@@ -1,0 +1,10 @@
+## Interface: 80200
+## Title: M|cffaeaeddonlith|r |cffff0000DKP|r
+## Author: Roe
+## Version: 0.1
+## DefaultState: enabled
+## SavedVariables: MonDKP_DB
+
+MonolithDKP.lua
+init.lua
+MonolithDKP.xml
