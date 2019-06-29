@@ -129,7 +129,7 @@ function MonDKP:CreateMenu()
     bgFile   = "Textures\\white.blp", tile = true,
     edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
   });
-  UIConfig.TitleBar:SetBackdropColor(0,0,0,0.8)
+  UIConfig.TitleBar:SetBackdropColor(0,0,0,0.9)
   UIConfig.TitleBar:SetSize(160, 48)
 
   -- Addon Title
