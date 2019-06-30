@@ -7,6 +7,7 @@ local MonDKP = core.MonDKP;
 local UIConfig;
 local MonVersion = "v0.1";
 
+--DBs required: MonDKP_DB (log app settings), MonDKP_Log(log kills/dkp distributed), MonDKP_DKPTable(Member/class/dkp list), MonDKP_Tables, MonDKP_Loot(loot and who got it)
 --------------------------------------
 -- Defaults
 --------------------------------------
@@ -408,13 +409,13 @@ function MonDKP:CreateMenu()
   Header2.t:SetFontObject("GameFontHighlightLarge");
   Header2.t:SetTextColor(1, 1, 1, 1);
   Header2.t:SetPoint("CENTER", Header2, "CENTER");
-  Header2.t:SetText("Adjusted DKP"); 
+  Header2.t:SetText("Not Used Yet"); 
 
   Header3.t = Header1:CreateFontString(nil, "OVERLAY")
   Header3.t:SetFontObject("GameFontHighlightLarge");
   Header3.t:SetTextColor(1, 1, 1, 1);
   Header3.t:SetPoint("CENTER", Header3, "CENTER");
-  Header3.t:SetText("DKP"); 
+  Header3.t:SetText("Total DKP"); 
   ---------------------------------------
   -- Creating the DKP Table
   ---------------------------------------

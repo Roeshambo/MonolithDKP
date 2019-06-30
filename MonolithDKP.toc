@@ -3,9 +3,10 @@
 ## Author: Roe
 ## Version: 0.1
 ## DefaultState: enabled
-## SavedVariables: MonDKP_DB
+## SavedVariables: MonDKP_DB, MonDKP_Log, MonDKP_DKPTable, MonDKP_Tables, MonDKP_Loot
 
-TableFunctions.lua
+
 MonolithDKP.lua
 init.lua
+TableFunctions.lua
 MonolithDKP.xml

@@ -45,12 +45,7 @@ local CColors = {
   }
 }
 core.TableWidth, core.TableHeight, core.TableNumrows = 500, 18, 27;
-local WorkingTable = {}
 local SelectedData = 0;
- 
-for i=1, 70 do
-    tinsert(WorkingTable, { player=i, class=random(1, #classes), dkp=random(0, 10000) })
-end
 
 --[[
   Table above will be structured as:
@@ -67,6 +62,10 @@ WorkingTable = {
 function GetCColors(class)
   local c = CColors[class];
   return c;
+end
+
+function DKPTable_Rebuild()         --rebuild WorkingTable with applied filters
+  
 end
 
 function DKPTable_OnClick(self)   -- self = Rows[]
@@ -105,28 +104,35 @@ function CreateRow(parent, id) -- Create 3 buttons for each row in the list
       f.DKPInfo[i].data:SetFontObject("GameFontHighlight");
       f.DKPInfo[i].data:SetTextColor(1, 1, 1, 1);
       f.DKPInfo[i].data:SetPoint("CENTER", f.DKPInfo[i], "CENTER");
+      if (i==3) then
+        f.DKPInfo[i].adjusted = f.DKPInfo[i]:CreateFontString(nil, "OVERLAY");
+        f.DKPInfo[i].adjusted:SetFontObject("GameFontWhiteTiny");
+        f.DKPInfo[i].adjusted:SetTextColor(1, 1, 1, 0.6);
+        f.DKPInfo[i].adjusted:SetPoint("LEFT", f.DKPInfo[i].data, "RIGHT", 3, -1);
+      end
     end
     return f
 end
  
 function DKPTable_Update(self)
-    local numOptions = #WorkingTable
+    local numOptions = #core.WorkingTable
     local index, row
     local offset = FauxScrollFrame_GetOffset(core.DKPTable)
     for i=1, core.TableNumrows do
         index = offset + i
         row = core.DKPTable.Rows[i]
-        local c = GetCColors(tostring(classes[WorkingTable[index].class]));
-        row.DKPInfo[1].data:SetText("Player"..WorkingTable[index].player)
+        local c = GetCColors(core.WorkingTable[index].class);
+        row.DKPInfo[1].data:SetText(core.WorkingTable[index].player)
         row.DKPInfo[1].data:SetTextColor(c.r, c.g, c.b, 1)
-        row.DKPInfo[2].data:SetText(classes[WorkingTable[index].class])
-        row.DKPInfo[3].data:SetText(WorkingTable[index].dkp)
+        row.DKPInfo[2].data:SetText("N/A")
+        row.DKPInfo[3].data:SetText(core.WorkingTable[index].dkp)
+        row.DKPInfo[3].adjusted:SetText("("..core.WorkingTable[index].dkp - core.WorkingTable[index].previous_dkp..")");
         if (index == SelectedData) then
           row:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
         else
           row:SetNormalTexture(nil)
         end
-        if WorkingTable[index] then
+        if core.WorkingTable[index] then
             row:Show()
             row.index = index
         else
