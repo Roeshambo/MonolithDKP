@@ -1,7 +1,49 @@
 
 local _, core = ...;
 local _G = _G;
-local classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" } 
+local classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
+local CColors = {
+  ["Druid"] = {
+    r = 1,
+    g = 0.49,
+    b = 0.04
+  },
+  ["Hunter"] = {
+    r = 0.67,
+    g = 0.83,
+    b = 0.45
+  },
+  ["Mage"] = {
+    r = 0.25,
+    g = 0.78,
+    b = 0.92
+  },
+  ["Priest"] = {
+    r = 1,
+    g = 1,
+    b = 1
+  },
+  ["Rogue"] = {
+    r = 1,
+    g = 0.96,
+    b = 0.41
+  },
+  ["Shaman"] = {
+    r = 0.96,
+    g = 0.55,
+    b = 0.73
+  },
+  ["Warlock"] = {
+    r = 0.53,
+    g = 0.53,
+    b = 0.93
+  },
+  ["Warrior"] = {
+    r = 0.78,
+    g = 0.61,
+    b = 0.43
+  }
+}
 core.TableWidth, core.TableHeight, core.TableNumrows = 500, 18, 25;
 local TableData = {}
 local SelectedData = 0;
@@ -21,6 +63,11 @@ TableData = {
 
 }
 --]]
+
+function GetCColors(class)
+  local c = CColors[class];
+  return c;
+end
 
 function OnClick(self)   -- self = Rows[]
     SelectedData = self.index;
@@ -69,7 +116,9 @@ function DKPTable_Update(self)
     for i=1, core.TableNumrows do
         row = core.DKPTable.Rows[i]
         index = offset + i
+        local c = GetCColors(tostring(classes[TableData[index].class]));
         row.DKPInfo[1].data:SetText("Player"..TableData[index].player)
+        row.DKPInfo[1].data:SetTextColor(c.r, c.g, c.b, 1)
         row.DKPInfo[2].data:SetText(classes[TableData[index].class])
         row.DKPInfo[3].data:SetText(TableData[index].dkp)
         if (index == SelectedData) then
