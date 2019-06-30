@@ -146,14 +146,14 @@ function MonDKP:CreateMenu()
   UIConfig.closeBtn:SetPoint("CENTER", UIConfig, "TOPRIGHT", -13, -13)
   UIConfig.closeBtn:SetNormalFontObject("GameFontNormalLarge");
   UIConfig.closeBtn:SetHighlightFontObject("GameFontHighlightLarge");
-  tinsert(UISpecialFrames, UIConfig:GetName());
+  tinsert(UISpecialFrames, UIConfig:GetName()); -- Sets frame to close on "Escape"
 
   ---------------------------------------
   -- TabMenu
   ---------------------------------------
 
   UIConfig.TabMenu = CreateFrame("Frame", "MonDKPConfigTabMenu", UIConfig);
-  UIConfig.TabMenu:SetPoint("TOPRIGHT", UIConfig, "TOPRIGHT", -22, -20);
+  UIConfig.TabMenu:SetPoint("TOPRIGHT", UIConfig, "TOPRIGHT", -22, -25);
   UIConfig.TabMenu:SetSize(400, 500);
   UIConfig.TabMenu:SetBackdrop( {
     bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
@@ -367,6 +367,23 @@ function MonDKP:CreateMenu()
   ConfigTab4.text:SetText("Content FOUR!"); 
 
   ---------------------------------------
+  -- DKP Table (TableFunctions.lua)
+  ---------------------------------------
+
+  core.DKPTable = CreateFrame("ScrollFrame", "MonDKPDiplayFrame", UIConfig, "FauxScrollFrameTemplate")
+  core.DKPTable:SetSize(core.TableWidth, core.TableHeight*core.TableNumrows)
+  core.DKPTable:SetPoint("TOPLEFT", UIConfig, "TOPLEFT", 20, -38)
+  core.DKPTable.Rows = {}
+  for i=1, core.TableNumrows do
+      core.DKPTable.Rows[i] = CreateRow(core.DKPTable, i)
+      core.DKPTable.Rows[i]:SetPoint("TOPLEFT", core.DKPTable.Rows[i-1] or core.DKPTable, core.DKPTable.Rows[i-1] and "BOTTOMLEFT" or "TOPLEFT")
+  end
+  core.DKPTable:SetScript("OnVerticalScroll", function(self, offset)
+      FauxScrollFrame_OnVerticalScroll(self, offset, core.TableHeight, DKPTable_Update)
+  end)
+  DKPTable_Update(core.DKPTable);
+
+  ---------------------------------------
   -- RESIZE BUTTON
   ---------------------------------------
 
@@ -394,14 +411,13 @@ function MonDKP:CreateMenu()
   resizeButton:SetScript("OnMouseUp", function(self, button)
     UIConfig:StopMovingOrSizing();
   end);
-
   ---------------------------------------
   -- VERSION IDENTIFIER
   ---------------------------------------
   UIConfig.Version = UIConfig.TitleBar:CreateFontString(nil, "OVERLAY")   -- not in a function so requires CreateFontString
   UIConfig.Version:ClearAllPoints();
   UIConfig.Version:SetFontObject("GameFontWhiteSmall");
-  UIConfig.Version:SetTextColor(c.r, c.g, c.b, 1);
+  UIConfig.Version:SetTextColor(c.r, c.g, c.b, 0.5);
   UIConfig.Version:SetPoint("BOTTOMRIGHT", UIConfig.TitleBar, "BOTTOMRIGHT", -8, 5);
   UIConfig.Version:SetText(MonDKP:GetVer()); 
 

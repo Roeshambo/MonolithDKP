@@ -5,6 +5,7 @@
 ## DefaultState: enabled
 ## SavedVariables: MonDKP_DB
 
+TableFunctions.lua
 MonolithDKP.lua
 init.lua
 MonolithDKP.xml
