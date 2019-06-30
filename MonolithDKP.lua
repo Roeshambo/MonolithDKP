@@ -374,7 +374,7 @@ function MonDKP:CreateMenu()
   ---------------------------------------
   core.DKPTable_Headers = CreateFrame("Frame", "MonDKPDKPTableHeaders", UIConfig)
   core.DKPTable_Headers:SetSize(500, 25)
-  core.DKPTable_Headers:SetPoint("TOPLEFT", UIConfig, "TOPLEFT", 20, -38)
+  core.DKPTable_Headers:SetPoint("TOPLEFT", UIConfig, "TOPLEFT", 20, -25)
   core.DKPTable_Headers:SetBackdrop({
     bgFile   = "Textures\\white.blp", tile = true,
     edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
