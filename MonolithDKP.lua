@@ -5,7 +5,7 @@ core.MonDKP = {};
 
 local MonDKP = core.MonDKP;
 local UIConfig;
-local MonVersion = "v0.1";
+local MonVersion = "v0.1 (alpha)";
 
 --DBs required: MonDKP_DB (log app settings), MonDKP_Log(log kills/dkp distributed), MonDKP_DKPTable(Member/class/dkp list), MonDKP_Tables, MonDKP_Loot(loot and who got it)
 --------------------------------------
