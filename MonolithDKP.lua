@@ -124,7 +124,7 @@ function MonDKP:CreateMenu()
 
   -- Title Frame (top/center)
   UIConfig.TitleBar = CreateFrame("Frame", "MonDKPTitle", UIConfig, "ShadowOverlaySmallTemplate")
-  UIConfig.TitleBar:SetPoint("BOTTOM", UIConfig, "TOP", 0, -18)
+  UIConfig.TitleBar:SetPoint("BOTTOM", UIConfig, "TOP", -225, -18)
   UIConfig.TitleBar:SetBackdrop({
     bgFile   = "Textures\\white.blp", tile = true,
     edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
@@ -369,10 +369,72 @@ function MonDKP:CreateMenu()
   ---------------------------------------
   -- DKP Table (TableFunctions.lua)
   ---------------------------------------
+  -- Header
+  ---------------------------------------
+  core.DKPTable_Headers = CreateFrame("Frame", "MonDKPDKPTableHeaders", UIConfig)
+  core.DKPTable_Headers:SetSize(500, 25)
+  core.DKPTable_Headers:SetPoint("TOPLEFT", UIConfig, "TOPLEFT", 20, -38)
+  core.DKPTable_Headers:SetBackdrop({
+    bgFile   = "Textures\\white.blp", tile = true,
+    edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
+  });
+  core.DKPTable_Headers:SetBackdropColor(0,0,0,0.8);
+  core.DKPTable_Headers:SetBackdropBorderColor(1,1,1,0.5)
+  core.DKPTable_Headers:Show()
 
+  local Header1 = CreateFrame("Button", "$parentHeader1", core.DKPTable_Headers)
+  local Header2 = CreateFrame("Button", "$parentHeader2", core.DKPTable_Headers)
+  local Header3 = CreateFrame("Button", "$parentHeader3", core.DKPTable_Headers)
+
+  Header1:SetSize(core.TableWidth/3, core.TableHeight);
+  Header2:SetSize(core.TableWidth/3, core.TableHeight);
+  Header3:SetSize(core.TableWidth/3, core.TableHeight);
+
+  Header1:SetHighlightTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp");
+  Header2:SetHighlightTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp");
+  Header3:SetHighlightTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp");
+
+  Header1:SetPoint("LEFT", core.DKPTable_Headers, "Left", 15)
+  Header2:SetPoint("CENTER", core.DKPTable_Headers, "CENTER")
+  Header3:SetPoint("RIGHT", core.DKPTable_Headers, "RIGHT", -15)
+
+  Header1.t = Header1:CreateFontString(nil, "OVERLAY")
+  Header1.t:SetFontObject("GameFontHighlightLarge");
+  Header1.t:SetTextColor(1, 1, 1, 1);
+  Header1.t:SetPoint("CENTER", Header1, "CENTER");
+  Header1.t:SetText("Player"); 
+
+  Header2.t = Header1:CreateFontString(nil, "OVERLAY")
+  Header2.t:SetFontObject("GameFontHighlightLarge");
+  Header2.t:SetTextColor(1, 1, 1, 1);
+  Header2.t:SetPoint("CENTER", Header2, "CENTER");
+  Header2.t:SetText("Adjusted DKP"); 
+
+  Header3.t = Header1:CreateFontString(nil, "OVERLAY")
+  Header3.t:SetFontObject("GameFontHighlightLarge");
+  Header3.t:SetTextColor(1, 1, 1, 1);
+  Header3.t:SetPoint("CENTER", Header3, "CENTER");
+  Header3.t:SetText("DKP"); 
+  ---------------------------------------
+  -- Creating the DKP Table
+  ---------------------------------------
   core.DKPTable = CreateFrame("ScrollFrame", "MonDKPDiplayFrame", UIConfig, "FauxScrollFrameTemplate")
   core.DKPTable:SetSize(core.TableWidth, core.TableHeight*core.TableNumrows)
-  core.DKPTable:SetPoint("TOPLEFT", UIConfig, "TOPLEFT", 20, -38)
+  core.DKPTable:SetPoint("TOPLEFT", core.DKPTable_Headers, "BOTTOMLEFT", 0, 1)
+  core.DKPTable:SetBackdrop( {
+    bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
+    edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
+    insets = { left = 0, right = 0, top = 0, bottom = 0 }
+  });
+  core.DKPTable:SetBackdropColor(0,0,0,0.4);
+  core.DKPTable:SetBackdropBorderColor(1,1,1,0.5)
+  core.DKPTable:SetClipsChildren(false);
+  core.DKPTable:SetScript("OnMouseWheel", ScrollFrame_OnMouseWheel);
+
+  core.DKPTable.ScrollBar:ClearAllPoints();
+  core.DKPTable.ScrollBar:SetPoint("TOPLEFT", core.DKPTable, "TOPRIGHT", 20, -17);
+  core.DKPTable.ScrollBar:SetPoint("BOTTOMRIGHT", core.DKPTable, "BOTTOMRIGHT", 0, 16);
+
   core.DKPTable.Rows = {}
   for i=1, core.TableNumrows do
       core.DKPTable.Rows[i] = CreateRow(core.DKPTable, i)

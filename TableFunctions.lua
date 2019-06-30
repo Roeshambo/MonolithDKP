@@ -44,18 +44,18 @@ local CColors = {
     b = 0.43
   }
 }
-core.TableWidth, core.TableHeight, core.TableNumrows = 500, 18, 25;
-local TableData = {}
+core.TableWidth, core.TableHeight, core.TableNumrows = 500, 18, 27;
+local WorkingTable = {}
 local SelectedData = 0;
  
 for i=1, 70 do
-    tinsert(TableData, { player=i, class=random(1, #classes), dkp=random(0, 10000) })
+    tinsert(WorkingTable, { player=i, class=random(1, #classes), dkp=random(0, 10000) })
 end
 
 --[[
   Table above will be structured as:
 
-TableData = {
+WorkingTable = {
   ["player"] = "Roeshambo",
   ["class"] = "Warrior",
   ["dkp"] = 1000,
@@ -69,14 +69,14 @@ function GetCColors(class)
   return c;
 end
 
-function OnClick(self)   -- self = Rows[]
+function DKPTable_OnClick(self)   -- self = Rows[]
     SelectedData = self.index;
     for i=1, core.TableNumrows do
       self:GetParent().Rows[i]:SetNormalTexture(nil)
     end
     self:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
     --[[  
-    for k,v in pairs(TableData[SelectedData]) do
+    for k,v in pairs(WorkingTable[SelectedData]) do
       if(tostring(k) == "class") then
         print(k, " -> ", classes[v])
       else
@@ -96,7 +96,7 @@ function CreateRow(parent, id) -- Create 3 buttons for each row in the list
     f.DKPInfo = {}
     f:SetSize(core.TableWidth, core.TableHeight)
     f:SetHighlightTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp");
-    f:SetScript("OnClick", OnClick)
+    f:SetScript("OnClick", DKPTable_OnClick)
     for i=1, 3 do
       tinsert(f.DKPInfo, CreateFrame("Frame", "$parentButton"..i, f))
       f.DKPInfo[i]:SetSize(core.TableWidth/3, core.TableHeight)
@@ -110,23 +110,23 @@ function CreateRow(parent, id) -- Create 3 buttons for each row in the list
 end
  
 function DKPTable_Update(self)
-    local numOptions = #TableData
+    local numOptions = #WorkingTable
     local index, row
     local offset = FauxScrollFrame_GetOffset(core.DKPTable)
     for i=1, core.TableNumrows do
-        row = core.DKPTable.Rows[i]
         index = offset + i
-        local c = GetCColors(tostring(classes[TableData[index].class]));
-        row.DKPInfo[1].data:SetText("Player"..TableData[index].player)
+        row = core.DKPTable.Rows[i]
+        local c = GetCColors(tostring(classes[WorkingTable[index].class]));
+        row.DKPInfo[1].data:SetText("Player"..WorkingTable[index].player)
         row.DKPInfo[1].data:SetTextColor(c.r, c.g, c.b, 1)
-        row.DKPInfo[2].data:SetText(classes[TableData[index].class])
-        row.DKPInfo[3].data:SetText(TableData[index].dkp)
+        row.DKPInfo[2].data:SetText(classes[WorkingTable[index].class])
+        row.DKPInfo[3].data:SetText(WorkingTable[index].dkp)
         if (index == SelectedData) then
           row:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
         else
           row:SetNormalTexture(nil)
         end
-        if TableData[index] then
+        if WorkingTable[index] then
             row:Show()
             row.index = index
         else
@@ -139,4 +139,9 @@ end
 
 --self.text
 
---self.text:GetText() ~= classes[TableData[index].class]
+--self.text:GetText() ~= classes[WorkingTable[index].class]
+
+--creat table for all dkp holders
+--shift to working table and clear as needed.
+--IE: Empty table, push full list to table one by one omiting any class not on the filter
+--Sorting columns need to be made as well.
