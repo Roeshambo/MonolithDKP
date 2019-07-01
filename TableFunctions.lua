@@ -143,6 +143,11 @@ function DKPTable_Update(self)
     else
       row:Hide()
     end
+    if (index == SelectedRow) then
+      row:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
+    else
+      row:SetNormalTexture(nil)
+    end
   end
   FauxScrollFrame_Update(core.DKPTable, numOptions, core.TableNumrows, core.TableHeight, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding
 end
