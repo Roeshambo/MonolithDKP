@@ -33,8 +33,9 @@ end
 
 function MonDKP:ResetPosition()
   UIConfig:ClearAllPoints();
-  UIConfig:SetPoint("CENTER", UIParent, "CENTER", -350, 150);
+  UIConfig:SetPoint("CENTER", UIParent, "CENTER", -250, 100);
   UIConfig:SetSize(1000, 590);
+  core:Print("Window Position Reset")
 end
 
 function MonDKP:GetThemeColor()
@@ -119,7 +120,7 @@ function FilterTable(sort)
       tinsert(core.WorkingTable, v)
     end
   end
-  SortDKPTable("class");
+  SortDKPTable("class", "reset");
 end
 
 function SortDKPTable(id, reset)
@@ -147,7 +148,7 @@ end
 
 function MonDKP:CreateMenu()
   UIConfig = CreateFrame("Frame", "MonDKPConfig", UIParent, "ShadowOverlaySmallTemplate")  --UIPanelDialogueTemplate, ShadowOverlaySmallTemplate
-  UIConfig:SetPoint("CENTER", UIParent, "CENTER", -350, 150);
+  UIConfig:SetPoint("CENTER", UIParent, "CENTER", -250, 100);
   UIConfig:SetSize(1000, 590);
   UIConfig:SetBackdrop({
     bgFile   = "Textures\\white.blp", tile = true,
@@ -452,8 +453,6 @@ function MonDKP:CreateMenu()
   core.DKPTable:SetScript("OnVerticalScroll", function(self, offset)
     FauxScrollFrame_OnVerticalScroll(self, offset, core.TableHeight, DKPTable_Update)
   end)
-  --FilterTable("player")
-  DKPTable_Update(core.DKPTable)  -- remove when completed
   
   ---------------------------------------
   -- DKP Table Headesr and Sort Buttons
@@ -485,7 +484,7 @@ function MonDKP:CreateMenu()
   for k, v in pairs(SortButtons) do
     v.Id = k
     v:SetHighlightTexture("Interface\\BUTTONS\\BlueGrad64_faded.blp");
-    v:SetSize(core.TableWidth/3, core.TableHeight)
+    v:SetSize((core.TableWidth/3)-1, core.TableHeight)
     v:SetScript("OnClick", function(self) SortDKPTable(self.Id) end)
   end
 
@@ -506,34 +505,6 @@ function MonDKP:CreateMenu()
   SortButtons.dkp.t:SetTextColor(1, 1, 1, 1);
   SortButtons.dkp.t:SetPoint("CENTER", SortButtons.dkp, "CENTER");
   SortButtons.dkp.t:SetText("Total DKP");
-  -------------------------------------
-
-  --[[core.DKPTable = CreateFrame("ScrollFrame", "MonDKPDiplayFrame", UIConfig, "FauxScrollFrameTemplate")
-  core.DKPTable:SetSize(core.TableWidth, core.TableHeight*core.TableNumrows)
-  core.DKPTable:SetPoint("TOPLEFT", core.DKPTable_Headers, "BOTTOMLEFT", 0, 1)
-  core.DKPTable:SetBackdrop( {
-    bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
-    edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
-    insets = { left = 0, right = 0, top = 0, bottom = 0 }
-  });
-  core.DKPTable:SetBackdropColor(0,0,0,0.4);
-  core.DKPTable:SetBackdropBorderColor(1,1,1,0.5)
-  core.DKPTable:SetClipsChildren(false);
-  core.DKPTable:SetScript("OnMouseWheel", ScrollFrame_OnMouseWheel);
-
-  core.DKPTable.ScrollBar:ClearAllPoints();
-  core.DKPTable.ScrollBar:SetPoint("TOPLEFT", core.DKPTable, "TOPRIGHT", 20, -17);
-  core.DKPTable.ScrollBar:SetPoint("BOTTOMRIGHT", core.DKPTable, "BOTTOMRIGHT", 0, 16);
-
-  core.DKPTable.Rows = {}
-  for i=1, core.TableNumrows do
-      core.DKPTable.Rows[i] = CreateRow(core.DKPTable, i)
-      core.DKPTable.Rows[i]:SetPoint("TOPLEFT", core.DKPTable.Rows[i-1] or core.DKPTable, core.DKPTable.Rows[i-1] and "BOTTOMLEFT" or "TOPLEFT")
-  end
-  core.DKPTable:SetScript("OnVerticalScroll", function(self, offset)
-      FauxScrollFrame_OnVerticalScroll(self, offset, core.TableHeight, DKPTable_Update)
-  end)
-  DKPTable_Update(core.DKPTable);--]]
 
   ----- Counter below DKP Table
   core.DKPTable.counter = CreateFrame("Frame", "MonDKPDisplayFrameCounter", UIConfig);
@@ -585,6 +556,7 @@ function MonDKP:CreateMenu()
   UIConfig.Version:SetText(MonDKP:GetVer()); 
 
   UIConfig:Hide(); -- hide menu after creation until called.
+  FilterTable("class")
 
   return UIConfig;
 end
