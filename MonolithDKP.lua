@@ -421,7 +421,7 @@ function MonDKP:CreateMenu()
   ---------------------------------------
 
   core.DKPTable_Headers = CreateFrame("Frame", "MonDKPDKPTableHeaders", UIConfig)
-  core.DKPTable_Headers:SetSize(500, 25)
+  core.DKPTable_Headers:SetSize(500, 22)
   core.DKPTable_Headers:SetPoint("BOTTOMLEFT", core.DKPTable, "TOPLEFT", 0, 1)
   core.DKPTable_Headers:SetBackdrop({
     bgFile   = "Textures\\white.blp", tile = true,
@@ -443,8 +443,6 @@ function MonDKP:CreateMenu()
     else
       button.Ascend = not button.Ascend
     end
-    local Suffix = button.Ascend and " ^" or " v"
-    button:SetText(button.Id .. Suffix)
     for k, v in pairs(SortButtons) do
       if v ~= button then
         v.Ascend = nil
@@ -469,13 +467,13 @@ function MonDKP:CreateMenu()
   SortButtons.class = CreateFrame("Button", "$ParentSortButtonClass", core.DKPTable_Headers)
   SortButtons.dkp = CreateFrame("Button", "$ParentSortButtonDkp", core.DKPTable_Headers)
    
-  SortButtons.class:SetPoint("BOTTOM", core.DKPTable_Headers, "BOTTOM", 0, 4)
+  SortButtons.class:SetPoint("BOTTOM", core.DKPTable_Headers, "BOTTOM", 0, 2)
   SortButtons.player:SetPoint("RIGHT", SortButtons.class, "LEFT")
   SortButtons.dkp:SetPoint("LEFT", SortButtons.class, "RIGHT")
    
   for k, v in pairs(SortButtons) do
     v.Id = k
-    v:SetHighlightTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp");
+    v:SetHighlightTexture("Interface\\BUTTONS\\BlueGrad64_faded.blp");
     v:SetSize(core.TableWidth/3, core.TableHeight)
     v:SetScript("OnClick", function(self) SortDKPTable(self.Id) end)
   end

@@ -45,7 +45,7 @@ local CColors = {
 }
 core.TableWidth, core.TableHeight, core.TableNumrows = 500, 18, 27;
 local SelectedRow = 0;      -- tracks row in DKPTable that is currently selected for SetHighlightTexture
-local SelectedData;         -- stores data of clicked row for manipulation.
+local SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 
 --[[
   Table above will be structured as:
@@ -73,7 +73,12 @@ end
 
 function DKPTable_OnClick(self)   -- self = Rows[]
     SelectedRow = self.index;
-    SelectedData = { core.WorkingTable[SelectedRow].player, core.WorkingTable[SelectedRow].class, core.WorkingTable[SelectedRow].dkp, core.WorkingTable[SelectedRow].previous_dkp }
+    SelectedData = {        --storing the data of the selected row for comparison and manipulation
+      player=core.WorkingTable[SelectedRow].player,
+      class=core.WorkingTable[SelectedRow].class,
+      dkp=core.WorkingTable[SelectedRow].dkp,
+      previous_dkp=core.WorkingTable[SelectedRow].previous_dkp
+    }
     for i=1, core.TableNumrows do
       self:GetParent().Rows[i]:SetNormalTexture(nil)
     end
@@ -143,7 +148,7 @@ function DKPTable_Update(self)
     else
       row:Hide()
     end
-    if (index == SelectedRow) then
+    if (core.WorkingTable[index].player == SelectedData.player) then
       row:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
     else
       row:SetNormalTexture(nil)
