@@ -133,6 +133,10 @@ function DKPTable_Update(self)
   local index, row, c
   local offset = FauxScrollFrame_GetOffset(core.DKPTable) or 0
   for i=1, core.TableNumrows do
+    row = core.DKPTable.Rows[i];
+    row:Hide();
+  end
+  for i=1, core.TableNumrows do
     row = core.DKPTable.Rows[i]
     index = offset + i
     if core.WorkingTable[index] then
@@ -145,13 +149,14 @@ function DKPTable_Update(self)
       row.DKPInfo[2]:SetText(core.WorkingTable[index].class)
       row.DKPInfo[3]:SetText(core.WorkingTable[index].dkp)
       row.DKPInfo[3].adjusted:SetText("("..core.WorkingTable[index].dkp - core.WorkingTable[index].previous_dkp..")");
+      
+      if (core.WorkingTable[index].player == SelectedData.player) then
+        row:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
+      else
+        row:SetNormalTexture(nil)
+      end
     else
       row:Hide()
-    end
-    if (core.WorkingTable[index].player == SelectedData.player) then
-      row:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
-    else
-      row:SetNormalTexture(nil)
     end
   end
   FauxScrollFrame_Update(core.DKPTable, numOptions, core.TableNumrows, core.TableHeight, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding

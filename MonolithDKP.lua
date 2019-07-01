@@ -107,6 +107,44 @@ local function SetTabs(frame, numTabs, ...)
   return unpack(contents);
 end
 
+---------------------------------------
+-- Sort Function
+---------------------------------------  
+local SortButtons = {}
+
+function FilterTable(sort)
+  core.WorkingTable = {}
+  for k,v in pairs(MonDKP_DKPTable) do
+    if(core.classFiltered[MonDKP_DKPTable[k]["class"]] == true) then
+      tinsert(core.WorkingTable, v)
+    end
+  end
+  SortDKPTable("class");
+end
+
+function SortDKPTable(id, reset)
+  local button = SortButtons[id]
+  if reset then
+    button.Ascend = true
+  else
+    button.Ascend = not button.Ascend
+  end
+  for k, v in pairs(SortButtons) do
+    if v ~= button then
+      v.Ascend = nil
+      v:SetText(v.Id)
+    end
+  end
+  table.sort(core.WorkingTable, function(a, b)
+    if button.Ascend then
+      return a[button.Id] < b[button.Id]
+    else
+      return a[button.Id] > b[button.Id]
+    end
+  end)
+  DKPTable_Update(core.DKPTable)
+end
+
 function MonDKP:CreateMenu()
   UIConfig = CreateFrame("Frame", "MonDKPConfig", UIParent, "ShadowOverlaySmallTemplate")  --UIPanelDialogueTemplate, ShadowOverlaySmallTemplate
   UIConfig:SetPoint("CENTER", UIParent, "CENTER", -350, 150);
@@ -226,7 +264,7 @@ function MonDKP:CreateMenu()
         core.classFiltered[v] = false;
       end
     end
-    DKPTable_Update();
+    FilterTable("player");
     core.DKPTable.counter.t:SetText(#core.WorkingTable.." Entries Listed"); 
   end
 
@@ -414,6 +452,7 @@ function MonDKP:CreateMenu()
   core.DKPTable:SetScript("OnVerticalScroll", function(self, offset)
     FauxScrollFrame_OnVerticalScroll(self, offset, core.TableHeight, DKPTable_Update)
   end)
+  --FilterTable("player")
   DKPTable_Update(core.DKPTable)  -- remove when completed
   
   ---------------------------------------
@@ -430,34 +469,6 @@ function MonDKP:CreateMenu()
   core.DKPTable_Headers:SetBackdropColor(0,0,0,0.8);
   core.DKPTable_Headers:SetBackdropBorderColor(1,1,1,0.5)
   core.DKPTable_Headers:Show()
-
-  ---------------------------------------
-  -- Sort Function
-  ---------------------------------------  
-  local SortButtons = {}
- 
-  local function SortDKPTable(id, reset)
-    local button = SortButtons[id]
-    if reset then
-      button.Ascend = true
-    else
-      button.Ascend = not button.Ascend
-    end
-    for k, v in pairs(SortButtons) do
-      if v ~= button then
-        v.Ascend = nil
-        v:SetText(v.Id)
-      end
-    end
-    table.sort(core.WorkingTable, function(a, b)
-      if button.Ascend then
-        return a[button.Id] < b[button.Id]
-      else
-        return a[button.Id] > b[button.Id]
-      end
-    end)
-    DKPTable_Update(core.DKPTable)
-  end
 
   ---------------------------------------
   -- Sort Buttons
