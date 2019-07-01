@@ -390,95 +390,6 @@ function MonDKP:CreateMenu()
   ---------------------------------------
   -- DKP Table (TableFunctions.lua)
   ---------------------------------------
-  -- Header
-  ---------------------------------------
-  core.DKPTable_Headers = CreateFrame("Frame", "MonDKPDKPTableHeaders", UIConfig)
-  core.DKPTable_Headers:SetSize(500, 25)
-  core.DKPTable_Headers:SetPoint("TOPLEFT", UIConfig, "TOPLEFT", 20, -25)
-  core.DKPTable_Headers:SetBackdrop({
-    bgFile   = "Textures\\white.blp", tile = true,
-    edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
-  });
-  core.DKPTable_Headers:SetBackdropColor(0,0,0,0.8);
-  core.DKPTable_Headers:SetBackdropBorderColor(1,1,1,0.5)
-  core.DKPTable_Headers:Show()
-
-  --[[local Header1 = CreateFrame("Button", "$parentHeader1", core.DKPTable_Headers)
-  local Header2 = CreateFrame("Button", "$parentHeader2", core.DKPTable_Headers)
-  local Header3 = CreateFrame("Button", "$parentHeader3", core.DKPTable_Headers)
-
-  Header1:SetSize(core.TableWidth/3, core.TableHeight);
-  Header2:SetSize(core.TableWidth/3, core.TableHeight);
-  Header3:SetSize(core.TableWidth/3, core.TableHeight);
-
-  Header1:SetHighlightTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp");
-  Header2:SetHighlightTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp");
-  Header3:SetHighlightTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp");
-
-  Header1:SetPoint("LEFT", core.DKPTable_Headers, "Left", 15)
-  Header2:SetPoint("CENTER", core.DKPTable_Headers, "CENTER")
-  Header3:SetPoint("RIGHT", core.DKPTable_Headers, "RIGHT", -15) --]]
-
-
-  local SortButtons = {}
- 
-  local function SortTable(id, reset)
-    local button = SortButtons[id]
-    if reset then
-      button.Ascend = true
-    else
-      button.Ascend = not button.Ascend
-    end
-    local Suffix = button.Ascend and " ^" or " v"
-    button:SetText(button.Id .. Suffix)
-    for k, v in pairs(SortButtons) do
-      if v ~= button then
-        v.Ascend = nil
-        v:SetText(v.Id)
-      end
-    end
-    table.sort(core.WorkingTable, function(a, b)
-      if button.Ascend then
-        return a[button.Id] < b[button.Id]
-      else
-        return a[button.Id] > b[button.Id]
-      end
-    end)
-    DKPTable_Update(core.DKPTable)
-  end
-
-  SortButtons.player = CreateFrame("Button", "$ParentSortButtonPlayer", core.DKPTable_Headers)
-  SortButtons.class = CreateFrame("Button", "$ParentSortButtonClass", core.DKPTable_Headers)
-  SortButtons.dkp = CreateFrame("Button", "$ParentSortButtonDkp", core.DKPTable_Headers)
-   
-  SortButtons.class:SetPoint("BOTTOM", core.DKPTable_Headers, "BOTTOM", 0, 4)
-  SortButtons.player:SetPoint("RIGHT", SortButtons.class, "LEFT")
-  SortButtons.dkp:SetPoint("LEFT", SortButtons.class, "RIGHT")
-   
-  for k, v in pairs(SortButtons) do
-    v.Id = k
-    v:SetHighlightTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp");
-    v:SetSize(core.TableWidth/3, core.TableHeight)
-    v:SetScript("OnClick", function(self) SortTable(self.Id) end)
-  end
-
-  SortButtons.player.t = SortButtons.player:CreateFontString(nil, "OVERLAY")
-  SortButtons.player.t:SetFontObject("GameFontNormalSmall");
-  SortButtons.player.t:SetTextColor(1, 1, 1, 1);
-  SortButtons.player.t:SetPoint("CENTER", SortButtons.player, "CENTER");
-  SortButtons.player.t:SetText("Player"); 
-
-  SortButtons.class.t = SortButtons.class:CreateFontString(nil, "OVERLAY")
-  SortButtons.class.t:SetFontObject("GameFontNormalSmall");
-  SortButtons.class.t:SetTextColor(1, 1, 1, 1);
-  SortButtons.class.t:SetPoint("CENTER", SortButtons.class, "CENTER");
-  SortButtons.class.t:SetText("Class"); 
-
-  SortButtons.dkp.t = SortButtons.dkp:CreateFontString(nil, "OVERLAY")
-  SortButtons.dkp.t:SetFontObject("GameFontNormalSmall");
-  SortButtons.dkp.t:SetTextColor(1, 1, 1, 1);
-  SortButtons.dkp.t:SetPoint("CENTER", SortButtons.dkp, "CENTER");
-  SortButtons.dkp.t:SetText("Total DKP");
   ---------------------------------------
   -- Creating the DKP Table
   ---------------------------------------
@@ -504,7 +415,88 @@ function MonDKP:CreateMenu()
     FauxScrollFrame_OnVerticalScroll(self, offset, core.TableHeight, DKPTable_Update)
   end)
   DKPTable_Update(core.DKPTable)  -- remove when completed
+  
+  ---------------------------------------
+  -- DKP Table Headesr and Sort Buttons
+  ---------------------------------------
 
+  core.DKPTable_Headers = CreateFrame("Frame", "MonDKPDKPTableHeaders", UIConfig)
+  core.DKPTable_Headers:SetSize(500, 25)
+  core.DKPTable_Headers:SetPoint("BOTTOMLEFT", core.DKPTable, "TOPLEFT", 0, 1)
+  core.DKPTable_Headers:SetBackdrop({
+    bgFile   = "Textures\\white.blp", tile = true,
+    edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
+  });
+  core.DKPTable_Headers:SetBackdropColor(0,0,0,0.8);
+  core.DKPTable_Headers:SetBackdropBorderColor(1,1,1,0.5)
+  core.DKPTable_Headers:Show()
+
+  ---------------------------------------
+  -- Sort Function
+  ---------------------------------------  
+  local SortButtons = {}
+ 
+  local function SortDKPTable(id, reset)
+    local button = SortButtons[id]
+    if reset then
+      button.Ascend = true
+    else
+      button.Ascend = not button.Ascend
+    end
+    local Suffix = button.Ascend and " ^" or " v"
+    button:SetText(button.Id .. Suffix)
+    for k, v in pairs(SortButtons) do
+      if v ~= button then
+        v.Ascend = nil
+        v:SetText(v.Id)
+      end
+    end
+    table.sort(core.WorkingTable, function(a, b)
+      if button.Ascend then
+        return a[button.Id] < b[button.Id]
+      else
+        return a[button.Id] > b[button.Id]
+      end
+    end)
+    DKPTable_Update(core.DKPTable)
+  end
+
+  ---------------------------------------
+  -- Sort Buttons
+  --------------------------------------- 
+
+  SortButtons.player = CreateFrame("Button", "$ParentSortButtonPlayer", core.DKPTable_Headers)
+  SortButtons.class = CreateFrame("Button", "$ParentSortButtonClass", core.DKPTable_Headers)
+  SortButtons.dkp = CreateFrame("Button", "$ParentSortButtonDkp", core.DKPTable_Headers)
+   
+  SortButtons.class:SetPoint("BOTTOM", core.DKPTable_Headers, "BOTTOM", 0, 4)
+  SortButtons.player:SetPoint("RIGHT", SortButtons.class, "LEFT")
+  SortButtons.dkp:SetPoint("LEFT", SortButtons.class, "RIGHT")
+   
+  for k, v in pairs(SortButtons) do
+    v.Id = k
+    v:SetHighlightTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp");
+    v:SetSize(core.TableWidth/3, core.TableHeight)
+    v:SetScript("OnClick", function(self) SortDKPTable(self.Id) end)
+  end
+
+  SortButtons.player.t = SortButtons.player:CreateFontString(nil, "OVERLAY")
+  SortButtons.player.t:SetFontObject("GameFontNormalSmall");
+  SortButtons.player.t:SetTextColor(1, 1, 1, 1);
+  SortButtons.player.t:SetPoint("CENTER", SortButtons.player, "CENTER");
+  SortButtons.player.t:SetText("Player"); 
+
+  SortButtons.class.t = SortButtons.class:CreateFontString(nil, "OVERLAY")
+  SortButtons.class.t:SetFontObject("GameFontNormalSmall");
+  SortButtons.class.t:SetTextColor(1, 1, 1, 1);
+  SortButtons.class.t:SetPoint("CENTER", SortButtons.class, "CENTER");
+  SortButtons.class.t:SetText("Class"); 
+
+  SortButtons.dkp.t = SortButtons.dkp:CreateFontString(nil, "OVERLAY")
+  SortButtons.dkp.t:SetFontObject("GameFontNormalSmall");
+  SortButtons.dkp.t:SetTextColor(1, 1, 1, 1);
+  SortButtons.dkp.t:SetPoint("CENTER", SortButtons.dkp, "CENTER");
+  SortButtons.dkp.t:SetText("Total DKP");
   -------------------------------------
 
   --[[core.DKPTable = CreateFrame("ScrollFrame", "MonDKPDiplayFrame", UIConfig, "FauxScrollFrameTemplate")
