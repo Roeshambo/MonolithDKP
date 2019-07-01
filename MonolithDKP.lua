@@ -1,46 +1,14 @@
 local _, core = ...;
 local _G = _G;
 
-core.MonDKP = {};
-core.classFiltered = {};
-core.classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
-
 local MonDKP = core.MonDKP;
 local UIConfig;
-local MonVersion = "v0.1 (alpha)";
 
 --DBs required: MonDKP_DB (log app settings), MonDKP_Log(log kills/dkp distributed), MonDKP_DKPTable(Member/class/dkp list), MonDKP_Tables, MonDKP_Loot(loot and who got it)
---------------------------------------
--- Defaults
---------------------------------------
-local defaults = {
-  theme = {
-    r = 0.6823, 
-    g = 0.6823,
-    b = 0.8666,
-    hex = "aeaedd"
-  }
-}
 
 function MonDKP:Toggle() 
   local menu = UIConfig or MonDKP:CreateMenu();
   menu:SetShown(not menu:IsShown())
-end
-
-function MonDKP:GetVer()
-  return MonVersion;
-end
-
-function MonDKP:ResetPosition()
-  UIConfig:ClearAllPoints();
-  UIConfig:SetPoint("CENTER", UIParent, "CENTER", -250, 100);
-  UIConfig:SetSize(1000, 590);
-  core:Print("Window Position Reset")
-end
-
-function MonDKP:GetThemeColor()
-  local c = defaults.theme;
-  return c;
 end
 
 local function ScrollFrame_OnMouseWheel(self, delta)
@@ -266,7 +234,7 @@ function MonDKP:CreateMenu()
       end
     end
     FilterTable("player");
-    core.DKPTable.counter.t:SetText(#core.WorkingTable.." Entries Listed"); 
+    core.DKPTable.counter.t:SetText(#core.WorkingTable.." Entries Shown"); 
   end
 
   -- Class Check Button 1:
@@ -515,7 +483,7 @@ function MonDKP:CreateMenu()
   core.DKPTable.counter.t:SetFontObject("GameFontHighlight");
   core.DKPTable.counter.t:SetTextColor(1, 1, 1, 0.7);
   core.DKPTable.counter.t:SetPoint("CENTER", core.DKPTable.counter, "CENTER");
-  core.DKPTable.counter.t:SetText(#core.WorkingTable.." Entries Listed"); 
+  core.DKPTable.counter.t:SetText(#core.WorkingTable.." Entries Shown"); 
 
   ---------------------------------------
   -- RESIZE BUTTON

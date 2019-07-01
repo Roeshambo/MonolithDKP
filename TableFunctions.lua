@@ -1,64 +1,11 @@
-
 local _, core = ...;
 local _G = _G;
-local CColors = {
-  ["Druid"] = {
-    r = 1,
-    g = 0.49,
-    b = 0.04
-  },
-  ["Hunter"] = {
-    r = 0.67,
-    g = 0.83,
-    b = 0.45
-  },
-  ["Mage"] = {
-    r = 0.25,
-    g = 0.78,
-    b = 0.92
-  },
-  ["Priest"] = {
-    r = 1,
-    g = 1,
-    b = 1
-  },
-  ["Rogue"] = {
-    r = 1,
-    g = 0.96,
-    b = 0.41
-  },
-  ["Shaman"] = {
-    r = 0.96,
-    g = 0.55,
-    b = 0.73
-  },
-  ["Warlock"] = {
-    r = 0.53,
-    g = 0.53,
-    b = 0.93
-  },
-  ["Warrior"] = {
-    r = 0.78,
-    g = 0.61,
-    b = 0.43
-  }
-}
-core.TableWidth, core.TableHeight, core.TableNumrows = 500, 18, 27;
-local SelectedRow = 0;      -- tracks row in DKPTable that is currently selected for SetHighlightTexture
-local SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 
-function GetCColors(class)
-  if CColors then 
-    local c = CColors[class];
-    return c;
-  else
-    return false;
-  end
-end
+local SelectedRow = 0;      -- tracks row in DKPTable that is currently selected for SetHighlightTexture
 
 function DKPTable_OnClick(self)   -- self = Rows[]
     SelectedRow = self.index;
-    SelectedData = {        --storing the data of the selected row for comparison and manipulation
+    core.SelectedData = {        --storing the data of the selected row for comparison and manipulation
       player=core.WorkingTable[SelectedRow].player,
       class=core.WorkingTable[SelectedRow].class,
       dkp=core.WorkingTable[SelectedRow].dkp,
@@ -91,6 +38,10 @@ function CreateRow(parent, id) -- Create 3 buttons for each row in the list
         f.DKPInfo[i].adjusted:SetFontObject("GameFontWhiteTiny");
         f.DKPInfo[i].adjusted:SetTextColor(1, 1, 1, 0.6);
         f.DKPInfo[i].adjusted:SetPoint("LEFT", f.DKPInfo[3], "RIGHT", 3, -1);
+        f.DKPInfo[i].adjustedArrow = f:CreateTexture(nil, "BACKGROUND", nil, -8);
+        f.DKPInfo[i].adjustedArrow:SetPoint("RIGHT", f, "RIGHT", -20, 0);
+        f.DKPInfo[i].adjustedArrow:SetColorTexture(0, 0, 0, 0.5)
+        f.DKPInfo[i].adjustedArrow:SetSize(8, 16);
       end
     end
     f.DKPInfo[1]:SetPoint("LEFT", 50, 0)
@@ -119,9 +70,16 @@ function DKPTable_Update(self)
       row.DKPInfo[1]:SetTextColor(c.r, c.g, c.b, 1)
       row.DKPInfo[2]:SetText(core.WorkingTable[index].class)
       row.DKPInfo[3]:SetText(core.WorkingTable[index].dkp)
-      row.DKPInfo[3].adjusted:SetText("("..core.WorkingTable[index].dkp - core.WorkingTable[index].previous_dkp..")");
+      local CheckAdjusted = core.WorkingTable[index].dkp - core.WorkingTable[index].previous_dkp;
+      if(CheckAdjusted > 0) then 
+        CheckAdjusted = strjoin("", "+", CheckAdjusted) 
+        row.DKPInfo[3].adjustedArrow:SetTexture("Interface\\AddOns\\MonolithDKP\\textures\\green-up-arrow.png");
+      else
+        row.DKPInfo[3].adjustedArrow:SetTexture("Interface\\AddOns\\MonolithDKP\\textures\\red-down-arrow.png");
+      end        
+      row.DKPInfo[3].adjusted:SetText("("..CheckAdjusted..")");
       
-      if (core.WorkingTable[index].player == SelectedData.player) then
+      if (core.WorkingTable[index].player == core.SelectedData.player) then
         row:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
       else
         row:SetNormalTexture(nil)

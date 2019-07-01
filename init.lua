@@ -1,8 +1,7 @@
 local _, core = ...;
 local _G = _G;
 local MonDKP = core.MonDKP;
-core.loaded = 0;
-core.WorkingTable = {};
+
 --------------------------------------
 -- Custom Slash Command
 --------------------------------------
@@ -11,10 +10,10 @@ core.commands = {
 	["reset"] = core.MonDKP.ResetPosition,
 	["help"] = function()
 		print(" ");
-		core:Print("List of slash commands:")
-		core:Print("|cff00cc66/dkp|r - Launches DKP Window");
-		core:Print("|cff00cc66/dkp ?|r - Shows Help Info");
-		core:Print("|cff00cc66/dkp reset|r - Resets DKP Window Position/Size");
+		MonDKP:Print("List of slash commands:")
+		MonDKP:Print("|cff00cc66/dkp|r - Launches DKP Window");
+		MonDKP:Print("|cff00cc66/dkp ?|r - Shows Help Info");
+		MonDKP:Print("|cff00cc66/dkp reset|r - Resets DKP Window Position/Size");
 		print(" ");
 	end,
 	["bid"] = {
@@ -60,31 +59,6 @@ local function HandleSlashCommands(str)
 	end
 end
 
-function core:Print(...)				--print function to add "MonolithDKP:" to the beginning of print() outputs.
-    local hex = self.MonDKP:GetThemeColor().hex;
-    local prefix = string.format("|cff%s%s|r", hex:upper(), "MonolithDKP:");
-    DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, ...));
-end
-
-function core:MonDKP_Search(tar, val)  --recursively searches tar (table) for val (string) as far as three nests deep
-	local value = tostring(val);
-	for k,v in pairs(tar) do
-		if(type(v) == "table") then
-			for k,v in pairs(v) do
-				if(type(v) == "table") then
-					for k,v in pairs(v) do
-						if v == value then return true end;
-					end
-				end
-				if v == value then return true end;
-			end
-		end
-		if v == value then return true end;
-	end
-
-	return false;
-end
-
 function core:init(event, name)
 	if (name ~= "MonolithDKP") then return end 
 
@@ -108,7 +82,7 @@ function core:init(event, name)
 	SLASH_MonolithDKP1 = "/dkp";
 	SlashCmdList.MonolithDKP = HandleSlashCommands;
 	
-    core:Print("Welcome back", UnitName("player").."!");
+    MonDKP:Print("Welcome back", UnitName("player").."!");
 
     if(event == "ADDON_LOADED") then
     	core.loaded = 1;
@@ -118,9 +92,6 @@ function core:init(event, name)
 		if (MonDKP_Tables == nil) then MonDKP_Tables = {} end;
 		if (MonDKP_Loot == nil) then MonDKP_Loot = {} end;
 
-		core:Print("Loaded "..#MonDKP_DKPTable.." records.");
-		core.WorkingTable = MonDKP_DKPTable;
-		
 		-- Populates SavedVariable MonDKP_DKPTable with fake values for testing purposes if they don't already exist
 		-- Delete this section and \WTF\AccountACCOUNT_NAME\SavedVariables\MonolithDKP.lua prior to actual use.
 		local player_names = {"Qulyolalima", "Cadhangwong", "Gilingerth", "Emondeatt", "Puthuguth", "Eminin", "Mormiannis", "Hemilionter", "Malcologan", "Alerahm", "Cricordinus", "Arommoth", "Barnamnon", "Eughtor", "Aldreavus", "Loylencel", "Barredgar", "Gerneheav", "Julivente", "Barlannel", "Audeacell", "Derneth", "Fredeond", "Gutrichas", "Wiliannel", "Siertlan", "Simitram", "Ronettius", "Livendley", "Mordannichas", "Tevistavus", "Jaspian"}
@@ -128,7 +99,7 @@ function core:init(event, name)
 
 		for i=1, #player_names do
 			local p = player_names[i]
-			if (core:MonDKP_Search(MonDKP_DKPTable, p) == false) then 		--
+			if (MonDKP:MonDKP_Search(MonDKP_DKPTable, p) == false) then 		--
 				tinsert(MonDKP_DKPTable, {
 					player=p,
 					class=classes[math.random(1, #classes)],
@@ -138,6 +109,9 @@ function core:init(event, name)
 			end
 		end
 		-- End testing DB
+
+		MonDKP:Print("Loaded "..#MonDKP_DKPTable.." records.");
+		core.WorkingTable = MonDKP_DKPTable;
 	end
 end
 
