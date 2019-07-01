@@ -2,6 +2,8 @@ local _, core = ...;
 local _G = _G;
 
 core.MonDKP = {};
+core.classFiltered = {};
+core.classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
 
 local MonDKP = core.MonDKP;
 local UIConfig;
@@ -153,7 +155,7 @@ function MonDKP:CreateMenu()
   -- TabMenu
   ---------------------------------------
 
-  UIConfig.TabMenu = CreateFrame("Frame", "MonDKPConfigTabMenu", UIConfig);
+  UIConfig.TabMenu = CreateFrame("Frame", "MonDKPcore.ConfigTabMenu", UIConfig);
   UIConfig.TabMenu:SetPoint("TOPRIGHT", UIConfig, "TOPRIGHT", -22, -25);
   UIConfig.TabMenu:SetSize(400, 500);
   UIConfig.TabMenu:SetBackdrop( {
@@ -167,8 +169,8 @@ function MonDKP:CreateMenu()
   -- TabMenu ScrollFrame and ScrollBar
   UIConfig.TabMenu.ScrollFrame = CreateFrame("ScrollFrame", nil, UIConfig.TabMenu, "UIPanelScrollFrameTemplate");
   UIConfig.TabMenu.ScrollFrame:ClearAllPoints();
-  UIConfig.TabMenu.ScrollFrame:SetPoint("TOPLEFT",  MonDKPConfigTabMenu, "TOPLEFT", 4, -8);
-  UIConfig.TabMenu.ScrollFrame:SetPoint("BOTTOMRIGHT", MonDKPConfigTabMenu, "BOTTOMRIGHT", -3, 4);
+  UIConfig.TabMenu.ScrollFrame:SetPoint("TOPLEFT",  UIConfig.TabMenu, "TOPLEFT", 4, -8);
+  UIConfig.TabMenu.ScrollFrame:SetPoint("BOTTOMRIGHT", UIConfig.TabMenu, "BOTTOMRIGHT", -3, 4);
   UIConfig.TabMenu.ScrollFrame:SetClipsChildren(false);
   UIConfig.TabMenu.ScrollFrame:SetScript("OnMouseWheel", ScrollFrame_OnMouseWheel);
   
@@ -182,20 +184,20 @@ function MonDKP:CreateMenu()
   -- Populate Tabs 
   ---------------------------------------
 
-  local ConfigTab1, ConfigTab2, ConfigTab3, ConfigTab4 = SetTabs(UIConfig.TabMenu, 4, "Filters", "Award DKP", "Award Items", "Options");
+  core.ConfigTab1, core.ConfigTab2, core.ConfigTab3, core.ConfigTab4 = SetTabs(UIConfig.TabMenu, 4, "Filters", "Award DKP", "Award Items", "Options");
   
   ---------------------------------------
   -- MENU TAB 1
   ---------------------------------------
 
-  ConfigTab1.text = ConfigTab1:CreateFontString(nil, "OVERLAY")   -- not in a function so requires CreateFontString
-  ConfigTab1.text:ClearAllPoints();
-  ConfigTab1.text:SetFontObject("GameFontHighlight");
-  ConfigTab1.text:SetPoint("TOPLEFT", ConfigTab1, "TOPLEFT", 15, -10);
-  ConfigTab1.text:SetText("Filters"); 
+  core.ConfigTab1.text = core.ConfigTab1:CreateFontString(nil, "OVERLAY")   -- not in a function so requires CreateFontString
+  core.ConfigTab1.text:ClearAllPoints();
+  core.ConfigTab1.text:SetFontObject("GameFontHighlight");
+  core.ConfigTab1.text:SetPoint("TOPLEFT", core.ConfigTab1, "TOPLEFT", 15, -10);
+  core.ConfigTab1.text:SetText("Filters"); 
 
   local checkBtn = {}
-    ConfigTab1.checkBtn = checkBtn;
+    core.ConfigTab1.checkBtn = checkBtn;
 
   --
   --  When clicking a box off, unchecks "All" as well and flags checkAll to false
@@ -203,169 +205,187 @@ function MonDKP:CreateMenu()
   local checkAll = true;
   local function FilterChecks(self)
     if (self:GetChecked() == false) then
-      ConfigTab1.checkBtn[9]:SetChecked(false);
+      core.ConfigTab1.checkBtn[9]:SetChecked(false);
       checkAll = false;
     end
     local verifyCheck = true; -- switches to false if the below loop finds anything unchecked
     for i=1, 8 do             -- checks all boxes to see if all are checked, if so, checks "All" as well
-      if ConfigTab1.checkBtn[i]:GetChecked() == false then
+      if core.ConfigTab1.checkBtn[i]:GetChecked() == false then
         verifyCheck = false;
       end
     end
     if (verifyCheck == true) then
-      ConfigTab1.checkBtn[9]:SetChecked(true);
+      core.ConfigTab1.checkBtn[9]:SetChecked(true);
     else
-      ConfigTab1.checkBtn[9]:SetChecked(false);
+      core.ConfigTab1.checkBtn[9]:SetChecked(false);
     end
+    for k,v in pairs(core.classes) do
+      if (core.ConfigTab1.checkBtn[k]:GetChecked() == true) then
+        core.classFiltered[v] = true;
+      else
+        core.classFiltered[v] = false;
+      end
+    end
+    DKPTable_Update();
+    core.DKPTable.counter.t:SetText(#core.WorkingTable.." Entries Listed"); 
   end
 
   -- Class Check Button 1:
-  ConfigTab1.checkBtn[1] = CreateFrame("CheckButton", nil, ConfigTab1, "UICheckButtonTemplate");
-  ConfigTab1.checkBtn[1]:SetPoint("TOPLEFT", ConfigTab1, "TOPLEFT", 15, -60);
-  ConfigTab1.checkBtn[1].text:SetText("Druid");
-  ConfigTab1.checkBtn[1]:SetID(1)
-  ConfigTab1.checkBtn[1]:SetChecked(true);
-  ConfigTab1.checkBtn[1]:SetScript("OnClick", FilterChecks)
+  core.ConfigTab1.checkBtn[1] = CreateFrame("CheckButton", nil, core.ConfigTab1, "UICheckButtonTemplate");
+  core.ConfigTab1.checkBtn[1]:SetPoint("TOPLEFT", core.ConfigTab1, "TOPLEFT", 15, -60);
+  core.ConfigTab1.checkBtn[1].text:SetText("Druid");
+  core.ConfigTab1.checkBtn[1]:SetID(1)
+  core.ConfigTab1.checkBtn[1]:SetChecked(true);
+  core.ConfigTab1.checkBtn[1]:SetScript("OnClick", FilterChecks)
 
   -- Class Check Button 2:
-  ConfigTab1.checkBtn[2] = CreateFrame("CheckButton", nil, ConfigTab1, "UICheckButtonTemplate");
-  ConfigTab1.checkBtn[2]:SetPoint("TOPLEFT", ConfigTab1.checkBtn[1], "TOPRIGHT", 50, 0);
-  ConfigTab1.checkBtn[2].text:SetText("Hunter");
-  ConfigTab1.checkBtn[2]:SetID(2)
-  ConfigTab1.checkBtn[2]:SetChecked(true);
-  ConfigTab1.checkBtn[2]:SetScript("OnClick", FilterChecks)
+  core.ConfigTab1.checkBtn[2] = CreateFrame("CheckButton", nil, core.ConfigTab1, "UICheckButtonTemplate");
+  core.ConfigTab1.checkBtn[2]:SetPoint("TOPLEFT", core.ConfigTab1.checkBtn[1], "TOPRIGHT", 50, 0);
+  core.ConfigTab1.checkBtn[2].text:SetText("Hunter");
+  core.ConfigTab1.checkBtn[2]:SetID(2)
+  core.ConfigTab1.checkBtn[2]:SetChecked(true);
+  core.ConfigTab1.checkBtn[2]:SetScript("OnClick", FilterChecks)
 
   -- Class Check Button 3:
-  ConfigTab1.checkBtn[3] = CreateFrame("CheckButton", nil, ConfigTab1, "UICheckButtonTemplate");
-  ConfigTab1.checkBtn[3]:SetPoint("TOPLEFT", ConfigTab1.checkBtn[2], "TOPRIGHT", 50, 0);
-  ConfigTab1.checkBtn[3].text:SetText("Mage");
-  ConfigTab1.checkBtn[3]:SetID(3)
-  ConfigTab1.checkBtn[3]:SetChecked(true);
-  ConfigTab1.checkBtn[3]:SetScript("OnClick", FilterChecks)
+  core.ConfigTab1.checkBtn[3] = CreateFrame("CheckButton", nil, core.ConfigTab1, "UICheckButtonTemplate");
+  core.ConfigTab1.checkBtn[3]:SetPoint("TOPLEFT", core.ConfigTab1.checkBtn[2], "TOPRIGHT", 50, 0);
+  core.ConfigTab1.checkBtn[3].text:SetText("Mage");
+  core.ConfigTab1.checkBtn[3]:SetID(3)
+  core.ConfigTab1.checkBtn[3]:SetChecked(true);
+  core.ConfigTab1.checkBtn[3]:SetScript("OnClick", FilterChecks)
 
   -- Class Check Button 4:
-  ConfigTab1.checkBtn[4] = CreateFrame("CheckButton", nil, ConfigTab1, "UICheckButtonTemplate");
-  ConfigTab1.checkBtn[4]:SetPoint("TOPLEFT", ConfigTab1.checkBtn[3], "TOPRIGHT", 50, 0);
-  ConfigTab1.checkBtn[4].text:SetText("Priest");
-  ConfigTab1.checkBtn[4]:SetID(4)
-  ConfigTab1.checkBtn[4]:SetChecked(true);
-  ConfigTab1.checkBtn[4]:SetScript("OnClick", FilterChecks)
+  core.ConfigTab1.checkBtn[4] = CreateFrame("CheckButton", nil, core.ConfigTab1, "UICheckButtonTemplate");
+  core.ConfigTab1.checkBtn[4]:SetPoint("TOPLEFT", core.ConfigTab1.checkBtn[3], "TOPRIGHT", 50, 0);
+  core.ConfigTab1.checkBtn[4].text:SetText("Priest");
+  core.ConfigTab1.checkBtn[4]:SetID(4)
+  core.ConfigTab1.checkBtn[4]:SetChecked(true);
+  core.ConfigTab1.checkBtn[4]:SetScript("OnClick", FilterChecks)
 
   -- Class Check Button 5:
-  ConfigTab1.checkBtn[5] = CreateFrame("CheckButton", nil, ConfigTab1, "UICheckButtonTemplate");
-  ConfigTab1.checkBtn[5]:SetPoint("TOPLEFT", ConfigTab1.checkBtn[1], "BOTTOMLEFT", 0, -10);
-  ConfigTab1.checkBtn[5].text:SetText("Rogue");
-  ConfigTab1.checkBtn[5]:SetID(5)
-  ConfigTab1.checkBtn[5]:SetChecked(true);
-  ConfigTab1.checkBtn[5]:SetScript("OnClick", FilterChecks)
+  core.ConfigTab1.checkBtn[5] = CreateFrame("CheckButton", nil, core.ConfigTab1, "UICheckButtonTemplate");
+  core.ConfigTab1.checkBtn[5]:SetPoint("TOPLEFT", core.ConfigTab1.checkBtn[1], "BOTTOMLEFT", 0, -10);
+  core.ConfigTab1.checkBtn[5].text:SetText("Rogue");
+  core.ConfigTab1.checkBtn[5]:SetID(5)
+  core.ConfigTab1.checkBtn[5]:SetChecked(true);
+  core.ConfigTab1.checkBtn[5]:SetScript("OnClick", FilterChecks)
 
   -- Class Check Button 6:
-  ConfigTab1.checkBtn[6] = CreateFrame("CheckButton", nil, ConfigTab1, "UICheckButtonTemplate");
-  ConfigTab1.checkBtn[6]:SetPoint("TOPLEFT", ConfigTab1.checkBtn[2], "BOTTOMLEFT", 0, -10);
-  ConfigTab1.checkBtn[6].text:SetText("Shaman");
-  ConfigTab1.checkBtn[6]:SetID(6)
-  ConfigTab1.checkBtn[6]:SetChecked(true);
-  ConfigTab1.checkBtn[6]:SetScript("OnClick", FilterChecks)
+  core.ConfigTab1.checkBtn[6] = CreateFrame("CheckButton", nil, core.ConfigTab1, "UICheckButtonTemplate");
+  core.ConfigTab1.checkBtn[6]:SetPoint("TOPLEFT", core.ConfigTab1.checkBtn[2], "BOTTOMLEFT", 0, -10);
+  core.ConfigTab1.checkBtn[6].text:SetText("Shaman");
+  core.ConfigTab1.checkBtn[6]:SetID(6)
+  core.ConfigTab1.checkBtn[6]:SetChecked(true);
+  core.ConfigTab1.checkBtn[6]:SetScript("OnClick", FilterChecks)
 
   -- Class Check Button 7:
-  ConfigTab1.checkBtn[7] = CreateFrame("CheckButton", nil, ConfigTab1, "UICheckButtonTemplate");
-  ConfigTab1.checkBtn[7]:SetPoint("TOPLEFT", ConfigTab1.checkBtn[3], "BOTTOMLEFT", 0, -10);
-  ConfigTab1.checkBtn[7].text:SetText("Warlock");
-  ConfigTab1.checkBtn[7]:SetID(7)
-  ConfigTab1.checkBtn[7]:SetChecked(true);
-  ConfigTab1.checkBtn[7]:SetScript("OnClick", FilterChecks)
+  core.ConfigTab1.checkBtn[7] = CreateFrame("CheckButton", nil, core.ConfigTab1, "UICheckButtonTemplate");
+  core.ConfigTab1.checkBtn[7]:SetPoint("TOPLEFT", core.ConfigTab1.checkBtn[3], "BOTTOMLEFT", 0, -10);
+  core.ConfigTab1.checkBtn[7].text:SetText("Warlock");
+  core.ConfigTab1.checkBtn[7]:SetID(7)
+  core.ConfigTab1.checkBtn[7]:SetChecked(true);
+  core.ConfigTab1.checkBtn[7]:SetScript("OnClick", FilterChecks)
 
   -- Class Check Button 8:
-  ConfigTab1.checkBtn[8] = CreateFrame("CheckButton", nil, ConfigTab1, "UICheckButtonTemplate");
-  ConfigTab1.checkBtn[8]:SetPoint("TOPLEFT", ConfigTab1.checkBtn[4], "BOTTOMLEFT", 0, -10);
-  ConfigTab1.checkBtn[8].text:SetText("Warrior");
-  ConfigTab1.checkBtn[8]:SetID(8)
-  ConfigTab1.checkBtn[8]:SetChecked(true);
-  ConfigTab1.checkBtn[8]:SetScript("OnClick", FilterChecks)
+  core.ConfigTab1.checkBtn[8] = CreateFrame("CheckButton", nil, core.ConfigTab1, "UICheckButtonTemplate");
+  core.ConfigTab1.checkBtn[8]:SetPoint("TOPLEFT", core.ConfigTab1.checkBtn[4], "BOTTOMLEFT", 0, -10);
+  core.ConfigTab1.checkBtn[8].text:SetText("Warrior");
+  core.ConfigTab1.checkBtn[8]:SetID(8)
+  core.ConfigTab1.checkBtn[8]:SetChecked(true);
+  core.ConfigTab1.checkBtn[8]:SetScript("OnClick", FilterChecks)
 
   -- Class Check Button 9:
-  ConfigTab1.checkBtn[9] = CreateFrame("CheckButton", nil, ConfigTab1, "UICheckButtonTemplate");
-  ConfigTab1.checkBtn[9]:SetPoint("BOTTOMRIGHT", ConfigTab1.checkBtn[3], "TOPLEFT", 10, 0);
-  ConfigTab1.checkBtn[9].text:SetText("All");
-  ConfigTab1.checkBtn[9]:SetID(9)
-  ConfigTab1.checkBtn[9]:SetChecked(true);
-  ConfigTab1.checkBtn[9]:SetScript("OnClick",
+  core.ConfigTab1.checkBtn[9] = CreateFrame("CheckButton", nil, core.ConfigTab1, "UICheckButtonTemplate");
+  core.ConfigTab1.checkBtn[9]:SetPoint("BOTTOMRIGHT", core.ConfigTab1.checkBtn[3], "TOPLEFT", 10, 0);
+  core.ConfigTab1.checkBtn[9].text:SetText("All");
+  core.ConfigTab1.checkBtn[9]:SetID(9)
+  core.ConfigTab1.checkBtn[9]:SetChecked(true);
+  core.ConfigTab1.checkBtn[9]:SetScript("OnClick",
     function()
       for i=1, 9 do
         if (checkAll) then
-          ConfigTab1.checkBtn[i]:SetChecked(false)
+          core.ConfigTab1.checkBtn[i]:SetChecked(false)
         else
-          ConfigTab1.checkBtn[i]:SetChecked(true)
+          core.ConfigTab1.checkBtn[i]:SetChecked(true)
         end
       end
       checkAll = not checkAll;
+      FilterChecks(core.ConfigTab1.checkBtn[9]);
     end)
+
+  for k,v in pairs(core.classes) do               -- sets core.classFiltered table with all values
+    if (core.ConfigTab1.checkBtn[k]:GetChecked() == true) then
+      core.classFiltered[v] = true;
+    else
+      core.classFiltered[v] = false;
+    end
+  end
 
   ---------------------------------------
   -- MENU TAB 2 (Currently ONLY Filler elements)
   ---------------------------------------
 
-  ConfigTab2.text = ConfigTab2:CreateFontString(nil, "OVERLAY")   -- not in a function so requires CreateFontString
-  ConfigTab2.text:ClearAllPoints();
-  ConfigTab2.text:SetFontObject("GameFontHighlight");
-  ConfigTab2.text:SetPoint("TOPLEFT", ConfigTab2, "TOPLEFT", 15, -10);
-  ConfigTab2.text:SetText("Content TWO!"); 
+  core.ConfigTab2.text = core.ConfigTab2:CreateFontString(nil, "OVERLAY")   -- not in a function so requires CreateFontString
+  core.ConfigTab2.text:ClearAllPoints();
+  core.ConfigTab2.text:SetFontObject("GameFontHighlight");
+  core.ConfigTab2.text:SetPoint("TOPLEFT", core.ConfigTab2, "TOPLEFT", 15, -10);
+  core.ConfigTab2.text:SetText("Content TWO!"); 
 
   -- Button:
-  ConfigTab2.trackBtn = self:CreateButton("CENTER", ConfigTab2, "TOP", 0, -70, "Award DKP");
+  core.ConfigTab2.trackBtn = self:CreateButton("CENTER", core.ConfigTab2, "TOP", 0, -70, "Award DKP");
 
   -- Button:  
-  ConfigTab2.stopTrackBtn = self:CreateButton("TOP", ConfigTab2.trackBtn, "BOTTOM", 0, -10, "Remove DKP");
+  core.ConfigTab2.stopTrackBtn = self:CreateButton("TOP", core.ConfigTab2.trackBtn, "BOTTOM", 0, -10, "Remove DKP");
 
   -- Button: 
-  ConfigTab2.engageBtn = self:CreateButton("TOP", ConfigTab2.stopTrackBtn, "BOTTOM", 0, -10, "Update DKP");
+  core.ConfigTab2.engageBtn = self:CreateButton("TOP", core.ConfigTab2.stopTrackBtn, "BOTTOM", 0, -10, "Update DKP");
 
   -- Slider 1:
-  ConfigTab2.slider1 = CreateFrame("SLIDER", nil, ConfigTab2, "OptionsSliderTemplate");
-  ConfigTab2.slider1:SetPoint("TOP", ConfigTab2.engageBtn, "BOTTOM", 0, -20);
-  ConfigTab2.slider1:SetMinMaxValues(1, 100);
-  ConfigTab2.slider1:SetValue(50);
-  ConfigTab2.slider1:SetValueStep(2);
-  ConfigTab2.slider1:SetObeyStepOnDrag(true);
+  core.ConfigTab2.slider1 = CreateFrame("SLIDER", nil, core.ConfigTab2, "OptionsSliderTemplate");
+  core.ConfigTab2.slider1:SetPoint("TOP", core.ConfigTab2.engageBtn, "BOTTOM", 0, -20);
+  core.ConfigTab2.slider1:SetMinMaxValues(1, 100);
+  core.ConfigTab2.slider1:SetValue(50);
+  core.ConfigTab2.slider1:SetValueStep(2);
+  core.ConfigTab2.slider1:SetObeyStepOnDrag(true);
 
   -- Slider 2:
-  ConfigTab2.slider2 = CreateFrame("SLIDER", nil, ConfigTab2, "OptionsSliderTemplate");
-  ConfigTab2.slider2:SetPoint("TOP", ConfigTab2.slider1, "BOTTOM", 0, -20);
-  ConfigTab2.slider2:SetMinMaxValues(1, 100);
-  ConfigTab2.slider2:SetValue(40);
-  ConfigTab2.slider2:SetValueStep(2);
-  ConfigTab2.slider2:SetObeyStepOnDrag(true);
+  core.ConfigTab2.slider2 = CreateFrame("SLIDER", nil, core.ConfigTab2, "OptionsSliderTemplate");
+  core.ConfigTab2.slider2:SetPoint("TOP", core.ConfigTab2.slider1, "BOTTOM", 0, -20);
+  core.ConfigTab2.slider2:SetMinMaxValues(1, 100);
+  core.ConfigTab2.slider2:SetValue(40);
+  core.ConfigTab2.slider2:SetValueStep(2);
+  core.ConfigTab2.slider2:SetObeyStepOnDrag(true);
 
   -- Check Button 1:
-  ConfigTab2.checkBtn1 = CreateFrame("CheckButton", nil, ConfigTab2, "UICheckButtonTemplate");
-  ConfigTab2.checkBtn1:SetPoint("TOPLEFT", ConfigTab2.slider1, "BOTTOMLEFT", -10, -60);
-  ConfigTab2.checkBtn1.text:SetText("My Check Button!");
+  core.ConfigTab2.checkBtn1 = CreateFrame("CheckButton", nil, core.ConfigTab2, "UICheckButtonTemplate");
+  core.ConfigTab2.checkBtn1:SetPoint("TOPLEFT", core.ConfigTab2.slider1, "BOTTOMLEFT", -10, -60);
+  core.ConfigTab2.checkBtn1.text:SetText("My Check Button!");
 
   -- Check Button 2:
-  ConfigTab2.checkBtn2 = CreateFrame("CheckButton", nil, ConfigTab2, "UICheckButtonTemplate");
-  ConfigTab2.checkBtn2:SetPoint("TOPLEFT", ConfigTab2.checkBtn1, "BOTTOMLEFT", 0, -10);
-  ConfigTab2.checkBtn2.text:SetText("Another Check Button!");
-  ConfigTab2.checkBtn2:SetChecked(true);
+  core.ConfigTab2.checkBtn2 = CreateFrame("CheckButton", nil, core.ConfigTab2, "UICheckButtonTemplate");
+  core.ConfigTab2.checkBtn2:SetPoint("TOPLEFT", core.ConfigTab2.checkBtn1, "BOTTOMLEFT", 0, -10);
+  core.ConfigTab2.checkBtn2.text:SetText("Another Check Button!");
+  core.ConfigTab2.checkBtn2:SetChecked(true);
 
   ---------------------------------------
   -- MENU TAB 3 (Currently ONLY Filler elements)
   ---------------------------------------
 
-  ConfigTab3.text = ConfigTab3:CreateFontString(nil, "OVERLAY")   -- not in a function so requires CreateFontString
-  ConfigTab3.text:ClearAllPoints();
-  ConfigTab3.text:SetFontObject("GameFontHighlight");
-  ConfigTab3.text:SetPoint("TOPLEFT", ConfigTab3, "TOPLEFT", 15, -10);
-  ConfigTab3.text:SetText("Content THREE!"); 
+  core.ConfigTab3.text = core.ConfigTab3:CreateFontString(nil, "OVERLAY")   -- not in a function so requires CreateFontString
+  core.ConfigTab3.text:ClearAllPoints();
+  core.ConfigTab3.text:SetFontObject("GameFontHighlight");
+  core.ConfigTab3.text:SetPoint("TOPLEFT", core.ConfigTab3, "TOPLEFT", 15, -10);
+  core.ConfigTab3.text:SetText("Content THREE!"); 
 
   ---------------------------------------
   -- MENU TAB 4 (Currently ONLY Filler elements)
   ---------------------------------------
 
-  ConfigTab4.text = ConfigTab4:CreateFontString(nil, "OVERLAY")   -- not in a function so requires CreateFontString
-  ConfigTab4.text:ClearAllPoints();
-  ConfigTab4.text:SetFontObject("GameFontHighlight");
-  ConfigTab4.text:SetPoint("TOPLEFT", ConfigTab4, "TOPLEFT", 15, -10);
-  ConfigTab4.text:SetText("Content FOUR!"); 
+  core.ConfigTab4.text = core.ConfigTab4:CreateFontString(nil, "OVERLAY")   -- not in a function so requires CreateFontString
+  core.ConfigTab4.text:ClearAllPoints();
+  core.ConfigTab4.text:SetFontObject("GameFontHighlight");
+  core.ConfigTab4.text:SetPoint("TOPLEFT", core.ConfigTab4, "TOPLEFT", 15, -10);
+  core.ConfigTab4.text:SetText("Content FOUR!"); 
 
   ---------------------------------------
   -- DKP Table (TableFunctions.lua)
@@ -383,7 +403,7 @@ function MonDKP:CreateMenu()
   core.DKPTable_Headers:SetBackdropBorderColor(1,1,1,0.5)
   core.DKPTable_Headers:Show()
 
-  local Header1 = CreateFrame("Button", "$parentHeader1", core.DKPTable_Headers)
+  --[[local Header1 = CreateFrame("Button", "$parentHeader1", core.DKPTable_Headers)
   local Header2 = CreateFrame("Button", "$parentHeader2", core.DKPTable_Headers)
   local Header3 = CreateFrame("Button", "$parentHeader3", core.DKPTable_Headers)
 
@@ -397,29 +417,97 @@ function MonDKP:CreateMenu()
 
   Header1:SetPoint("LEFT", core.DKPTable_Headers, "Left", 15)
   Header2:SetPoint("CENTER", core.DKPTable_Headers, "CENTER")
-  Header3:SetPoint("RIGHT", core.DKPTable_Headers, "RIGHT", -15)
+  Header3:SetPoint("RIGHT", core.DKPTable_Headers, "RIGHT", -15) --]]
 
-  Header1.t = Header1:CreateFontString(nil, "OVERLAY")
-  Header1.t:SetFontObject("GameFontHighlightLarge");
-  Header1.t:SetTextColor(1, 1, 1, 1);
-  Header1.t:SetPoint("CENTER", Header1, "CENTER");
-  Header1.t:SetText("Player"); 
 
-  Header2.t = Header1:CreateFontString(nil, "OVERLAY")
-  Header2.t:SetFontObject("GameFontHighlightLarge");
-  Header2.t:SetTextColor(1, 1, 1, 1);
-  Header2.t:SetPoint("CENTER", Header2, "CENTER");
-  Header2.t:SetText("Not Used Yet"); 
+  local SortButtons = {}
+ 
+  local function SortTable(id, reset)
+    local button = SortButtons[id]
+    if reset then
+      button.Ascend = true
+    else
+      button.Ascend = not button.Ascend
+    end
+    local Suffix = button.Ascend and " ^" or " v"
+    button:SetText(button.Id .. Suffix)
+    for k, v in pairs(SortButtons) do
+      if v ~= button then
+        v.Ascend = nil
+        v:SetText(v.Id)
+      end
+    end
+    table.sort(core.WorkingTable, function(a, b)
+      if button.Ascend then
+        return a[button.Id] < b[button.Id]
+      else
+        return a[button.Id] > b[button.Id]
+      end
+    end)
+    DKPTable_Update(core.DKPTable)
+  end
 
-  Header3.t = Header1:CreateFontString(nil, "OVERLAY")
-  Header3.t:SetFontObject("GameFontHighlightLarge");
-  Header3.t:SetTextColor(1, 1, 1, 1);
-  Header3.t:SetPoint("CENTER", Header3, "CENTER");
-  Header3.t:SetText("Total DKP"); 
+  SortButtons.player = CreateFrame("Button", "$ParentSortButtonPlayer", core.DKPTable_Headers)
+  SortButtons.class = CreateFrame("Button", "$ParentSortButtonClass", core.DKPTable_Headers)
+  SortButtons.dkp = CreateFrame("Button", "$ParentSortButtonDkp", core.DKPTable_Headers)
+   
+  SortButtons.class:SetPoint("BOTTOM", core.DKPTable_Headers, "BOTTOM", 0, 4)
+  SortButtons.player:SetPoint("RIGHT", SortButtons.class, "LEFT")
+  SortButtons.dkp:SetPoint("LEFT", SortButtons.class, "RIGHT")
+   
+  for k, v in pairs(SortButtons) do
+    v.Id = k
+    v:SetHighlightTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp");
+    v:SetSize(core.TableWidth/3, core.TableHeight)
+    v:SetScript("OnClick", function(self) SortTable(self.Id) end)
+  end
+
+  SortButtons.player.t = SortButtons.player:CreateFontString(nil, "OVERLAY")
+  SortButtons.player.t:SetFontObject("GameFontNormalSmall");
+  SortButtons.player.t:SetTextColor(1, 1, 1, 1);
+  SortButtons.player.t:SetPoint("CENTER", SortButtons.player, "CENTER");
+  SortButtons.player.t:SetText("Player"); 
+
+  SortButtons.class.t = SortButtons.class:CreateFontString(nil, "OVERLAY")
+  SortButtons.class.t:SetFontObject("GameFontNormalSmall");
+  SortButtons.class.t:SetTextColor(1, 1, 1, 1);
+  SortButtons.class.t:SetPoint("CENTER", SortButtons.class, "CENTER");
+  SortButtons.class.t:SetText("Class"); 
+
+  SortButtons.dkp.t = SortButtons.dkp:CreateFontString(nil, "OVERLAY")
+  SortButtons.dkp.t:SetFontObject("GameFontNormalSmall");
+  SortButtons.dkp.t:SetTextColor(1, 1, 1, 1);
+  SortButtons.dkp.t:SetPoint("CENTER", SortButtons.dkp, "CENTER");
+  SortButtons.dkp.t:SetText("Total DKP");
   ---------------------------------------
   -- Creating the DKP Table
   ---------------------------------------
-  core.DKPTable = CreateFrame("ScrollFrame", "MonDKPDiplayFrame", UIConfig, "FauxScrollFrameTemplate")
+  core.DKPTable = CreateFrame("ScrollFrame", "MonDKPDisplayScrollFrame", UIConfig, "FauxScrollFrameTemplate")
+  core.DKPTable:SetSize(core.TableWidth, core.TableHeight*core.TableNumrows)
+  core.DKPTable:SetPoint("LEFT", 20, 0)
+  core.DKPTable:SetBackdrop( {
+    bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
+    edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
+    insets = { left = 0, right = 0, top = 0, bottom = 0 }
+  });
+  core.DKPTable:SetBackdropColor(0,0,0,0.4);
+  core.DKPTable:SetBackdropBorderColor(1,1,1,0.5)
+  core.DKPTable:SetClipsChildren(false);
+
+  core.DKPTable.ScrollBar = FauxScrollFrame_GetChildFrames(core.DKPTable)
+  core.DKPTable.Rows = {}
+  for i=1, core.TableNumrows do
+    core.DKPTable.Rows[i] = CreateRow(core.DKPTable, i)
+    core.DKPTable.Rows[i]:SetPoint("TOPLEFT", core.DKPTable.Rows[i-1] or core.DKPTable, core.DKPTable.Rows[i-1] and "BOTTOMLEFT" or "TOPLEFT")
+  end
+  core.DKPTable:SetScript("OnVerticalScroll", function(self, offset)
+    FauxScrollFrame_OnVerticalScroll(self, offset, core.TableHeight, DKPTable_Update)
+  end)
+  DKPTable_Update(core.DKPTable)  -- remove when completed
+
+  -------------------------------------
+
+  --[[core.DKPTable = CreateFrame("ScrollFrame", "MonDKPDiplayFrame", UIConfig, "FauxScrollFrameTemplate")
   core.DKPTable:SetSize(core.TableWidth, core.TableHeight*core.TableNumrows)
   core.DKPTable:SetPoint("TOPLEFT", core.DKPTable_Headers, "BOTTOMLEFT", 0, 1)
   core.DKPTable:SetBackdrop( {
@@ -444,7 +532,18 @@ function MonDKP:CreateMenu()
   core.DKPTable:SetScript("OnVerticalScroll", function(self, offset)
       FauxScrollFrame_OnVerticalScroll(self, offset, core.TableHeight, DKPTable_Update)
   end)
-  DKPTable_Update(core.DKPTable);
+  DKPTable_Update(core.DKPTable);--]]
+
+  ----- Counter below DKP Table
+  core.DKPTable.counter = CreateFrame("Frame", "MonDKPDisplayFrameCounter", UIConfig);
+  core.DKPTable.counter:SetPoint("TOP", core.DKPTable, "BOTTOM", 0, 0)
+  core.DKPTable.counter:SetSize(400, 30)
+
+  core.DKPTable.counter.t = core.DKPTable.counter:CreateFontString(nil, "OVERLAY")
+  core.DKPTable.counter.t:SetFontObject("GameFontHighlight");
+  core.DKPTable.counter.t:SetTextColor(1, 1, 1, 0.7);
+  core.DKPTable.counter.t:SetPoint("CENTER", core.DKPTable.counter, "CENTER");
+  core.DKPTable.counter.t:SetText(#core.WorkingTable.." Entries Listed"); 
 
   ---------------------------------------
   -- RESIZE BUTTON

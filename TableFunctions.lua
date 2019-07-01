@@ -1,7 +1,6 @@
 
 local _, core = ...;
 local _G = _G;
-local classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
 local CColors = {
   ["Druid"] = {
     r = 1,
@@ -45,37 +44,42 @@ local CColors = {
   }
 }
 core.TableWidth, core.TableHeight, core.TableNumrows = 500, 18, 27;
-local SelectedData = 0;
+local SelectedRow = 0;      -- tracks row in DKPTable that is currently selected for SetHighlightTexture
+local SelectedData;         -- stores data of clicked row for manipulation.
 
 --[[
   Table above will be structured as:
 
 WorkingTable = {
-  ["player"] = "Roeshambo",
-  ["class"] = "Warrior",
-  ["dkp"] = 1000,
-  ["previous_dkp"] = 800, --not implemented yet. set previous_dkp = dkp at beginning of raid to see how much was gained/lost during a raid.
-
+  {
+    ["previous_dkp"] = 569,
+    ["player"] = "Qulyolalima",
+    ["class"] = "Druid",
+    ["dkp"] = 922,
+  }, -- [1]
 }
+
+WorkingTable[1]["player"] gives player name of first entry
 --]]
 
 function GetCColors(class)
-  local c = CColors[class];
-  return c;
-end
-
-function DKPTable_Rebuild()         --rebuild WorkingTable with applied filters
-  
+  if CColors then 
+    local c = CColors[class];
+    return c;
+  else
+    return false;
+  end
 end
 
 function DKPTable_OnClick(self)   -- self = Rows[]
-    SelectedData = self.index;
+    SelectedRow = self.index;
+    SelectedData = { core.WorkingTable[SelectedRow].player, core.WorkingTable[SelectedRow].class, core.WorkingTable[SelectedRow].dkp, core.WorkingTable[SelectedRow].previous_dkp }
     for i=1, core.TableNumrows do
       self:GetParent().Rows[i]:SetNormalTexture(nil)
     end
     self:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
     --[[  
-    for k,v in pairs(WorkingTable[SelectedData]) do
+    for k,v in pairs(WorkingTable[SelectedRow]) do
       if(tostring(k) == "class") then
         print(k, " -> ", classes[v])
       else
@@ -89,8 +93,61 @@ function DKPTable_OnClick(self)   -- self = Rows[]
     self.index selects the number of the row
     --]]
 end
- 
+
 function CreateRow(parent, id) -- Create 3 buttons for each row in the list
+    local f = CreateFrame("Button", "$parentLine"..id, parent)
+    f.DKPInfo = {}
+    f:SetSize(core.TableWidth, core.TableHeight)
+    f:SetHighlightTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp");
+    f:SetScript("OnClick", DKPTable_OnClick)
+    for i=1, 3 do
+      f.DKPInfo[i] = f:CreateFontString(nil, "OVERLAY");
+      f.DKPInfo[i]:SetFontObject("GameFontHighlight");
+      f.DKPInfo[i]:SetTextColor(1, 1, 1, 1);
+      if (i==1) then
+        f.DKPInfo[i].rowCounter = f:CreateFontString(nil, "OVERLAY");
+        f.DKPInfo[i].rowCounter:SetFontObject("GameFontWhiteTiny");
+        f.DKPInfo[i].rowCounter:SetTextColor(1, 1, 1, 0.3);
+        f.DKPInfo[i].rowCounter:SetPoint("LEFT", f, "LEFT", 3, -1);
+      end
+      if (i==3) then
+        f.DKPInfo[i].adjusted = f:CreateFontString(nil, "OVERLAY");
+        f.DKPInfo[i].adjusted:SetFontObject("GameFontWhiteTiny");
+        f.DKPInfo[i].adjusted:SetTextColor(1, 1, 1, 0.6);
+        f.DKPInfo[i].adjusted:SetPoint("LEFT", f.DKPInfo[3], "RIGHT", 3, -1);
+      end
+    end
+    f.DKPInfo[1]:SetPoint("LEFT", 50, 0)
+    f.DKPInfo[2]:SetPoint("CENTER")
+    f.DKPInfo[3]:SetPoint("RIGHT", -80, 0)
+    return f
+end
+
+function DKPTable_Update(self)
+  local numOptions = #core.WorkingTable
+  local index, row, c
+  local offset = FauxScrollFrame_GetOffset(core.DKPTable) or 0
+  for i=1, core.TableNumrows do
+    row = core.DKPTable.Rows[i]
+    index = offset + i
+    if core.WorkingTable[index] then
+      c = GetCColors(core.WorkingTable[index].class);
+      row:Show()
+      row.index = index
+      row.DKPInfo[1]:SetText(core.WorkingTable[index].player)
+      row.DKPInfo[1].rowCounter:SetText(index)
+      row.DKPInfo[1]:SetTextColor(c.r, c.g, c.b, 1)
+      row.DKPInfo[2]:SetText(core.WorkingTable[index].class)
+      row.DKPInfo[3]:SetText(core.WorkingTable[index].dkp)
+      row.DKPInfo[3].adjusted:SetText("("..core.WorkingTable[index].dkp - core.WorkingTable[index].previous_dkp..")");
+    else
+      row:Hide()
+    end
+  end
+  FauxScrollFrame_Update(core.DKPTable, numOptions, core.TableNumrows, core.TableHeight, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding
+end
+
+--[[function CreateRow(parent, id) -- Create 3 buttons for each row in the list
     local f = CreateFrame("Button", "$parentLine"..id, parent)
     f.DKPInfo = {}
     f:SetSize(core.TableWidth, core.TableHeight)
@@ -104,6 +161,12 @@ function CreateRow(parent, id) -- Create 3 buttons for each row in the list
       f.DKPInfo[i].data:SetFontObject("GameFontHighlight");
       f.DKPInfo[i].data:SetTextColor(1, 1, 1, 1);
       f.DKPInfo[i].data:SetPoint("CENTER", f.DKPInfo[i], "CENTER");
+      if (i==1) then
+        f.DKPInfo[i].rowCounter = f.DKPInfo[i]:CreateFontString(nil, "OVERLAY");
+        f.DKPInfo[i].rowCounter:SetFontObject("GameFontWhiteTiny");
+        f.DKPInfo[i].rowCounter:SetTextColor(1, 1, 1, 0.2);
+        f.DKPInfo[i].rowCounter:SetPoint("LEFT", f.DKPInfo[i], "LEFT", 3, -1);
+      end
       if (i==3) then
         f.DKPInfo[i].adjusted = f.DKPInfo[i]:CreateFontString(nil, "OVERLAY");
         f.DKPInfo[i].adjusted:SetFontObject("GameFontWhiteTiny");
@@ -112,22 +175,37 @@ function CreateRow(parent, id) -- Create 3 buttons for each row in the list
       end
     end
     return f
-end
- 
-function DKPTable_Update(self)
-    local numOptions = #core.WorkingTable
-    local index, row
+end --]]
+
+--[[function DKPTable_Update(self)
+    local numOptions;
+    local index, row, c
     local offset = FauxScrollFrame_GetOffset(core.DKPTable)
+    core.WorkingTable = {}
+    for k,v in pairs(MonDKP_DKPTable) do
+      if(core.classFiltered[MonDKP_DKPTable[k]["class"]] --[[== true) then
+        tinsert(core.WorkingTable, v)
+      end
+    end
+    numOptions = #core.WorkingTable;
     for i=1, core.TableNumrows do
         index = offset + i
         row = core.DKPTable.Rows[i]
-        local c = GetCColors(core.WorkingTable[index].class);
-        row.DKPInfo[1].data:SetText(core.WorkingTable[index].player)
-        row.DKPInfo[1].data:SetTextColor(c.r, c.g, c.b, 1)
-        row.DKPInfo[2].data:SetText("N/A")
-        row.DKPInfo[3].data:SetText(core.WorkingTable[index].dkp)
-        row.DKPInfo[3].adjusted:SetText("("..core.WorkingTable[index].dkp - core.WorkingTable[index].previous_dkp..")");
-        if (index == SelectedData) then
+        if (i <= numOptions) then
+          c = GetCColors(core.WorkingTable[index].class);
+          row.DKPInfo[1]:SetText(core.WorkingTable[index].player)
+          row.DKPInfo[1].rowCounter:SetText(index)
+          row.DKPInfo[1]:SetTextColor(c.r, c.g, c.b, 1)
+          row.DKPInfo[2]:SetText("N/A")
+          row.DKPInfo[3]:SetText(core.WorkingTable[index].dkp)
+          row.DKPInfo[3].adjusted:SetText("("..core.WorkingTable[index].dkp - core.WorkingTable[index].previous_dkp..")");
+        else
+          row.DKPInfo[1]:SetText("")
+          row.DKPInfo[2]:SetText("")
+          row.DKPInfo[3]:SetText("")
+          row.DKPInfo[3].adjusted:SetText("");
+        end
+        if (index == SelectedRow) then
           row:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
         else
           row:SetNormalTexture(nil)
@@ -140,7 +218,7 @@ function DKPTable_Update(self)
         end
     end
     FauxScrollFrame_Update(core.DKPTable, numOptions, core.TableNumrows, core.TableHeight)
-end
+end--]]
 
 
 --self.text
