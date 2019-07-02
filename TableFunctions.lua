@@ -11,7 +11,7 @@ function DKPTable_OnClick(self)   -- self = Rows[]
       dkp=core.WorkingTable[SelectedRow].dkp,
       previous_dkp=core.WorkingTable[SelectedRow].previous_dkp
     }
-    for i=1, core.TableNumrows do
+    for i=1, core.TableNumRows do
       self:GetParent().Rows[i]:SetNormalTexture(nil)
     end
     self:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
@@ -20,7 +20,7 @@ end
 function CreateRow(parent, id) -- Create 3 buttons for each row in the list
     local f = CreateFrame("Button", "$parentLine"..id, parent)
     f.DKPInfo = {}
-    f:SetSize(core.TableWidth, core.TableHeight)
+    f:SetSize(core.TableWidth, core.TableRowHeight)
     f:SetHighlightTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp");
     f:SetScript("OnClick", DKPTable_OnClick)
     for i=1, 3 do
@@ -38,10 +38,11 @@ function CreateRow(parent, id) -- Create 3 buttons for each row in the list
         f.DKPInfo[i].adjusted:SetFontObject("GameFontWhiteTiny");
         f.DKPInfo[i].adjusted:SetTextColor(1, 1, 1, 0.6);
         f.DKPInfo[i].adjusted:SetPoint("LEFT", f.DKPInfo[3], "RIGHT", 3, -1);
-        f.DKPInfo[i].adjustedArrow = f:CreateTexture(nil, "BACKGROUND", nil, -8);
-        f.DKPInfo[i].adjustedArrow:SetPoint("RIGHT", f, "RIGHT", -20, 0);
+        f.DKPInfo[i].adjustedArrow = f:CreateTexture(nil, "OVERLAY", nil, -8);
+        f.DKPInfo[i].adjustedArrow:SetPoint("RIGHT", f, "RIGHT", -28, 0);
         f.DKPInfo[i].adjustedArrow:SetColorTexture(0, 0, 0, 0.5)
-        f.DKPInfo[i].adjustedArrow:SetSize(8, 16);
+        f.DKPInfo[i].adjustedArrow:SetSize(8, 12);
+        f.DKPInfo[i].adjustedArrow:SetAlpha(0.9);
       end
     end
     f.DKPInfo[1]:SetPoint("LEFT", 50, 0)
@@ -54,11 +55,11 @@ function DKPTable_Update(self)
   local numOptions = #core.WorkingTable
   local index, row, c
   local offset = FauxScrollFrame_GetOffset(core.DKPTable) or 0
-  for i=1, core.TableNumrows do
+  for i=1, core.TableNumRows do
     row = core.DKPTable.Rows[i];
     row:Hide();
   end
-  for i=1, core.TableNumrows do
+  for i=1, core.TableNumRows do
     row = core.DKPTable.Rows[i]
     index = offset + i
     if core.WorkingTable[index] then
@@ -88,7 +89,7 @@ function DKPTable_Update(self)
       row:Hide()
     end
   end
-  FauxScrollFrame_Update(core.DKPTable, numOptions, core.TableNumrows, core.TableHeight, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding
+  FauxScrollFrame_Update(core.DKPTable, numOptions, core.TableNumRows, core.TableRowHeight, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding
 end
 
 --creat table for all dkp holders

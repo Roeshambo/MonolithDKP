@@ -4,15 +4,16 @@ local _G = _G;
 local MonDKP = core.MonDKP;
 local UIConfig;
 
---DBs required: MonDKP_DB (log app settings), MonDKP_Log(log kills/dkp distributed), MonDKP_DKPTable(Member/class/dkp list), MonDKP_Tables, MonDKP_Loot(loot and who got it)
+-- DBs required: MonDKP_DB (log app settings), MonDKP_Log(log kills/dkp distributed), MonDKP_DKPTable(Member/class/dkp list), MonDKP_Tables, MonDKP_Loot(loot and who got it)
+-- DBs are initiallized at the bottom of init.lua
 
-function MonDKP:Toggle() 
+function MonDKP:Toggle()        -- toggles IsShown() state of UIConfig, the entire addon window
   local menu = UIConfig or MonDKP:CreateMenu();
   menu:SetShown(not menu:IsShown())
 end
 
-local function ScrollFrame_OnMouseWheel(self, delta)
-  local newValue = self:GetVerticalScroll() - (delta * 20);
+local function ScrollFrame_OnMouseWheel(self, delta)          -- scroll function for all but the DKPTable frame
+  local newValue = self:GetVerticalScroll() - (delta * 20);   -- DKPTable frame uses FauxScrollFrame_OnVerticalScroll()
   
   if (newValue < 0) then
     newValue = 0;
@@ -36,7 +37,7 @@ local function Tab_OnClick(self)
   UIConfig.TabMenu.ScrollFrame:SetVerticalScroll(0)
 end
 
-function MonDKP:CreateButton(point, relativeFrame, relativePoint, xOffset, yOffset, text)
+function MonDKP:CreateButton(point, relativeFrame, relativePoint, xOffset, yOffset, text)  -- temp function for testing purpose only
   local btn = CreateFrame("Button", nil, relativeFrame, "GameMenuButtonTemplate")
   btn:SetPoint(point, relativeFrame, relativePoint, xOffset, yOffset);
   btn:SetSize(140, 40);
@@ -81,19 +82,19 @@ end
 ---------------------------------------  
 local SortButtons = {}
 
-function FilterTable(sort)
-  core.WorkingTable = {}
-  for k,v in pairs(MonDKP_DKPTable) do
+function FilterDKPTable(sort, reset)          -- filters core.WorkingTable based on classes in classFiltered table.
+  core.WorkingTable = {}                      -- classFiltered stores true/false
+  for k,v in pairs(MonDKP_DKPTable) do        -- sort and reset are used to pass along to SortDKPTable()
     if(core.classFiltered[MonDKP_DKPTable[k]["class"]] == true) then
       tinsert(core.WorkingTable, v)
     end
   end
-  SortDKPTable("class", "reset");
+  SortDKPTable(sort, reset);
 end
 
-function SortDKPTable(id, reset)
-  local button = SortButtons[id]
-  if reset then
+function SortDKPTable(id, reset)        -- reorganizes core.WorkingTable based on id passed. Avail IDs are "class", "player" and "dkp"
+  local button = SortButtons[id]        -- passing "reset" forces it to do initial sort (A to Z repeatedly instead of A to Z then Z to A toggled)
+  if reset then                         -- reset is useful for check boxes when you don't want it repeatedly reversing the sort
     button.Ascend = true
   else
     button.Ascend = not button.Ascend
@@ -101,17 +102,48 @@ function SortDKPTable(id, reset)
   for k, v in pairs(SortButtons) do
     if v ~= button then
       v.Ascend = nil
-      v:SetText(v.Id)
     end
   end
   table.sort(core.WorkingTable, function(a, b)
     if button.Ascend then
-      return a[button.Id] < b[button.Id]
+      if(id == "dkp") then return a[button.Id] > b[button.Id] else return a[button.Id] < b[button.Id] end
+        
     else
-      return a[button.Id] > b[button.Id]
+      if(id == "dkp") then return a[button.Id] < b[button.Id] else return a[button.Id] > b[button.Id] end
     end
   end)
   DKPTable_Update(core.DKPTable)
+end
+
+--
+--  When clicking a box off, unchecks "All" as well and flags checkAll to false
+--
+local checkAll = true;                    -- changes to false when less than all of the boxes are checked
+local function FilterChecks(self)         -- sets/unsets check boxes in conjunction with "All" button, then runs FilterDKPTable() above
+  if (self:GetChecked() == false) then
+    core.ConfigTab1.checkBtn[9]:SetChecked(false);
+    checkAll = false;
+  end
+  local verifyCheck = true; -- switches to false if the below loop finds anything unchecked
+  for i=1, 8 do             -- checks all boxes to see if all are checked, if so, checks "All" as well
+    if core.ConfigTab1.checkBtn[i]:GetChecked() == false then
+      verifyCheck = false;
+    end
+  end
+  if (verifyCheck == true) then
+    core.ConfigTab1.checkBtn[9]:SetChecked(true);
+  else
+    core.ConfigTab1.checkBtn[9]:SetChecked(false);
+  end
+  for k,v in pairs(core.classes) do
+    if (core.ConfigTab1.checkBtn[k]:GetChecked() == true) then
+      core.classFiltered[v] = true;
+    else
+      core.classFiltered[v] = false;
+    end
+  end
+  FilterDKPTable("class", "reset");
+  core.DKPTable.counter.t:SetText(#core.WorkingTable.." Entries Shown");    -- updates "Entries Shown" at bottom of DKPTable
 end
 
 function MonDKP:CreateMenu()
@@ -140,16 +172,14 @@ function MonDKP:CreateMenu()
     edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
   });
   UIConfig.TitleBar:SetBackdropColor(0,0,0,0.9)
-  UIConfig.TitleBar:SetSize(160, 48)
+  UIConfig.TitleBar:SetSize(166, 54)
 
   -- Addon Title
-  local c = MonDKP:GetThemeColor();
-  UIConfig.Title = UIConfig.TitleBar:CreateFontString(nil, "OVERLAY")   -- not in a function so requires CreateFontString
-  UIConfig.Title:ClearAllPoints();
-  UIConfig.Title:SetFontObject("QuestTitleFont");
-  UIConfig.Title:SetTextColor(c.r, c.g, c.b, 1);
+  UIConfig.Title = UIConfig.TitleBar:CreateTexture(nil, "OVERLAY", nil);   -- Title Bar Texture
+  UIConfig.Title:SetColorTexture(0, 0, 0, 1)
   UIConfig.Title:SetPoint("CENTER", UIConfig.TitleBar, "CENTER");
-  UIConfig.Title:SetText("Monolith DKP"); 
+  UIConfig.Title:SetSize(160, 48);
+  UIConfig.Title:SetTexture("Interface\\AddOns\\MonolithDKP\\textures\\mondkp-title-t.tga");
 
   -- Close Button
   UIConfig.closeBtn = CreateFrame("Button", nil, UIConfig, "UIPanelCloseButton")
@@ -205,37 +235,6 @@ function MonDKP:CreateMenu()
 
   local checkBtn = {}
     core.ConfigTab1.checkBtn = checkBtn;
-
-  --
-  --  When clicking a box off, unchecks "All" as well and flags checkAll to false
-  --
-  local checkAll = true;
-  local function FilterChecks(self)
-    if (self:GetChecked() == false) then
-      core.ConfigTab1.checkBtn[9]:SetChecked(false);
-      checkAll = false;
-    end
-    local verifyCheck = true; -- switches to false if the below loop finds anything unchecked
-    for i=1, 8 do             -- checks all boxes to see if all are checked, if so, checks "All" as well
-      if core.ConfigTab1.checkBtn[i]:GetChecked() == false then
-        verifyCheck = false;
-      end
-    end
-    if (verifyCheck == true) then
-      core.ConfigTab1.checkBtn[9]:SetChecked(true);
-    else
-      core.ConfigTab1.checkBtn[9]:SetChecked(false);
-    end
-    for k,v in pairs(core.classes) do
-      if (core.ConfigTab1.checkBtn[k]:GetChecked() == true) then
-        core.classFiltered[v] = true;
-      else
-        core.classFiltered[v] = false;
-      end
-    end
-    FilterTable("player");
-    core.DKPTable.counter.t:SetText(#core.WorkingTable.." Entries Shown"); 
-  end
 
   -- Class Check Button 1:
   core.ConfigTab1.checkBtn[1] = CreateFrame("CheckButton", nil, core.ConfigTab1, "UICheckButtonTemplate");
@@ -328,6 +327,14 @@ function MonDKP:CreateMenu()
     end
   end
 
+  -- Check Button 10 (In Part):   No Functionality yet
+  core.ConfigTab1.checkBtn[10] = CreateFrame("CheckButton", nil, core.ConfigTab1, "UICheckButtonTemplate");
+  core.ConfigTab1.checkBtn[10]:SetPoint("BOTTOMRIGHT", core.ConfigTab1.checkBtn[2], "TOPLEFT", -15, 0);
+  core.ConfigTab1.checkBtn[10].text:SetText("In Party/Raid");
+  core.ConfigTab1.checkBtn[10]:SetID(9)
+  core.ConfigTab1.checkBtn[10]:SetChecked(false);
+  core.ConfigTab1.checkBtn[10]:SetScript("OnClick", FilterChecks)
+
   ---------------------------------------
   -- MENU TAB 2 (Currently ONLY Filler elements)
   ---------------------------------------
@@ -401,8 +408,8 @@ function MonDKP:CreateMenu()
   -- Creating the DKP Table
   ---------------------------------------
   core.DKPTable = CreateFrame("ScrollFrame", "MonDKPDisplayScrollFrame", UIConfig, "FauxScrollFrameTemplate")
-  core.DKPTable:SetSize(core.TableWidth, core.TableHeight*core.TableNumrows)
-  core.DKPTable:SetPoint("LEFT", 20, 0)
+  core.DKPTable:SetSize(core.TableWidth, core.TableRowHeight*core.TableNumRows)
+  core.DKPTable:SetPoint("LEFT", 20, 3)
   core.DKPTable:SetBackdrop( {
     bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
     edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
@@ -414,12 +421,12 @@ function MonDKP:CreateMenu()
 
   core.DKPTable.ScrollBar = FauxScrollFrame_GetChildFrames(core.DKPTable)
   core.DKPTable.Rows = {}
-  for i=1, core.TableNumrows do
+  for i=1, core.TableNumRows do
     core.DKPTable.Rows[i] = CreateRow(core.DKPTable, i)
     core.DKPTable.Rows[i]:SetPoint("TOPLEFT", core.DKPTable.Rows[i-1] or core.DKPTable, core.DKPTable.Rows[i-1] and "BOTTOMLEFT" or "TOPLEFT")
   end
   core.DKPTable:SetScript("OnVerticalScroll", function(self, offset)
-    FauxScrollFrame_OnVerticalScroll(self, offset, core.TableHeight, DKPTable_Update)
+    FauxScrollFrame_OnVerticalScroll(self, offset, core.TableRowHeight, DKPTable_Update)
   end)
   
   ---------------------------------------
@@ -452,7 +459,7 @@ function MonDKP:CreateMenu()
   for k, v in pairs(SortButtons) do
     v.Id = k
     v:SetHighlightTexture("Interface\\BUTTONS\\BlueGrad64_faded.blp");
-    v:SetSize((core.TableWidth/3)-1, core.TableHeight)
+    v:SetSize((core.TableWidth/3)-1, core.TableRowHeight)
     v:SetScript("OnClick", function(self) SortDKPTable(self.Id) end)
   end
 
@@ -500,22 +507,20 @@ function MonDKP:CreateMenu()
     UIConfig:StartSizing("BOTTOMRIGHT");
     UIConfig:SetUserPlaced(true);
   end);
-
-  resizeButton:SetScript("OnUpdate", function(self, button)           -- TabMenu scaling OnUpdate
+   
+  resizeButton:SetScript("OnMouseUp", function(self, button)
     UIConfig.TabMenu:SetHeight(self:GetParent():GetHeight() - 145);    -- keeps TabMenu height 185 pixels smaller than UIConfig
     if (self:GetParent():GetWidth() * 0.4 <= 500) then                -- scales TabMenu width at 0.4 parent width, with max of 500px
       UIConfig.TabMenu:SetWidth(self:GetParent():GetWidth() * 0.4);
     else
       UIConfig.TabMenu:SetWidth(500);
     end
-  end);
-   
-  resizeButton:SetScript("OnMouseUp", function(self, button)
     UIConfig:StopMovingOrSizing();
   end);
   ---------------------------------------
   -- VERSION IDENTIFIER
   ---------------------------------------
+  local c = MonDKP:GetThemeColor();
   UIConfig.Version = UIConfig.TitleBar:CreateFontString(nil, "OVERLAY")   -- not in a function so requires CreateFontString
   UIConfig.Version:ClearAllPoints();
   UIConfig.Version:SetFontObject("GameFontWhiteSmall");
@@ -524,7 +529,7 @@ function MonDKP:CreateMenu()
   UIConfig.Version:SetText(MonDKP:GetVer()); 
 
   UIConfig:Hide(); -- hide menu after creation until called.
-  FilterTable("class")
+  FilterDKPTable("class", "reset")   -- initial sort and populates data values in DKPTable.Rows{} FilterDKPTable() -> SortDKPTable() -> DKPTable_Update()
 
   return UIConfig;
 end

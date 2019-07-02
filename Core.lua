@@ -1,10 +1,15 @@
+--[[
+  Core.lua is intended to store all core functions and variables to be used throughout the addon. 
+  Don't put anything in here that you don't want to be loaded FIRST.
+--]]
+
 local _, core = ...;
 local _G = _G;
 
-core.MonDKP = {};       -- UI Frames
+core.MonDKP = {};       -- UI Frames global
 local MonDKP = core.MonDKP;
 
-core.CColors = {
+core.CColors = {   -- class colors in RGB
   ["Druid"] = {
     r = 1,
     g = 0.49,
@@ -48,7 +53,7 @@ core.CColors = {
 }
 
 --------------------------------------
--- Defaults
+-- Addon Defaults
 --------------------------------------
 local defaults = {
   theme = {
@@ -59,7 +64,7 @@ local defaults = {
   }
 }
 
-core.TableWidth, core.TableHeight, core.TableNumrows = 500, 18, 27;
+core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
 core.classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
