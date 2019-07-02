@@ -2,25 +2,57 @@ local _, core = ...;
 local _G = _G;
 local MonDKP = core.MonDKP;
 
-local SelectedRow = 0;      -- tracks row in DKPTable that is currently selected for SetHighlightTexture
+local SelectedRows = {};      -- tracks rows in DKPTable that are currently selected for SetHighlightTexture
+local SelectedRow = 0;        -- sets the row that is being clicked
 
-
--- make SelectedRow an array. when something is selected, push the index to it. When it's unselected, remove that index by searching for the key
-
-
-
-function DKPTable_OnClick(self)   -- self = Rows[]
-    SelectedRow = self.index;
-    core.SelectedData = {        --storing the data of the selected row for comparison and manipulation
+function DKPTable_OnClick(self)   
+  local offset = FauxScrollFrame_GetOffset(MonDKP.DKPTable) or 0
+  local index, TempSearch;
+  SelectedRow = self.index
+  if(not IsShiftKeyDown()) then
+    for i=1, core.TableNumRows do
+      table.wipe(core.SelectedData)
+      TempSearch = MonDKP:Table_Search(SelectedRows, SelectedRow);
+      table.wipe(SelectedRows)
+      if (TempSearch == false) then
+        tinsert(SelectedRows, {SelectedRow});
+      else
+        table.wipe(core.SelectedData)
+      end
+      self:GetParent().Rows[i]:SetNormalTexture(nil)
+    end
+  else
+    TempSearch = MonDKP:Table_Search(SelectedRows, SelectedRow);
+    if (TempSearch == false) then
+      tinsert(SelectedRows, {SelectedRow});
+    else
+      tremove(SelectedRows, TempSearch[1])
+    end
+  end
+  if (TempSearch == false) then
+    tinsert(core.SelectedData, {        --storing the data of the selected row for comparison and manipulation
       player=core.WorkingTable[SelectedRow].player,
       class=core.WorkingTable[SelectedRow].class,
       dkp=core.WorkingTable[SelectedRow].dkp,
       previous_dkp=core.WorkingTable[SelectedRow].previous_dkp
-    }
-    for i=1, core.TableNumRows do
-      self:GetParent().Rows[i]:SetNormalTexture(nil)
+    });
+  else
+    tremove(core.SelectedData, TempSearch[1])
+  end
+  for i=1, core.TableNumRows do
+    index = offset + i;
+    local a = MonDKP:Table_Search(SelectedRows, index);
+    if(a==false) then
+      MonDKP.DKPTable.Rows[i]:SetNormalTexture(nil)
+    else
+      MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
     end
-    self:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
+  end
+  --[[ChatFrame1:Clear()
+  print("SelectedData: ", #core.SelectedData, ", SelectedRows:", #SelectedRows)  -- verify selections on click
+  for i=1, #core.SelectedData do
+    print("  ", core.SelectedData[i]["player"], " -> ", core.SelectedData[i]["dkp"], "dkp")
+  end--]]
 end
 
 function CreateRow(parent, id) -- Create 3 buttons for each row in the list
@@ -84,11 +116,12 @@ function DKPTable_Update(self)
         row.DKPInfo[3].adjustedArrow:SetTexture("Interface\\AddOns\\MonolithDKP\\textures\\red-down-arrow.png");
       end        
       row.DKPInfo[3].adjusted:SetText("("..CheckAdjusted..")");
-      
-      if (core.WorkingTable[index].player == core.SelectedData.player) then
-        row:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
+
+      local a = MonDKP:Table_Search(SelectedRows, index);
+      if(a==false) then
+        MonDKP.DKPTable.Rows[i]:SetNormalTexture(nil)
       else
-        row:SetNormalTexture(nil)
+        MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
       end
     else
       row:Hide()
