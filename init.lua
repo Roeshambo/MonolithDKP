@@ -5,9 +5,9 @@ local MonDKP = core.MonDKP;
 --------------------------------------
 -- Custom Slash Command
 --------------------------------------
-core.commands = {
-	["config"] = core.MonDKP.Toggle,
-	["reset"] = core.MonDKP.ResetPosition,
+MonDKP.Commands = {
+	["config"] = MonDKP.Toggle,
+	["reset"] = MonDKP.ResetPosition,
 	["help"] = function()
 		print(" ");
 		MonDKP:Print("List of slash commands:")
@@ -26,7 +26,7 @@ core.commands = {
 
 local function HandleSlashCommands(str)	
 	if (#str == 0) then	
-		core.commands.config();
+		MonDKP.Commands.config();
 		return;		
 	end	
 	
@@ -37,7 +37,7 @@ local function HandleSlashCommands(str)
 		end
 	end
 	
-	local path = core.commands; -- required for updating found table.
+	local path = MonDKP.Commands; -- required for updating found table.
 	
 	for id, arg in ipairs(args) do
 		if (#arg > 0) then -- if string length is greater than 0.
@@ -52,14 +52,14 @@ local function HandleSlashCommands(str)
 				end
 			else
 				-- does not exist!
-				core.commands.help();
+				MonDKP.Commands.help();
 				return;
 			end
 		end
 	end
 end
 
-function core:init(event, name)
+function core:init(event, name)		-- This is the FIRST function to run on load triggered by last 3 lines of this file
 	if (name ~= "MonolithDKP") then return end 
 
 	-- allows using left and right buttons to move through chat 'edit' box
@@ -99,7 +99,7 @@ function core:init(event, name)
 
 		for i=1, #player_names do
 			local p = player_names[i]
-			if (MonDKP:MonDKP_Search(MonDKP_DKPTable, p) == false) then 		--
+			if (MonDKP:Table_Search(MonDKP_DKPTable, p) == false) then 		--
 				tinsert(MonDKP_DKPTable, {
 					player=p,
 					class=classes[math.random(1, #classes)],

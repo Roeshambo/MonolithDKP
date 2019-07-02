@@ -1,7 +1,13 @@
 local _, core = ...;
 local _G = _G;
+local MonDKP = core.MonDKP;
 
 local SelectedRow = 0;      -- tracks row in DKPTable that is currently selected for SetHighlightTexture
+
+
+-- make SelectedRow an array. when something is selected, push the index to it. When it's unselected, remove that index by searching for the key
+
+
 
 function DKPTable_OnClick(self)   -- self = Rows[]
     SelectedRow = self.index;
@@ -42,7 +48,6 @@ function CreateRow(parent, id) -- Create 3 buttons for each row in the list
         f.DKPInfo[i].adjustedArrow:SetPoint("RIGHT", f, "RIGHT", -28, 0);
         f.DKPInfo[i].adjustedArrow:SetColorTexture(0, 0, 0, 0.5)
         f.DKPInfo[i].adjustedArrow:SetSize(8, 12);
-        f.DKPInfo[i].adjustedArrow:SetAlpha(0.9);
       end
     end
     f.DKPInfo[1]:SetPoint("LEFT", 50, 0)
@@ -54,13 +59,13 @@ end
 function DKPTable_Update(self)
   local numOptions = #core.WorkingTable
   local index, row, c
-  local offset = FauxScrollFrame_GetOffset(core.DKPTable) or 0
+  local offset = FauxScrollFrame_GetOffset(MonDKP.DKPTable) or 0
   for i=1, core.TableNumRows do
-    row = core.DKPTable.Rows[i];
+    row = MonDKP.DKPTable.Rows[i];
     row:Hide();
   end
   for i=1, core.TableNumRows do
-    row = core.DKPTable.Rows[i]
+    row = MonDKP.DKPTable.Rows[i]
     index = offset + i
     if core.WorkingTable[index] then
       c = GetCColors(core.WorkingTable[index].class);
@@ -89,7 +94,7 @@ function DKPTable_Update(self)
       row:Hide()
     end
   end
-  FauxScrollFrame_Update(core.DKPTable, numOptions, core.TableNumRows, core.TableRowHeight, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding
+  FauxScrollFrame_Update(MonDKP.DKPTable, numOptions, core.TableNumRows, core.TableRowHeight, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding
 end
 
 --creat table for all dkp holders

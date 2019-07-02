@@ -64,6 +64,7 @@ local defaults = {
   }
 }
 
+core.MonDKPUI = {}
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
@@ -85,9 +86,9 @@ function MonDKP:GetVer()
 end
 
 function MonDKP:ResetPosition()
-  UIConfig:ClearAllPoints();
-  UIConfig:SetPoint("CENTER", UIParent, "CENTER", -250, 100);
-  UIConfig:SetSize(1000, 590);
+  MonDKP.UIConfig:ClearAllPoints();
+  MonDKP.UIConfig:SetPoint("CENTER", UIParent, "CENTER", -250, 100);
+  MonDKP.UIConfig:SetSize(1000, 590);
   MonDKP:Print("Window Position Reset")
 end
 
@@ -102,21 +103,46 @@ function MonDKP:Print(...)        --print function to add "MonolithDKP:" to the 
     DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, ...));
 end
 
-function MonDKP:MonDKP_Search(tar, val)  --recursively searches tar (table) for val (string) as far as three nests deep
-  local value = tostring(val);
+-------------------------------------
+-- Recursively searches tar (table) for val (string) as far as 4 nests deep
+-- returns an indexed array of the keys to get to it.
+-- IE: If the returned array is {1,3,2,player} it means it is located at tar[1][3][2][player]
+-- use to search for players in SavedVariables. If not found, returns false
+-------------------------------------
+function MonDKP:Table_Search(tar, val)
+  local value = string.upper(tostring(val));
+  local location = {}
   for k,v in pairs(tar) do
     if(type(v) == "table") then
+      local temp1 = k
       for k,v in pairs(v) do
         if(type(v) == "table") then
+          local temp2 = k;
           for k,v in pairs(v) do
-            if v == value then return true end;
+            if(type(v) == "table") then
+              local temp3 = k
+              for k,v in pairs(v) do
+                if string.upper(tostring(v)) == value then
+                  location = {temp1, temp2, temp3, k}
+                  return location;
+                end;
+              end
+            end
+            if string.upper(tostring(v)) == value then
+              location = {temp1, temp2, k}
+              return location
+            end;
           end
         end
-        if v == value then return true end;
+        if string.upper(tostring(v)) == value then
+          location = {temp1, k}
+          return location
+        end;
       end
     end
-    if v == value then return true end;
+    if string.upper(tostring(v)) == value then  -- only returns in indexed arrays
+      return v
+    end;
   end
-
   return false;
 end
