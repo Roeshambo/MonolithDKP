@@ -146,3 +146,33 @@ function MonDKP:Table_Search(tar, val)
   end
   return false;
 end
+
+function MonDKP:PrintTable(tar)             --prints table structure for testing purposes
+  for k,v in pairs(tar) do
+    if (type(v) == "table") then
+      for k,v in pairs(v) do
+        if (type(v) == "table") then
+          for k,v in pairs(v) do
+            if (type(v) == "table") then
+              for k,v in pairs(v) do
+                if (type(v) ~= "table") then
+                  print("            ", k, " -> ", v)
+                end
+              end
+              print(" ")
+            else
+              print("        ", k, " -> ", v)
+            end
+          end
+          print(" ")
+        else
+          print("    ", k, " -> ", v)
+        end
+      end
+      print(" ")
+    else
+      print(k, " -> ", v)
+    end
+  end
+  print(" ")
+end

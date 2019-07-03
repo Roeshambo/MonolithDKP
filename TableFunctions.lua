@@ -48,11 +48,6 @@ function DKPTable_OnClick(self)
       MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
     end
   end
-  --[[ChatFrame1:Clear()
-  print("SelectedData: ", #core.SelectedData, ", SelectedRows:", #SelectedRows)  -- verify selections on click
-  for i=1, #core.SelectedData do
-    print("  ", core.SelectedData[i]["player"], " -> ", core.SelectedData[i]["dkp"], "dkp")
-  end--]]
 end
 
 function CreateRow(parent, id) -- Create 3 buttons for each row in the list
@@ -127,6 +122,7 @@ function DKPTable_Update(self)
       row:Hide()
     end
   end
+  MonDKP.DKPTable.counter.t:SetText(#core.WorkingTable.." Entries Shown");    -- updates "Entries Shown" at bottom of DKPTable
   FauxScrollFrame_Update(MonDKP.DKPTable, numOptions, core.TableNumRows, core.TableRowHeight, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding
 end
 

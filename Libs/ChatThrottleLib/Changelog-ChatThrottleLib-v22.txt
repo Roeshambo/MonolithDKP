@@ -1,0 +1,16 @@
+------------------------------------------------------------------------
+r71 | mikk | 2011-03-27 11:49:06 +0000 (Sun, 27 Mar 2011) | 1 line
+Changed paths:
+   A /tags/v22 (from /trunk:70)
+
+Tagging as v22 for 4.0
+------------------------------------------------------------------------
+r70 | mikk | 2011-03-27 11:46:31 +0000 (Sun, 27 Mar 2011) | 3 lines
+Changed paths:
+   M /trunk/ChatThrottleLib.lua
+   M /trunk/ChatThrottleLib.toc
+
+Version 22:
+- Check if 4.1: Allow SendAddonMessage text length up to 255 (NOT 256! tested!)
+- Bump toc to 40000, oops =)
+------------------------------------------------------------------------

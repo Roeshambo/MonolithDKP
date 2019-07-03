@@ -1,6 +1,5 @@
 local _, core = ...;
 local _G = _G;
-
 local MonDKP = core.MonDKP;
 
 -- DBs required: MonDKP_DB (log app settings), MonDKP_Log(log kills/dkp distributed), MonDKP_DKPTable(Member/class/dkp list), MonDKP_Tables, MonDKP_Loot(loot and who got it)
@@ -142,7 +141,6 @@ local function FilterChecks(self)         -- sets/unsets check boxes in conjunct
     end
   end
   FilterDKPTable("class", "reset");
-  MonDKP.DKPTable.counter.t:SetText(#core.WorkingTable.." Entries Shown");    -- updates "Entries Shown" at bottom of DKPTable
 end
 
 function MonDKP:CreateMenu()
