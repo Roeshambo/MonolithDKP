@@ -112,7 +112,7 @@ function DKPTable_Update(self)
       end        
       row.DKPInfo[3].adjusted:SetText("("..CheckAdjusted..")");
 
-      local a = MonDKP:Table_Search(SelectedRows, index);
+      local a = MonDKP:Table_Search(core.SelectedData, core.WorkingTable[index].player);  -- searches selectedData for the player name indexed.
       if(a==false) then
         MonDKP.DKPTable.Rows[i]:SetNormalTexture(nil)
       else
