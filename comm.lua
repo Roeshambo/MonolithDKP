@@ -22,7 +22,7 @@ function MonDKP.Sync:OnEnable()
 end
 
 function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
-	if (prefix ~= nil) then
+	if (prefix) then
 		decoded = LibCompress:Decompress(LibCompressAddonEncodeTable:Decode(message))
 		local success, deserialized = LibAceSerializer:Deserialize(decoded);
 		if success then			

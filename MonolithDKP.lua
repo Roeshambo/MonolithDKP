@@ -520,8 +520,8 @@ function MonDKP:CreateMenu()
   MonDKP.UIConfig.Version = MonDKP.UIConfig.TitleBar:CreateFontString(nil, "OVERLAY")   -- not in a function so requires CreateFontString
   MonDKP.UIConfig.Version:ClearAllPoints();
   MonDKP.UIConfig.Version:SetFontObject("GameFontWhiteSmall");
-  MonDKP.UIConfig.Version:SetTextColor(c.r, c.g, c.b, 0.5);
-  MonDKP.UIConfig.Version:SetPoint("BOTTOMRIGHT", MonDKP.UIConfig.TitleBar, "BOTTOMRIGHT", -8, 5);
+  MonDKP.UIConfig.Version:SetTextColor(c[1].r, c[1].g, c[1].b, 0.5);
+  MonDKP.UIConfig.Version:SetPoint("BOTTOMRIGHT", MonDKP.UIConfig.TitleBar, "BOTTOMRIGHT", -8, 4);
   MonDKP.UIConfig.Version:SetText(MonDKP:GetVer()); 
 
   MonDKP.UIConfig:Hide(); -- hide menu after creation until called.
