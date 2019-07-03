@@ -25,7 +25,7 @@ MonDKP.Commands = {
 };
 
 local function HandleSlashCommands(str)	
-	if (#str == 0) then	
+	if (#str == 0) then
 		MonDKP.Commands.config();
 		return;		
 	end	
@@ -37,18 +37,17 @@ local function HandleSlashCommands(str)
 		end
 	end
 	
-	local path = MonDKP.Commands; -- required for updating found table.
+	local path = MonDKP.Commands;
 	
 	for id, arg in ipairs(args) do
-		if (#arg > 0) then -- if string length is greater than 0.
+		if (#arg > 0) then
 			arg = arg:lower();			
 			if (path[arg]) then
-				if (type(path[arg]) == "function") then				
-					-- all remaining args passed to our function!
+				if (type(path[arg]) == "function") then
 					path[arg](select(id + 1, unpack(args))); 
 					return;					
 				elseif (type(path[arg]) == "table") then				
-					path = path[arg]; -- another sub-table found!
+					path = path[arg];
 				end
 			else
 				-- does not exist!
@@ -59,7 +58,7 @@ local function HandleSlashCommands(str)
 	end
 end
 
-function core:init(event, name)		-- This is the FIRST function to run on load triggered by last 3 lines of this file
+function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run on load triggered by last 3 lines of this file
 	if (name ~= "MonolithDKP") then return end 
 
 	-- allows using left and right buttons to move through chat 'edit' box
@@ -94,7 +93,7 @@ function core:init(event, name)		-- This is the FIRST function to run on load tr
 
 		-- Populates SavedVariable MonDKP_DKPTable with fake values for testing purposes if they don't already exist
 		-- Delete this section and \WTF\AccountACCOUNT_NAME\SavedVariables\MonolithDKP.lua prior to actual use.
-		local player_names = {"Qulyolalima", "Cadhangwong", "Gilingerth", "Emondeatt", "Puthuguth", "Eminin", "Mormiannis", "Hemilionter", "Malcologan", "Alerahm", "Cricordinus", "Arommoth", "Barnamnon", "Eughtor", "Aldreavus", "Loylencel", "Barredgar", "Gerneheav", "Julivente", "Barlannel", "Audeacell", "Derneth", "Fredeond", "Gutrichas", "Wiliannel", "Siertlan", "Simitram", "Ronettius", "Livendley", "Mordannichas", "Tevistavus", "Jaspian"}
+		--[[local player_names = {"Qulyolalima", "Cadhangwong", "Gilingerth", "Emondeatt", "Puthuguth", "Eminin", "Mormiannis", "Hemilionter", "Malcologan", "Alerahm", "Cricordinus", "Arommoth", "Barnamnon", "Eughtor", "Aldreavus", "Loylencel", "Barredgar", "Gerneheav", "Julivente", "Barlannel", "Audeacell", "Derneth", "Fredeond", "Gutrichas", "Wiliannel", "Siertlan", "Simitram", "Ronettius", "Livendley", "Mordannichas", "Tevistavus", "Jaspian"}
 		local classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
 
 		for i=1, #player_names do
@@ -107,11 +106,12 @@ function core:init(event, name)		-- This is the FIRST function to run on load tr
 					dkp=math.random(0, 1000)
 				})
 			end
-		end
+		end--]]
 		-- End testing DB
 
 		MonDKP:Print("Loaded "..#MonDKP_DKPTable.." records.");
 		core.WorkingTable = MonDKP_DKPTable;
+		core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();
 	end
 end
 
@@ -121,4 +121,4 @@ end
 
 local events = CreateFrame("Frame");
 events:RegisterEvent("ADDON_LOADED");
-events:SetScript("OnEvent", core.init); -- calls the above core:init function after addon_loaded event fires identifying the addon and SavedVariables are completely loaded
+events:SetScript("OnEvent", MonDKP.OnInitialize); -- calls the above core:init function after addon_loaded event fires identifying the addon and SavedVariables are completely loaded

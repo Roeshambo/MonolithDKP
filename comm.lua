@@ -17,15 +17,6 @@ local LibAceSerializer = LibStub:GetLibrary("AceSerializer-3.0")
 local LibCompress = LibStub:GetLibrary("LibCompress")
 local LibCompressAddonEncodeTable = LibCompress:GetAddonEncodeTable()
 
-StaticPopupDialogs["UPDATE_RECEIVED"] = {
-  text = "DKP Database has been updated!",
-  button1 = "OK",
-  timeout = 3,
-  whileDead = true,
-  hideOnEscape = true,
-  preferredIndex = 3,  -- avoid some UI taint, see http://www.wowace.com/announcements/how-to-avoid-some-ui-taint/
-}
-
 function MonDKP.Sync:OnEnable()
 	MonDKP.Sync:RegisterComm("MonDKPDataSync", MonDKP.Sync:OnCommReceived())
 end
@@ -39,10 +30,12 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 			core.WorkingTable = deserialized;		-- populates WorkingTable
 			DKPTable_Update(MonDKP.DKPTable)
 			if (sender ~= UnitName("player")) then
-				StaticPopup_Show ("UPDATE_RECEIVED")
+				MonDKP:Print("DKP Database updated by "..sender.."!")
+			else
+				MonDKP:Print("DKP Database successfully sent!")
 			end
 		else
-			print(deserialized)
+			print(deserialized)  -- error reporting if string doesn't get deserialized correctly
 		end
 	end
 end

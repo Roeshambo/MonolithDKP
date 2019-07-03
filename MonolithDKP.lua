@@ -487,7 +487,6 @@ function MonDKP:CreateMenu()
   MonDKP.DKPTable.counter.t:SetFontObject("GameFontHighlight");
   MonDKP.DKPTable.counter.t:SetTextColor(1, 1, 1, 0.7);
   MonDKP.DKPTable.counter.t:SetPoint("CENTER", MonDKP.DKPTable.counter, "CENTER");
-  MonDKP.DKPTable.counter.t:SetText(#core.WorkingTable.." Entries Shown"); 
 
   ---------------------------------------
   -- RESIZE BUTTON

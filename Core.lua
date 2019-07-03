@@ -61,6 +61,12 @@ local defaults = {
     g = 0.6823,
     b = 0.8666,
     hex = "aeaedd"
+  },
+  theme2 = {
+    r = 1,
+    g = 0.37,
+    b = 0.37,
+    hex = "ff6060"
   }
 }
 
@@ -93,14 +99,15 @@ function MonDKP:ResetPosition()
 end
 
 function MonDKP:GetThemeColor()
-  local c = defaults.theme;
+  local c = {defaults.theme, defaults.theme2};
   return c;
 end
 
 function MonDKP:Print(...)        --print function to add "MonolithDKP:" to the beginning of print() outputs.
-    local hex = MonDKP:GetThemeColor().hex;
-    local prefix = string.format("|cff%s%s|r", hex:upper(), "MonolithDKP:");
-    DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, ...));
+    local defaults = MonDKP:GetThemeColor();
+    local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "MonolithDKP:", defaults[2].hex:upper());
+    local suffix = "|r";
+    DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, ..., suffix));
 end
 
 -------------------------------------
