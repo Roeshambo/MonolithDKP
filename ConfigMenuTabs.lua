@@ -81,132 +81,209 @@ end
 ---------------------------------------
 function MonDKP:ConfigMenuTabs()
 
-  MonDKP.ConfigTab1, MonDKP.ConfigTab2, MonDKP.ConfigTab3, MonDKP.ConfigTab4, MonDKP.ConfigTab5 = SetTabs(MonDKP.UIConfig.TabMenu, 5, "Filters", "Award DKP", "Edit Entries", "Options", "History");
+  MonDKP.ConfigTab1, MonDKP.ConfigTab2, MonDKP.ConfigTab3, MonDKP.ConfigTab4, MonDKP.ConfigTab5 = SetTabs(MonDKP.UIConfig.TabMenu, 5, "Filters", "Adjust DKP", "Edit Entries", "Options", "History");
 
   ---------------------------------------
   -- MENU TAB 1
   ---------------------------------------
 
-  MonDKP.ConfigTab1.text = MonDKP.ConfigTab1:CreateFontString(nil, "OVERLAY")   -- not in a function so requires CreateFontString
+  MonDKP.ConfigTab1.text = MonDKP.ConfigTab1:CreateFontString(nil, "OVERLAY")   -- Filters header
   MonDKP.ConfigTab1.text:ClearAllPoints();
   MonDKP.ConfigTab1.text:SetFontObject("GameFontHighlight");
   MonDKP.ConfigTab1.text:SetPoint("TOPLEFT", MonDKP.ConfigTab1, "TOPLEFT", 15, -10);
-  MonDKP.ConfigTab1.text:SetText("Filters"); 
+  MonDKP.ConfigTab1.text:SetText("Filters");
 
   local checkBtn = {}
-    MonDKP.ConfigTab1.checkBtn = checkBtn;
+  MonDKP.ConfigTab1.checkBtn = checkBtn;
 
-  -- Class Check Button 1:
-  MonDKP.ConfigTab1.checkBtn[1] = CreateFrame("CheckButton", nil, MonDKP.ConfigTab1, "UICheckButtonTemplate");
-  MonDKP.ConfigTab1.checkBtn[1]:SetPoint("TOPLEFT", MonDKP.ConfigTab1, "TOPLEFT", 15, -60);
-  MonDKP.ConfigTab1.checkBtn[1].text:SetText("Druid");
-  MonDKP.ConfigTab1.checkBtn[1]:SetID(1)
-  MonDKP.ConfigTab1.checkBtn[1]:SetChecked(true);
-  MonDKP.ConfigTab1.checkBtn[1]:SetScript("OnClick", FilterChecks)
+  -- Create CheckBoxes
+  for i=1, 10 do
+    MonDKP.ConfigTab1.checkBtn[i] = CreateFrame("CheckButton", nil, MonDKP.ConfigTab1, "UICheckButtonTemplate");
+    if i <= 9 then MonDKP.ConfigTab1.checkBtn[i]:SetChecked(true) else MonDKP.ConfigTab1.checkBtn[i]:SetChecked(false) end;
+    MonDKP.ConfigTab1.checkBtn[i]:SetID(i)
+    if i <= 8 then
+      MonDKP.ConfigTab1.checkBtn[i].text:SetText(core.classes[i]);
+    end
+    if i==9 then
+      MonDKP.ConfigTab1.checkBtn[i]:SetScript("OnClick",
+        function()
+          for j=1, 9 do
+            if (checkAll) then
+              MonDKP.ConfigTab1.checkBtn[j]:SetChecked(false)
+            else
+              MonDKP.ConfigTab1.checkBtn[j]:SetChecked(true)
+            end
+          end
+          checkAll = not checkAll;
+          FilterChecks(MonDKP.ConfigTab1.checkBtn[9]);
+        end)
 
-  -- Class Check Button 2:
-  MonDKP.ConfigTab1.checkBtn[2] = CreateFrame("CheckButton", nil, MonDKP.ConfigTab1, "UICheckButtonTemplate");
-  MonDKP.ConfigTab1.checkBtn[2]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[1], "TOPRIGHT", 50, 0);
-  MonDKP.ConfigTab1.checkBtn[2].text:SetText("Hunter");
-  MonDKP.ConfigTab1.checkBtn[2]:SetID(2)
-  MonDKP.ConfigTab1.checkBtn[2]:SetChecked(true);
-  MonDKP.ConfigTab1.checkBtn[2]:SetScript("OnClick", FilterChecks)
-
-  -- Class Check Button 3:
-  MonDKP.ConfigTab1.checkBtn[3] = CreateFrame("CheckButton", nil, MonDKP.ConfigTab1, "UICheckButtonTemplate");
-  MonDKP.ConfigTab1.checkBtn[3]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[2], "TOPRIGHT", 50, 0);
-  MonDKP.ConfigTab1.checkBtn[3].text:SetText("Mage");
-  MonDKP.ConfigTab1.checkBtn[3]:SetID(3)
-  MonDKP.ConfigTab1.checkBtn[3]:SetChecked(true);
-  MonDKP.ConfigTab1.checkBtn[3]:SetScript("OnClick", FilterChecks)
-
-  -- Class Check Button 4:
-  MonDKP.ConfigTab1.checkBtn[4] = CreateFrame("CheckButton", nil, MonDKP.ConfigTab1, "UICheckButtonTemplate");
-  MonDKP.ConfigTab1.checkBtn[4]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[3], "TOPRIGHT", 50, 0);
-  MonDKP.ConfigTab1.checkBtn[4].text:SetText("Priest");
-  MonDKP.ConfigTab1.checkBtn[4]:SetID(4)
-  MonDKP.ConfigTab1.checkBtn[4]:SetChecked(true);
-  MonDKP.ConfigTab1.checkBtn[4]:SetScript("OnClick", FilterChecks)
-
-  -- Class Check Button 5:
-  MonDKP.ConfigTab1.checkBtn[5] = CreateFrame("CheckButton", nil, MonDKP.ConfigTab1, "UICheckButtonTemplate");
-  MonDKP.ConfigTab1.checkBtn[5]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[1], "BOTTOMLEFT", 0, -10);
-  MonDKP.ConfigTab1.checkBtn[5].text:SetText("Rogue");
-  MonDKP.ConfigTab1.checkBtn[5]:SetID(5)
-  MonDKP.ConfigTab1.checkBtn[5]:SetChecked(true);
-  MonDKP.ConfigTab1.checkBtn[5]:SetScript("OnClick", FilterChecks)
-
-  -- Class Check Button 6:
-  MonDKP.ConfigTab1.checkBtn[6] = CreateFrame("CheckButton", nil, MonDKP.ConfigTab1, "UICheckButtonTemplate");
-  MonDKP.ConfigTab1.checkBtn[6]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[2], "BOTTOMLEFT", 0, -10);
-  MonDKP.ConfigTab1.checkBtn[6].text:SetText("Shaman");
-  MonDKP.ConfigTab1.checkBtn[6]:SetID(6)
-  MonDKP.ConfigTab1.checkBtn[6]:SetChecked(true);
-  MonDKP.ConfigTab1.checkBtn[6]:SetScript("OnClick", FilterChecks)
-
-  -- Class Check Button 7:
-  MonDKP.ConfigTab1.checkBtn[7] = CreateFrame("CheckButton", nil, MonDKP.ConfigTab1, "UICheckButtonTemplate");
-  MonDKP.ConfigTab1.checkBtn[7]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[3], "BOTTOMLEFT", 0, -10);
-  MonDKP.ConfigTab1.checkBtn[7].text:SetText("Warlock");
-  MonDKP.ConfigTab1.checkBtn[7]:SetID(7)
-  MonDKP.ConfigTab1.checkBtn[7]:SetChecked(true);
-  MonDKP.ConfigTab1.checkBtn[7]:SetScript("OnClick", FilterChecks)
-
-  -- Class Check Button 8:
-  MonDKP.ConfigTab1.checkBtn[8] = CreateFrame("CheckButton", nil, MonDKP.ConfigTab1, "UICheckButtonTemplate");
-  MonDKP.ConfigTab1.checkBtn[8]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[4], "BOTTOMLEFT", 0, -10);
-  MonDKP.ConfigTab1.checkBtn[8].text:SetText("Warrior");
-  MonDKP.ConfigTab1.checkBtn[8]:SetID(8)
-  MonDKP.ConfigTab1.checkBtn[8]:SetChecked(true);
-  MonDKP.ConfigTab1.checkBtn[8]:SetScript("OnClick", FilterChecks)
-
-  -- Class Check Button 9:
-  MonDKP.ConfigTab1.checkBtn[9] = CreateFrame("CheckButton", nil, MonDKP.ConfigTab1, "UICheckButtonTemplate");
-  MonDKP.ConfigTab1.checkBtn[9]:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab1.checkBtn[3], "TOPLEFT", 10, 0);
-  MonDKP.ConfigTab1.checkBtn[9].text:SetText("All");
-  MonDKP.ConfigTab1.checkBtn[9]:SetID(9)
-  MonDKP.ConfigTab1.checkBtn[9]:SetChecked(true);
-  MonDKP.ConfigTab1.checkBtn[9]:SetScript("OnClick",
-    function()
-      for i=1, 9 do
-        if (checkAll) then
-          MonDKP.ConfigTab1.checkBtn[i]:SetChecked(false)
+      for k,v in pairs(core.classes) do               -- sets core.classFiltered table with all values
+        if (MonDKP.ConfigTab1.checkBtn[k]:GetChecked() == true) then
+          core.classFiltered[v] = true;
         else
-          MonDKP.ConfigTab1.checkBtn[i]:SetChecked(true)
+          core.classFiltered[v] = false;
         end
       end
-      checkAll = not checkAll;
-      FilterChecks(MonDKP.ConfigTab1.checkBtn[9]);
-    end)
-
-  for k,v in pairs(core.classes) do               -- sets core.classFiltered table with all values
-    if (MonDKP.ConfigTab1.checkBtn[k]:GetChecked() == true) then
-      core.classFiltered[v] = true;
     else
-      core.classFiltered[v] = false;
+      MonDKP.ConfigTab1.checkBtn[i]:SetScript("OnClick", FilterChecks)
     end
   end
 
-  -- Check Button 10 (In Part):   No Functionality yet
-  MonDKP.ConfigTab1.checkBtn[10] = CreateFrame("CheckButton", nil, MonDKP.ConfigTab1, "UICheckButtonTemplate");
+  -- Class Check Buttons:
+  MonDKP.ConfigTab1.checkBtn[1]:SetPoint("TOPLEFT", MonDKP.ConfigTab1, "TOPLEFT", 15, -60);
+  MonDKP.ConfigTab1.checkBtn[2]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[1], "TOPRIGHT", 50, 0);
+  MonDKP.ConfigTab1.checkBtn[3]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[2], "TOPRIGHT", 50, 0);
+  MonDKP.ConfigTab1.checkBtn[4]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[3], "TOPRIGHT", 50, 0);
+  MonDKP.ConfigTab1.checkBtn[5]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[1], "BOTTOMLEFT", 0, -10);
+  MonDKP.ConfigTab1.checkBtn[6]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[2], "BOTTOMLEFT", 0, -10);
+  MonDKP.ConfigTab1.checkBtn[7]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[3], "BOTTOMLEFT", 0, -10);
+  MonDKP.ConfigTab1.checkBtn[8]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[4], "BOTTOMLEFT", 0, -10);
+
+  -- Other filter buttons
+  MonDKP.ConfigTab1.checkBtn[9]:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab1.checkBtn[3], "TOPLEFT", 10, 0);
+  MonDKP.ConfigTab1.checkBtn[9].text:SetText("All");
   MonDKP.ConfigTab1.checkBtn[10]:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab1.checkBtn[2], "TOPLEFT", -15, 0);
   MonDKP.ConfigTab1.checkBtn[10].text:SetText("In Party/Raid");
-  MonDKP.ConfigTab1.checkBtn[10]:SetID(9)
-  MonDKP.ConfigTab1.checkBtn[10]:SetChecked(false);
-  MonDKP.ConfigTab1.checkBtn[10]:SetScript("OnClick", FilterChecks)
+
   ---------------------------------------
   -- MENU TAB 2 (Currently ONLY Filler elements)
   ---------------------------------------
 
-  MonDKP.ConfigTab2.text = MonDKP.ConfigTab2:CreateFontString(nil, "OVERLAY")   -- not in a function so requires CreateFontString
-  MonDKP.ConfigTab2.text:ClearAllPoints();
-  MonDKP.ConfigTab2.text:SetFontObject("GameFontHighlight");
-  MonDKP.ConfigTab2.text:SetPoint("TOPLEFT", MonDKP.ConfigTab2, "TOPLEFT", 15, -10);
-  MonDKP.ConfigTab2.text:SetText("Content TWO!"); 
+  MonDKP.ConfigTab2.header = MonDKP.ConfigTab2:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab2.header:SetFontObject("GameFontNormalLarge");
+  MonDKP.ConfigTab2.header:SetPoint("TOPLEFT", MonDKP.ConfigTab2, "TOPLEFT", 15, -10);
+  MonDKP.ConfigTab2.header:SetText("Adjust DKP");
+  MonDKP.ConfigTab2.header:SetScale(1.2)
 
-  -- Button:
-  MonDKP.ConfigTab2.trackBtn = self:CreateButton("CENTER", MonDKP.ConfigTab2, "TOP", 0, -70, "Award DKP");
-  MonDKP.ConfigTab2.trackBtn:SetSize(90,20)
+  MonDKP.ConfigTab2.description = MonDKP.ConfigTab2:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab2.description:SetFontObject("GameFontHighlightLeft");
+  MonDKP.ConfigTab2.description:SetPoint("TOPLEFT", MonDKP.ConfigTab2.header, "BOTTOMLEFT", 7, -10);
+  MonDKP.ConfigTab2.description:SetText("Select individual users from the left (Shift+Click\nfor multiple users) or click \"Select All Visible\"\nbelow and enter amount to adjust.\n\n\"Select All Visible\" will only select entries visible.\nCan be narrowed down via the Filters Tab\n\n\nPoints: (Use a negative number to deduct DKP)"); 
+
+  -- Add DKP Edit Box
+  MonDKP.ConfigTab2.addDKP = CreateFrame("EditBox", nil, MonDKP.ConfigTab2)
+  MonDKP.ConfigTab2.addDKP:SetPoint("TOPLEFT", MonDKP.ConfigTab2.description, "BOTTOMLEFT", -5, -8)     
+  MonDKP.ConfigTab2.addDKP:SetAutoFocus(false)
+  MonDKP.ConfigTab2.addDKP:SetMultiLine(false)
+  MonDKP.ConfigTab2.addDKP:SetSize(100, 24)
+  MonDKP.ConfigTab2.addDKP:SetBackdrop({
+    bgFile   = "Textures\\white.blp", tile = true,
+    edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
+  });
+  MonDKP.ConfigTab2.addDKP:SetBackdropColor(0,0,0,0.9)
+  MonDKP.ConfigTab2.addDKP:SetBackdropBorderColor(1,1,1,0.6)
+  MonDKP.ConfigTab2.addDKP:SetMaxLetters(4)
+  MonDKP.ConfigTab2.addDKP:SetTextColor(1, 1, 1, 1)
+  MonDKP.ConfigTab2.addDKP:SetFontObject("GameFontNormalRight")
+  MonDKP.ConfigTab2.addDKP:SetTextInsets(10, 10, 5, 5)
+  MonDKP.ConfigTab2.addDKP:SetScript("OnEscapePressed", function(self)    -- clears text and focus on esc
+    self:SetText("")
+    self:ClearFocus()
+  end)
+
+  -- Select All Checkbox
+  MonDKP.ConfigTab2.selectAll = CreateFrame("CheckButton", nil, MonDKP.ConfigTab2, "UICheckButtonTemplate");
+  MonDKP.ConfigTab2.selectAll:SetChecked(false)
+  MonDKP.ConfigTab2.selectAll:SetScale(0.6);
+  MonDKP.ConfigTab2.selectAll.text:SetText("  Select All Visible");
+  MonDKP.ConfigTab2.selectAll.text:SetScale(1.5);
+  MonDKP.ConfigTab2.selectAll:SetPoint("LEFT", MonDKP.ConfigTab2.addDKP, "RIGHT", 15, 0);
+  MonDKP.ConfigTab2.selectAll:SetScript("OnClick", function(self)
+    if (self:GetChecked() == true) then
+      core.SelectedRows = core.WorkingTable;
+      core.SelectedData = core.WorkingTable;
+    else
+      core.SelectedRows = {}
+      core.SelectedData = {}
+    end
+    MonDKP:FilterDKPTable("class", "reset");
+  end)
+
+  MonDKP.ConfigTab2.reasonHeader = MonDKP.ConfigTab2:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab2.reasonHeader:SetFontObject("GameFontHighlightLeft");
+  MonDKP.ConfigTab2.reasonHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab2.addDKP, "BOTTOMLEFT", 5, -18);
+  MonDKP.ConfigTab2.reasonHeader:SetText("Reason for adjustment:")
+  
+  -- Reason DROPDOWN box 
+  local curReason; -- stores user input in dropdown 
+  
+  -- Create the dropdown, and configure its appearance
+  MonDKP.ConfigTab2.reasonDropDown = CreateFrame("FRAME", "MonDKPConfigReasonDropDown", MonDKP.ConfigTab2, "MonolithDKPUIDropDownMenuTemplate")
+  MonDKP.ConfigTab2.reasonDropDown:SetPoint("TOPLEFT", MonDKP.ConfigTab2.reasonHeader, "BOTTOMLEFT", -23, -10)
+  UIDropDownMenu_SetWidth(MonDKP.ConfigTab2.reasonDropDown, 100)
+  UIDropDownMenu_SetText(MonDKP.ConfigTab2.reasonDropDown)
+
+  -- Create and bind the initialization function to the dropdown menu
+  UIDropDownMenu_Initialize(MonDKP.ConfigTab2.reasonDropDown, function(self, level, menuList)
+  local reason = UIDropDownMenu_CreateInfo()
+    -- Display the 0-9, 10-19, ... groups
+    reason.func = self.SetValue
+    reason.text, reason.arg1, reason.checked, reason.isNotRadio = "DKP Adjust", "DKP Adjust", "DKP Adjust" == curReason, true
+    UIDropDownMenu_AddButton(reason)
+    reason.text, reason.arg1, reason.checked, reason.isNotRadio = "Failed", "Failed", "Failed" == curReason, true
+    UIDropDownMenu_AddButton(reason)
+    reason.text, reason.arg1, reason.checked, reason.isNotRadio = "Just Cuz", "Just Cuz", "Just Cuz" == curReason, true
+    UIDropDownMenu_AddButton(reason)
+  end)
+
+  -- Dropdown Menu Function
+  function MonDKP.ConfigTab2.reasonDropDown:SetValue(newValue)
+    curReason = newValue
+    UIDropDownMenu_SetText(MonDKP.ConfigTab2.reasonDropDown, newValue)
+    CloseDropDownMenus()
+  end
+
+  -- Adjust DKP Button
+  MonDKP.ConfigTab2.adjustButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab2.reasonDropDown, "BOTTOMLEFT", 20, -5, "Adjust DKP");
+  MonDKP.ConfigTab2.adjustButton:SetSize(90,25)
+  MonDKP.ConfigTab2.adjustButton:SetScript("OnClick", function()
+    if (#core.SelectedData > 1 and curReason) then
+      local tempString = "";       -- stores list of changes
+      for i=1, #core.SelectedData do
+        if MonDKP:Table_Search(core.WorkingTable, core.SelectedData[i]["player"]) then
+            if i < #core.SelectedData then
+              tempString = tempString..core.SelectedData[i]["player"]..", ";
+            else
+              tempString = tempString..core.SelectedData[i]["player"];
+            end
+            MonDKP:DKPTable_Set(core.SelectedData[i]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber())
+        end
+      end
+      if (MonDKP.ConfigTab1.checkBtn[10]:GetChecked() and MonDKP.ConfigTab2.selectAll:GetChecked()) then
+        MonDKP:Print("Raid DKP Adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for reason: "..curReason)
+      else
+        MonDKP:Print("DKP Adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for the following users: ")
+        MonDKP:Print(tempString)
+        MonDKP:Print("Reason: "..curReason)
+      end
+    elseif (#core.SelectedData == 1 and curReason) then
+      if core.SelectedData[1]["player"] and MonDKP:Table_Search(core.WorkingTable, core.SelectedData[1]["player"]) then
+        MonDKP:DKPTable_Set(core.SelectedData[1]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber())
+        MonDKP:Print(core.SelectedData[1]["player"].."s DKP adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for reason: "..curReason)
+      end
+    else
+      local validation;
+      if (#core.SelectedData == 0 and not curReason) then
+        validation = "Entry or Reason"
+      elseif #core.SelectedData == 0 then
+        validation = "Entry"
+      elseif not curReason then
+        validation = "Reason"
+      end
+      StaticPopupDialogs["VALIDATION_PROMPT"] = {
+        text = "No "..validation.." Selected",
+        button1 = "OK",
+        timeout = 5,
+        whileDead = true,
+        hideOnEscape = true,
+        preferredIndex = 3,
+      }
+      StaticPopup_Show ("VALIDATION_PROMPT")
+    end
+  end)
+
+  
 
   -- Button:  
   MonDKP.ConfigTab2.stopTrackBtn = self:CreateButton("TOP", MonDKP.ConfigTab2.trackBtn, "BOTTOM", 0, -10, "Remove DKP");

@@ -28,15 +28,16 @@ local defaults = {
   theme2 = { r = 1, g = 0.37, b = 0.37, hex = "ff6060" }
 }
 
-core.MonDKPUI = {}
+core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
 core.classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
 core.MonVersion = "v0.1 (alpha)";
-core.WorkingTable = {};
+core.WorkingTable = {};       -- table of all entries from MonDKP_DKPTable that are currently visible in the window
+core.SelectedRows = {};       -- tracks rows in DKPTable that are currently selected for SetHighlightTexture
 
-function GetCColors(class)
+function MonDKP:GetCColors(class)
   if core.CColors then 
     local c = core.CColors[class];
     return c;
@@ -84,37 +85,56 @@ function MonDKP:Table_Search(tar, val)
               local temp3 = k
               for k,v in pairs(v) do
                 if string.upper(tostring(v)) == value then
-                  location = {temp1, temp2, temp3, k}
-                  return location;
+                  tinsert(location, {temp1, temp2, temp3, k} )
                 end;
               end
             end
             if string.upper(tostring(v)) == value then
-              location = {temp1, temp2, k}
-              return location
+              tinsert(location, {temp1, temp2, k} )
             end;
           end
         end
         if string.upper(tostring(v)) == value then
-          location = {temp1, k}
-          return location
+          tinsert(location, {temp1, k} )
         end;
       end
     end
     if string.upper(tostring(v)) == value then  -- only returns in indexed arrays
-      return v
+      tinsert(location, k)
     end;
   end
-  return false;
+  if (#location > 0) then
+    return location;
+  else
+    return false;
+  end
 end
 
+function MonDKP:DKPTable_Set(tar, field, value)              -- updates field with value where name is found    -- core and table functions
+  local result = MonDKP:Table_Search(MonDKP_DKPTable, tar);
+  for i=1, #result do
+    local current = MonDKP_DKPTable[result[i][1]][field];
+    if(field == "dkp") then
+      MonDKP_DKPTable[result[i][1]][field] = current + value
+    else
+      MonDKP_DKPTable[result[i][1]][field] = value
+    end
+  end
+  MonDKP:FilterDKPTable("class", "reset")
+end
+  
+
 function MonDKP:PrintTable(tar)             --prints table structure for testing purposes
+  ChatFrame1:Clear()
   for k,v in pairs(tar) do                  -- remove prior to RC
     if (type(v) == "table") then
+      print(k)
       for k,v in pairs(v) do
         if (type(v) == "table") then
+          print("    ", k)
           for k,v in pairs(v) do
             if (type(v) == "table") then
+              print("        ", k)
               for k,v in pairs(v) do
                 if (type(v) ~= "table") then
                   print("            ", k, " -> ", v)

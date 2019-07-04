@@ -39,7 +39,7 @@ end
 local SortButtons = {}
 
 function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTable based on classes in classFiltered table.
-  core.WorkingTable = {}                      -- classFiltered stores true/false
+  core.WorkingTable = {}
   for k,v in pairs(MonDKP_DKPTable) do        -- sort and reset are used to pass along to MonDKP:SortDKPTable()
     if(core.classFiltered[MonDKP_DKPTable[k]["class"]] == true) then
       tinsert(core.WorkingTable, v)
@@ -68,7 +68,7 @@ function MonDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable 
       if(id == "dkp") then return a[button.Id] < b[button.Id] else return a[button.Id] > b[button.Id] end
     end
   end)
-  DKPTable_Update(MonDKP.DKPTable)
+  DKPTable_Update()
 end
 
 function MonDKP:CreateMenu()
@@ -117,7 +117,7 @@ function MonDKP:CreateMenu()
   MonDKP.UIConfig.closeContainer:SetBackdropBorderColor(1,1,1,0.2)
   MonDKP.UIConfig.closeContainer:SetSize(28, 28)
 
-  MonDKP.UIConfig.closeBtn = CreateFrame("Button", nil, MonDKP.UIConfig.closeContainer, "UIPanelCloseButton")
+  MonDKP.UIConfig.closeBtn = CreateFrame("Button", nil, MonDKP.UIConfig, "UIPanelCloseButton")
   MonDKP.UIConfig.closeBtn:SetPoint("CENTER", MonDKP.UIConfig.closeContainer, "TOPRIGHT", -14, -14)
   tinsert(UISpecialFrames, MonDKP.UIConfig:GetName()); -- Sets frame to close on "Escape"
 
@@ -151,35 +151,9 @@ function MonDKP:CreateMenu()
   MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", MonDKP.UIConfig.TabMenu.ScrollFrame, "BOTTOMRIGHT", -2, 15);
 
 
-  -- Create and populate Config Menu Tabs
-  MonDKP:ConfigMenuTabs()
-
-  ---------------------------------------
-  -- DKP Table (TableFunctions.lua)
-  ---------------------------------------
-  -- Creating the DKP Table
-  ---------------------------------------
-  MonDKP.DKPTable = CreateFrame("ScrollFrame", "MonDKPDisplayScrollFrame", MonDKP.UIConfig, "FauxScrollFrameTemplate")
-  MonDKP.DKPTable:SetSize(core.TableWidth, core.TableRowHeight*core.TableNumRows)
-  MonDKP.DKPTable:SetPoint("LEFT", 20, 3)
-  MonDKP.DKPTable:SetBackdrop( {
-    bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
-    edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
-    insets = { left = 0, right = 0, top = 0, bottom = 0 }
-  });
-  MonDKP.DKPTable:SetBackdropColor(0,0,0,0.4);
-  MonDKP.DKPTable:SetBackdropBorderColor(1,1,1,0.5)
-  MonDKP.DKPTable:SetClipsChildren(false);
-
-  MonDKP.DKPTable.ScrollBar = FauxScrollFrame_GetChildFrames(MonDKP.DKPTable)
-  MonDKP.DKPTable.Rows = {}
-  for i=1, core.TableNumRows do
-    MonDKP.DKPTable.Rows[i] = CreateRow(MonDKP.DKPTable, i)
-    MonDKP.DKPTable.Rows[i]:SetPoint("TOPLEFT", MonDKP.DKPTable.Rows[i-1] or MonDKP.DKPTable, MonDKP.DKPTable.Rows[i-1] and "BOTTOMLEFT" or "TOPLEFT")
-  end
-  MonDKP.DKPTable:SetScript("OnVerticalScroll", function(self, offset)
-    FauxScrollFrame_OnVerticalScroll(self, offset, core.TableRowHeight, DKPTable_Update)
-  end)
+  
+  MonDKP:ConfigMenuTabs();        -- Create and populate Config Menu Tabs
+  MonDKP:DKPTable_Create();       -- Create DKPTable and populate rows
   
   ---------------------------------------
   -- DKP Table Headesr and Sort Buttons

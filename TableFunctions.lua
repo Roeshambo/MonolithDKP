@@ -2,7 +2,6 @@ local _, core = ...;
 local _G = _G;
 local MonDKP = core.MonDKP;
 
-local SelectedRows = {};      -- tracks rows in DKPTable that are currently selected for SetHighlightTexture
 local SelectedRow = 0;        -- sets the row that is being clicked
 
 function DKPTable_OnClick(self)   
@@ -12,21 +11,21 @@ function DKPTable_OnClick(self)
   if(not IsShiftKeyDown()) then
     for i=1, core.TableNumRows do
       table.wipe(core.SelectedData)
-      TempSearch = MonDKP:Table_Search(SelectedRows, SelectedRow);
-      table.wipe(SelectedRows)
+      TempSearch = MonDKP:Table_Search(core.SelectedRows, SelectedRow);
+      table.wipe(core.SelectedRows)
       if (TempSearch == false) then
-        tinsert(SelectedRows, {SelectedRow});
+        tinsert(core.SelectedRows, {SelectedRow});
       else
         table.wipe(core.SelectedData)
       end
       self:GetParent().Rows[i]:SetNormalTexture("Interface\\AddOns\\MonolithDKP\\textures\\ListBox-Highlight")
     end
   else
-    TempSearch = MonDKP:Table_Search(SelectedRows, SelectedRow);
+    TempSearch = MonDKP:Table_Search(core.SelectedRows, SelectedRow);
     if (TempSearch == false) then
-      tinsert(SelectedRows, {SelectedRow});
+      tinsert(core.SelectedRows, {SelectedRow});
     else
-      tremove(SelectedRows, TempSearch[1])
+      tremove(core.SelectedRows, TempSearch[1][1])
     end
   end
   if (TempSearch == false) then
@@ -37,11 +36,11 @@ function DKPTable_OnClick(self)
       previous_dkp=core.WorkingTable[SelectedRow].previous_dkp
     });
   else
-    tremove(core.SelectedData, TempSearch[1])
+    tremove(core.SelectedData, TempSearch[1][1])
   end
   for i=1, core.TableNumRows do
     index = offset + i;
-    local a = MonDKP:Table_Search(SelectedRows, index);
+    local a = MonDKP:Table_Search(core.SelectedRows, index);
     if(a==false) then
       MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
       MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.2)
@@ -53,7 +52,7 @@ function DKPTable_OnClick(self)
   MonDKP.Sync:SendData(core.WorkingTable)
 end
 
-function CreateRow(parent, id) -- Create 3 buttons for each row in the list
+local function CreateRow(parent, id) -- Create 3 buttons for each row in the list
     local f = CreateFrame("Button", "$parentLine"..id, parent)
     f.DKPInfo = {}
     f:SetSize(core.TableWidth, core.TableRowHeight)
@@ -88,7 +87,7 @@ function CreateRow(parent, id) -- Create 3 buttons for each row in the list
     return f
 end
 
-function DKPTable_Update(self)
+function DKPTable_Update()
   local numOptions = #core.WorkingTable
   local index, row, c
   local offset = FauxScrollFrame_GetOffset(MonDKP.DKPTable) or 0
@@ -100,7 +99,7 @@ function DKPTable_Update(self)
     row = MonDKP.DKPTable.Rows[i]
     index = offset + i
     if core.WorkingTable[index] then
-      c = GetCColors(core.WorkingTable[index].class);
+      c = MonDKP:GetCColors(core.WorkingTable[index].class);
       row:Show()
       row.index = index
       row.DKPInfo[1]:SetText(core.WorkingTable[index].player)
@@ -112,8 +111,10 @@ function DKPTable_Update(self)
       if(CheckAdjusted > 0) then 
         CheckAdjusted = strjoin("", "+", CheckAdjusted) 
         row.DKPInfo[3].adjustedArrow:SetTexture("Interface\\AddOns\\MonolithDKP\\textures\\green-up-arrow.png");
-      else
+      elseif (CheckAdjusted < 0) then
         row.DKPInfo[3].adjustedArrow:SetTexture("Interface\\AddOns\\MonolithDKP\\textures\\red-down-arrow.png");
+      else
+        row.DKPInfo[3].adjustedArrow:SetTexture(nil);
       end        
       row.DKPInfo[3].adjusted:SetText("("..CheckAdjusted..")");
 
@@ -132,6 +133,31 @@ function DKPTable_Update(self)
   MonDKP.DKPTable.counter.t:SetText(#core.WorkingTable.." Entries Shown");    -- updates "Entries Shown" at bottom of DKPTable
   FauxScrollFrame_Update(MonDKP.DKPTable, numOptions, core.TableNumRows, core.TableRowHeight, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding
 end
+
+function MonDKP:DKPTable_Create()
+  MonDKP.DKPTable = CreateFrame("ScrollFrame", "MonDKPDisplayScrollFrame", MonDKP.UIConfig, "FauxScrollFrameTemplate")
+  MonDKP.DKPTable:SetSize(core.TableWidth, core.TableRowHeight*core.TableNumRows)
+  MonDKP.DKPTable:SetPoint("LEFT", 20, 3)
+  MonDKP.DKPTable:SetBackdrop( {
+    bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
+    edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,
+    insets = { left = 0, right = 0, top = 0, bottom = 0 }
+  });
+  MonDKP.DKPTable:SetBackdropColor(0,0,0,0.4);
+  MonDKP.DKPTable:SetBackdropBorderColor(1,1,1,0.5)
+  MonDKP.DKPTable:SetClipsChildren(false);
+
+  MonDKP.DKPTable.ScrollBar = FauxScrollFrame_GetChildFrames(MonDKP.DKPTable)
+  MonDKP.DKPTable.Rows = {}
+  for i=1, core.TableNumRows do
+    MonDKP.DKPTable.Rows[i] = CreateRow(MonDKP.DKPTable, i)
+    MonDKP.DKPTable.Rows[i]:SetPoint("TOPLEFT", MonDKP.DKPTable.Rows[i-1] or MonDKP.DKPTable, MonDKP.DKPTable.Rows[i-1] and "BOTTOMLEFT" or "TOPLEFT")
+  end
+  MonDKP.DKPTable:SetScript("OnVerticalScroll", function(self, offset)
+    FauxScrollFrame_OnVerticalScroll(self, offset, core.TableRowHeight, DKPTable_Update)
+  end)
+end
+
 
 --creat table for all dkp holders
 --shift to working table and clear as needed.

@@ -28,10 +28,12 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 		end
 		decoded = LibCompress:Decompress(LibCompressAddonEncodeTable:Decode(message))
 		local success, deserialized = LibAceSerializer:Deserialize(decoded);
-		if success then			
-			MonDKP_DKPTable = deserialized;			-- populates SavedVariables
-			core.WorkingTable = deserialized;		-- populates WorkingTable
-			DKPTable_Update(MonDKP.DKPTable)
+		if success then
+			-- SET IF CONTAINER BASED ON PREFIX
+			-- statement will decide what to do with the deserialized data based on the prefix it's sent with
+			MonDKP_DKPTable = deserialized;			-- commits to SavedVariables
+			core.WorkingTable = deserialized;		-- commits to WorkingTable (visible list in configuration window)
+			DKPTable_Update()
 			if (sender ~= UnitName("player")) then
 				MonDKP:Print("DKP Database update complete!")
 			else
