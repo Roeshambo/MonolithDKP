@@ -126,7 +126,7 @@ function MonDKP:CreateMenu()
   ---------------------------------------
 
   MonDKP.UIConfig.TabMenu = CreateFrame("Frame", "MonDKPMonDKP.ConfigTabMenu", MonDKP.UIConfig);
-  MonDKP.UIConfig.TabMenu:SetPoint("TOPRIGHT", MonDKP.UIConfig, "TOPRIGHT", -35, -25);
+  MonDKP.UIConfig.TabMenu:SetPoint("TOPRIGHT", MonDKP.UIConfig, "TOPRIGHT", -25, -25);
   MonDKP.UIConfig.TabMenu:SetSize(400, 500);
   MonDKP.UIConfig.TabMenu:SetBackdrop( {
     bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
