@@ -1,6 +1,6 @@
 --[[
   Core.lua is intended to store all core functions and variables to be used throughout the addon. 
-  Don't put anything in here that you don't want to be loaded FIRST.
+  Don't put anything in here that you don't want to be loaded immediately after the Libs but before initialization.
 --]]
 
 local _, core = ...;
@@ -9,65 +9,23 @@ local _G = _G;
 core.MonDKP = {};       -- UI Frames global
 local MonDKP = core.MonDKP;
 
-core.CColors = {   -- class colors in RGB
-  ["Druid"] = {
-    r = 1,
-    g = 0.49,
-    b = 0.04
-  },
-  ["Hunter"] = {
-    r = 0.67,
-    g = 0.83,
-    b = 0.45
-  },
-  ["Mage"] = {
-    r = 0.25,
-    g = 0.78,
-    b = 0.92
-  },
-  ["Priest"] = {
-    r = 1,
-    g = 1,
-    b = 1
-  },
-  ["Rogue"] = {
-    r = 1,
-    g = 0.96,
-    b = 0.41
-  },
-  ["Shaman"] = {
-    r = 0.96,
-    g = 0.55,
-    b = 0.73
-  },
-  ["Warlock"] = {
-    r = 0.53,
-    g = 0.53,
-    b = 0.93
-  },
-  ["Warrior"] = {
-    r = 0.78,
-    g = 0.61,
-    b = 0.43
-  }
+core.CColors = {   -- class colors
+  ["Druid"] = { r = 1, g = 0.49, b = 0.04, hex = "FF7D0A" },
+  ["Hunter"] = {  r = 0.67, g = 0.83, b = 0.45, hex = "ABD473" },
+  ["Mage"] = { r = 0.25, g = 0.78, b = 0.92, hex = "40C7EB" },
+  ["Priest"] = { r = 1, g = 1, b = 1, hex = "FFFFFF" },
+  ["Rogue"] = { r = 1, g = 0.96, b = 0.41, hex = "FFF569" },
+  ["Shaman"] = { r = 0.96, g = 0.55, b = 0.73, hex = "F58CBA" },
+  ["Warlock"] = { r = 0.53, g = 0.53, b = 0.93, hex = "8787ED" },
+  ["Warrior"] = { r = 0.78, g = 0.61, b = 0.43, hex = "C79C6E" }
 }
 
 --------------------------------------
 -- Addon Defaults
 --------------------------------------
 local defaults = {
-  theme = {
-    r = 0.6823, 
-    g = 0.6823,
-    b = 0.8666,
-    hex = "aeaedd"
-  },
-  theme2 = {
-    r = 1,
-    g = 0.37,
-    b = 0.37,
-    hex = "ff6060"
-  }
+  theme = { r = 0.6823, g = 0.6823, b = 0.8666, hex = "aeaedd" },
+  theme2 = { r = 1, g = 0.37, b = 0.37, hex = "ff6060" }
 }
 
 core.MonDKPUI = {}
@@ -85,10 +43,6 @@ function GetCColors(class)
   else
     return false;
   end
-end
-
-function MonDKP:GetVer()
-  return core.MonVersion;
 end
 
 function MonDKP:ResetPosition()
@@ -114,7 +68,7 @@ end
 -- Recursively searches tar (table) for val (string) as far as 4 nests deep
 -- returns an indexed array of the keys to get to it.
 -- IE: If the returned array is {1,3,2,player} it means it is located at tar[1][3][2][player]
--- use to search for players in SavedVariables. If not found, returns false
+-- use to search for players in SavedVariables. Only two possible returns is the table or false.
 -------------------------------------
 function MonDKP:Table_Search(tar, val)
   local value = string.upper(tostring(val));
@@ -155,7 +109,7 @@ function MonDKP:Table_Search(tar, val)
 end
 
 function MonDKP:PrintTable(tar)             --prints table structure for testing purposes
-  for k,v in pairs(tar) do
+  for k,v in pairs(tar) do                  -- remove prior to RC
     if (type(v) == "table") then
       for k,v in pairs(v) do
         if (type(v) == "table") then

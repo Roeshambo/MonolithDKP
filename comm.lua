@@ -23,6 +23,9 @@ end
 
 function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 	if (prefix) then
+		if (sender ~= UnitName("player")) then
+			MonDKP:Print("DKP Database update initiated by "..sender.."...")
+		end
 		decoded = LibCompress:Decompress(LibCompressAddonEncodeTable:Decode(message))
 		local success, deserialized = LibAceSerializer:Deserialize(decoded);
 		if success then			
@@ -30,7 +33,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 			core.WorkingTable = deserialized;		-- populates WorkingTable
 			DKPTable_Update(MonDKP.DKPTable)
 			if (sender ~= UnitName("player")) then
-				MonDKP:Print("DKP Database updated by "..sender.."!")
+				MonDKP:Print("DKP Database update complete!")
 			else
 				MonDKP:Print("DKP Database successfully sent!")
 			end
@@ -51,6 +54,7 @@ function MonDKP.Sync:SendData(data)
 	end
 
 	-- compress serialized string with both possible compressions for comparison
+	-- I do both in case one of them doesn't retain integrity after decompression and decoding, the other is sent
 	local huffmanCompressed = LibCompress:CompressHuffman(serialized);
 	if huffmanCompressed then
 		huffmanCompressed = LibCompressAddonEncodeTable:Encode(huffmanCompressed);
@@ -75,14 +79,15 @@ function MonDKP.Sync:SendData(data)
 	elseif (strlen(huffmanCompressed) > strlen(lzwCompressed) and verInteg2 == true) then
 		packet = lzwCompressed
 	elseif (strlen(huffmanCompressed) == strlen(lzwCompressed)) then
-		if verInteg1 == true then packet = huffmanCompressed else packet = lzwCompressed end
+		if verInteg1 == true then packet = huffmanCompressed
+		elseif verInteg2 == true then packet = lzwCompressed end
 	end
 
-	--debug lengths
+	--debug lengths, uncomment to see string lengths of each uncompressed, Huffman and LZQ compressions
 	--[[print("Uncompressed: ", strlen(serialized))
 	print("Huffman: ", strlen(huffmanCompressed))
 	print("LZQ: ", strlen(lzwCompressed)) --]]
 
-	-- send the message
+	-- send packet
 	MonDKP.Sync:SendCommMessage("MonDKPDataSync", packet, "PARTY")
 end

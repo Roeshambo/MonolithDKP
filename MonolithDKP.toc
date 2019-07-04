@@ -10,4 +10,7 @@ Core.lua
 comm.lua
 MonolithDKP.lua
 init.lua
+ConfigMenuTabs.lua
 TableFunctions.lua
+XMLFunctions.lua
+MonolithDKP.xml

@@ -3,7 +3,7 @@ local _G = _G;
 local MonDKP = core.MonDKP;
 
 --------------------------------------
--- Custom Slash Command
+-- Slash Command
 --------------------------------------
 MonDKP.Commands = {
 	["config"] = MonDKP.Toggle,
@@ -50,7 +50,6 @@ local function HandleSlashCommands(str)
 					path = path[arg];
 				end
 			else
-				-- does not exist!
 				MonDKP.Commands.help();
 				return;
 			end
@@ -81,7 +80,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	SLASH_MonolithDKP1 = "/dkp";
 	SlashCmdList.MonolithDKP = HandleSlashCommands;
 	
-    MonDKP:Print("Welcome back", UnitName("player").."!");
+    MonDKP:Print("Welcome back, ", UnitName("player").."!");
 
     if(event == "ADDON_LOADED") then
     	core.loaded = 1;

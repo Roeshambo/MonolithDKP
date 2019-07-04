@@ -19,7 +19,7 @@ function DKPTable_OnClick(self)
       else
         table.wipe(core.SelectedData)
       end
-      self:GetParent().Rows[i]:SetNormalTexture(nil)
+      self:GetParent().Rows[i]:SetNormalTexture("Interface\\AddOns\\MonolithDKP\\textures\\ListBox-Highlight")
     end
   else
     TempSearch = MonDKP:Table_Search(SelectedRows, SelectedRow);
@@ -43,18 +43,23 @@ function DKPTable_OnClick(self)
     index = offset + i;
     local a = MonDKP:Table_Search(SelectedRows, index);
     if(a==false) then
-      MonDKP.DKPTable.Rows[i]:SetNormalTexture(nil)
+      MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
+      MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.2)
     else
-      MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
+      MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\AddOns\\MonolithDKP\\textures\\ListBox-Highlight")
+      MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
     end
   end
+  MonDKP.Sync:SendData(core.WorkingTable)
 end
 
 function CreateRow(parent, id) -- Create 3 buttons for each row in the list
     local f = CreateFrame("Button", "$parentLine"..id, parent)
     f.DKPInfo = {}
     f:SetSize(core.TableWidth, core.TableRowHeight)
-    f:SetHighlightTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp");
+    f:SetHighlightTexture("Interface\\AddOns\\MonolithDKP\\textures\\ListBox-Highlight");
+    f:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
+    f:GetNormalTexture():SetAlpha(0.2)
     f:SetScript("OnClick", DKPTable_OnClick)
     for i=1, 3 do
       f.DKPInfo[i] = f:CreateFontString(nil, "OVERLAY");
@@ -87,11 +92,11 @@ function DKPTable_Update(self)
   local numOptions = #core.WorkingTable
   local index, row, c
   local offset = FauxScrollFrame_GetOffset(MonDKP.DKPTable) or 0
-  for i=1, core.TableNumRows do
+  for i=1, core.TableNumRows do     -- hide all rows before displaying them 1 by 1 as they show values
     row = MonDKP.DKPTable.Rows[i];
     row:Hide();
   end
-  for i=1, core.TableNumRows do
+  for i=1, core.TableNumRows do     -- show rows if they have values
     row = MonDKP.DKPTable.Rows[i]
     index = offset + i
     if core.WorkingTable[index] then
@@ -114,9 +119,11 @@ function DKPTable_Update(self)
 
       local a = MonDKP:Table_Search(core.SelectedData, core.WorkingTable[index].player);  -- searches selectedData for the player name indexed.
       if(a==false) then
-        MonDKP.DKPTable.Rows[i]:SetNormalTexture(nil)
+        MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
+        MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.2)
       else
-        MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\BUTTONS\\UI-Listbox-Highlight2.blp")
+        MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\AddOns\\MonolithDKP\\textures\\ListBox-Highlight")
+        MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
       end
     else
       row:Hide()
