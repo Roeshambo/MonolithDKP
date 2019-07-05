@@ -84,12 +84,21 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 
     if(event == "ADDON_LOADED") then
     	core.loaded = 1;
-	    if (MonDKP_DB == nil) then MonDKP_DB = {} end;
 		if (MonDKP_Log == nil) then MonDKP_Log = {} end;
 		if (MonDKP_DKPTable == nil) then MonDKP_DKPTable = {} end;
 		if (MonDKP_Tables == nil) then MonDKP_Tables = {} end;
 		if (MonDKP_Loot == nil) then MonDKP_Loot = {} end;
+	    if (MonDKP_DB == nil) then 
+	    	MonDKP_DB = {
+	    		DKPBonus = { OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10 }
+	    	} 
+	    end;
 
+	    ------------------------------------
+	    --	Import SavedVariables
+	    ------------------------------------
+	    core.settings = MonDKP_DB
+	    core.WorkingTable = MonDKP_DKPTable;
 		-- Populates SavedVariable MonDKP_DKPTable with fake values for testing purposes if they don't already exist
 		-- Delete this section and \WTF\AccountACCOUNT_NAME\SavedVariables\MonolithDKP.lua prior to actual use.
 		--[[local player_names = {"Qulyolalima", "Cadhangwong", "Gilingerth", "Emondeatt", "Puthuguth", "Eminin", "Mormiannis", "Hemilionter", "Malcologan", "Alerahm", "Cricordinus", "Arommoth", "Barnamnon", "Eughtor", "Aldreavus", "Loylencel", "Barredgar", "Gerneheav", "Julivente", "Barlannel", "Audeacell", "Derneth", "Fredeond", "Gutrichas", "Wiliannel", "Siertlan", "Simitram", "Ronettius", "Livendley", "Mordannichas", "Tevistavus", "Jaspian"}
@@ -109,7 +118,6 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		-- End testing DB
 
 		MonDKP:Print("Loaded "..#MonDKP_DKPTable.." records.");
-		core.WorkingTable = MonDKP_DKPTable;
 		core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();
 	end
 end

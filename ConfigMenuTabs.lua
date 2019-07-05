@@ -159,11 +159,60 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab2.description = MonDKP.ConfigTab2:CreateFontString(nil, "OVERLAY")
   MonDKP.ConfigTab2.description:SetFontObject("GameFontHighlightLeft");
   MonDKP.ConfigTab2.description:SetPoint("TOPLEFT", MonDKP.ConfigTab2.header, "BOTTOMLEFT", 7, -10);
-  MonDKP.ConfigTab2.description:SetText("Select individual users from the left (Shift+Click\nfor multiple users) or click \"Select All Visible\"\nbelow and enter amount to adjust.\n\n\"Select All Visible\" will only select entries visible.\nCan be narrowed down via the Filters Tab\n\n\nPoints: (Use a negative number to deduct DKP)"); 
+  MonDKP.ConfigTab2.description:SetText("Select individual users from the left (Shift+Click\nfor multiple users) or click \"Select All Visible\"\nbelow and enter amount to adjust.\n\n\"Select All Visible\" will only select entries visible.\nCan be narrowed down via the Filters Tab\n\n\nReason for adjustment:"); 
 
+  -- Reason DROPDOWN box 
+  local curReason; -- stores user input in dropdown 
+  
+  -- Create the dropdown, and configure its appearance
+  MonDKP.ConfigTab2.reasonDropDown = CreateFrame("FRAME", "MonDKPConfigReasonDropDown", MonDKP.ConfigTab2, "MonolithDKPUIDropDownMenuTemplate")
+  MonDKP.ConfigTab2.reasonDropDown:SetPoint("TOPLEFT", MonDKP.ConfigTab2.description, "BOTTOMLEFT", -23, -10)
+  UIDropDownMenu_SetWidth(MonDKP.ConfigTab2.reasonDropDown, 150)
+  UIDropDownMenu_SetText(MonDKP.ConfigTab2.reasonDropDown)
+
+  -- Create and bind the initialization function to the dropdown menu
+  UIDropDownMenu_Initialize(MonDKP.ConfigTab2.reasonDropDown, function(self, level, menuList)
+  local reason = UIDropDownMenu_CreateInfo()
+    reason.func = self.SetValue
+    reason.text, reason.arg1, reason.checked, reason.isNotRadio = "On Time Bonus", "On Time Bonus", "On Time Bonus" == curReason, true
+    UIDropDownMenu_AddButton(reason)
+    reason.text, reason.arg1, reason.checked, reason.isNotRadio = "Boss Kill Bonus", "Boss Kill Bonus", "Boss Kill Bonus" == curReason, true
+    UIDropDownMenu_AddButton(reason)
+    reason.text, reason.arg1, reason.checked, reason.isNotRadio = "Raid Completion Bonus", "Raid Completion Bonus", "Raid Completion Bonus" == curReason, true
+    UIDropDownMenu_AddButton(reason)
+    reason.text, reason.arg1, reason.checked, reason.isNotRadio = "New Boss Kill Bonus", "New Boss Kill Bonus", "New Boss Kill Bonus" == curReason, true
+    UIDropDownMenu_AddButton(reason)
+    reason.text, reason.arg1, reason.checked, reason.isNotRadio = "Correcting Error", "Correcting Error", "Correcting Error" == curReason, true
+    UIDropDownMenu_AddButton(reason)
+    reason.text, reason.arg1, reason.checked, reason.isNotRadio = "DKP Adjust", "DKP Adjust", "DKP Adjust" == curReason, true
+    UIDropDownMenu_AddButton(reason)
+    reason.text, reason.arg1, reason.checked, reason.isNotRadio = "Unexcused Absence", "Unexcused Absence", "Unexcused Absence" == curReason, true
+    UIDropDownMenu_AddButton(reason)
+  end)
+
+  -- Dropdown Menu Function
+  function MonDKP.ConfigTab2.reasonDropDown:SetValue(newValue)
+    curReason = newValue
+    local DKPSettings = MonDKP:GetDKPSettings()
+    UIDropDownMenu_SetText(MonDKP.ConfigTab2.reasonDropDown, newValue)
+
+    if (curReason == "On Time Bonus") then MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["OnTimeBonus"]))
+    elseif (curReason == "Boss Kill Bonus") then MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["BossKillBonus"]))
+    elseif (curReason == "Raid Completion Bonus") then MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["CompletionBonus"]))
+    elseif (curReason == "New Boss Kill Bonus") then MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["NewBossKillBonus"]))
+    else MonDKP.ConfigTab2.addDKP:SetText("")end
+
+    CloseDropDownMenus()
+  end
+
+  MonDKP.ConfigTab2.pointsHeader = MonDKP.ConfigTab2:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab2.pointsHeader:SetFontObject("GameFontHighlightLeft");
+  MonDKP.ConfigTab2.pointsHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab2.reasonDropDown, "BOTTOMLEFT", 25, -18);
+  MonDKP.ConfigTab2.pointsHeader:SetText("Points: (Use a negative number to deduct DKP)")
+  
   -- Add DKP Edit Box
   MonDKP.ConfigTab2.addDKP = CreateFrame("EditBox", nil, MonDKP.ConfigTab2)
-  MonDKP.ConfigTab2.addDKP:SetPoint("TOPLEFT", MonDKP.ConfigTab2.description, "BOTTOMLEFT", -5, -8)     
+  MonDKP.ConfigTab2.addDKP:SetPoint("TOPLEFT", MonDKP.ConfigTab2.pointsHeader, "BOTTOMLEFT", -5, -8)     
   MonDKP.ConfigTab2.addDKP:SetAutoFocus(false)
   MonDKP.ConfigTab2.addDKP:SetMultiLine(false)
   MonDKP.ConfigTab2.addDKP:SetSize(100, 24)
@@ -200,42 +249,8 @@ function MonDKP:ConfigMenuTabs()
     MonDKP:FilterDKPTable("class", "reset");
   end)
 
-  MonDKP.ConfigTab2.reasonHeader = MonDKP.ConfigTab2:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab2.reasonHeader:SetFontObject("GameFontHighlightLeft");
-  MonDKP.ConfigTab2.reasonHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab2.addDKP, "BOTTOMLEFT", 5, -18);
-  MonDKP.ConfigTab2.reasonHeader:SetText("Reason for adjustment:")
-  
-  -- Reason DROPDOWN box 
-  local curReason; -- stores user input in dropdown 
-  
-  -- Create the dropdown, and configure its appearance
-  MonDKP.ConfigTab2.reasonDropDown = CreateFrame("FRAME", "MonDKPConfigReasonDropDown", MonDKP.ConfigTab2, "MonolithDKPUIDropDownMenuTemplate")
-  MonDKP.ConfigTab2.reasonDropDown:SetPoint("TOPLEFT", MonDKP.ConfigTab2.reasonHeader, "BOTTOMLEFT", -23, -10)
-  UIDropDownMenu_SetWidth(MonDKP.ConfigTab2.reasonDropDown, 100)
-  UIDropDownMenu_SetText(MonDKP.ConfigTab2.reasonDropDown)
-
-  -- Create and bind the initialization function to the dropdown menu
-  UIDropDownMenu_Initialize(MonDKP.ConfigTab2.reasonDropDown, function(self, level, menuList)
-  local reason = UIDropDownMenu_CreateInfo()
-    -- Display the 0-9, 10-19, ... groups
-    reason.func = self.SetValue
-    reason.text, reason.arg1, reason.checked, reason.isNotRadio = "DKP Adjust", "DKP Adjust", "DKP Adjust" == curReason, true
-    UIDropDownMenu_AddButton(reason)
-    reason.text, reason.arg1, reason.checked, reason.isNotRadio = "Failed", "Failed", "Failed" == curReason, true
-    UIDropDownMenu_AddButton(reason)
-    reason.text, reason.arg1, reason.checked, reason.isNotRadio = "Just Cuz", "Just Cuz", "Just Cuz" == curReason, true
-    UIDropDownMenu_AddButton(reason)
-  end)
-
-  -- Dropdown Menu Function
-  function MonDKP.ConfigTab2.reasonDropDown:SetValue(newValue)
-    curReason = newValue
-    UIDropDownMenu_SetText(MonDKP.ConfigTab2.reasonDropDown, newValue)
-    CloseDropDownMenus()
-  end
-
-  -- Adjust DKP Button
-  MonDKP.ConfigTab2.adjustButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab2.reasonDropDown, "BOTTOMLEFT", 20, -5, "Adjust DKP");
+    -- Adjust DKP Button
+  MonDKP.ConfigTab2.adjustButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab2.addDKP, "BOTTOMLEFT", -1, -15, "Adjust DKP");
   MonDKP.ConfigTab2.adjustButton:SetSize(90,25)
   MonDKP.ConfigTab2.adjustButton:SetScript("OnClick", function()
     if (#core.SelectedData > 1 and curReason) then
@@ -332,13 +347,90 @@ function MonDKP:ConfigMenuTabs()
   -- MENU TAB 4 (Currently ONLY Filler elements)
   ---------------------------------------
 
-  MonDKP.ConfigTab4.text = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")   -- not in a function so requires CreateFontString
-  MonDKP.ConfigTab4.text:ClearAllPoints();
-  MonDKP.ConfigTab4.text:SetFontObject("GameFontHighlight");
-  MonDKP.ConfigTab4.text:SetPoint("TOPLEFT", MonDKP.ConfigTab4, "TOPLEFT", 15, -10);
-  MonDKP.ConfigTab4.text:SetText("Content FOUR!");
+  MonDKP.ConfigTab4.header = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab4.header:SetFontObject("GameFontNormalLarge");
+  MonDKP.ConfigTab4.header:SetPoint("TOPLEFT", MonDKP.ConfigTab4, "TOPLEFT", 15, -10);
+  MonDKP.ConfigTab4.header:SetText("Default Settings");
+  MonDKP.ConfigTab4.header:SetScale(1.2)
 
-    ---------------------------------------
+  MonDKP.ConfigTab4.description = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab4.description:SetFontObject("GameFontHighlightLeft");
+  MonDKP.ConfigTab4.description:SetPoint("TOPLEFT", MonDKP.ConfigTab4.header, "BOTTOMLEFT", 7, -10);
+  MonDKP.ConfigTab4.description:SetText("Default DKP settings for raid bonus'.");
+
+  --OnTimeBonus Header
+  MonDKP.ConfigTab4.OnTimeHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab4.OnTimeHeader:SetFontObject("GameFontHighlightLeft");
+  MonDKP.ConfigTab4.OnTimeHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab4.description, "BOTTOMLEFT", 0, -20);
+  MonDKP.ConfigTab4.OnTimeHeader:SetText("On Time Bonus: ")
+
+  --BossKillBonus Header
+  MonDKP.ConfigTab4.BossKillHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab4.BossKillHeader:SetFontObject("GameFontHighlightLeft");
+  MonDKP.ConfigTab4.BossKillHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab4.OnTimeHeader, "BOTTOMLEFT", 0, -20);
+  MonDKP.ConfigTab4.BossKillHeader:SetText("Boss Kill Bonus: ")
+
+  --CompletionBonus Header
+  MonDKP.ConfigTab4.CompleteHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab4.CompleteHeader:SetFontObject("GameFontHighlightLeft");
+  MonDKP.ConfigTab4.CompleteHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab4.BossKillHeader, "BOTTOMLEFT", 0, -20);
+  MonDKP.ConfigTab4.CompleteHeader:SetText("Raid Completion Bonus: ")
+
+  --NewBossKillBonus Header
+  MonDKP.ConfigTab4.NewBossHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab4.NewBossHeader:SetFontObject("GameFontHighlightLeft");
+  MonDKP.ConfigTab4.NewBossHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab4.CompleteHeader, "BOTTOMLEFT", 0, -20);
+  MonDKP.ConfigTab4.NewBossHeader:SetText("New Boss Kill Bonus: ")
+  
+  -- Default OnTimeBonus Edit Box
+  local default = {}
+  MonDKP.ConfigTab4.default = default;
+
+  for i=1, 4 do
+    MonDKP.ConfigTab4.default[i] = CreateFrame("EditBox", nil, MonDKP.ConfigTab4)
+    MonDKP.ConfigTab4.default[i]:SetAutoFocus(false)
+    MonDKP.ConfigTab4.default[i]:SetMultiLine(false)
+    MonDKP.ConfigTab4.default[i]:SetSize(50, 24)
+    MonDKP.ConfigTab4.default[i]:SetBackdrop({
+      bgFile   = "Textures\\white.blp", tile = true,
+      edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
+    });
+    MonDKP.ConfigTab4.default[i]:SetBackdropColor(0,0,0,0.9)
+    MonDKP.ConfigTab4.default[i]:SetBackdropBorderColor(1,1,1,0.6)
+    MonDKP.ConfigTab4.default[i]:SetMaxLetters(4)
+    MonDKP.ConfigTab4.default[i]:SetTextColor(1, 1, 1, 1)
+    MonDKP.ConfigTab4.default[i]:SetFontObject("GameFontNormalRight")
+    MonDKP.ConfigTab4.default[i]:SetTextInsets(10, 10, 5, 5)
+    MonDKP.ConfigTab4.default[i]:SetScript("OnEscapePressed", function(self)    -- clears text and focus on esc
+      self:SetText("")
+      self:ClearFocus()
+    end)
+  end
+
+  local DKPSettings = MonDKP:GetDKPSettings()
+
+  MonDKP.ConfigTab4.default[1]:SetPoint("TOPLEFT", MonDKP.ConfigTab4.OnTimeHeader, "TOPRIGHT", 5, 5)     
+  MonDKP.ConfigTab4.default[1]:SetText(tonumber(DKPSettings["OnTimeBonus"]))
+
+  MonDKP.ConfigTab4.default[2]:SetPoint("TOPLEFT", MonDKP.ConfigTab4.BossKillHeader, "TOPRIGHT", 5, 5)     
+  MonDKP.ConfigTab4.default[2]:SetText(tonumber(DKPSettings["BossKillBonus"]))
+
+  MonDKP.ConfigTab4.default[3]:SetPoint("TOPLEFT", MonDKP.ConfigTab4.CompleteHeader, "TOPRIGHT", 5, 5)     
+  MonDKP.ConfigTab4.default[3]:SetText(tonumber(DKPSettings["CompletionBonus"]))
+
+  MonDKP.ConfigTab4.default[4]:SetPoint("TOPLEFT", MonDKP.ConfigTab4.NewBossHeader, "TOPRIGHT", 5, 5)     
+  MonDKP.ConfigTab4.default[4]:SetText(tonumber(DKPSettings["NewBossKillBonus"]))
+
+  MonDKP.ConfigTab4.submitSettings = self:CreateButton("TOPLEFT", MonDKP.ConfigTab4.default[4], "BOTTOMLEFT", 0, -20, "Save Settings");
+  MonDKP.ConfigTab4.submitSettings:SetSize(90,25)
+  MonDKP.ConfigTab4.submitSettings:SetScript("OnClick", function()
+    MonDKP_DB["DKPBonus"]["OnTimeBonus"] = MonDKP.ConfigTab4.default[1]:GetNumber();
+    MonDKP_DB["DKPBonus"]["BossKillBonus"] = MonDKP.ConfigTab4.default[2]:GetNumber();
+    MonDKP_DB["DKPBonus"]["CompletionBonus"] = MonDKP.ConfigTab4.default[3]:GetNumber();
+    MonDKP_DB["DKPBonus"]["NewBossKillBonus"] = MonDKP.ConfigTab4.default[4]:GetNumber();
+  end)
+
+  ---------------------------------------
   -- MENU TAB 5 (Currently ONLY Filler elements)
   ---------------------------------------
 
@@ -346,6 +438,6 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab5.text:ClearAllPoints();
   MonDKP.ConfigTab5.text:SetFontObject("GameFontHighlight");
   MonDKP.ConfigTab5.text:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 15, -10);
-  MonDKP.ConfigTab5.text:SetText("Content Five!");
+  MonDKP.ConfigTab5.text:SetText("Will stream loot and dkp edit history");
 end
   

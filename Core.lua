@@ -28,13 +28,22 @@ local defaults = {
   theme2 = { r = 1, g = 0.37, b = 0.37, hex = "ff6060" }
 }
 
+core.WorkingTable = {};       -- table of all entries from MonDKP_DKPTable that are currently visible in the window. From MonDKP_DKPTable
+core.settings = {             -- From MonDKP_DB
+  DKPBonus = { 
+    OnTimeBonus = 15,
+    BossKillBonus = 5,
+    CompletionBonus = 10,
+    NewBossKillBonus = 10
+  }
+}
+
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
 core.classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
 core.MonVersion = "v0.1 (alpha)";
-core.WorkingTable = {};       -- table of all entries from MonDKP_DKPTable that are currently visible in the window
 core.SelectedRows = {};       -- tracks rows in DKPTable that are currently selected for SetHighlightTexture
 
 function MonDKP:GetCColors(class)
@@ -56,6 +65,10 @@ end
 function MonDKP:GetThemeColor()
   local c = {defaults.theme, defaults.theme2};
   return c;
+end
+
+function MonDKP:GetDKPSettings()
+  return core.settings["DKPBonus"];
 end
 
 function MonDKP:Print(...)        --print function to add "MonolithDKP:" to the beginning of print() outputs.
@@ -110,7 +123,7 @@ function MonDKP:Table_Search(tar, val)
   end
 end
 
-function MonDKP:DKPTable_Set(tar, field, value)              -- updates field with value where name is found    -- core and table functions
+function MonDKP:DKPTable_Set(tar, field, value)                -- updates field with value where tar is found (IE: MonDKP:DKPTable_Set("Roeshambo", "dkp", 10) adds 10 dkp to user Roeshambo)
   local result = MonDKP:Table_Search(MonDKP_DKPTable, tar);
   for i=1, #result do
     local current = MonDKP_DKPTable[result[i][1]][field];
