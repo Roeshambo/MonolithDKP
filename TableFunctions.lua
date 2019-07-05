@@ -18,7 +18,7 @@ function DKPTable_OnClick(self)
       else
         table.wipe(core.SelectedData)
       end
-      self:GetParent().Rows[i]:SetNormalTexture("Interface\\AddOns\\MonolithDKP\\textures\\ListBox-Highlight")
+      self:GetParent().Rows[i]:SetNormalTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\ListBox-Highlight")
     end
   else
     TempSearch = MonDKP:Table_Search(core.SelectedRows, SelectedRow);
@@ -45,34 +45,38 @@ function DKPTable_OnClick(self)
       MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
       MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.2)
     else
-      MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\AddOns\\MonolithDKP\\textures\\ListBox-Highlight")
+      MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\ListBox-Highlight")
       MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
     end
   end
-  MonDKP.Sync:SendData(core.WorkingTable)
+  --MonDKP.Sync:SendData("MonDKPDataSync", core.WorkingTable)
 end
 
 local function CreateRow(parent, id) -- Create 3 buttons for each row in the list
     local f = CreateFrame("Button", "$parentLine"..id, parent)
     f.DKPInfo = {}
     f:SetSize(core.TableWidth, core.TableRowHeight)
-    f:SetHighlightTexture("Interface\\AddOns\\MonolithDKP\\textures\\ListBox-Highlight");
+    f:SetHighlightTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\ListBox-Highlight");
     f:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
     f:GetNormalTexture():SetAlpha(0.2)
     f:SetScript("OnClick", DKPTable_OnClick)
     for i=1, 3 do
       f.DKPInfo[i] = f:CreateFontString(nil, "OVERLAY");
       f.DKPInfo[i]:SetFontObject("GameFontHighlight");
+      f.DKPInfo[i]:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 12)
       f.DKPInfo[i]:SetTextColor(1, 1, 1, 1);
       if (i==1) then
         f.DKPInfo[i].rowCounter = f:CreateFontString(nil, "OVERLAY");
         f.DKPInfo[i].rowCounter:SetFontObject("GameFontWhiteTiny");
+        f.DKPInfo[i].rowCounter:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 12)
         f.DKPInfo[i].rowCounter:SetTextColor(1, 1, 1, 0.3);
         f.DKPInfo[i].rowCounter:SetPoint("LEFT", f, "LEFT", 3, -1);
       end
       if (i==3) then
+        f.DKPInfo[i]:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 13)
         f.DKPInfo[i].adjusted = f:CreateFontString(nil, "OVERLAY");
         f.DKPInfo[i].adjusted:SetFontObject("GameFontWhiteTiny");
+        f.DKPInfo[i].adjusted:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 10)
         f.DKPInfo[i].adjusted:SetTextColor(1, 1, 1, 0.6);
         f.DKPInfo[i].adjusted:SetPoint("LEFT", f.DKPInfo[3], "RIGHT", 3, -1);
         f.DKPInfo[i].adjustedArrow = f:CreateTexture(nil, "OVERLAY", nil, -8);
@@ -110,9 +114,9 @@ function DKPTable_Update()
       local CheckAdjusted = core.WorkingTable[index].dkp - core.WorkingTable[index].previous_dkp;
       if(CheckAdjusted > 0) then 
         CheckAdjusted = strjoin("", "+", CheckAdjusted) 
-        row.DKPInfo[3].adjustedArrow:SetTexture("Interface\\AddOns\\MonolithDKP\\textures\\green-up-arrow.png");
+        row.DKPInfo[3].adjustedArrow:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\green-up-arrow.png");
       elseif (CheckAdjusted < 0) then
-        row.DKPInfo[3].adjustedArrow:SetTexture("Interface\\AddOns\\MonolithDKP\\textures\\red-down-arrow.png");
+        row.DKPInfo[3].adjustedArrow:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\red-down-arrow.png");
       else
         row.DKPInfo[3].adjustedArrow:SetTexture(nil);
       end        
@@ -123,7 +127,7 @@ function DKPTable_Update()
         MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
         MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.2)
       else
-        MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\AddOns\\MonolithDKP\\textures\\ListBox-Highlight")
+        MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\ListBox-Highlight")
         MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
       end
     else
@@ -131,6 +135,7 @@ function DKPTable_Update()
     end
   end
   MonDKP.DKPTable.counter.t:SetText(#core.WorkingTable.." Entries Shown");    -- updates "Entries Shown" at bottom of DKPTable
+  MonDKP.DKPTable.counter.t:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 12)
   FauxScrollFrame_Update(MonDKP.DKPTable, numOptions, core.TableNumRows, core.TableRowHeight, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding
 end
 
@@ -140,7 +145,7 @@ function MonDKP:DKPTable_Create()
   MonDKP.DKPTable:SetPoint("LEFT", 20, 3)
   MonDKP.DKPTable:SetBackdrop( {
     bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
-    edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,
+    edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,
     insets = { left = 0, right = 0, top = 0, bottom = 0 }
   });
   MonDKP.DKPTable:SetBackdropColor(0,0,0,0.4);

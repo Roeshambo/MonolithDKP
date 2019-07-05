@@ -90,7 +90,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if (MonDKP_Loot == nil) then MonDKP_Loot = {} end;
 	    if (MonDKP_DB == nil) then 
 	    	MonDKP_DB = {
-	    		DKPBonus = { OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10 }
+	    		DKPBonus = { OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25},
 	    	} 
 	    end;
 
@@ -99,6 +99,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	    ------------------------------------
 	    core.settings = MonDKP_DB
 	    core.WorkingTable = MonDKP_DKPTable;
+
 		-- Populates SavedVariable MonDKP_DKPTable with fake values for testing purposes if they don't already exist
 		-- Delete this section and \WTF\AccountACCOUNT_NAME\SavedVariables\MonolithDKP.lua prior to actual use.
 		--[[local player_names = {"Qulyolalima", "Cadhangwong", "Gilingerth", "Emondeatt", "Puthuguth", "Eminin", "Mormiannis", "Hemilionter", "Malcologan", "Alerahm", "Cricordinus", "Arommoth", "Barnamnon", "Eughtor", "Aldreavus", "Loylencel", "Barredgar", "Gerneheav", "Julivente", "Barlannel", "Audeacell", "Derneth", "Fredeond", "Gutrichas", "Wiliannel", "Siertlan", "Simitram", "Ronettius", "Livendley", "Mordannichas", "Tevistavus", "Jaspian"}
@@ -114,7 +115,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 					dkp=math.random(0, 1000)
 				})
 			end
-		end--]]
+		end --]]
 		-- End testing DB
 
 		MonDKP:Print("Loaded "..#MonDKP_DKPTable.." records.");

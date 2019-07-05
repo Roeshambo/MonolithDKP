@@ -34,7 +34,8 @@ core.settings = {             -- From MonDKP_DB
     OnTimeBonus = 15,
     BossKillBonus = 5,
     CompletionBonus = 10,
-    NewBossKillBonus = 10
+    NewBossKillBonus = 10,
+    UnexcusedAbsence = -25
   }
 }
 
@@ -76,6 +77,18 @@ function MonDKP:Print(...)        --print function to add "MonolithDKP:" to the 
     local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "MonolithDKP:", defaults[2].hex:upper());
     local suffix = "|r";
     DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, ..., suffix));
+end
+
+function MonDKP:CreateButton(point, relativeFrame, relativePoint, xOffset, yOffset, text)  -- temp function for testing purpose only
+  local btn = CreateFrame("Button", nil, relativeFrame, "MonolithDKPButtonTemplate")
+  btn:SetPoint(point, relativeFrame, relativePoint, xOffset, yOffset);
+  btn:SetSize(100, 30);
+  btn:SetText(text);
+  btn:GetFontString():SetTextColor(1, 1, 1, 1)
+  btn:GetFontString():SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 12)
+  btn:SetNormalFontObject("GameFontNormalSmall");
+  btn:SetHighlightFontObject("GameFontNormalSmallLeft");
+  return btn; 
 end
 
 -------------------------------------

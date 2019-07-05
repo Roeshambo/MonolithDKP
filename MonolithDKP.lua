@@ -10,32 +10,9 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
   core.MonDKPUI:SetShown(not core.MonDKPUI:IsShown())
 end
 
-local function ScrollFrame_OnMouseWheel(self, delta)          -- scroll function for all but the DKPTable frame
-  local newValue = self:GetVerticalScroll() - (delta * 20);   -- DKPTable frame uses FauxScrollFrame_OnVerticalScroll()
-  
-  if (newValue < 0) then
-    newValue = 0;
-  elseif (newValue > self:GetVerticalScrollRange()) then
-    newValue = self:GetVerticalScrollRange();
-  end
-  
-  self:SetVerticalScroll(newValue);
-end
-
-function MonDKP:CreateButton(point, relativeFrame, relativePoint, xOffset, yOffset, text)  -- temp function for testing purpose only
-  local btn = CreateFrame("Button", nil, relativeFrame, "MonolithDKPButtonTemplate")
-  btn:SetPoint(point, relativeFrame, relativePoint, xOffset, yOffset);
-  btn:SetSize(100, 30);
-  btn:SetText(text);
-  btn:GetFontString():SetPoint("CENTER", btn, "CENTER", 0, -1)
-  btn:SetNormalFontObject("GameFontNormalSmall");
-  btn:SetHighlightFontObject("GameFontNormalSmallLeft");
-  return btn; 
-end
-
 ---------------------------------------
 -- Sort Function
----------------------------------------  
+---------------------------------------
 local SortButtons = {}
 
 function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTable based on classes in classFiltered table.
@@ -63,7 +40,6 @@ function MonDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable 
   table.sort(core.WorkingTable, function(a, b)
     if button.Ascend then
       if(id == "dkp") then return a[button.Id] > b[button.Id] else return a[button.Id] < b[button.Id] end
-        
     else
       if(id == "dkp") then return a[button.Id] < b[button.Id] else return a[button.Id] > b[button.Id] end
     end
@@ -77,7 +53,7 @@ function MonDKP:CreateMenu()
   MonDKP.UIConfig:SetSize(1000, 590);
   MonDKP.UIConfig:SetBackdrop({
     bgFile   = "Textures\\white.blp", tile = true,
-    edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
+    edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
   });
   MonDKP.UIConfig:SetBackdropColor(0,0,0,0.8);
   MonDKP.UIConfig:SetMovable(true);
@@ -94,7 +70,7 @@ function MonDKP:CreateMenu()
   MonDKP.UIConfig.TitleBar:SetPoint("BOTTOM", MonDKP.UIConfig, "TOP", -225, -18)
   MonDKP.UIConfig.TitleBar:SetBackdrop({
     bgFile   = "Textures\\white.blp", tile = true,
-    edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
+    edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
   });
   MonDKP.UIConfig.TitleBar:SetBackdropColor(0,0,0,0.9)
   MonDKP.UIConfig.TitleBar:SetSize(166, 54)
@@ -104,14 +80,14 @@ function MonDKP:CreateMenu()
   MonDKP.UIConfig.Title:SetColorTexture(0, 0, 0, 1)
   MonDKP.UIConfig.Title:SetPoint("CENTER", MonDKP.UIConfig.TitleBar, "CENTER");
   MonDKP.UIConfig.Title:SetSize(160, 48);
-  MonDKP.UIConfig.Title:SetTexture("Interface\\AddOns\\MonolithDKP\\textures\\mondkp-title-t.tga");
+  MonDKP.UIConfig.Title:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\mondkp-title-t.tga");
 
   -- Close Button
   MonDKP.UIConfig.closeContainer = CreateFrame("Frame", "MonDKPTitle", MonDKP.UIConfig)
   MonDKP.UIConfig.closeContainer:SetPoint("CENTER", MonDKP.UIConfig, "TOPRIGHT", -4, 0)
   MonDKP.UIConfig.closeContainer:SetBackdrop({
     bgFile   = "Textures\\white.blp", tile = true,
-    edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
+    edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
   });
   MonDKP.UIConfig.closeContainer:SetBackdropColor(0,0,0,0.9)
   MonDKP.UIConfig.closeContainer:SetBackdropBorderColor(1,1,1,0.2)
@@ -121,42 +97,11 @@ function MonDKP:CreateMenu()
   MonDKP.UIConfig.closeBtn:SetPoint("CENTER", MonDKP.UIConfig.closeContainer, "TOPRIGHT", -14, -14)
   tinsert(UISpecialFrames, MonDKP.UIConfig:GetName()); -- Sets frame to close on "Escape"
 
-  ---------------------------------------
-  -- TabMenu
-  ---------------------------------------
-
-  MonDKP.UIConfig.TabMenu = CreateFrame("Frame", "MonDKPMonDKP.ConfigTabMenu", MonDKP.UIConfig);
-  MonDKP.UIConfig.TabMenu:SetPoint("TOPRIGHT", MonDKP.UIConfig, "TOPRIGHT", -25, -25);
-  MonDKP.UIConfig.TabMenu:SetSize(400, 500);
-  MonDKP.UIConfig.TabMenu:SetBackdrop( {
-    bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
-    edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
-    insets = { left = 0, right = 0, top = 0, bottom = 0 }
-  });
-  MonDKP.UIConfig.TabMenu:SetBackdropColor(0,0,0,0.9);
-  MonDKP.UIConfig.TabMenu:SetBackdropBorderColor(1,1,1,0.5)
-
-  -- TabMenu ScrollFrame and ScrollBar
-  MonDKP.UIConfig.TabMenu.ScrollFrame = CreateFrame("ScrollFrame", nil, MonDKP.UIConfig.TabMenu, "UIPanelScrollFrameTemplate");
-  MonDKP.UIConfig.TabMenu.ScrollFrame:ClearAllPoints();
-  MonDKP.UIConfig.TabMenu.ScrollFrame:SetPoint("TOPLEFT",  MonDKP.UIConfig.TabMenu, "TOPLEFT", 4, -8);
-  MonDKP.UIConfig.TabMenu.ScrollFrame:SetPoint("BOTTOMRIGHT", MonDKP.UIConfig.TabMenu, "BOTTOMRIGHT", -3, 4);
-  MonDKP.UIConfig.TabMenu.ScrollFrame:SetClipsChildren(false);
-  MonDKP.UIConfig.TabMenu.ScrollFrame:SetScript("OnMouseWheel", ScrollFrame_OnMouseWheel);
-  
-  MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:Hide();
-  MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar = CreateFrame("Slider", nil, MonDKP.UIConfig.TabMenu.ScrollFrame, "UIPanelScrollBarTrimTemplate")
-  MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:ClearAllPoints();
-  MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", MonDKP.UIConfig.TabMenu.ScrollFrame, "TOPRIGHT", -20, -12);
-  MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", MonDKP.UIConfig.TabMenu.ScrollFrame, "BOTTOMRIGHT", -2, 15);
-
-
-  
   MonDKP:ConfigMenuTabs();        -- Create and populate Config Menu Tabs
   MonDKP:DKPTable_Create();       -- Create DKPTable and populate rows
   
   ---------------------------------------
-  -- DKP Table Headesr and Sort Buttons
+  -- DKP Table Header and Sort Buttons
   ---------------------------------------
 
   MonDKP.DKPTable_Headers = CreateFrame("Frame", "MonDKPDKPTableHeaders", MonDKP.UIConfig)
@@ -164,7 +109,7 @@ function MonDKP:CreateMenu()
   MonDKP.DKPTable_Headers:SetPoint("BOTTOMLEFT", MonDKP.DKPTable, "TOPLEFT", 0, 1)
   MonDKP.DKPTable_Headers:SetBackdrop({
     bgFile   = "Textures\\white.blp", tile = true,
-    edgeFile = "Interface\\AddOns\\MonolithDKP\\textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
+    edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
   });
   MonDKP.DKPTable_Headers:SetBackdropColor(0,0,0,0.8);
   MonDKP.DKPTable_Headers:SetBackdropBorderColor(1,1,1,0.5)
@@ -190,21 +135,23 @@ function MonDKP:CreateMenu()
   end
 
   SortButtons.player.t = SortButtons.player:CreateFontString(nil, "OVERLAY")
-  SortButtons.player.t:SetFontObject("GameFontNormalSmall");
+  SortButtons.player.t:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 14)
   SortButtons.player.t:SetTextColor(1, 1, 1, 1);
-  SortButtons.player.t:SetPoint("CENTER", SortButtons.player, "CENTER");
+  SortButtons.player.t:SetPoint("CENTER", SortButtons.player, "CENTER", 0, -1);
   SortButtons.player.t:SetText("Player"); 
 
   SortButtons.class.t = SortButtons.class:CreateFontString(nil, "OVERLAY")
+  SortButtons.class.t:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 14)
   SortButtons.class.t:SetFontObject("GameFontNormalSmall");
   SortButtons.class.t:SetTextColor(1, 1, 1, 1);
-  SortButtons.class.t:SetPoint("CENTER", SortButtons.class, "CENTER");
+  SortButtons.class.t:SetPoint("CENTER", SortButtons.class, "CENTER", 0, -1);
   SortButtons.class.t:SetText("Class"); 
 
   SortButtons.dkp.t = SortButtons.dkp:CreateFontString(nil, "OVERLAY")
+  SortButtons.dkp.t:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 14)
   SortButtons.dkp.t:SetFontObject("GameFontNormalSmall");
   SortButtons.dkp.t:SetTextColor(1, 1, 1, 1);
-  SortButtons.dkp.t:SetPoint("CENTER", SortButtons.dkp, "CENTER");
+  SortButtons.dkp.t:SetPoint("CENTER", SortButtons.dkp, "CENTER", 0, -1);
   SortButtons.dkp.t:SetText("Total DKP");
 
   ----- Counter below DKP Table

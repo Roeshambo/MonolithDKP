@@ -5,6 +5,10 @@
 	functions will be separated into more specific uses such as full DB upload (it's current state) as well as
 	individual entries (sending updates for one or more users. IE: if dkp is deducted from a single person)
 	Will also incorporate events to trigger the update for users that have an outdated DB as well as a cooldown mechanism to prevent flooding
+
+	Prefix's used: 	MonDKPDataSync - Mass Update. Update all SavedVariables
+					MonDKPBroadcast - Message on broadcast
+					MonDKPDataSmall - Supress full update message
 --]]
 
 local _, core = ...;
@@ -19,37 +23,48 @@ local LibCompressAddonEncodeTable = LibCompress:GetAddonEncodeTable()
 
 function MonDKP.Sync:OnEnable()
 	MonDKP.Sync:RegisterComm("MonDKPDataSync", MonDKP.Sync:OnCommReceived())
+	MonDKP.Sync:RegisterComm("MonDKPBroadcast", MonDKP.Sync:OnCommReceived())
+	MonDKP.Sync:RegisterComm("MonDKPDataSmall", MonDKP.Sync:OnCommReceived())
 end
 
 function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 	if (prefix) then
-		if (sender ~= UnitName("player")) then
-			MonDKP:Print("DKP Database update initiated by "..sender.."...")
-		end
-		decoded = LibCompress:Decompress(LibCompressAddonEncodeTable:Decode(message))
-		local success, deserialized = LibAceSerializer:Deserialize(decoded);
-		if success then
-			-- SET IF CONTAINER BASED ON PREFIX
-			-- statement will decide what to do with the deserialized data based on the prefix it's sent with
-			MonDKP_DKPTable = deserialized;			-- commits to SavedVariables
-			core.WorkingTable = deserialized;		-- commits to WorkingTable (visible list in configuration window)
-			DKPTable_Update()
-			if (sender ~= UnitName("player")) then
-				MonDKP:Print("DKP Database update complete!")
-			else
-				MonDKP:Print("DKP Database successfully sent!")
+		if (prefix == "MonDKPBroadcast") then
+			MonDKP:Print(message)
+		elseif (prefix == "MonDKPDataSync" or prefix == "MonDKPDataSmall") then
+			if (sender ~= UnitName("player") and prefix ~= "MonDKPDataSmall") then
+				MonDKP:Print("DKP Database update initiated by "..sender.."...")
 			end
-		else
-			print(deserialized)  -- error reporting if string doesn't get deserialized correctly
+			decoded = LibCompress:Decompress(LibCompressAddonEncodeTable:Decode(message))
+			local success, deserialized = LibAceSerializer:Deserialize(decoded);
+			if success then
+				MonDKP_DKPTable = deserialized;			-- commits to SavedVariables
+				MonDKP:FilterDKPTable("class", "reset")
+				DKPTable_Update()
+				if (prefix ~= "MonDKPDataSmall") then
+					if (sender ~= UnitName("player")) then
+						MonDKP:Print("DKP Database update complete!")
+					else
+						MonDKP:Print("DKP Database successfully sent!")
+					end
+				end
+			else
+				print(deserialized)  -- error reporting if string doesn't get deserialized correctly
+			end
 		end
 	end
 end
 
-function MonDKP.Sync:SendData(data)
+function MonDKP.Sync:SendData(prefix, data)
 	local serialized = nil;
 	local packet = nil;
 	local verInteg1 = false;
 	local verInteg2 = false;
+
+	if (type(data) == "string") then
+		MonDKP.Sync:SendCommMessage(prefix, data, "PARTY")
+		return;
+	end
 
 	if data then
 		serialized = LibAceSerializer:Serialize(data);
@@ -91,5 +106,5 @@ function MonDKP.Sync:SendData(data)
 	print("LZQ: ", strlen(lzwCompressed)) --]]
 
 	-- send packet
-	MonDKP.Sync:SendCommMessage("MonDKPDataSync", packet, "PARTY")
+	MonDKP.Sync:SendCommMessage(prefix, packet, "PARTY")
 end
