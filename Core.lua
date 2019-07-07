@@ -46,6 +46,7 @@ core.classFiltered = {};   -- tracks classes filtered out with checkboxes
 core.classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
 core.MonVersion = "v0.1 (alpha)";
 core.SelectedRows = {};       -- tracks rows in DKPTable that are currently selected for SetHighlightTexture
+core.ShowState = false;
 
 function MonDKP:GetCColors(class)
   if core.CColors then 
@@ -59,7 +60,10 @@ end
 function MonDKP:ResetPosition()
   MonDKP.UIConfig:ClearAllPoints();
   MonDKP.UIConfig:SetPoint("CENTER", UIParent, "CENTER", -250, 100);
-  MonDKP.UIConfig:SetSize(1000, 590);
+  MonDKP.UIConfig:SetSize(550, 590);
+  MonDKP.UIConfig.TabMenu:Hide()
+  MonDKP.UIConfig.expandtab:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\expand-arrow");
+  core.ShowState = false;
   MonDKP:Print("Window Position Reset")
 end
 
@@ -85,9 +89,8 @@ function MonDKP:CreateButton(point, relativeFrame, relativePoint, xOffset, yOffs
   btn:SetSize(100, 30);
   btn:SetText(text);
   btn:GetFontString():SetTextColor(1, 1, 1, 1)
-  btn:GetFontString():SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 12)
-  btn:SetNormalFontObject("GameFontNormalSmall");
-  btn:SetHighlightFontObject("GameFontNormalSmallLeft");
+  btn:SetNormalFontObject("MonDKPTinyCenter");
+  btn:SetHighlightFontObject("MonDKPTinyCenter");
   return btn; 
 end
 

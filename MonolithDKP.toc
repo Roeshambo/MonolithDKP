@@ -11,6 +11,8 @@ comm.lua
 MonolithDKP.lua
 init.lua
 ConfigMenuTabs.lua
+LootHistory.lua
+ManageEntries.lua
 TableFunctions.lua
 XMLFunctions.lua
 MonolithDKP.xml

@@ -1,9 +1,74 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
+ 	<!-- Custom Highlight Template -->
  	<Texture name="MonolithDKPButtonHighlightTexture" file="Interface\AddOns\MonolithDKP\Media\Textures\MonolithDKP-Button-Highlight" alphaMode="ADD" virtual="true">
 		<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 	</Texture>
+	<!-- MonDKP Fonts -->
+	<FontFamily  name="MonDKPTiny" virtual="true">
+		<Member alphabet="roman">
+			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="12"/>
+		</Member>
+		<Member alphabet="korean">
+			<Font font="Fonts\2002.TTF" height="15" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="simplifiedchinese">
+			<Font font="Fonts\ARKai_C.ttf" height="14" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="traditionalchinese">
+			<Font font="Fonts\bHEI01B.TTF" height="14" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="russian">
+			<Font font="Fonts\ARIALN.TTF" height="16" outline="NORMAL"/>
+		</Member>
+	</FontFamily>
+	<FontFamily  name="MonDKPSmall" virtual="true">
+		<Member alphabet="roman">
+			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="13"/>
+		</Member>
+		<Member alphabet="korean">
+			<Font font="Fonts\2002.TTF" height="15" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="simplifiedchinese">
+			<Font font="Fonts\ARKai_C.ttf" height="14" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="traditionalchinese">
+			<Font font="Fonts\bHEI01B.TTF" height="14" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="russian">
+			<Font font="Fonts\ARIALN.TTF" height="16" outline="NORMAL"/>
+		</Member>
+	</FontFamily>
+	<FontFamily  name="MonDKPLarge" virtual="true">
+		<Member alphabet="roman">
+			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\uf_font.ttf" height="24"/>
+		</Member>
+		<Member alphabet="korean">
+			<Font font="Fonts\2002.TTF" height="15" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="simplifiedchinese">
+			<Font font="Fonts\ARKai_C.ttf" height="14" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="traditionalchinese">
+			<Font font="Fonts\bHEI01B.TTF" height="14" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="russian">
+			<Font font="Fonts\ARIALN.TTF" height="16" outline="NORMAL"/>
+		</Member>
+	</FontFamily>
+	<Font name="MonDKPLarge" virtual="true">
+		<Color r="0.8" g="0.65" b="0"/>
+	</Font>
+	<Font name="MonDKPTinyCenter" inherits="MonDKPTiny" justifyH="CENTER" virtual="true"/>
+	<Font name="MonDKPTinyLeft" inherits="MonDKPTiny" justifyH="LEFT" virtual="true"/>
+	<Font name="MonDKPTinyRight" inherits="MonDKPTiny" justifyH="RIGHT" virtual="true"/>
+	<Font name="MonDKPSmallCenter" inherits="MonDKPSmall" justifyH="CENTER" virtual="true"/>
+	<Font name="MonDKPSmallLeft" inherits="MonDKPSmall" justifyH="LEFT" virtual="true"/>
+	<Font name="MonDKPSmallRight" inherits="MonDKPSmall" justifyH="RIGHT" virtual="true"/>
+	<Font name="MonDKPLargeCenter" inherits="MonDKPLarge" justifyH="CENTER" virtual="true"/>
+	<Font name="MonDKPLargeLeft" inherits="MonDKPLarge" justifyH="LEFT" virtual="true"/>
+	<Font name="MonDKPLargeRight" inherits="MonDKPLarge" justifyH="RIGHT" virtual="true"/>
  	<!-- Button Frame Template -->
  	<Button name="MonolithDKPUIPanelButtonNoTooltipTemplate" virtual="true">
 		<Size x="40" y="22"/>

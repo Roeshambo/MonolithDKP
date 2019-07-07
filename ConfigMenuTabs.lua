@@ -68,7 +68,7 @@ local function SetTabs(frame, numTabs, ...)
     local tab = CreateFrame("Button", frameName.."Tab"..i, frame, "MonDKPTabButtonTemplate");
     tab:SetID(i);
     tab:SetText(select(i, ...));
-    tab:GetFontString():SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\uf_font.ttf", 12)
+    tab:GetFontString():SetFontObject("MonDKPTinyLeft")
     tab:GetFontString():SetTextColor(0.7, 0.7, 0.86, 1)
     tab:SetScript("OnClick", Tab_OnClick);
     
@@ -100,7 +100,7 @@ function MonDKP:ConfigMenuTabs()
 
   MonDKP.UIConfig.TabMenu = CreateFrame("Frame", "MonDKPMonDKP.ConfigTabMenu", MonDKP.UIConfig);
   MonDKP.UIConfig.TabMenu:SetPoint("TOPRIGHT", MonDKP.UIConfig, "TOPRIGHT", -25, -25);
-  MonDKP.UIConfig.TabMenu:SetSize(400, 500);
+  MonDKP.UIConfig.TabMenu:SetSize(477, 510);
   MonDKP.UIConfig.TabMenu:SetBackdrop( {
     bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
     edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
@@ -123,7 +123,7 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", MonDKP.UIConfig.TabMenu.ScrollFrame, "TOPRIGHT", -20, -12);
   MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", MonDKP.UIConfig.TabMenu.ScrollFrame, "BOTTOMRIGHT", -2, 15);
 
-  MonDKP.ConfigTab1, MonDKP.ConfigTab2, MonDKP.ConfigTab3, MonDKP.ConfigTab4, MonDKP.ConfigTab5 = SetTabs(MonDKP.UIConfig.TabMenu, 5, "Filters", "Adjust DKP", "Edit Entries", "Options", "History");
+  MonDKP.ConfigTab1, MonDKP.ConfigTab2, MonDKP.ConfigTab3, MonDKP.ConfigTab4, MonDKP.ConfigTab5 = SetTabs(MonDKP.UIConfig.TabMenu, 5, "Filters", "Adjust DKP", "Manage", "Options", "History");
 
   ---------------------------------------
   -- MENU TAB 1
@@ -131,10 +131,9 @@ function MonDKP:ConfigMenuTabs()
 
   MonDKP.ConfigTab1.text = MonDKP.ConfigTab1:CreateFontString(nil, "OVERLAY")   -- Filters header
   MonDKP.ConfigTab1.text:ClearAllPoints();
-  MonDKP.ConfigTab1.text:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\uf_font.ttf", 24)
+  MonDKP.ConfigTab1.text:SetFontObject("MonDKPLargeCenter")
   MonDKP.ConfigTab1.text:SetPoint("TOPLEFT", MonDKP.ConfigTab1, "TOPLEFT", 15, -10);
   MonDKP.ConfigTab1.text:SetText("Filters");
-  MonDKP.ConfigTab1.text:SetTextColor(0.8, 0.65, 0, 1);
   MonDKP.ConfigTab1.text:SetScale(1.2)
 
   local checkBtn = {}
@@ -172,7 +171,7 @@ function MonDKP:ConfigMenuTabs()
     else
       MonDKP.ConfigTab1.checkBtn[i]:SetScript("OnClick", FilterChecks)
     end
-    MonDKP.ConfigTab1.checkBtn[i].text:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 12)
+    MonDKP.ConfigTab1.checkBtn[i].text:SetFontObject("MonDKPTiny")
   end
 
   -- Class Check Buttons:
@@ -196,16 +195,14 @@ function MonDKP:ConfigMenuTabs()
   ---------------------------------------
 
   MonDKP.ConfigTab2.header = MonDKP.ConfigTab2:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab2.header:SetFontObject("GameFontNormalLarge");
   MonDKP.ConfigTab2.header:SetPoint("TOPLEFT", MonDKP.ConfigTab2, "TOPLEFT", 15, -10);
+  MonDKP.ConfigTab2.header:SetFontObject("MonDKPLargeCenter")
   MonDKP.ConfigTab2.header:SetText("Adjust DKP");
-  MonDKP.ConfigTab2.header:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\uf_font.ttf", 24)
   MonDKP.ConfigTab2.header:SetScale(1.2)
 
   MonDKP.ConfigTab2.description = MonDKP.ConfigTab2:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab2.description:SetFontObject("GameFontHighlightLeft");
   MonDKP.ConfigTab2.description:SetPoint("TOPLEFT", MonDKP.ConfigTab2.header, "BOTTOMLEFT", 7, -10);
-  MonDKP.ConfigTab2.description:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 14)
+  MonDKP.ConfigTab2.description:SetFontObject("MonDKPSmallLeft")
   MonDKP.ConfigTab2.description:SetText("Select individual users from the left (Shift+Click\nfor multiple users) or click \"Select All Visible\"\nbelow and enter amount to adjust.\n\n\"Select All Visible\" will only select entries visible.\nCan be narrowed down via the Filters Tab"); 
 
   -- Reason DROPDOWN box 
@@ -215,13 +212,13 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab2.reasonDropDown = CreateFrame("FRAME", "MonDKPConfigReasonDropDown", MonDKP.ConfigTab2, "MonolithDKPUIDropDownMenuTemplate")
   MonDKP.ConfigTab2.reasonDropDown:SetPoint("TOPLEFT", MonDKP.ConfigTab2.description, "BOTTOMLEFT", -23, -60)
   UIDropDownMenu_SetWidth(MonDKP.ConfigTab2.reasonDropDown, 150)
-  UIDropDownMenu_SetText(MonDKP.ConfigTab2.reasonDropDown)
+  UIDropDownMenu_SetText(MonDKP.ConfigTab2.reasonDropDown, "Select Reason")
 
   -- Create and bind the initialization function to the dropdown menu
   UIDropDownMenu_Initialize(MonDKP.ConfigTab2.reasonDropDown, function(self, level, menuList)
   local reason = UIDropDownMenu_CreateInfo()
     reason.func = self.SetValue
-    reason.fontObject = "GameFontHighlightLeft"
+    reason.fontObject = "MonDKPTinyCenter"
     reason.text, reason.arg1, reason.checked, reason.isNotRadio = "On Time Bonus", "On Time Bonus", "On Time Bonus" == curReason, true
     UIDropDownMenu_AddButton(reason)
     reason.text, reason.arg1, reason.checked, reason.isNotRadio = "Boss Kill Bonus", "Boss Kill Bonus", "Boss Kill Bonus" == curReason, true
@@ -266,10 +263,10 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab2.reasonHeader = MonDKP.ConfigTab2:CreateFontString(nil, "OVERLAY")
   MonDKP.ConfigTab2.reasonHeader:SetFontObject("GameFontHighlightLeft");
   MonDKP.ConfigTab2.reasonHeader:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab2.reasonDropDown, "TOPLEFT", 25, 0);
-  MonDKP.ConfigTab2.reasonHeader:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 12)
+  MonDKP.ConfigTab2.reasonHeader:SetFontObject("MonDKPTinyLeft")
   MonDKP.ConfigTab2.reasonHeader:SetText("Reason for Adjustment:")
 
-    MonDKP.ConfigTab2.otherReason = CreateFrame("EditBox", nil, MonDKP.ConfigTab2)
+  MonDKP.ConfigTab2.otherReason = CreateFrame("EditBox", nil, MonDKP.ConfigTab2)
   MonDKP.ConfigTab2.otherReason:SetPoint("TOPLEFT", MonDKP.ConfigTab2.reasonDropDown, "BOTTOMLEFT", 19, 2)     
   MonDKP.ConfigTab2.otherReason:SetAutoFocus(false)
   MonDKP.ConfigTab2.otherReason:SetMultiLine(false)
@@ -282,7 +279,7 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab2.otherReason:SetBackdropBorderColor(1,1,1,0.6)
   MonDKP.ConfigTab2.otherReason:SetMaxLetters(50)
   MonDKP.ConfigTab2.otherReason:SetTextColor(0.4, 0.4, 0.4, 1)
-  MonDKP.ConfigTab2.otherReason:SetFontObject("GameFontNormalLeft")
+  MonDKP.ConfigTab2.otherReason:SetFontObject("MonDKPSmallLeft")
   MonDKP.ConfigTab2.otherReason:SetTextInsets(10, 10, 5, 5)
   MonDKP.ConfigTab2.otherReason:SetText("Enter Other Reason Here")
   MonDKP.ConfigTab2.otherReason:SetScript("OnEscapePressed", function(self)    -- clears text and focus on esc
@@ -316,7 +313,7 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab2.addDKP:SetBackdropBorderColor(1,1,1,0.6)
   MonDKP.ConfigTab2.addDKP:SetMaxLetters(4)
   MonDKP.ConfigTab2.addDKP:SetTextColor(1, 1, 1, 1)
-  MonDKP.ConfigTab2.addDKP:SetFontObject("GameFontNormalRight")
+  MonDKP.ConfigTab2.addDKP:SetFontObject("MonDKPSmallRight")
   MonDKP.ConfigTab2.addDKP:SetTextInsets(10, 10, 5, 5)
   MonDKP.ConfigTab2.addDKP:SetScript("OnEscapePressed", function(self)    -- clears text and focus on esc
     self:SetText("")
@@ -326,7 +323,7 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab2.pointsHeader = MonDKP.ConfigTab2:CreateFontString(nil, "OVERLAY")
   MonDKP.ConfigTab2.pointsHeader:SetFontObject("GameFontHighlightLeft");
   MonDKP.ConfigTab2.pointsHeader:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab2.addDKP, "TOPLEFT", 3, 3);
-  MonDKP.ConfigTab2.pointsHeader:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 12)
+  MonDKP.ConfigTab2.pointsHeader:SetFontObject("MonDKPTinyLeft")
   MonDKP.ConfigTab2.pointsHeader:SetText("Points: (Use a negative number to deduct DKP)")
   
   -- Select All Checkbox
@@ -335,7 +332,7 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab2.selectAll:SetScale(0.6);
   MonDKP.ConfigTab2.selectAll.text:SetText("  Select All Visible");
   MonDKP.ConfigTab2.selectAll.text:SetScale(1.5);
-  MonDKP.ConfigTab2.selectAll.text:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 12)
+  MonDKP.ConfigTab2.selectAll.text:SetFontObject("MonDKPTinyLeft")
   MonDKP.ConfigTab2.selectAll:SetPoint("LEFT", MonDKP.ConfigTab2.addDKP, "RIGHT", 15, 0);
   MonDKP.ConfigTab2.selectAll:SetScript("OnClick", function(self)
     if (self:GetChecked() == true) then
@@ -348,11 +345,8 @@ function MonDKP:ConfigMenuTabs()
     MonDKP:FilterDKPTable("class", "reset");
   end)
 
-    -- Adjust DKP Button
-  MonDKP.ConfigTab2.adjustButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab2.addDKP, "BOTTOMLEFT", -1, -15, "Adjust DKP");
-  MonDKP.ConfigTab2.adjustButton:SetSize(90,25)
-  MonDKP.ConfigTab2.adjustButton:SetScript("OnClick", function()
-    local adjustReason = curReason;
+  local function AdjustDKP ()
+  	local adjustReason = curReason;
     if (curReason == "Other") then adjustReason = "Other - "..MonDKP.ConfigTab2.otherReason:GetText(); end
     if (#core.SelectedData > 1 and adjustReason) then
       local tempString = "";       -- stores list of changes
@@ -399,74 +393,115 @@ function MonDKP:ConfigMenuTabs()
       }
       StaticPopup_Show ("VALIDATION_PROMPT")
     end
+  end
+
+    -- Adjust DKP Button
+  MonDKP.ConfigTab2.adjustButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab2.addDKP, "BOTTOMLEFT", -1, -15, "Adjust DKP");
+  MonDKP.ConfigTab2.adjustButton:SetSize(90,25)
+  MonDKP.ConfigTab2.adjustButton:SetScript("OnClick", function()
+  	if #core.SelectedData > 0 and curReason and MonDKP.ConfigTab2.otherReason:GetText() then
+	  	local selected = "Are you sure you'd like give:"..MonDKP.ConfigTab2.addDKP:GetNumber().." DKP to the following users: \n\n";
+
+		for i=1, #core.SelectedData do
+			local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[i].player)
+
+		    if classSearch then
+		     	c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+		    else
+		     	c = { hex="ffffff" }
+		    end
+			if i == 1 then
+				selected = selected.."|cff"..c.hex..core.SelectedData[i].player.."|r"
+			else
+				selected = selected..", |cff"..c.hex..core.SelectedData[i].player.."|r"
+			end
+		end
+	    StaticPopupDialogs["ADJUST_DKP"] = {
+			text = selected,
+			button1 = "Yes",
+			button2 = "No",
+			OnAccept = function()
+			  AdjustDKP()
+			end,
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = true,
+			preferredIndex = 3,
+		}
+		StaticPopup_Show ("ADJUST_DKP")
+	else
+		AdjustDKP();
+	end
   end)
 
   MonDKP.ConfigTab2.broadcastButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab2.adjustButton, "BOTTOMLEFT", 0, -115, "Broadcast DKP Table");
-  MonDKP.ConfigTab2.broadcastButton:SetSize(120,25)
+  MonDKP.ConfigTab2.broadcastButton:SetSize(140,25)
   MonDKP.ConfigTab2.broadcastButton:SetScript("OnClick", function()
     MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
+  end)
+
+  MonDKP.ConfigTab2.broadcastLootButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab2.broadcastButton, "TOPRIGHT", 20, 0, "Broadcast Loot History");
+  MonDKP.ConfigTab2.broadcastLootButton:SetSize(140,25)
+  MonDKP.ConfigTab2.broadcastLootButton:SetScript("OnClick", function()
+    MonDKP.Sync:SendData("MonDKPLogSync", MonDKP_Log)
+    MonDKP.Sync:SendData("MonDKPBroadcast", "Loot history update in progress...")
   end)
 
   ---------------------------------------
   -- MENU TAB 3 (Currently ONLY Filler elements)
   ---------------------------------------
 
-  MonDKP.ConfigTab3.text = MonDKP.ConfigTab3:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab3.text:ClearAllPoints();
-  MonDKP.ConfigTab3.text:SetFontObject("GameFontHighlight");
-  MonDKP.ConfigTab3.text:SetPoint("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 15, -10);
-  MonDKP.ConfigTab3.text:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\uf_font.ttf", 24)
-  MonDKP.ConfigTab3.text:SetText("Content THREE!"); 
+  MonDKP.ConfigTab3.header = MonDKP.ConfigTab3:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab3.header:ClearAllPoints();
+  MonDKP.ConfigTab3.header:SetFontObject("MonDKPLargeCenter");
+  MonDKP.ConfigTab3.header:SetPoint("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 15, -10);
+  MonDKP.ConfigTab3.header:SetText("Manage DKP Listings"); 
+
+  -- Populate Manage Tab
+  MonDKP:ManageEntries()
 
   ---------------------------------------
   -- OPTIONS TAB
   ---------------------------------------
 
   MonDKP.ConfigTab4.header = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab4.header:SetFontObject("GameFontNormalLarge");
+  MonDKP.ConfigTab4.header:SetFontObject("MonDKPLargeCenter");
   MonDKP.ConfigTab4.header:SetPoint("TOPLEFT", MonDKP.ConfigTab4, "TOPLEFT", 15, -10);
-  MonDKP.ConfigTab4.header:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\uf_font.ttf", 24)
   MonDKP.ConfigTab4.header:SetText("Default Settings");
 
   MonDKP.ConfigTab4.description = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab4.description:SetFontObject("GameFontHighlightLeft");
+  MonDKP.ConfigTab4.description:SetFontObject("MonDKPSmallLeft");
   MonDKP.ConfigTab4.description:SetPoint("TOPLEFT", MonDKP.ConfigTab4.header, "BOTTOMLEFT", 7, -30);
-  MonDKP.ConfigTab4.description:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 14)
   MonDKP.ConfigTab4.description:SetText("Default DKP settings for raid bonus'.");
 
   --OnTimeBonus Header
   MonDKP.ConfigTab4.OnTimeHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab4.OnTimeHeader:SetFontObject("GameFontHighlightLeft");
+  MonDKP.ConfigTab4.OnTimeHeader:SetFontObject("MonDKPSmallLeft");
   MonDKP.ConfigTab4.OnTimeHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab4.description, "BOTTOMLEFT", 0, -20);
-  MonDKP.ConfigTab4.OnTimeHeader:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 12)
   MonDKP.ConfigTab4.OnTimeHeader:SetText("On Time Bonus: ")
 
   --BossKillBonus Header
   MonDKP.ConfigTab4.BossKillHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab4.BossKillHeader:SetFontObject("GameFontHighlightLeft");
+  MonDKP.ConfigTab4.BossKillHeader:SetFontObject("MonDKPSmallLeft");
   MonDKP.ConfigTab4.BossKillHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab4.OnTimeHeader, "BOTTOMLEFT", 0, -20);
-  MonDKP.ConfigTab4.BossKillHeader:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 12)
   MonDKP.ConfigTab4.BossKillHeader:SetText("Boss Kill Bonus: ")
 
   --CompletionBonus Header
   MonDKP.ConfigTab4.CompleteHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab4.CompleteHeader:SetFontObject("GameFontHighlightLeft");
+  MonDKP.ConfigTab4.CompleteHeader:SetFontObject("MonDKPSmallLeft");
   MonDKP.ConfigTab4.CompleteHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab4.BossKillHeader, "BOTTOMLEFT", 0, -20);
-  MonDKP.ConfigTab4.CompleteHeader:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 12)
   MonDKP.ConfigTab4.CompleteHeader:SetText("Raid Completion Bonus: ")
 
   --NewBossKillBonus Header
   MonDKP.ConfigTab4.NewBossHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab4.NewBossHeader:SetFontObject("GameFontHighlightLeft");
+  MonDKP.ConfigTab4.NewBossHeader:SetFontObject("MonDKPSmallLeft");
   MonDKP.ConfigTab4.NewBossHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab4.CompleteHeader, "BOTTOMLEFT", 0, -20);
-  MonDKP.ConfigTab4.NewBossHeader:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 12)
   MonDKP.ConfigTab4.NewBossHeader:SetText("New Boss Kill Bonus: ")
 
   --UnexcusedAbsence Header
   MonDKP.ConfigTab4.UnexcusedHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab4.UnexcusedHeader:SetFontObject("GameFontHighlightLeft");
+  MonDKP.ConfigTab4.UnexcusedHeader:SetFontObject("MonDKPSmallLeft");
   MonDKP.ConfigTab4.UnexcusedHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab4.NewBossHeader, "BOTTOMLEFT", 0, -20);
-  MonDKP.ConfigTab4.UnexcusedHeader:SetFont("Interface\\AddOns\\MonolithDKP\\Media\\Fonts\\homizio_bold.ttf", 12)
   MonDKP.ConfigTab4.UnexcusedHeader:SetText("Unexcused Absence: ")
   
   -- Default OnTimeBonus Edit Box
@@ -521,14 +556,34 @@ function MonDKP:ConfigMenuTabs()
     MonDKP_DB["DKPBonus"]["UnexcusedAbsence"] = MonDKP.ConfigTab4.default[5]:GetNumber();
   end)
 
-  ---------------------------------------
-  -- MENU TAB 5 (Currently ONLY Filler elements)
-  ---------------------------------------
+  	---------------------------------------
+  	-- Loot History Tab
+	---------------------------------------
 
-  MonDKP.ConfigTab5.text = MonDKP.ConfigTab5:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab5.text:ClearAllPoints();
-  MonDKP.ConfigTab5.text:SetFontObject("GameFontHighlight");
-  MonDKP.ConfigTab5.text:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 15, -10);
-  MonDKP.ConfigTab5.text:SetText("Will stream loot and dkp edit history");
+	MonDKP.ConfigTab5.text = MonDKP.ConfigTab5:CreateFontString(nil, "OVERLAY")
+	MonDKP.ConfigTab5.text:ClearAllPoints();
+	MonDKP.ConfigTab5.text:SetFontObject("MonDKPLargeLeft");
+	MonDKP.ConfigTab5.text:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 15, -10);
+	MonDKP.ConfigTab5.text:SetText("Loot History");
+
+	MonDKP.ConfigTab5.inst = MonDKP.ConfigTab5:CreateFontString(nil, "OVERLAY")
+	MonDKP.ConfigTab5.inst:ClearAllPoints();
+	MonDKP.ConfigTab5.inst:SetFontObject("MonDKPTinyRight");
+	MonDKP.ConfigTab5.inst:SetTextColor(0.3, 0.3, 0.3, 0.7)
+	MonDKP.ConfigTab5.inst:SetPoint("TOPRIGHT", MonDKP.ConfigTab5, "TOPRIGHT", 60, -10);
+	MonDKP.ConfigTab5.inst:SetText("Click or Shift+Click line\nto link information");
+
+  -- Populate Loot History (LootHistory.lua)
+	local looter = {}
+	MonDKP.ConfigTab5.looter = looter
+	local lootFrame = {}
+	MonDKP.ConfigTab5.lootFrame = lootFrame
+	for i=1, #MonDKP_Log do
+	MonDKP.ConfigTab5.lootFrame[i] = CreateFrame("Frame", "MonDKPLootHistoryFrame"..i, MonDKP.ConfigTab5);
+	end
+
+	if #MonDKP_Log > 0 then
+	MonDKP:LootHistory_Update()
+	end
 end
   

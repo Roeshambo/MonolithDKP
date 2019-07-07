@@ -104,7 +104,32 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		-- Delete this section and \WTF\AccountACCOUNT_NAME\SavedVariables\MonolithDKP.lua prior to actual use.
 		--[[local player_names = {"Qulyolalima", "Cadhangwong", "Gilingerth", "Emondeatt", "Puthuguth", "Eminin", "Mormiannis", "Hemilionter", "Malcologan", "Alerahm", "Cricordinus", "Arommoth", "Barnamnon", "Eughtor", "Aldreavus", "Loylencel", "Barredgar", "Gerneheav", "Julivente", "Barlannel", "Audeacell", "Derneth", "Fredeond", "Gutrichas", "Wiliannel", "Siertlan", "Simitram", "Ronettius", "Livendley", "Mordannichas", "Tevistavus", "Jaspian"}
 		local classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
-
+		local items = { 
+			"|cffa335ee|Hitem:169058::::::::120::::1:4778:|h[Salvaged Incendiary Tool]|h|r",
+			"|cff0070dd|Hitem:166483::::::::120::::2:5126:1517:|h[Sentinel's Tomahawk]|h|r",
+			"|cffa335ee|Hitem:168902::::::::120::::2:4798:1487:|h[Dream's End]|h|r",
+			"|cffa335ee|Hitem:168901::::::::120::::2:4799:1502:|h[Royal Scaleguard's Battleaxe]|h|r",
+			"|cffa335ee|Hitem:165601::::::::120::::2:4798:1507:|h[Storm-Toothed Kasuyu]|h|r"
+		}
+		local de = {true, false}
+		local day = { "05/15", "05/20", "05/25", "05/30"}
+		
+		for i=1, 60 do
+			local d = day[math.random(1,4)];
+			local m = i;
+			if i<10 then
+				m = "0"..i
+			end
+			tinsert(MonDKP_Log, {
+				player=player_names[math.random(1, #player_names)],
+				loot=items[math.random(1, #items)],
+				date="19/"..d.." "..date("%H:")..m..date(":%S"),
+				zone="Molten Core",
+				boss="Ragnaros",
+				de=de[math.random(1, 2)],
+				cost=math.random(35, 100)
+			})
+		end
 		for i=1, #player_names do
 			local p = player_names[i]
 			if (MonDKP:Table_Search(MonDKP_DKPTable, p) == false) then 		--
@@ -115,7 +140,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 					dkp=math.random(0, 1000)
 				})
 			end
-		end --]]
+		end--]]
 		-- End testing DB
 
 		MonDKP:Print("Loaded "..#MonDKP_DKPTable.." records.");
