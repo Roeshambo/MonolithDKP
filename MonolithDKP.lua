@@ -15,11 +15,22 @@ end
 ---------------------------------------
 local SortButtons = {}
 
-function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTable based on classes in classFiltered table.
+function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTable based on classes in classFiltered table. core.currentSort should be used in most cases
   core.WorkingTable = {}
   for k,v in pairs(MonDKP_DKPTable) do        -- sort and reset are used to pass along to MonDKP:SortDKPTable()
     if(core.classFiltered[MonDKP_DKPTable[k]["class"]] == true) then
-      tinsert(core.WorkingTable, v)
+      if MonDKP.ConfigTab1.checkBtn[10]:GetChecked() == true then
+        for i=1, 40 do
+          tempName,_,_,_,tempClass = GetRaidRosterInfo(i)
+          if tempName and tempName == v.player then
+            core.SelectedRows = {}
+            core.SelectedData = {}
+            tinsert(core.WorkingTable, v)
+          end
+        end
+      else
+        tinsert(core.WorkingTable, v)
+      end
     end
   end
   MonDKP:SortDKPTable(sort, reset);
@@ -44,6 +55,7 @@ function MonDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable 
       if(id == "dkp") then return a[button.Id] < b[button.Id] else return a[button.Id] > b[button.Id] end
     end
   end)
+  core.currentSort = id;
   DKPTable_Update()
 end
 
@@ -213,10 +225,10 @@ function MonDKP:CreateMenu()
   MonDKP.UIConfig.Version:SetText(core.MonVersion); 
 
   MonDKP.UIConfig:Hide(); -- hide menu after creation until called.
-  MonDKP:FilterDKPTable("class", "reset")   -- initial sort and populates data values in DKPTable.Rows{} MonDKP:FilterDKPTable() -> MonDKP:SortDKPTable() -> DKPTable_Update()
+  MonDKP:FilterDKPTable(core.currentSort, "reset")   -- initial sort and populates data values in DKPTable.Rows{} MonDKP:FilterDKPTable() -> MonDKP:SortDKPTable() -> DKPTable_Update()
 
   --print("|cffff8000|Hitem:17182::::::::120:::::|h[Sulfuras, Hand of Ragnaros]|h|r")
   --print(date("%m/%d/%y"))
-
+  
   return MonDKP.UIConfig;
 end

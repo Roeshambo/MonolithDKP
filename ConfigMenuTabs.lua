@@ -20,11 +20,12 @@ local function ScrollFrame_OnMouseWheel(self, delta)          -- scroll function
 end
 
 local function FilterChecks(self)         -- sets/unsets check boxes in conjunction with "All" button, then runs MonDKP:FilterDKPTable() above
-  if (self:GetChecked() == false) then
+  local verifyCheck = true; -- switches to false if the below loop finds anything unchecked
+  if (self:GetChecked() == false and not MonDKP.ConfigTab1.checkBtn[10]) then
     MonDKP.ConfigTab1.checkBtn[9]:SetChecked(false);
     checkAll = false;
+    verifyCheck = false
   end
-  local verifyCheck = true; -- switches to false if the below loop finds anything unchecked
   for i=1, 8 do             -- checks all boxes to see if all are checked, if so, checks "All" as well
     if MonDKP.ConfigTab1.checkBtn[i]:GetChecked() == false then
       verifyCheck = false;
@@ -42,7 +43,7 @@ local function FilterChecks(self)         -- sets/unsets check boxes in conjunct
       core.classFiltered[v] = false;
     end
   end
-  MonDKP:FilterDKPTable("class", "reset");
+  MonDKP:FilterDKPTable(core.currentSort, "reset");
 end
 
 local function Tab_OnClick(self)
@@ -79,7 +80,7 @@ local function SetTabs(frame, numTabs, ...)
     table.insert(contents, tab.content);
     
     if (i == 1) then
-      tab:SetPoint("TOPLEFT", MonDKP.UIConfig.TabMenu, "BOTTOMLEFT", 5, 0);
+      tab:SetPoint("TOPLEFT", MonDKP.UIConfig.TabMenu, "BOTTOMLEFT", 5, 1);
     else
       tab:SetPoint("TOPLEFT", _G[frameName.."Tab"..(i - 1)], "TOPRIGHT", -14, 0);
     end 
@@ -188,7 +189,7 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab1.checkBtn[9]:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab1.checkBtn[3], "TOPLEFT", 10, 0);
   MonDKP.ConfigTab1.checkBtn[9].text:SetText("All");
   MonDKP.ConfigTab1.checkBtn[10]:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab1.checkBtn[2], "TOPLEFT", -15, 0);
-  MonDKP.ConfigTab1.checkBtn[10].text:SetText("In Party/Raid");
+  MonDKP.ConfigTab1.checkBtn[10].text:SetText("In Party/Raid");         -- executed in filterDKPTable (MonolithDKP.lua)
 
   ---------------------------------------
   -- MENU TAB 2 (Currently ONLY Filler elements)
@@ -342,7 +343,7 @@ function MonDKP:ConfigMenuTabs()
       core.SelectedRows = {}
       core.SelectedData = {}
     end
-    MonDKP:FilterDKPTable("class", "reset");
+    MonDKP:FilterDKPTable(core.currentSort, "reset");
   end)
 
   local function AdjustDKP ()
@@ -448,7 +449,7 @@ function MonDKP:ConfigMenuTabs()
   end)
 
   ---------------------------------------
-  -- MENU TAB 3 (Currently ONLY Filler elements)
+  -- MENU TAB 3
   ---------------------------------------
 
   MonDKP.ConfigTab3.header = MonDKP.ConfigTab3:CreateFontString(nil, "OVERLAY")
@@ -461,103 +462,12 @@ function MonDKP:ConfigMenuTabs()
   MonDKP:ManageEntries()
 
   ---------------------------------------
-  -- OPTIONS TAB
+  -- MENU TAB 4 (OPTIONS)
   ---------------------------------------
+  MonDKP:Options()
 
-  MonDKP.ConfigTab4.header = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab4.header:SetFontObject("MonDKPLargeCenter");
-  MonDKP.ConfigTab4.header:SetPoint("TOPLEFT", MonDKP.ConfigTab4, "TOPLEFT", 15, -10);
-  MonDKP.ConfigTab4.header:SetText("Default Settings");
-
-  MonDKP.ConfigTab4.description = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab4.description:SetFontObject("MonDKPSmallLeft");
-  MonDKP.ConfigTab4.description:SetPoint("TOPLEFT", MonDKP.ConfigTab4.header, "BOTTOMLEFT", 7, -30);
-  MonDKP.ConfigTab4.description:SetText("Default DKP settings for raid bonus'.");
-
-  --OnTimeBonus Header
-  MonDKP.ConfigTab4.OnTimeHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab4.OnTimeHeader:SetFontObject("MonDKPSmallLeft");
-  MonDKP.ConfigTab4.OnTimeHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab4.description, "BOTTOMLEFT", 0, -20);
-  MonDKP.ConfigTab4.OnTimeHeader:SetText("On Time Bonus: ")
-
-  --BossKillBonus Header
-  MonDKP.ConfigTab4.BossKillHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab4.BossKillHeader:SetFontObject("MonDKPSmallLeft");
-  MonDKP.ConfigTab4.BossKillHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab4.OnTimeHeader, "BOTTOMLEFT", 0, -20);
-  MonDKP.ConfigTab4.BossKillHeader:SetText("Boss Kill Bonus: ")
-
-  --CompletionBonus Header
-  MonDKP.ConfigTab4.CompleteHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab4.CompleteHeader:SetFontObject("MonDKPSmallLeft");
-  MonDKP.ConfigTab4.CompleteHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab4.BossKillHeader, "BOTTOMLEFT", 0, -20);
-  MonDKP.ConfigTab4.CompleteHeader:SetText("Raid Completion Bonus: ")
-
-  --NewBossKillBonus Header
-  MonDKP.ConfigTab4.NewBossHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab4.NewBossHeader:SetFontObject("MonDKPSmallLeft");
-  MonDKP.ConfigTab4.NewBossHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab4.CompleteHeader, "BOTTOMLEFT", 0, -20);
-  MonDKP.ConfigTab4.NewBossHeader:SetText("New Boss Kill Bonus: ")
-
-  --UnexcusedAbsence Header
-  MonDKP.ConfigTab4.UnexcusedHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab4.UnexcusedHeader:SetFontObject("MonDKPSmallLeft");
-  MonDKP.ConfigTab4.UnexcusedHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab4.NewBossHeader, "BOTTOMLEFT", 0, -20);
-  MonDKP.ConfigTab4.UnexcusedHeader:SetText("Unexcused Absence: ")
-  
-  -- Default OnTimeBonus Edit Box
-  local default = {}
-  MonDKP.ConfigTab4.default = default;
-
-  for i=1, 5 do
-    MonDKP.ConfigTab4.default[i] = CreateFrame("EditBox", nil, MonDKP.ConfigTab4)
-    MonDKP.ConfigTab4.default[i]:SetAutoFocus(false)
-    MonDKP.ConfigTab4.default[i]:SetMultiLine(false)
-    MonDKP.ConfigTab4.default[i]:SetSize(50, 24)
-    MonDKP.ConfigTab4.default[i]:SetBackdrop({
-      bgFile   = "Textures\\white.blp", tile = true,
-      edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
-    });
-    MonDKP.ConfigTab4.default[i]:SetBackdropColor(0,0,0,0.9)
-    MonDKP.ConfigTab4.default[i]:SetBackdropBorderColor(1,1,1,0.6)
-    MonDKP.ConfigTab4.default[i]:SetMaxLetters(4)
-    MonDKP.ConfigTab4.default[i]:SetTextColor(1, 1, 1, 1)
-    MonDKP.ConfigTab4.default[i]:SetFontObject("GameFontNormalRight")
-    MonDKP.ConfigTab4.default[i]:SetTextInsets(10, 10, 5, 5)
-    MonDKP.ConfigTab4.default[i]:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
-      self:ClearFocus()
-    end)
-  end
-
-  local DKPSettings = MonDKP:GetDKPSettings()
-
-  MonDKP.ConfigTab4.default[1]:SetPoint("TOPLEFT", MonDKP.ConfigTab4.OnTimeHeader, "TOPRIGHT", 5, 5)     
-  MonDKP.ConfigTab4.default[1]:SetText(tonumber(DKPSettings["OnTimeBonus"]))
-
-  MonDKP.ConfigTab4.default[2]:SetPoint("TOPLEFT", MonDKP.ConfigTab4.BossKillHeader, "TOPRIGHT", 5, 5)     
-  MonDKP.ConfigTab4.default[2]:SetText(tonumber(DKPSettings["BossKillBonus"]))
-
-  MonDKP.ConfigTab4.default[3]:SetPoint("TOPLEFT", MonDKP.ConfigTab4.CompleteHeader, "TOPRIGHT", 5, 5)     
-  MonDKP.ConfigTab4.default[3]:SetText(tonumber(DKPSettings["CompletionBonus"]))
-
-  MonDKP.ConfigTab4.default[4]:SetPoint("TOPLEFT", MonDKP.ConfigTab4.NewBossHeader, "TOPRIGHT", 5, 5)     
-  MonDKP.ConfigTab4.default[4]:SetText(tonumber(DKPSettings["NewBossKillBonus"]))
-
-  MonDKP.ConfigTab4.default[5]:SetPoint("TOPLEFT", MonDKP.ConfigTab4.UnexcusedHeader, "TOPRIGHT", 5, 5)
-  MonDKP.ConfigTab4.default[5]:SetText(tonumber(DKPSettings["UnexcusedAbsence"]))
-
-  -- Save Settings Button
-  MonDKP.ConfigTab4.submitSettings = self:CreateButton("TOPLEFT", MonDKP.ConfigTab4.default[5], "BOTTOMLEFT", -100, -20, "Save Settings");
-  MonDKP.ConfigTab4.submitSettings:SetSize(90,25)
-  MonDKP.ConfigTab4.submitSettings:SetScript("OnClick", function()
-    MonDKP_DB["DKPBonus"]["OnTimeBonus"] = MonDKP.ConfigTab4.default[1]:GetNumber();
-    MonDKP_DB["DKPBonus"]["BossKillBonus"] = MonDKP.ConfigTab4.default[2]:GetNumber();
-    MonDKP_DB["DKPBonus"]["CompletionBonus"] = MonDKP.ConfigTab4.default[3]:GetNumber();
-    MonDKP_DB["DKPBonus"]["NewBossKillBonus"] = MonDKP.ConfigTab4.default[4]:GetNumber();
-    MonDKP_DB["DKPBonus"]["UnexcusedAbsence"] = MonDKP.ConfigTab4.default[5]:GetNumber();
-  end)
-
-  	---------------------------------------
-  	-- Loot History Tab
+	---------------------------------------
+	-- Loot History Tab
 	---------------------------------------
 
 	MonDKP.ConfigTab5.text = MonDKP.ConfigTab5:CreateFontString(nil, "OVERLAY")
@@ -573,7 +483,7 @@ function MonDKP:ConfigMenuTabs()
 	MonDKP.ConfigTab5.inst:SetPoint("TOPRIGHT", MonDKP.ConfigTab5, "TOPRIGHT", 60, -10);
 	MonDKP.ConfigTab5.inst:SetText("Click or Shift+Click line\nto link information");
 
-  -- Populate Loot History (LootHistory.lua)
+	-- Populate Loot History (LootHistory.lua)
 	local looter = {}
 	MonDKP.ConfigTab5.looter = looter
 	local lootFrame = {}

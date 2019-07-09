@@ -47,6 +47,7 @@ core.classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warloc
 core.MonVersion = "v0.1 (alpha)";
 core.SelectedRows = {};       -- tracks rows in DKPTable that are currently selected for SetHighlightTexture
 core.ShowState = false;
+core.currentSort = "class"		-- stores current sort selection
 
 function MonDKP:GetCColors(class)
   if core.CColors then 
@@ -57,6 +58,10 @@ function MonDKP:GetCColors(class)
   end
 end
 
+function round(number, decimals)
+    return (("%%.%df"):format(decimals)):format(number)
+end
+
 function MonDKP:ResetPosition()
   MonDKP.UIConfig:ClearAllPoints();
   MonDKP.UIConfig:SetPoint("CENTER", UIParent, "CENTER", -250, 100);
@@ -64,6 +69,8 @@ function MonDKP:ResetPosition()
   MonDKP.UIConfig.TabMenu:Hide()
   MonDKP.UIConfig.expandtab:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\expand-arrow");
   core.ShowState = false;
+  MonDKP.BidTimer:ClearAllPoints()
+  MonDKP.BidTimer:SetPoint("CENTER", UIParent)
   MonDKP:Print("Window Position Reset")
 end
 
@@ -80,7 +87,11 @@ function MonDKP:Print(...)        --print function to add "MonolithDKP:" to the 
     local defaults = MonDKP:GetThemeColor();
     local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "MonolithDKP:", defaults[2].hex:upper());
     local suffix = "|r";
-    DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, ..., suffix));
+    if postColor then
+      DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, ..., suffix, postColor));
+    else
+      DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, ..., suffix));
+    end
 end
 
 function MonDKP:CreateButton(point, relativeFrame, relativePoint, xOffset, yOffset, text)  -- temp function for testing purpose only
@@ -92,6 +103,77 @@ function MonDKP:CreateButton(point, relativeFrame, relativePoint, xOffset, yOffs
   btn:SetNormalFontObject("MonDKPTinyCenter");
   btn:SetHighlightFontObject("MonDKPTinyCenter");
   return btn; 
+end
+
+function MonDKP:StartTimer(seconds, ...)
+  local duration = seconds
+  local title = ...;
+  local alpha = 1;
+
+  if not tonumber(seconds) then       -- cancels the function if the command was entered improperly (eg. no number for time)
+    MonDKP:Print("Invalid Timer");
+    return;
+  end
+
+  MonDKP.BidTimer = MonDKP.BidTimer or MonDKP:CreateTimer();    -- recycles timer frame so multiple instances aren't created
+  MonDKP.BidTimer:SetShown(not MonDKP.BidTimer:IsShown())         -- shows if not shown
+  if MonDKP.BidTimer:IsShown() == false then                    -- terminates function if hiding timer
+    return;
+  end
+
+  MonDKP.BidTimer:SetMinMaxValues(0, duration)
+  MonDKP.BidTimer.timerTitle:SetText(...)
+  PlaySound(8959)
+
+  if MonDKP_DB.timerpos then
+    local a = MonDKP_DB["timerpos"]                   -- retrieves timer's saved position from SavedVariables
+    MonDKP.BidTimer:SetPoint(a.point, a.relativeTo, a.relativePoint, a.x, a.y)
+  else
+    MonDKP.BidTimer:SetPoint("CENTER")                      -- sets to center if no position has been saved
+  end
+
+  local timer = 0             -- timer starts at 0
+  local timerText;            -- count down when below 1 minute
+  local modulo                -- remainder after divided by 60
+  local timerMinute           -- timerText / 60 to get minutes.
+  local audioPlayed = false;  -- so audio only plays once
+  local expiring;             -- determines when red blinking bar starts. @ 30 sec if timer > 120 seconds, @ 10 sec if below 120 seconds
+
+  MonDKP.BidTimer:SetScript("OnUpdate", function(self, elapsed)   -- timer loop
+    timer = timer + elapsed
+    timerText = round(duration - timer, 1)
+    if tonumber(timerText) > 60 then
+      timerMinute = math.floor(tonumber(timerText) / 60, 0);
+      modulo = bit.mod(tonumber(timerText), 60);
+      if tonumber(modulo) < 10 then modulo = "0"..modulo end
+      MonDKP.BidTimer.timertext:SetText(timerMinute..":"..modulo)
+    else
+      MonDKP.BidTimer.timertext:SetText(timerText)
+    end
+    if duration >= 120 then
+      expiring = 30;
+    else
+      expiring = 10;
+    end
+    if tonumber(timerText) < expiring then
+      if audioPlayed == false then
+        PlaySound(23639);
+        audioPlayed = true;
+      end
+      MonDKP.BidTimer:SetStatusBarColor(0.8, 0.1, 0, alpha)
+      if alpha > 0 then
+        alpha = alpha - 0.005
+      elseif alpha <= 0 then
+        alpha = 1
+      end
+    else
+      MonDKP.BidTimer:SetStatusBarColor(0, 0.8, 0)
+    end
+    self:SetValue(timer)
+    if timer >= duration then
+      MonDKP.BidTimer:Hide();
+    end
+  end)
 end
 
 -------------------------------------
@@ -149,7 +231,7 @@ function MonDKP:DKPTable_Set(tar, field, value)                -- updates field 
       MonDKP_DKPTable[result[i][1]][field] = value
     end
   end
-  MonDKP:FilterDKPTable("class", "reset")
+  MonDKP:FilterDKPTable(core.currentSort, "reset")
 end
   
 
@@ -166,22 +248,22 @@ function MonDKP:PrintTable(tar)             --prints table structure for testing
               print("        ", k)
               for k,v in pairs(v) do
                 if (type(v) ~= "table") then
-                  print("            ", k, " -> ", v)
+                  print("            ", v)
                 end
               end
               print(" ")
             else
-              print("        ", k, " -> ", v)
+              print("        ", v)
             end
           end
           print(" ")
         else
-          print("    ", k, " -> ", v)
+          print("    ", v)
         end
       end
       print(" ")
     else
-      print(k, " -> ", v)
+      print(v)
     end
   end
   print(" ")

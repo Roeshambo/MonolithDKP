@@ -8,23 +8,36 @@ local MonDKP = core.MonDKP;
 MonDKP.Commands = {
 	["config"] = MonDKP.Toggle,
 	["reset"] = MonDKP.ResetPosition,
+	["bid"] = function(...)
+		local item = strjoin(" ", ...)
+		if ... == nil then
+			MonDKP.ToggleBidWindow()
+		else
+			MonDKP:Print("Opening Bid Window for: ".. item)
+			MonDKP.ToggleBidWindow()
+		end
+	end,
+	["timer"] = function(time, ...)
+		if time == nil then
+			MonDKP:StartTimer(0)
+		else
+			local title = strjoin(" ", ...)
+			MonDKP:StartTimer(tonumber(time), title)
+		end
+	end,
+		--MonDKP.ToggleBidWindow,
 	["help"] = function()
 		print(" ");
 		MonDKP:Print("List of slash commands:")
 		MonDKP:Print("|cff00cc66/dkp|r - Launches DKP Window");
 		MonDKP:Print("|cff00cc66/dkp ?|r - Shows Help Info");
 		MonDKP:Print("|cff00cc66/dkp reset|r - Resets DKP Window Position/Size");
+		MonDKP:Print("|cff00cc66/dkp timer|r - Creates Raid Timer (Raid Assists Only) (eg. /dkp timer 120 Pizza Break!");
 		print(" ");
 	end,
-	["bid"] = {
-		["start"] = function() print("bidding started") end,	-- place holders to launch bidding windows 
-
-		["stop"] = function() print("bidding stopped") end,
-
-	},
 };
 
-local function HandleSlashCommands(str)	
+local function HandleSlashCommands(str)
 	if (#str == 0) then
 		MonDKP.Commands.config();
 		return;		
@@ -80,7 +93,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	SLASH_MonolithDKP1 = "/dkp";
 	SlashCmdList.MonolithDKP = HandleSlashCommands;
 	
-    MonDKP:Print("Welcome back, ", UnitName("player").."!");
+    MonDKP:Print("Welcome back, "..UnitName("player").."!");
 
     if(event == "ADDON_LOADED") then
     	core.loaded = 1;
@@ -143,7 +156,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		end--]]
 		-- End testing DB
 
-		MonDKP:Print("Loaded "..#MonDKP_DKPTable.." records.");
+		MonDKP:Print("Loaded "..#MonDKP_DKPTable.." player records and "..#MonDKP_Log.." loot history records.");
 		core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();
 	end
 end

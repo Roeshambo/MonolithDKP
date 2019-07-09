@@ -8,11 +8,13 @@
 embeds.xml
 Core.lua
 comm.lua
+Bidding.lua
 MonolithDKP.lua
 init.lua
 ConfigMenuTabs.lua
 LootHistory.lua
 ManageEntries.lua
+Options.lua
 TableFunctions.lua
 XMLFunctions.lua
 MonolithDKP.xml

@@ -296,27 +296,27 @@
         			</Anchors>
 					<TexCoords left="0.84375" right="1.0" top="0" bottom="0.546875"/>
         		</Texture>
-				<Texture name="$parentLeft" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
+				<Texture name="$parentLeft" file="Interface\AddOns\MonolithDKP\Media\Textures\MonDKP-Inactive-Tab">
         			<Size>
-        				<AbsDimension x="20" y="32"/>
+        				<AbsDimension x="20" y="47"/>
         			</Size>
         			<Anchors>
         				<Anchor point="TOPLEFT" x="0" y="-1"/>
         			</Anchors>
 					<TexCoords left="0" right="0.15625" top="0" bottom="1.0"/>
         		</Texture>
-				<Texture name="$parentMiddle" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
+				<Texture name="$parentMiddle" file="Interface\AddOns\MonolithDKP\Media\Textures\MonDKP-Inactive-Tab">
         			<Size>
-        				<AbsDimension x="88" y="32"/>
+        				<AbsDimension x="88" y="47"/>
         			</Size>
         			<Anchors>
         				<Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT"/>
 					</Anchors>
 					<TexCoords left="0.15625" right="0.84375" top="0" bottom="1.0"/>
         		</Texture>
-				<Texture name="$parentRight" file="Interface\PaperDollInfoFrame\UI-Character-InActiveTab">
+				<Texture name="$parentRight" file="Interface\AddOns\MonolithDKP\Media\Textures\MonDKP-Inactive-Tab">
         			<Size>
-        				<AbsDimension x="20" y="32"/>
+        				<AbsDimension x="20" y="47"/>
         			</Size>
         			<Anchors>
         				<Anchor point="LEFT" relativeTo="$parentMiddle" relativePoint="RIGHT"/>

@@ -10,13 +10,13 @@ function DKPTable_OnClick(self)
   SelectedRow = self.index
   if(not IsShiftKeyDown()) then
     for i=1, core.TableNumRows do
-      table.wipe(core.SelectedData)
+      core.SelectedData = {}
       TempSearch = MonDKP:Table_Search(core.SelectedRows, SelectedRow);
-      table.wipe(core.SelectedRows)
+      core.SelectedRows = {}
       if (TempSearch == false) then
         tinsert(core.SelectedRows, {SelectedRow});
       else
-        table.wipe(core.SelectedData)
+        core.SelectedData = {}
       end
       self:GetParent().Rows[i]:SetNormalTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\ListBox-Highlight")
     end
@@ -99,10 +99,14 @@ function DKPTable_Update()
     row = MonDKP.DKPTable.Rows[i];
     row:Hide();
   end
+  for i=1, #MonDKP_DKPTable do
+    if MonDKP_DKPTable[i].dkp < 0 then MonDKP_DKPTable[i].dkp = 0 end  -- cleans negative numbers from SavedVariables
+  end
   for i=1, core.TableNumRows do     -- show rows if they have values
     row = MonDKP.DKPTable.Rows[i]
     index = offset + i
     if core.WorkingTable[index] then
+      --if (tonumber(core.WorkingTable[index].dkp) < 0) then core.WorkingTable[index].dkp = 0 end           -- shows 0 if negative DKP
       c = MonDKP:GetCColors(core.WorkingTable[index].class);
       row:Show()
       row.index = index

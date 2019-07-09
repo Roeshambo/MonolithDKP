@@ -36,7 +36,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 		if (sender ~= UnitName("player")) then
 			if (prefix == "MonDKPDataSync" or prefix == "MonDKPDataSmall" or prefix == "MonDKPLogSync") then
 				if (prefix == "MonDKPDataSync") then
-					MonDKP:Print("DKP Database update initiated by "..sender.."...")
+					MonDKP:Print("DKP database updated by "..sender.."...")
 				end
 				decoded = LibCompress:Decompress(LibCompressAddonEncodeTable:Decode(message))
 				local success, deserialized = LibAceSerializer:Deserialize(decoded);
@@ -47,11 +47,8 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						MonDKP:Print("Loot history update complete.")
 					else
 						MonDKP_DKPTable = deserialized;			-- commits to SavedVariables
-						MonDKP:FilterDKPTable("class", "reset")
+						MonDKP:FilterDKPTable(core.currentSort, "reset")
 						DKPTable_Update()
-						if (prefix == "MonDKPDataSync") then
-							MonDKP:Print("DKP Database update complete!")
-						end
 					end
 				else
 					print(deserialized)  -- error reporting if string doesn't get deserialized correctly
