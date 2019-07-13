@@ -1,9 +1,9 @@
 ## Interface: 80200
 ## Title: M|cffaeaeddonlith|r |cffff0000DKP|r
-## Author: Roe
+## Author: Roeshambo
 ## Version: 0.1
 ## DefaultState: enabled
-## SavedVariables: MonDKP_DB, MonDKP_Log, MonDKP_DKPTable, MonDKP_Tables, MonDKP_Loot
+## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_MinBids
 
 embeds.xml
 Core.lua
@@ -11,9 +11,10 @@ comm.lua
 Bidding.lua
 MonolithDKP.lua
 init.lua
-ConfigMenuTabs.lua
 LootHistory.lua
+ConfigMenuTabs.lua
 ManageEntries.lua
+ClassGraph.lua
 Options.lua
 TableFunctions.lua
 XMLFunctions.lua

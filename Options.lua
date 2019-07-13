@@ -44,11 +44,29 @@ function MonDKP:Options()
   MonDKP.ConfigTab4.UnexcusedHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab4.NewBossHeader, "BOTTOMLEFT", 0, -20);
   MonDKP.ConfigTab4.UnexcusedHeader:SetText("Unexcused Absence: ")
 
+  --Bid Timer Header
+  MonDKP.ConfigTab4.BidTimerHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab4.BidTimerHeader:SetFontObject("MonDKPSmallLeft");
+  MonDKP.ConfigTab4.BidTimerHeader:SetPoint("LEFT", MonDKP.ConfigTab4.OnTimeHeader, "RIGHT", 120, 0);
+  MonDKP.ConfigTab4.BidTimerHeader:SetText("Bid Timer: ")
+
+  --History Lenght Header
+  MonDKP.ConfigTab4.HistoryLimitHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab4.HistoryLimitHeader:SetFontObject("MonDKPSmallLeft");
+  MonDKP.ConfigTab4.HistoryLimitHeader:SetPoint("TOP", MonDKP.ConfigTab4.UnexcusedHeader, "BOTTOM", -15, -20);
+  MonDKP.ConfigTab4.HistoryLimitHeader:SetText("Loot History Limit: ")
+
+  --History Lenght Description
+  MonDKP.ConfigTab4.HistoryLimitDesc = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab4.HistoryLimitDesc:SetFontObject("MonDKPTinyLeft");
+  MonDKP.ConfigTab4.HistoryLimitDesc:SetPoint("LEFT", MonDKP.ConfigTab4.HistoryLimitHeader, "RIGHT", 80, 0);
+  MonDKP.ConfigTab4.HistoryLimitDesc:SetText("|cffff0000Recommended you don't exceed 3,000 entries\nto avoid script lock ups. Oldest entries beyond\nyour set limit will be removed on reload or login.|r")
+
   -- Default OnTimeBonus Edit Box
   local default = {}
   MonDKP.ConfigTab4.default = default;
 
-  for i=1, 5 do
+  for i=1, 7 do
     MonDKP.ConfigTab4.default[i] = CreateFrame("EditBox", nil, MonDKP.ConfigTab4)
     MonDKP.ConfigTab4.default[i]:SetAutoFocus(false)
     MonDKP.ConfigTab4.default[i]:SetMultiLine(false)
@@ -85,8 +103,15 @@ function MonDKP:Options()
   MonDKP.ConfigTab4.default[5]:SetPoint("TOPLEFT", MonDKP.ConfigTab4.UnexcusedHeader, "TOPRIGHT", 5, 5)
   MonDKP.ConfigTab4.default[5]:SetText(tonumber(DKPSettings["UnexcusedAbsence"]))
 
+  MonDKP.ConfigTab4.default[6]:SetPoint("TOPLEFT", MonDKP.ConfigTab4.BidTimerHeader, "TOPRIGHT", 5, 5)     
+  MonDKP.ConfigTab4.default[6]:SetText(tonumber(DKPSettings["BidTimer"]))
+
+  MonDKP.ConfigTab4.default[7]:SetPoint("TOPLEFT", MonDKP.ConfigTab4.HistoryLimitHeader, "TOPRIGHT", 5, 5)     
+  MonDKP.ConfigTab4.default[7]:SetText(tonumber(DKPSettings["HistoryLimit"]))
+  MonDKP.ConfigTab4.default[7]:SetSize(70, 24)
+
   -- Save Settings Button
-  MonDKP.ConfigTab4.submitSettings = self:CreateButton("TOPLEFT", MonDKP.ConfigTab4.default[5], "BOTTOMLEFT", -100, -20, "Save Settings");
+  MonDKP.ConfigTab4.submitSettings = self:CreateButton("TOPLEFT", MonDKP.ConfigTab4.default[7], "BOTTOMLEFT", -40, -40, "Save Settings");
   MonDKP.ConfigTab4.submitSettings:SetSize(90,25)
   MonDKP.ConfigTab4.submitSettings:SetScript("OnClick", function()
     MonDKP_DB["DKPBonus"]["OnTimeBonus"] = MonDKP.ConfigTab4.default[1]:GetNumber();
@@ -94,6 +119,8 @@ function MonDKP:Options()
     MonDKP_DB["DKPBonus"]["CompletionBonus"] = MonDKP.ConfigTab4.default[3]:GetNumber();
     MonDKP_DB["DKPBonus"]["NewBossKillBonus"] = MonDKP.ConfigTab4.default[4]:GetNumber();
     MonDKP_DB["DKPBonus"]["UnexcusedAbsence"] = MonDKP.ConfigTab4.default[5]:GetNumber();
+    MonDKP_DB["DKPBonus"]["BidTimer"] = MonDKP.ConfigTab4.default[6]:GetNumber();
+    MonDKP_DB["DKPBonus"]["HistoryLimit"] = MonDKP.ConfigTab4.default[7]:GetNumber();
     MonDKP:Print("Default settings saved.")
   end)
 

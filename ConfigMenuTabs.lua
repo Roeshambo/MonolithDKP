@@ -49,6 +49,12 @@ end
 local function Tab_OnClick(self)
   PanelTemplates_SetTab(self:GetParent(), self:GetID());
   
+  if self:GetID() > 4 then
+    MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:Show()
+  else
+    MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:Hide()
+  end
+
   local scrollChild = MonDKP.UIConfig.TabMenu.ScrollFrame:GetScrollChild();
   if (scrollChild) then
     scrollChild:Hide();
@@ -74,13 +80,13 @@ local function SetTabs(frame, numTabs, ...)
     tab:SetScript("OnClick", Tab_OnClick);
     
     tab.content = CreateFrame("Frame", nil, MonDKP.UIConfig.TabMenu.ScrollFrame);
-    tab.content:SetSize(375, 800);
+    tab.content:SetSize(475, 490);
     tab.content:Hide();
         
     table.insert(contents, tab.content);
     
     if (i == 1) then
-      tab:SetPoint("TOPLEFT", MonDKP.UIConfig.TabMenu, "BOTTOMLEFT", 5, 1);
+      tab:SetPoint("TOPLEFT", MonDKP.UIConfig.TabMenu, "BOTTOMLEFT", 0, 1);
     else
       tab:SetPoint("TOPLEFT", _G[frameName.."Tab"..(i - 1)], "TOPRIGHT", -14, 0);
     end 
@@ -124,7 +130,7 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", MonDKP.UIConfig.TabMenu.ScrollFrame, "TOPRIGHT", -20, -12);
   MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", MonDKP.UIConfig.TabMenu.ScrollFrame, "BOTTOMRIGHT", -2, 15);
 
-  MonDKP.ConfigTab1, MonDKP.ConfigTab2, MonDKP.ConfigTab3, MonDKP.ConfigTab4, MonDKP.ConfigTab5 = SetTabs(MonDKP.UIConfig.TabMenu, 5, "Filters", "Adjust DKP", "Manage", "Options", "History");
+  MonDKP.ConfigTab1, MonDKP.ConfigTab2, MonDKP.ConfigTab3, MonDKP.ConfigTab4, MonDKP.ConfigTab5 = SetTabs(MonDKP.UIConfig.TabMenu, 6, "Filters", "Adjust DKP", "Manage", "Options", "Loot History", "DKP History");
 
   ---------------------------------------
   -- MENU TAB 1
@@ -176,7 +182,7 @@ function MonDKP:ConfigMenuTabs()
   end
 
   -- Class Check Buttons:
-  MonDKP.ConfigTab1.checkBtn[1]:SetPoint("TOPLEFT", MonDKP.ConfigTab1, "TOPLEFT", 15, -80);
+  MonDKP.ConfigTab1.checkBtn[1]:SetPoint("TOPLEFT", MonDKP.ConfigTab1, "TOPLEFT", 60, -100);
   MonDKP.ConfigTab1.checkBtn[2]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[1], "TOPRIGHT", 50, 0);
   MonDKP.ConfigTab1.checkBtn[3]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[2], "TOPRIGHT", 50, 0);
   MonDKP.ConfigTab1.checkBtn[4]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[3], "TOPRIGHT", 50, 0);
@@ -185,14 +191,17 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab1.checkBtn[7]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[3], "BOTTOMLEFT", 0, -10);
   MonDKP.ConfigTab1.checkBtn[8]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[4], "BOTTOMLEFT", 0, -10);
 
-  -- Other filter buttons
-  MonDKP.ConfigTab1.checkBtn[9]:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab1.checkBtn[3], "TOPLEFT", 10, 0);
+  MonDKP.ConfigTab1.checkBtn[9]:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab1.checkBtn[3], "TOPLEFT", 50, 0);
   MonDKP.ConfigTab1.checkBtn[9].text:SetText("All");
-  MonDKP.ConfigTab1.checkBtn[10]:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab1.checkBtn[2], "TOPLEFT", -15, 0);
+  MonDKP.ConfigTab1.checkBtn[10]:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab1.checkBtn[2], "TOPLEFT", 25, 0);
   MonDKP.ConfigTab1.checkBtn[10].text:SetText("In Party/Raid");         -- executed in filterDKPTable (MonolithDKP.lua)
 
+
+
+  MonDKP:ClassGraph()  -- draws class graph on tab1
+
   ---------------------------------------
-  -- MENU TAB 2 (Currently ONLY Filler elements)
+  -- MENU TAB 2
   ---------------------------------------
 
   MonDKP.ConfigTab2.header = MonDKP.ConfigTab2:CreateFontString(nil, "OVERLAY")
@@ -336,7 +345,7 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab2.selectAll.text:SetFontObject("MonDKPTinyLeft")
   MonDKP.ConfigTab2.selectAll:SetPoint("LEFT", MonDKP.ConfigTab2.addDKP, "RIGHT", 15, 0);
   MonDKP.ConfigTab2.selectAll:SetScript("OnClick", function(self)
-    if (self:GetChecked() == true) then
+    if (MonDKP.ConfigTab2.selectAll:GetChecked() == true) then
       core.SelectedRows = core.WorkingTable;
       core.SelectedData = core.WorkingTable;
     else
@@ -361,7 +370,7 @@ function MonDKP:ConfigMenuTabs()
             MonDKP:DKPTable_Set(core.SelectedData[i]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber())
         end
       end
-      MonDKP.Sync:SendData("MonDKPDataSmall", MonDKP_DKPTable)         -- broadcast updated DKP table
+      MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
       if (MonDKP.ConfigTab1.checkBtn[10]:GetChecked() and MonDKP.ConfigTab2.selectAll:GetChecked()) then
         MonDKP.Sync:SendData("MonDKPBroadcast", "Raid DKP Adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for reason: "..adjustReason)
       else
@@ -372,7 +381,7 @@ function MonDKP:ConfigMenuTabs()
     elseif (#core.SelectedData == 1 and adjustReason) then
       if core.SelectedData[1]["player"] and MonDKP:Table_Search(core.WorkingTable, core.SelectedData[1]["player"]) then
         MonDKP:DKPTable_Set(core.SelectedData[1]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber())
-        MonDKP.Sync:SendData("MonDKPDataSmall", MonDKP_DKPTable) -- broadcast updated DKP table
+        MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable) -- broadcast updated DKP table
         MonDKP.Sync:SendData("MonDKPBroadcast", core.SelectedData[1]["player"].."s DKP adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for reason: "..adjustReason)
       end
     else
@@ -444,7 +453,7 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab2.broadcastLootButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab2.broadcastButton, "TOPRIGHT", 20, 0, "Broadcast Loot History");
   MonDKP.ConfigTab2.broadcastLootButton:SetSize(140,25)
   MonDKP.ConfigTab2.broadcastLootButton:SetScript("OnClick", function()
-    MonDKP.Sync:SendData("MonDKPLogSync", MonDKP_Log)
+    MonDKP.Sync:SendData("MonDKPLogSync", MonDKP_Loot)
     MonDKP.Sync:SendData("MonDKPBroadcast", "Loot history update in progress...")
   end)
 
@@ -480,7 +489,7 @@ function MonDKP:ConfigMenuTabs()
 	MonDKP.ConfigTab5.inst:ClearAllPoints();
 	MonDKP.ConfigTab5.inst:SetFontObject("MonDKPTinyRight");
 	MonDKP.ConfigTab5.inst:SetTextColor(0.3, 0.3, 0.3, 0.7)
-	MonDKP.ConfigTab5.inst:SetPoint("TOPRIGHT", MonDKP.ConfigTab5, "TOPRIGHT", 60, -10);
+	MonDKP.ConfigTab5.inst:SetPoint("TOPRIGHT", MonDKP.ConfigTab5, "TOPRIGHT", -40, -10);
 	MonDKP.ConfigTab5.inst:SetText("Click or Shift+Click line\nto link information");
 
 	-- Populate Loot History (LootHistory.lua)
@@ -488,12 +497,13 @@ function MonDKP:ConfigMenuTabs()
 	MonDKP.ConfigTab5.looter = looter
 	local lootFrame = {}
 	MonDKP.ConfigTab5.lootFrame = lootFrame
-	for i=1, #MonDKP_Log do
+	for i=1, #MonDKP_Loot do
 	MonDKP.ConfigTab5.lootFrame[i] = CreateFrame("Frame", "MonDKPLootHistoryFrame"..i, MonDKP.ConfigTab5);
 	end
 
-	if #MonDKP_Log > 0 then
-	MonDKP:LootHistory_Update()
+	if #MonDKP_Loot > 0 then
+    MonDKP:LootHistory_Update("No Filter")
+    CreateSortBox();
 	end
 end
   

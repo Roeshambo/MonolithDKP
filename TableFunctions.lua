@@ -22,7 +22,12 @@ function DKPTable_OnClick(self)
     end
   else
     TempSearch = MonDKP:Table_Search(core.SelectedRows, SelectedRow);
-    if (TempSearch == false) then
+    if MonDKP.ConfigTab2.selectAll:GetChecked() then
+      core.SelectedRows = {}
+      core.SelectedData = {}
+      tinsert(core.SelectedRows, {SelectedRow});
+      MonDKP.ConfigTab2.selectAll:SetChecked(false)
+    elseif TempSearch == false then
       tinsert(core.SelectedRows, {SelectedRow});
     else
       tremove(core.SelectedRows, TempSearch[1][1])
@@ -145,7 +150,7 @@ end
 
 function MonDKP:DKPTable_Create()
   MonDKP.DKPTable = CreateFrame("ScrollFrame", "MonDKPDisplayScrollFrame", MonDKP.UIConfig, "FauxScrollFrameTemplate")
-  MonDKP.DKPTable:SetSize(core.TableWidth, core.TableRowHeight*core.TableNumRows)
+  MonDKP.DKPTable:SetSize(core.TableWidth, core.TableRowHeight*core.TableNumRows+3)
   MonDKP.DKPTable:SetPoint("LEFT", 20, 3)
   MonDKP.DKPTable:SetBackdrop( {
     bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
@@ -160,7 +165,11 @@ function MonDKP:DKPTable_Create()
   MonDKP.DKPTable.Rows = {}
   for i=1, core.TableNumRows do
     MonDKP.DKPTable.Rows[i] = CreateRow(MonDKP.DKPTable, i)
-    MonDKP.DKPTable.Rows[i]:SetPoint("TOPLEFT", MonDKP.DKPTable.Rows[i-1] or MonDKP.DKPTable, MonDKP.DKPTable.Rows[i-1] and "BOTTOMLEFT" or "TOPLEFT")
+    if i==1 then
+      MonDKP.DKPTable.Rows[i]:SetPoint("TOPLEFT", MonDKP.DKPTable, "TOPLEFT", 0, -2)
+    else  
+      MonDKP.DKPTable.Rows[i]:SetPoint("TOPLEFT", MonDKP.DKPTable.Rows[i-1], "BOTTOMLEFT")
+    end
   end
   MonDKP.DKPTable:SetScript("OnVerticalScroll", function(self, offset)
     FauxScrollFrame_OnVerticalScroll(self, offset, core.TableRowHeight, DKPTable_Update)

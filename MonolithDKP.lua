@@ -2,7 +2,7 @@ local _, core = ...;
 local _G = _G;
 local MonDKP = core.MonDKP;
 
--- DBs required: MonDKP_DB (log app settings), MonDKP_Log(log kills/dkp distributed), MonDKP_DKPTable(Member/class/dkp list), MonDKP_Tables, MonDKP_Loot(loot and who got it)
+-- DBs required: MonDKP_DB (log app settings), MonDKP_Loot(log kills/dkp distributed), MonDKP_DKPTable(Member/class/dkp list), MonDKP_Tables, MonDKP_Loot(loot and who got it)
 -- DBs are initiallized at the bottom of init.lua
 
 function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, the entire addon window
@@ -23,8 +23,6 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
         for i=1, 40 do
           tempName,_,_,_,tempClass = GetRaidRosterInfo(i)
           if tempName and tempName == v.player then
-            core.SelectedRows = {}
-            core.SelectedData = {}
             tinsert(core.WorkingTable, v)
           end
         end

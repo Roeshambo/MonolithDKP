@@ -35,7 +35,9 @@ core.settings = {             -- From MonDKP_DB
     BossKillBonus = 5,
     CompletionBonus = 10,
     NewBossKillBonus = 10,
-    UnexcusedAbsence = -25
+    UnexcusedAbsence = -25,
+    BidTimer = 30,
+    HistoryLimit = 5000
   }
 }
 
@@ -48,10 +50,12 @@ core.MonVersion = "v0.1 (alpha)";
 core.SelectedRows = {};       -- tracks rows in DKPTable that are currently selected for SetHighlightTexture
 core.ShowState = false;
 core.currentSort = "class"		-- stores current sort selection
+core.BidInProgress = false;   -- flagged true if bidding in progress. else; false.
+core.BossKilled = nil
 
 function MonDKP:GetCColors(class)
   if core.CColors then 
-    local c = core.CColors[class];
+    local c = core.CColors[class] or core.CColors;
     return c;
   else
     return false;
@@ -79,8 +83,51 @@ function MonDKP:GetThemeColor()
   return c;
 end
 
+function MonDKP:GetPlayerDKP(player)
+  local search = MonDKP:Table_Search(MonDKP_DKPTable, player)
+  local dkp;
+
+  if search then
+    return MonDKP_DKPTable[search[1][1]].dkp
+  end
+end
+
 function MonDKP:GetDKPSettings()
   return core.settings["DKPBonus"];
+end
+
+function MonDKP:PurgeLootHistory()     -- cleans old loot history beyond 2500 entries to reduce native system load
+  local limit = core.settings["DKPBonus"]["HistoryLimit"]
+  MonDKP:SortLootTable()
+
+  if #MonDKP_Loot > limit then
+    for i=limit+1, #MonDKP_Loot do
+      tremove(MonDKP_Loot, i)
+    end
+  end
+end
+
+function MonDKP:CurrentTime()
+  local TZ = date("%Z") -- Time Zone
+  --Eastern Daylight Time
+  --Central Daylight Time
+  --Mountain Daylight Time
+  --Pacific Daylight Time
+  local str;
+
+  if strfind(TZ, "Eastern") then
+    TZ = "EST"
+  elseif strfind(TZ, "Central") then
+    TZ = "CST"
+  elseif strfind(TZ, "Mountain") then
+    TZ = "MST"
+  elseif strfind(TZ, "Pacific") then
+    TZ = "PST"
+  end
+
+  str = date("%y/%m/%d %H:%M:%S ")..TZ
+
+  return str;
 end
 
 function MonDKP:Print(...)        --print function to add "MonolithDKP:" to the beginning of print() outputs.
@@ -105,8 +152,18 @@ function MonDKP:CreateButton(point, relativeFrame, relativePoint, xOffset, yOffs
   return btn; 
 end
 
+function MonDKP:BroadcastTimer(seconds, ...)       -- broadcasts timer and starts it natively
+  local title = ...;
+  if not tonumber(seconds) then       -- cancels the function if the command was entered improperly (eg. no number for time)
+    MonDKP:Print("Invalid Timer");
+    return;
+  end
+  MonDKP:StartTimer(seconds, ...)
+  MonDKP.Sync:SendData("MonDKPNotify", "StartTimer,"..seconds..","..title)
+end
+
 function MonDKP:StartTimer(seconds, ...)
-  local duration = seconds
+  local duration = tonumber(seconds)
   local title = ...;
   local alpha = 1;
 
@@ -158,7 +215,10 @@ function MonDKP:StartTimer(seconds, ...)
     if tonumber(timerText) < expiring then
       if audioPlayed == false then
         PlaySound(23639);
-        audioPlayed = true;
+      end
+      if tonumber(timerText) < 10 then
+        audioPlayed = true
+        StopSound(23639)
       end
       MonDKP.BidTimer:SetStatusBarColor(0.8, 0.1, 0, alpha)
       if alpha > 0 then

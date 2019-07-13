@@ -1,5 +1,5 @@
 --[[
-	Usage so far:  MonDKP.Sync:SendData(core.WorkingTable)  --sends table through comm channel for updates
+	Usage so far:  MonDKP.Sync:SendData(prefix, core.WorkingTable)  --sends table through comm channel for updates
 
 	TODO:
 	functions will be separated into more specific uses such as full DB upload (it's current state) as well as
@@ -8,8 +8,11 @@
 
 	Prefix's used: 	MonDKPDataSync - Mass Update. Update all SavedVariables
 					MonDKPBroadcast - Message on broadcast
-					MonDKPDataSmall - Supress full update message
---]]
+					MonDKPLogSync - Syncs Loot Log
+					MonDKPNotify - string of variables to be broken down to launch modules (eg. timer 20 timer_title_string)
+
+
+--]]	
 
 local _, core = ...;
 local _G = _G;
@@ -24,17 +27,27 @@ local LibCompressAddonEncodeTable = LibCompress:GetAddonEncodeTable()
 function MonDKP.Sync:OnEnable()
 	MonDKP.Sync:RegisterComm("MonDKPDataSync", MonDKP.Sync:OnCommReceived())
 	MonDKP.Sync:RegisterComm("MonDKPBroadcast", MonDKP.Sync:OnCommReceived())
-	MonDKP.Sync:RegisterComm("MonDKPDataSmall", MonDKP.Sync:OnCommReceived())
 	MonDKP.Sync:RegisterComm("MonDKPLogSync", MonDKP.Sync:OnCommReceived())
+	MonDKP.Sync:RegisterComm("MonDKPNotify", MonDKP.Sync:OnCommReceived())
+	MonDKP.Sync:RegisterComm("MonDKPLootAward", MonDKP.Sync:OnCommReceived())
 end
 
 function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 	if (prefix) then
-		if (prefix == "MonDKPBroadcast") then
+		if (prefix == "MonDKPBroadcast") and sender ~= UnitName("player") then
 			MonDKP:Print(message)
+		elseif (prefix == "MonDKPNotify") then
+			local command, arg1, arg2 = strsplit(",", message);
+			if sender ~= UnitName("player") then
+				if command == "StartTimer" then
+					MonDKP:StartTimer(arg1, arg2)
+				elseif command == "StartBidTimer" then
+					MonDKP:StartBidTimer(arg1, arg2)
+				end
+			end
 		end
 		if (sender ~= UnitName("player")) then
-			if (prefix == "MonDKPDataSync" or prefix == "MonDKPDataSmall" or prefix == "MonDKPLogSync") then
+			if (prefix == "MonDKPDataSync" or prefix == "MonDKPLogSync" or prefix == "MonDKPLootAward") then
 				if (prefix == "MonDKPDataSync") then
 					MonDKP:Print("DKP database updated by "..sender.."...")
 				end
@@ -42,9 +55,14 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				local success, deserialized = LibAceSerializer:Deserialize(decoded);
 				if success then
 					if (prefix == "MonDKPLogSync") then
-						MonDKP_Log = deserialized;
-						MonDKP:LootHistory_Update()
+						MonDKP_Loot = deserialized;
+						MonDKP:LootHistory_Reset()
+						MonDKP:LootHistory_Update("No Filter")
 						MonDKP:Print("Loot history update complete.")
+					elseif prefix == "MonDKPLootAward" then
+						tinsert(MonDKP_Loot, deserialized)
+						MonDKP:LootHistory_Reset()
+						MonDKP:LootHistory_Update("No Filter")
 					else
 						MonDKP_DKPTable = deserialized;			-- commits to SavedVariables
 						MonDKP:FilterDKPTable(core.currentSort, "reset")
@@ -67,7 +85,7 @@ function MonDKP.Sync:SendData(prefix, data)
 	local verInteg1 = false;
 	local verInteg2 = false;
 
-	if (type(data) == "string") then
+	if (prefix == "MonDKPBroadcast" or prefix == "MonDKPNotify") then
 		MonDKP.Sync:SendCommMessage(prefix, data, "PARTY")
 		return;
 	end

@@ -14,18 +14,20 @@ MonDKP.Commands = {
 			MonDKP.ToggleBidWindow()
 		else
 			MonDKP:Print("Opening Bid Window for: ".. item)
-			MonDKP.ToggleBidWindow()
+			MonDKP:ToggleBidWindow(item)
 		end
 	end,
 	["timer"] = function(time, ...)
 		if time == nil then
-			MonDKP:StartTimer(0)
+			MonDKP:BroadcastTimer(1, "...")
 		else
 			local title = strjoin(" ", ...)
-			MonDKP:StartTimer(tonumber(time), title)
+			MonDKP:BroadcastTimer(tonumber(time), title)
 		end
 	end,
-		--MonDKP.ToggleBidWindow,
+	["test"] = function(time, ...)
+		MonDKP:BroadcastBidTimer(20, "Don't worry about it")
+	end,
 	["help"] = function()
 		print(" ");
 		MonDKP:Print("List of slash commands:")
@@ -70,6 +72,14 @@ local function HandleSlashCommands(str)
 	end
 end
 
+function MonDKP_OnEvent(self, event, arg1, ...)
+	if event == "ADDON_LOADED" then
+		MonDKP:OnInitialize(event, arg1)
+	elseif event == "CHAT_MSG_WHISPER" then
+		MonDKP_CHAT_MSG_WHISPER(arg1, ...)
+	end
+end
+
 function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run on load triggered by last 3 lines of this file
 	if (name ~= "MonolithDKP") then return end 
 
@@ -92,18 +102,17 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 
 	SLASH_MonolithDKP1 = "/dkp";
 	SlashCmdList.MonolithDKP = HandleSlashCommands;
-	
+
     MonDKP:Print("Welcome back, "..UnitName("player").."!");
 
     if(event == "ADDON_LOADED") then
     	core.loaded = 1;
-		if (MonDKP_Log == nil) then MonDKP_Log = {} end;
 		if (MonDKP_DKPTable == nil) then MonDKP_DKPTable = {} end;
-		if (MonDKP_Tables == nil) then MonDKP_Tables = {} end;
 		if (MonDKP_Loot == nil) then MonDKP_Loot = {} end;
+		if (MonDKP_MinBids == nil) then MonDKP_MinBids = {} end;
 	    if (MonDKP_DB == nil) then 
 	    	MonDKP_DB = {
-	    		DKPBonus = { OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25},
+	    		DKPBonus = { OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, HistoryLimit = 5000},
 	    	} 
 	    end;
 
@@ -124,26 +133,24 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 			"|cffa335ee|Hitem:168901::::::::120::::2:4799:1502:|h[Royal Scaleguard's Battleaxe]|h|r",
 			"|cffa335ee|Hitem:165601::::::::120::::2:4798:1507:|h[Storm-Toothed Kasuyu]|h|r"
 		}
-		local de = {true, false}
 		local day = { "05/15", "05/20", "05/25", "05/30"}
 		
-		for i=1, 60 do
+		for i=1, 3000 do
 			local d = day[math.random(1,4)];
 			local m = i;
 			if i<10 then
 				m = "0"..i
 			end
-			tinsert(MonDKP_Log, {
+			tinsert(MonDKP_Loot, {
 				player=player_names[math.random(1, #player_names)],
 				loot=items[math.random(1, #items)],
 				date="19/"..d.." "..date("%H:")..m..date(":%S"),
 				zone="Molten Core",
 				boss="Ragnaros",
-				de=de[math.random(1, 2)],
 				cost=math.random(35, 100)
 			})
-		end
-		for i=1, #player_names do
+		end--]]
+		--[[for i=1, #player_names do
 			local p = player_names[i]
 			if (MonDKP:Table_Search(MonDKP_DKPTable, p) == false) then 		--
 				tinsert(MonDKP_DKPTable, {
@@ -156,15 +163,19 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		end--]]
 		-- End testing DB
 
-		MonDKP:Print("Loaded "..#MonDKP_DKPTable.." player records and "..#MonDKP_Log.." loot history records.");
+		MonDKP:Print("Loaded "..#MonDKP_DKPTable.." player records and "..#MonDKP_Loot.." loot history records.");
 		core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();
+		MonDKP:StartBidTimer(seconds, nil)
+		MonDKP_Register_ShiftClickLootWindowHook()
+		MonDKP:PurgeLootHistory()
 	end
 end
 
 ----------------------------------
--- Initiallize Addon/SavedVariables
+-- Register Events and Initiallize AddOn
 ----------------------------------
 
 local events = CreateFrame("Frame");
 events:RegisterEvent("ADDON_LOADED");
-events:SetScript("OnEvent", MonDKP.OnInitialize); -- calls the above core:init function after addon_loaded event fires identifying the addon and SavedVariables are completely loaded
+events:RegisterEvent("CHAT_MSG_WHISPER");
+events:SetScript("OnEvent", MonDKP_OnEvent); -- calls the above core:init function after addon_loaded event fires identifying the addon and SavedVariables are completely loaded
