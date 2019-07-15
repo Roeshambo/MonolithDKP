@@ -8,7 +8,7 @@
 	<!-- MonDKP Fonts -->
 	<FontFamily  name="MonDKPTiny" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="12"/>
+			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="10"/>
 		</Member>
 		<Member alphabet="korean">
 			<Font font="Fonts\2002.TTF" height="15" outline="NORMAL"/>
@@ -24,6 +24,23 @@
 		</Member>
 	</FontFamily>
 	<FontFamily  name="MonDKPSmall" virtual="true">
+		<Member alphabet="roman">
+			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="12"/>
+		</Member>
+		<Member alphabet="korean">
+			<Font font="Fonts\2002.TTF" height="15" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="simplifiedchinese">
+			<Font font="Fonts\ARKai_C.ttf" height="14" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="traditionalchinese">
+			<Font font="Fonts\bHEI01B.TTF" height="14" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="russian">
+			<Font font="Fonts\ARIALN.TTF" height="16" outline="NORMAL"/>
+		</Member>
+	</FontFamily>
+	<FontFamily  name="MonDKPNormal" virtual="true">
 		<Member alphabet="roman">
 			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="13"/>
 		</Member>
@@ -66,6 +83,9 @@
 	<Font name="MonDKPSmallCenter" inherits="MonDKPSmall" justifyH="CENTER" virtual="true"/>
 	<Font name="MonDKPSmallLeft" inherits="MonDKPSmall" justifyH="LEFT" virtual="true"/>
 	<Font name="MonDKPSmallRight" inherits="MonDKPSmall" justifyH="RIGHT" virtual="true"/>
+	<Font name="MonDKPNormalCenter" inherits="MonDKPNormal" justifyH="CENTER" virtual="true"/>
+	<Font name="MonDKPNormalLeft" inherits="MonDKPNormal" justifyH="LEFT" virtual="true"/>
+	<Font name="MonDKPNormalRight" inherits="MonDKPNormal" justifyH="RIGHT" virtual="true"/>
 	<Font name="MonDKPLargeCenter" inherits="MonDKPLarge" justifyH="CENTER" virtual="true"/>
 	<Font name="MonDKPLargeLeft" inherits="MonDKPLarge" justifyH="LEFT" virtual="true"/>
 	<Font name="MonDKPLargeRight" inherits="MonDKPLarge" justifyH="RIGHT" virtual="true"/>
@@ -384,6 +404,79 @@
 			</Anchors>
 		</HighlightTexture>
     </Button>
+    <Slider name="MonDKPSliderTemplate" orientation="HORIZONTAL" enableMouse="true" virtual="true">
+		<HitRectInsets>
+			<AbsInset left="0" right="0" top="-10" bottom="-10"/>
+		</HitRectInsets>
+		<Backdrop bgFile="Interface\Buttons\UI-SliderBar-Background" edgeFile="Interface\AddOns\MonolithDKP\Media\Textures\slider-border" tile="true">
+			<EdgeSize>
+				<AbsValue val="1"/>
+			</EdgeSize>
+			<TileSize>
+				<AbsValue val="1"/>
+			</TileSize>
+			<BackgroundInsets>
+				<AbsInset left="3" right="3" top="6" bottom="6"/>
+			</BackgroundInsets>
+		</Backdrop>
+		<ThumbTexture parentKey="Thumb" name="$parentThumb" file="Interface\AddOns\MonolithDKP\Media\Textures\slider-pin">
+			<Size x="16" y="16"/>
+		</ThumbTexture>
+	</Slider>
+	<Slider name="MonDKPOptionsSliderTemplate" inherits="MonDKPSliderTemplate" virtual="true">
+		<KeyValues>
+			<KeyValue key="type" value="CONTROLTYPE_SLIDER" type="global"/>
+		</KeyValues>
+		<Size x="144" y="10"/>
+		<Layers>
+			<Layer level="ARTWORK">
+				<FontString name="$parentText" parentKey="Text" inherits="GameFontHighlight">
+					<Anchors>
+						<Anchor point="BOTTOM" relativePoint="TOP"/>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentLow" parentKey="Low" inherits="GameFontHighlightSmall" text="LOW">
+					<Anchors>
+						<Anchor point="TOPLEFT" relativePoint="BOTTOMLEFT">
+							<Offset>
+								<AbsDimension x="-4" y="-4"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+				<FontString name="$parentHigh" parentKey="High" inherits="GameFontHighlightSmall" text="HIGH">
+					<Anchors>
+						<Anchor point="TOPRIGHT" relativePoint="BOTTOMRIGHT">
+							<Offset>
+								<AbsDimension x="4" y="-4"/>
+							</Offset>
+						</Anchor>
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Scripts>
+			<OnEnter>
+				if ( self:IsEnabled() ) then
+					if ( self.tooltipText ) then
+						GameTooltip:SetOwner(self, self.tooltipOwnerPoint or "ANCHOR_RIGHT");
+						GameTooltip:SetText(self.tooltipText, 0.25, 0.75, 0.90, 1, true);
+					end
+					if ( self.tooltipRequirement ) then
+						GameTooltip:AddLine(self.tooltipRequirement, 1.0, 1.0, 1.0, true);
+						GameTooltip:Show();
+					end
+					if ( self.tooltipWarning ) then
+						GameTooltip:AddLine(self.tooltipWarning, 1, 0, 0, 1, true);
+						GameTooltip:Show();
+					end
+				end
+			</OnEnter>
+			<OnLeave>
+				GameTooltip:Hide();
+			</OnLeave>
+		</Scripts>
+	</Slider>
 </Ui>
 
 

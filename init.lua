@@ -103,29 +103,29 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	SLASH_MonolithDKP1 = "/dkp";
 	SlashCmdList.MonolithDKP = HandleSlashCommands;
 
-    MonDKP:Print("Welcome back, "..UnitName("player").."!");
-
     if(event == "ADDON_LOADED") then
     	core.loaded = 1;
 		if (MonDKP_DKPTable == nil) then MonDKP_DKPTable = {} end;
 		if (MonDKP_Loot == nil) then MonDKP_Loot = {} end;
 		if (MonDKP_MinBids == nil) then MonDKP_MinBids = {} end;
+		if (MonDKP_DKPHistory == nil) then MonDKP_DKPHistory = {} end;
 	    if (MonDKP_DB == nil) then 
 	    	MonDKP_DB = {
-	    		DKPBonus = { OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, HistoryLimit = 5000},
+	    		DKPBonus = { OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, HistoryLimit = 2500},
 	    	} 
 	    end;
 
 	    ------------------------------------
 	    --	Import SavedVariables
 	    ------------------------------------
-	    core.settings = MonDKP_DB
-	    core.WorkingTable = MonDKP_DKPTable;
+	    core.settings = MonDKP_DB 				--imports default settings (Options Tab)
+	    core.WorkingTable = MonDKP_DKPTable;	--imports full DKP table to WorkingTable for list manipulation without altering the SavedVariable
 
 		-- Populates SavedVariable MonDKP_DKPTable with fake values for testing purposes if they don't already exist
 		-- Delete this section and \WTF\AccountACCOUNT_NAME\SavedVariables\MonolithDKP.lua prior to actual use.
 		--[[local player_names = {"Qulyolalima", "Cadhangwong", "Gilingerth", "Emondeatt", "Puthuguth", "Eminin", "Mormiannis", "Hemilionter", "Malcologan", "Alerahm", "Cricordinus", "Arommoth", "Barnamnon", "Eughtor", "Aldreavus", "Loylencel", "Barredgar", "Gerneheav", "Julivente", "Barlannel", "Audeacell", "Derneth", "Fredeond", "Gutrichas", "Wiliannel", "Siertlan", "Simitram", "Ronettius", "Livendley", "Mordannichas", "Tevistavus", "Jaspian"}
 		local classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
+		local bosses = { "Ragnaros", "Garr", "Onyxia"}
 		local items = { 
 			"|cffa335ee|Hitem:169058::::::::120::::1:4778:|h[Salvaged Incendiary Tool]|h|r",
 			"|cff0070dd|Hitem:166483::::::::120::::2:5126:1517:|h[Sentinel's Tomahawk]|h|r",
@@ -133,20 +133,21 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 			"|cffa335ee|Hitem:168901::::::::120::::2:4799:1502:|h[Royal Scaleguard's Battleaxe]|h|r",
 			"|cffa335ee|Hitem:165601::::::::120::::2:4798:1507:|h[Storm-Toothed Kasuyu]|h|r"
 		}
-		local day = { "05/15", "05/20", "05/25", "05/30"}
+		local day = { "04/01", "05/05", "05/10", "04/08", "03/15", "05/20", "10/25", "05/30"}
 		
-		for i=1, 3000 do
-			local d = day[math.random(1,4)];
-			local m = i;
-			if i<10 then
-				m = "0"..i
+		for i=1, 100 do
+			local d = day[math.random(1,8)];
+			local m = math.random(1, 59);
+			local y = math.random(18, 19)
+			if m<10 then
+				m = "0"..m
 			end
 			tinsert(MonDKP_Loot, {
 				player=player_names[math.random(1, #player_names)],
 				loot=items[math.random(1, #items)],
-				date="19/"..d.." "..date("%H:")..m..date(":%S"),
+				date=y.."/"..d.." "..date("%H:")..m..date(":%S"),
 				zone="Molten Core",
-				boss="Ragnaros",
+				boss=bosses[math.random(1, #bosses)],
 				cost=math.random(35, 100)
 			})
 		end--]]
@@ -163,6 +164,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		end--]]
 		-- End testing DB
 
+		MonDKP:Print("Welcome back, "..UnitName("player").."!");
 		MonDKP:Print("Loaded "..#MonDKP_DKPTable.." player records and "..#MonDKP_Loot.." loot history records.");
 		core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();
 		MonDKP:StartBidTimer(seconds, nil)
@@ -178,4 +180,4 @@ end
 local events = CreateFrame("Frame");
 events:RegisterEvent("ADDON_LOADED");
 events:RegisterEvent("CHAT_MSG_WHISPER");
-events:SetScript("OnEvent", MonDKP_OnEvent); -- calls the above core:init function after addon_loaded event fires identifying the addon and SavedVariables are completely loaded
+events:SetScript("OnEvent", MonDKP_OnEvent); -- calls the above MonDKP_OnEvent function to determine what to do with the event

@@ -3,19 +3,20 @@
 ## Author: Roeshambo
 ## Version: 0.1
 ## DefaultState: enabled
-## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_MinBids
+## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_MinBids, MonDKP_DKPHistory
 
 embeds.xml
 Core.lua
-comm.lua
-Bidding.lua
+Modules\comm.lua
+Modules\Bidding.lua
 MonolithDKP.lua
 init.lua
-LootHistory.lua
+Modules\LootHistory.lua
+Modules\DKPHistory.lua
 ConfigMenuTabs.lua
-ManageEntries.lua
-ClassGraph.lua
-Options.lua
+Modules\ManageEntries.lua
+Modules\ClassGraph.lua
+Modules\Options.lua
 TableFunctions.lua
 XMLFunctions.lua
 MonolithDKP.xml

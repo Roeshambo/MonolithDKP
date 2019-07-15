@@ -37,7 +37,7 @@ core.settings = {             -- From MonDKP_DB
     NewBossKillBonus = 10,
     UnexcusedAbsence = -25,
     BidTimer = 30,
-    HistoryLimit = 5000
+    HistoryLimit = 2500
   }
 }
 
@@ -46,7 +46,7 @@ core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width,
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
 core.classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
-core.MonVersion = "v0.1 (alpha)";
+core.MonVersion = "v0.2 (alpha)";
 core.SelectedRows = {};       -- tracks rows in DKPTable that are currently selected for SetHighlightTexture
 core.ShowState = false;
 core.currentSort = "class"		-- stores current sort selection
@@ -89,6 +89,8 @@ function MonDKP:GetPlayerDKP(player)
 
   if search then
     return MonDKP_DKPTable[search[1][1]].dkp
+  else
+    return false;
   end
 end
 
@@ -96,7 +98,7 @@ function MonDKP:GetDKPSettings()
   return core.settings["DKPBonus"];
 end
 
-function MonDKP:PurgeLootHistory()     -- cleans old loot history beyond 2500 entries to reduce native system load
+function MonDKP:PurgeLootHistory()     -- cleans old loot history beyond history limit to reduce native system load
   local limit = core.settings["DKPBonus"]["HistoryLimit"]
   MonDKP:SortLootTable()
 
@@ -147,8 +149,8 @@ function MonDKP:CreateButton(point, relativeFrame, relativePoint, xOffset, yOffs
   btn:SetSize(100, 30);
   btn:SetText(text);
   btn:GetFontString():SetTextColor(1, 1, 1, 1)
-  btn:SetNormalFontObject("MonDKPTinyCenter");
-  btn:SetHighlightFontObject("MonDKPTinyCenter");
+  btn:SetNormalFontObject("MonDKPSmallCenter");
+  btn:SetHighlightFontObject("MonDKPSmallCenter");
   return btn; 
 end
 

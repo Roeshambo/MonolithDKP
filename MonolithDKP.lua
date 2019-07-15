@@ -68,12 +68,19 @@ function MonDKP:CreateMenu()
   MonDKP.UIConfig:SetBackdropColor(0,0,0,0.8);
   MonDKP.UIConfig:SetMovable(true);
   MonDKP.UIConfig:EnableMouse(true);
+  MonDKP.UIConfig:SetFrameLevel(10)
   --MonDKP.UIConfig:SetResizable(true);
   --MonDKP.UIConfig:SetMaxResize(1400, 875)
   --MonDKP.UIConfig:SetMinResize(1000, 590)
   MonDKP.UIConfig:RegisterForDrag("LeftButton");
   MonDKP.UIConfig:SetScript("OnDragStart", MonDKP.UIConfig.StartMoving);
   MonDKP.UIConfig:SetScript("OnDragStop", MonDKP.UIConfig.StopMovingOrSizing);
+  MonDKP.UIConfig:SetScript("OnMouseDown", function(self)
+    self:SetFrameLevel(10)
+    if core.BiddingWindow then
+      core.BiddingWindow:SetFrameLevel(5)
+    end
+  end)
 
   -- Close Button
   MonDKP.UIConfig.closeContainer = CreateFrame("Frame", "MonDKPTitle", MonDKP.UIConfig)
@@ -132,19 +139,19 @@ function MonDKP:CreateMenu()
   end
 
   SortButtons.player.t = SortButtons.player:CreateFontString(nil, "OVERLAY")
-  SortButtons.player.t:SetFontObject("MonDKPSmall")
+  SortButtons.player.t:SetFontObject("MonDKPNormal")
   SortButtons.player.t:SetTextColor(1, 1, 1, 1);
   SortButtons.player.t:SetPoint("CENTER", SortButtons.player, "CENTER", 0, -1);
   SortButtons.player.t:SetText("Player"); 
 
   SortButtons.class.t = SortButtons.class:CreateFontString(nil, "OVERLAY")
-  SortButtons.class.t:SetFontObject("MonDKPSmall");
+  SortButtons.class.t:SetFontObject("MonDKPNormal");
   SortButtons.class.t:SetTextColor(1, 1, 1, 1);
   SortButtons.class.t:SetPoint("CENTER", SortButtons.class, "CENTER", 0, -1);
   SortButtons.class.t:SetText("Class"); 
 
   SortButtons.dkp.t = SortButtons.dkp:CreateFontString(nil, "OVERLAY")
-  SortButtons.dkp.t:SetFontObject("MonDKPSmall")
+  SortButtons.dkp.t:SetFontObject("MonDKPNormal")
   SortButtons.dkp.t:SetTextColor(1, 1, 1, 1);
   SortButtons.dkp.t:SetPoint("CENTER", SortButtons.dkp, "CENTER", 0, -1);
   SortButtons.dkp.t:SetText("Total DKP");
@@ -155,7 +162,7 @@ function MonDKP:CreateMenu()
   MonDKP.DKPTable.counter:SetSize(400, 30)
 
   MonDKP.DKPTable.counter.t = MonDKP.DKPTable.counter:CreateFontString(nil, "OVERLAY")
-  MonDKP.DKPTable.counter.t:SetFontObject("MonDKPSmall");
+  MonDKP.DKPTable.counter.t:SetFontObject("MonDKPNormal");
   MonDKP.DKPTable.counter.t:SetTextColor(1, 1, 1, 0.7);
   MonDKP.DKPTable.counter.t:SetPoint("CENTER", MonDKP.DKPTable.counter, "CENTER");
 
@@ -216,7 +223,7 @@ function MonDKP:CreateMenu()
   local c = MonDKP:GetThemeColor();
   MonDKP.UIConfig.Version = MonDKP.UIConfig.TitleBar:CreateFontString(nil, "OVERLAY")   -- not in a function so requires CreateFontString
   MonDKP.UIConfig.Version:ClearAllPoints();
-  MonDKP.UIConfig.Version:SetFontObject("MonDKPTinyCenter");
+  MonDKP.UIConfig.Version:SetFontObject("MonDKPSmallCenter");
   MonDKP.UIConfig.Version:SetScale("0.9")
   MonDKP.UIConfig.Version:SetTextColor(c[1].r, c[1].g, c[1].b, 0.5);
   MonDKP.UIConfig.Version:SetPoint("BOTTOMRIGHT", MonDKP.UIConfig.TitleBar, "BOTTOMRIGHT", -8, 4);

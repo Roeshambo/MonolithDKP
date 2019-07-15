@@ -68,19 +68,19 @@ local function CreateRow(parent, id) -- Create 3 buttons for each row in the lis
     for i=1, 3 do
       f.DKPInfo[i] = f:CreateFontString(nil, "OVERLAY");
       f.DKPInfo[i]:SetFontObject("GameFontHighlight");
-      f.DKPInfo[i]:SetFontObject("MonDKPTinyLeft")
+      f.DKPInfo[i]:SetFontObject("MonDKPSmallLeft")
       f.DKPInfo[i]:SetTextColor(1, 1, 1, 1);
       if (i==1) then
         f.DKPInfo[i].rowCounter = f:CreateFontString(nil, "OVERLAY");
         f.DKPInfo[i].rowCounter:SetFontObject("GameFontWhiteTiny");
-        f.DKPInfo[i].rowCounter:SetFontObject("MonDKPTinyLeft")
+        f.DKPInfo[i].rowCounter:SetFontObject("MonDKPSmallLeft")
         f.DKPInfo[i].rowCounter:SetTextColor(1, 1, 1, 0.3);
         f.DKPInfo[i].rowCounter:SetPoint("LEFT", f, "LEFT", 3, -1);
       end
       if (i==3) then
-        f.DKPInfo[i]:SetFontObject("MonDKPTinyLeft")
+        f.DKPInfo[i]:SetFontObject("MonDKPSmallLeft")
         f.DKPInfo[i].adjusted = f:CreateFontString(nil, "OVERLAY");
-        f.DKPInfo[i].adjusted:SetFontObject("MonDKPTinyLeft")
+        f.DKPInfo[i].adjusted:SetFontObject("MonDKPSmallLeft")
         f.DKPInfo[i].adjusted:SetScale("0.8")
         f.DKPInfo[i].adjusted:SetTextColor(1, 1, 1, 0.6);
         f.DKPInfo[i].adjusted:SetPoint("LEFT", f.DKPInfo[3], "RIGHT", 3, -1);
@@ -144,7 +144,7 @@ function DKPTable_Update()
     end
   end
   MonDKP.DKPTable.counter.t:SetText(#core.WorkingTable.." Entries Shown");    -- updates "Entries Shown" at bottom of DKPTable
-  MonDKP.DKPTable.counter.t:SetFontObject("MonDKPTinyLeft")
+  MonDKP.DKPTable.counter.t:SetFontObject("MonDKPSmallLeft")
   FauxScrollFrame_Update(MonDKP.DKPTable, numOptions, core.TableNumRows, core.TableRowHeight, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding
 end
 
