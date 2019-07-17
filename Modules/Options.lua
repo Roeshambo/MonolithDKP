@@ -7,7 +7,7 @@ function MonDKP:Options()
   local default = {}
   MonDKP.ConfigTab4.default = default;
 
-  for i=1, 5 do
+  for i=1, 6 do
     MonDKP.ConfigTab4.default[i] = CreateFrame("EditBox", nil, MonDKP.ConfigTab4)
     MonDKP.ConfigTab4.default[i]:SetAutoFocus(false)
     MonDKP.ConfigTab4.default[i]:SetMultiLine(false)
@@ -75,6 +75,12 @@ function MonDKP:Options()
   MonDKP.ConfigTab4.default[5].tooltipDescription = "Penalty for unexcused absence from raid."
   MonDKP.ConfigTab4.default[5].tooltipWarning = "Should be a negative number."
 
+  MonDKP.ConfigTab4.default[6]:SetText(tonumber(DKPSettings["DecayPercentage"]))
+  MonDKP.ConfigTab4.default[6]:SetTextInsets(0, 15, 0, 0)
+  MonDKP.ConfigTab4.default[6].tooltipText = "Decay Percentage"
+  MonDKP.ConfigTab4.default[6].tooltipDescription = "Percentage to reduce all DKP values by for routine decay."
+  MonDKP.ConfigTab4.default[6].tooltipWarning = "NOT a negative number."
+
   MonDKP.ConfigTab4.header = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
   MonDKP.ConfigTab4.header:SetFontObject("MonDKPLargeCenter");
   MonDKP.ConfigTab4.header:SetPoint("TOPLEFT", MonDKP.ConfigTab4, "TOPLEFT", 15, -10);
@@ -114,6 +120,17 @@ function MonDKP:Options()
   MonDKP.ConfigTab4.UnexcusedHeader:SetFontObject("MonDKPNormalLeft");
   MonDKP.ConfigTab4.UnexcusedHeader:SetPoint("RIGHT", MonDKP.ConfigTab4.default[5], "LEFT", -5, 0);
   MonDKP.ConfigTab4.UnexcusedHeader:SetText("Unexcused Absence: ")
+
+  --DKP Decay Header
+  MonDKP.ConfigTab4.DecayHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab4.DecayHeader:SetFontObject("MonDKPNormalLeft");
+  MonDKP.ConfigTab4.DecayHeader:SetPoint("RIGHT", MonDKP.ConfigTab4.default[6], "LEFT", -5, 0);
+  MonDKP.ConfigTab4.DecayHeader:SetText("Decay Amount: ")
+
+  MonDKP.ConfigTab4.DecayFooter = MonDKP.ConfigTab4.default[6]:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab4.DecayFooter:SetFontObject("MonDKPNormalLeft");
+  MonDKP.ConfigTab4.DecayFooter:SetPoint("LEFT", MonDKP.ConfigTab4.default[6], "RIGHT", -15, 1);
+  MonDKP.ConfigTab4.DecayFooter:SetText("%")
 
   -- Bid Timer Slider
   MonDKP.ConfigTab4.bidTimerSlider = CreateFrame("SLIDER", "$parentBidTimerSlider", MonDKP.ConfigTab4, "MonDKPOptionsSliderTemplate");

@@ -37,7 +37,8 @@ core.settings = {             -- From MonDKP_DB
     NewBossKillBonus = 10,
     UnexcusedAbsence = -25,
     BidTimer = 30,
-    HistoryLimit = 2500
+    HistoryLimit = 2500,
+    DecayPercentage = 20
   }
 }
 
@@ -46,6 +47,7 @@ core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width,
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
 core.classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
+core.IsOfficer = "";
 core.MonVersion = "v0.2 (alpha)";
 core.SelectedRows = {};       -- tracks rows in DKPTable that are currently selected for SetHighlightTexture
 core.ShowState = false;
@@ -76,6 +78,39 @@ function MonDKP:ResetPosition()
   MonDKP.BidTimer:ClearAllPoints()
   MonDKP.BidTimer:SetPoint("CENTER", UIParent)
   MonDKP:Print("Window Position Reset")
+end
+
+function MonDKP:GetGuildRank(player)
+  local name, rank;
+  local guildSize = GetNumGuildMembers();
+
+  if IsInGuild() then
+    for i=1, guildSize do
+      name, rank = GetGuildRosterInfo(i)
+      name = strsub(name, 1, string.find(name, "-")-1)  -- required to remove server name from player (can remove in classic if this is not an issue)
+      if name == player then
+        return rank;
+      else
+        return "No Rank";
+      end
+    end
+  end
+end
+
+function MonDKP:GetGuildRankIndex(player)
+  local name, rank;
+  local guildSize,_,_ = GetNumGuildMembers();
+
+  if IsInGuild() then
+    for i=1, tonumber(guildSize) do
+      name,_,rank = GetGuildRosterInfo(i)
+      name = strsub(name, 1, string.find(name, "-")-1)  -- required to remove server name from player (can remove in classic if this is not an issue)
+      if name == player then
+        return rank+1;
+      end
+    end
+    return false;
+  end
 end
 
 function MonDKP:GetThemeColor()
@@ -109,25 +144,21 @@ function MonDKP:PurgeLootHistory()     -- cleans old loot history beyond history
   end
 end
 
-function MonDKP:CurrentTime()
+function MonDKP:FormatTime(time)
   local TZ = date("%Z") -- Time Zone
-  --Eastern Daylight Time
-  --Central Daylight Time
-  --Mountain Daylight Time
-  --Pacific Daylight Time
   local str;
 
   if strfind(TZ, "Eastern") then
-    TZ = "EST"
+    TZ = "Eastern"
   elseif strfind(TZ, "Central") then
-    TZ = "CST"
+    TZ = "Central"
   elseif strfind(TZ, "Mountain") then
-    TZ = "MST"
+    TZ = "Mountain"
   elseif strfind(TZ, "Pacific") then
-    TZ = "PST"
+    TZ = "Pacific"
   end
 
-  str = date("%y/%m/%d %H:%M:%S ")..TZ
+  str = date("%y/%m/%d %H:%M:%S ", time)..TZ
 
   return str;
 end
@@ -155,13 +186,15 @@ function MonDKP:CreateButton(point, relativeFrame, relativePoint, xOffset, yOffs
 end
 
 function MonDKP:BroadcastTimer(seconds, ...)       -- broadcasts timer and starts it natively
-  local title = ...;
-  if not tonumber(seconds) then       -- cancels the function if the command was entered improperly (eg. no number for time)
-    MonDKP:Print("Invalid Timer");
-    return;
+  if IsInRaid() and core.IsOfficer then
+    local title = ...;
+    if not tonumber(seconds) then       -- cancels the function if the command was entered improperly (eg. no number for time)
+      MonDKP:Print("Invalid Timer");
+      return;
+    end
+    MonDKP:StartTimer(seconds, ...)
+    MonDKP.Sync:SendData("MonDKPNotify", "StartTimer,"..seconds..","..title)
   end
-  MonDKP:StartTimer(seconds, ...)
-  MonDKP.Sync:SendData("MonDKPNotify", "StartTimer,"..seconds..","..title)
 end
 
 function MonDKP:StartTimer(seconds, ...)
@@ -233,6 +266,7 @@ function MonDKP:StartTimer(seconds, ...)
     end
     self:SetValue(timer)
     if timer >= duration then
+      MonDKP.BidTimer:SetScript("OnUpdate", nil)
       MonDKP.BidTimer:Hide();
     end
   end)

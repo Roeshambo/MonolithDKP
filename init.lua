@@ -10,11 +10,16 @@ MonDKP.Commands = {
 	["reset"] = MonDKP.ResetPosition,
 	["bid"] = function(...)
 		local item = strjoin(" ", ...)
-		if ... == nil then
-			MonDKP.ToggleBidWindow()
+		
+		if core.IsOfficer then	
+			if ... == nil then
+				MonDKP.ToggleBidWindow()
+			else
+				MonDKP:Print("Opening Bid Window for: ".. item)
+				MonDKP:ToggleBidWindow(item)
+			end
 		else
-			MonDKP:Print("Opening Bid Window for: ".. item)
-			MonDKP:ToggleBidWindow(item)
+			MonDKP:Print("You do not have permission to access that feature.")
 		end
 	end,
 	["timer"] = function(time, ...)
@@ -34,7 +39,7 @@ MonDKP.Commands = {
 		MonDKP:Print("|cff00cc66/dkp|r - Launches DKP Window");
 		MonDKP:Print("|cff00cc66/dkp ?|r - Shows Help Info");
 		MonDKP:Print("|cff00cc66/dkp reset|r - Resets DKP Window Position/Size");
-		MonDKP:Print("|cff00cc66/dkp timer|r - Creates Raid Timer (Raid Assists Only) (eg. /dkp timer 120 Pizza Break!");
+		MonDKP:Print("|cff00cc66/dkp timer|r - Creates Raid Timer (Officers Only) (eg. /dkp timer 120 Pizza Break!");
 		print(" ");
 	end,
 };
@@ -76,7 +81,13 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 	if event == "ADDON_LOADED" then
 		MonDKP:OnInitialize(event, arg1)
 	elseif event == "CHAT_MSG_WHISPER" then
-		MonDKP_CHAT_MSG_WHISPER(arg1, ...)
+		if core.IsOfficer then
+			MonDKP_CHAT_MSG_WHISPER(arg1, ...)
+		end
+	elseif event == "GROUP_ROSTER_UPDATE" then
+		if IsInRaid() and core.IsOfficer then
+			AddRaidToDKPTable()
+		end
 	end
 end
 
@@ -111,7 +122,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if (MonDKP_DKPHistory == nil) then MonDKP_DKPHistory = {} end;
 	    if (MonDKP_DB == nil) then 
 	    	MonDKP_DB = {
-	    		DKPBonus = { OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, HistoryLimit = 2500},
+	    		DKPBonus = { OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, HistoryLimit = 2500, DecayPercentage = 20},
 	    	} 
 	    end;
 
@@ -164,8 +175,13 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		end--]]
 		-- End testing DB
 
+		table.sort(MonDKP_DKPTable, function(a, b)
+			return a["player"] < b["player"]
+		end)
+
 		MonDKP:Print("Welcome back, "..UnitName("player").."!");
 		MonDKP:Print("Loaded "..#MonDKP_DKPTable.." player records and "..#MonDKP_Loot.." loot history records.");
+		
 		core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();
 		MonDKP:StartBidTimer(seconds, nil)
 		MonDKP_Register_ShiftClickLootWindowHook()
@@ -180,4 +196,5 @@ end
 local events = CreateFrame("Frame");
 events:RegisterEvent("ADDON_LOADED");
 events:RegisterEvent("CHAT_MSG_WHISPER");
+events:RegisterEvent("GROUP_ROSTER_UPDATE");
 events:SetScript("OnEvent", MonDKP_OnEvent); -- calls the above MonDKP_OnEvent function to determine what to do with the event

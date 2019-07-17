@@ -14,6 +14,7 @@ init.lua
 Modules\LootHistory.lua
 Modules\DKPHistory.lua
 ConfigMenuTabs.lua
+Modules\AdjustDKP.lua
 Modules\ManageEntries.lua
 Modules\ClassGraph.lua
 Modules\Options.lua

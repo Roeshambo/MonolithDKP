@@ -85,7 +85,7 @@ local function CreateRow(parent, id) -- Create 3 buttons for each row in the lis
         f.DKPInfo[i].adjusted:SetTextColor(1, 1, 1, 0.6);
         f.DKPInfo[i].adjusted:SetPoint("LEFT", f.DKPInfo[3], "RIGHT", 3, -1);
         f.DKPInfo[i].adjustedArrow = f:CreateTexture(nil, "OVERLAY", nil, -8);
-        f.DKPInfo[i].adjustedArrow:SetPoint("RIGHT", f, "RIGHT", -28, 0);
+        f.DKPInfo[i].adjustedArrow:SetPoint("RIGHT", f, "RIGHT", -20, 0);
         f.DKPInfo[i].adjustedArrow:SetColorTexture(0, 0, 0, 0.5)
         f.DKPInfo[i].adjustedArrow:SetSize(8, 12);
       end
@@ -100,6 +100,7 @@ function DKPTable_Update()
   local numOptions = #core.WorkingTable
   local index, row, c
   local offset = FauxScrollFrame_GetOffset(MonDKP.DKPTable) or 0
+  local rank;
   for i=1, core.TableNumRows do     -- hide all rows before displaying them 1 by 1 as they show values
     row = MonDKP.DKPTable.Rows[i];
     row:Hide();
@@ -115,7 +116,8 @@ function DKPTable_Update()
       c = MonDKP:GetCColors(core.WorkingTable[index].class);
       row:Show()
       row.index = index
-      row.DKPInfo[1]:SetText(core.WorkingTable[index].player)
+      rank = MonDKP:GetGuildRank(core.WorkingTable[index].player) or "None"
+      row.DKPInfo[1]:SetText(core.WorkingTable[index].player.." |cff444444("..rank..")|r")
       row.DKPInfo[1].rowCounter:SetText(index)
       row.DKPInfo[1]:SetTextColor(c.r, c.g, c.b, 1)
       row.DKPInfo[2]:SetText(core.WorkingTable[index].class)

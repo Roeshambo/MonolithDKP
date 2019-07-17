@@ -24,7 +24,7 @@ local function Remove_Entries()
 	MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
 end
 
-local function AddRaidToDKPTable()
+function AddRaidToDKPTable()
 	local NumGroup = 0;
 	local GroupType = "none";
 
@@ -40,9 +40,20 @@ local function AddRaidToDKPTable()
 		local tempName,tempClass;
 		local addedUsers, c
 		local numPlayers = 0;
+		local guildSize = GetNumGuildMembers();
+		local name;
+		local InGuild = false;
+
 		for i=1, 40 do
 			tempName,_,_,_,tempClass = GetRaidRosterInfo(i)
-			if tempName then
+			for j=1, guildSize do
+				name = GetGuildRosterInfo(j)
+				name = strsub(name, 1, string.find(name, "-")-1)						-- required to remove server name from player (can remove in classic if this is not an issue)
+				if name == tempName then
+					InGuild = true;
+				end
+			end
+			if tempName and InGuild then
 				if not MonDKP:Table_Search(MonDKP_DKPTable, tempName) then
 					tinsert(MonDKP_DKPTable, {
 						player=tempName,
@@ -59,14 +70,13 @@ local function AddRaidToDKPTable()
 					end
 				end
 			end
+			InGuild = false;
 		end
 		if addedUsers then
 			MonDKP:Print("Added "..numPlayers.." player(s): "..addedUsers)
-		else
-			MonDKP:Print("No new players added")
 		end
 		MonDKP:FilterDKPTable(core.currentSort, "reset")
-		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
+		--MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)   removed broadcast on add to prevent crossfire from other officers. Move it to init in the event and guild leader ONLY
 	else
 		MonDKP:Print("You are not in a party or raid.")
 	end
@@ -181,5 +191,25 @@ function MonDKP:ManageEntries()
 	MonDKP.ConfigTab3.reset_previous_header:SetFontObject("MonDKPNormalLeft")
 	MonDKP.ConfigTab3.reset_previous_header:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab3.reset_previous_dkp, "TOPLEFT", -20, 10);
 	MonDKP.ConfigTab3.reset_previous_header:SetText("Reset previous DKP. This should be reset in regular intervals\n(weekly, monthly etc)");
+
+	MonDKP.ConfigTab3.broadcastButton = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab3, "BOTTOMLEFT", 15, 15, "Broadcast DKP Table");
+	MonDKP.ConfigTab3.broadcastButton:SetSize(140,25)
+	MonDKP.ConfigTab3.broadcastButton:SetScript("OnClick", function()
+		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
+	end)
+
+	MonDKP.ConfigTab3.broadcastLootButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3.broadcastButton, "TOPRIGHT", 10, 0, "Broadcast Loot History");
+	MonDKP.ConfigTab3.broadcastLootButton:SetSize(140,25)
+	MonDKP.ConfigTab3.broadcastLootButton:SetScript("OnClick", function()
+		MonDKP.Sync:SendData("MonDKPLogSync", MonDKP_Loot)
+		MonDKP.Sync:SendData("MonDKPBroadcast", "Loot history update in progress...")
+	end)
+
+	MonDKP.ConfigTab3.broadcastDKPButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3.broadcastLootButton, "TOPRIGHT", 10, 0, "Broadcast Loot History");
+	MonDKP.ConfigTab3.broadcastDKPButton:SetSize(140,25)
+	MonDKP.ConfigTab3.broadcastDKPButton:SetScript("OnClick", function()
+		MonDKP.Sync:SendData("MonDKPDKPLogSync", MonDKP_DKPHistory)
+		MonDKP.Sync:SendData("MonDKPBroadcast", "DKP history update in progress...")
+	end)
 
 end

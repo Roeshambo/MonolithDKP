@@ -8,6 +8,15 @@ local MonDKP = core.MonDKP;
 function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, the entire addon window
   core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();
   core.MonDKPUI:SetShown(not core.MonDKPUI:IsShown())
+  core.IsOfficer = C_GuildInfo.CanEditOfficerNote()
+  if not core.IsOfficer then
+    for i=2, 4 do
+      _G["MonDKPMonDKP.ConfigTabMenuTab"..i]:Hide();
+    end
+    _G["MonDKPMonDKP.ConfigTabMenuTab5"]:SetPoint("TOPLEFT", _G["MonDKPMonDKP.ConfigTabMenuTab1"], "TOPRIGHT", -14, 0)
+    _G["MonDKPMonDKP.ConfigTabMenuTab6"]:SetPoint("TOPLEFT", _G["MonDKPMonDKP.ConfigTabMenuTab5"], "TOPRIGHT", -14, 0)
+  end
+  DKPTable_Update()
 end
 
 ---------------------------------------
@@ -231,9 +240,6 @@ function MonDKP:CreateMenu()
 
   MonDKP.UIConfig:Hide(); -- hide menu after creation until called.
   MonDKP:FilterDKPTable(core.currentSort, "reset")   -- initial sort and populates data values in DKPTable.Rows{} MonDKP:FilterDKPTable() -> MonDKP:SortDKPTable() -> DKPTable_Update()
-
-  --print("|cffff8000|Hitem:17182::::::::120:::::|h[Sulfuras, Hand of Ragnaros]|h|r")
-  --print(date("%m/%d/%y"))
   
   return MonDKP.UIConfig;
 end

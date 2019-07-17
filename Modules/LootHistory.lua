@@ -96,7 +96,7 @@ function MonDKP:LootHistory_Reset()
 end
 
 function MonDKP:LootHistory_Update(filter)
-
+	local date;
 	local linesToUse = 1;
 	--local historyLength
 	MonDKP:SortLootTable()
@@ -126,10 +126,11 @@ function MonDKP:LootHistory_Update(filter)
 	for i=CurrentPosition+1, CurrentLimit do
 	  	if (filter and filter == MonDKP_Loot[i].player and filter ~= "No Filter") or (filter and filter == MonDKP_Loot[i].loot and filter ~= "No Filter") then
 		    local itemToLink = MonDKP_Loot[i]["loot"]
+		    date = MonDKP:FormatTime(MonDKP_Loot[i]["date"])
 
-		    if strsub(MonDKP_Loot[i]["date"], 1, 8) ~= curDate then
+		    if strsub(date, 1, 8) ~= curDate then
 		      linesToUse = 3
-		    elseif strsub(MonDKP_Loot[i]["date"], 1, 8) == curDate and MonDKP_Loot[i]["boss"] ~= curBoss and MonDKP_Loot[i]["zone"] ~= curZone then
+		    elseif strsub(date, 1, 8) == curDate and MonDKP_Loot[i]["boss"] ~= curBoss and MonDKP_Loot[i]["zone"] ~= curZone then
 		      linesToUse = 3
 		    elseif MonDKP_Loot[i]["zone"] ~= curZone or MonDKP_Loot[i]["boss"] ~= curBoss then
 		      linesToUse = 2
@@ -163,7 +164,7 @@ function MonDKP:LootHistory_Update(filter)
 		   
 
 		    -- print string to history
-		    local date1, date2, date3 = strsplit("/", strsub(MonDKP_Loot[i]["date"], 1, 8))    -- date is stored as yy/mm/dd for sorting purposes. rearranges numbers for printing to string
+		    local date1, date2, date3 = strsplit("/", strsub(date, 1, 8))    -- date is stored as yy/mm/dd for sorting purposes. rearranges numbers for printing to string
 
 		    local feedString;
 
@@ -176,20 +177,20 @@ function MonDKP:LootHistory_Update(filter)
 		     	c = { hex="444444" }
 		    end
 
-		    if strsub(MonDKP_Loot[i]["date"], 1, 8) ~= curDate or MonDKP_Loot[i]["zone"] ~= curZone then
-				feedString = date2.."/"..date3.."/"..date1.." - "..MonDKP_Loot[i]["zone"].."\n  |cffff0000"..MonDKP_Loot[i]["boss"].."|r |cff555555("..strtrim(strsub(MonDKP_Loot[i]["date"], 10), " ")..")|r".."\n"
+		    if strsub(date, 1, 8) ~= curDate or MonDKP_Loot[i]["zone"] ~= curZone then
+				feedString = date2.."/"..date3.."/"..date1.." - "..MonDKP_Loot[i]["zone"].."\n  |cffff0000"..MonDKP_Loot[i]["boss"].."|r |cff555555("..strtrim(strsub(date, 10), " ")..")|r".."\n"
 				feedString = feedString.."    "..itemToLink.." won by |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." DKP)|r"
 				        
 				MonDKP.ConfigTab5.looter[i]:SetText(feedString);
-				curDate = strtrim(strsub(MonDKP_Loot[i]["date"], 1, 8), " ")
+				curDate = strtrim(strsub(date, 1, 8), " ")
 				curZone = MonDKP_Loot[i]["zone"];
 				curBoss = MonDKP_Loot[i]["boss"];
 		    elseif MonDKP_Loot[i]["boss"] ~= curBoss then
-		    	feedString = "  |cffff0000"..MonDKP_Loot[i]["boss"].."|r |cff555555("..strtrim(strsub(MonDKP_Loot[i]["date"], 10), " ")..")|r".."\n"
+		    	feedString = "  |cffff0000"..MonDKP_Loot[i]["boss"].."|r |cff555555("..strtrim(strsub(date, 10), " ")..")|r".."\n"
 		    	feedString = feedString.."    "..itemToLink.." won by |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." DKP)|r"
 		    	
 		    	MonDKP.ConfigTab5.looter[i]:SetText(feedString);
-		    	curDate = strtrim(strsub(MonDKP_Loot[i]["date"], 1, 8), " ")
+		    	curDate = strtrim(strsub(date, 1, 8), " ")
 		    	curBoss = MonDKP_Loot[i]["boss"]
 		    else
 		    	feedString = "    "..itemToLink.." won by |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." DKP)|r"
@@ -222,10 +223,11 @@ function MonDKP:LootHistory_Update(filter)
 		    CurrentPosition = CurrentPosition + 1;
 		elseif not filter or filter == "No Filter" then
 			local itemToLink = MonDKP_Loot[i]["loot"]
+			date = MonDKP:FormatTime(MonDKP_Loot[i]["date"])
 
-		    if strtrim(strsub(MonDKP_Loot[i]["date"], 1, 8), " ") ~= curDate then
+		    if strtrim(strsub(date, 1, 8), " ") ~= curDate then
 		      linesToUse = 3
-		    elseif strtrim(strsub(MonDKP_Loot[i]["date"], 1, 8), " ") == curDate and MonDKP_Loot[i]["boss"] ~= curBoss and MonDKP_Loot[i]["zone"] ~= curZone then
+		    elseif strtrim(strsub(date, 1, 8), " ") == curDate and MonDKP_Loot[i]["boss"] ~= curBoss and MonDKP_Loot[i]["zone"] ~= curZone then
 		      linesToUse = 3
 		    elseif MonDKP_Loot[i]["zone"] ~= curZone or MonDKP_Loot[i]["boss"] ~= curBoss then
 		      linesToUse = 2
@@ -259,7 +261,7 @@ function MonDKP:LootHistory_Update(filter)
 		   
 
 		    -- print string to history
-		    local date1, date2, date3 = strsplit("/", strtrim(strsub(MonDKP_Loot[i]["date"], 1, 8), " "))    -- date is stored as yy/mm/dd for sorting purposes. rearranges numbers for printing to string
+		    local date1, date2, date3 = strsplit("/", strtrim(strsub(date, 1, 8), " "))    -- date is stored as yy/mm/dd for sorting purposes. rearranges numbers for printing to string
 
 		    local feedString;
 
@@ -272,20 +274,20 @@ function MonDKP:LootHistory_Update(filter)
 		     	c = { hex="444444" }
 		    end
 
-		    if strtrim(strsub(MonDKP_Loot[i]["date"], 1, 8), " ") ~= curDate or MonDKP_Loot[i]["zone"] ~= curZone then
-				feedString = date2.."/"..date3.."/"..date1.." - "..MonDKP_Loot[i]["zone"].."\n  |cffff0000"..MonDKP_Loot[i]["boss"].."|r |cff555555("..strtrim(strsub(MonDKP_Loot[i]["date"], 10), " ")..")|r".."\n"
+		    if strtrim(strsub(date, 1, 8), " ") ~= curDate or MonDKP_Loot[i]["zone"] ~= curZone then
+				feedString = date2.."/"..date3.."/"..date1.." - "..MonDKP_Loot[i]["zone"].."\n  |cffff0000"..MonDKP_Loot[i]["boss"].."|r |cff555555("..strtrim(strsub(date, 10), " ")..")|r".."\n"
 				feedString = feedString.."    "..itemToLink.." won by |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." DKP)|r"
 				        
 				MonDKP.ConfigTab5.looter[i]:SetText(feedString);
-				curDate = strtrim(strsub(MonDKP_Loot[i]["date"], 1, 8), " ")
+				curDate = strtrim(strsub(date, 1, 8), " ")
 				curZone = MonDKP_Loot[i]["zone"];
 				curBoss = MonDKP_Loot[i]["boss"];
 		    elseif MonDKP_Loot[i]["boss"] ~= curBoss then
-		    	feedString = "  |cffff0000"..MonDKP_Loot[i]["boss"].."|r |cff555555("..strtrim(strsub(MonDKP_Loot[i]["date"], 10), " ")..")|r".."\n"
+		    	feedString = "  |cffff0000"..MonDKP_Loot[i]["boss"].."|r |cff555555("..strtrim(strsub(date, 10), " ")..")|r".."\n"
 		    	feedString = feedString.."    "..itemToLink.." won by |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." DKP)|r"
 		    	 
 		    	MonDKP.ConfigTab5.looter[i]:SetText(feedString);
-		    	curDate = strtrim(strsub(MonDKP_Loot[i]["date"], 1, 8), " ")
+		    	curDate = strtrim(strsub(date, 1, 8), " ")
 		    	curBoss = MonDKP_Loot[i]["boss"]
 		    else
 		    	feedString = "    "..itemToLink.." won by |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." DKP)|r"
