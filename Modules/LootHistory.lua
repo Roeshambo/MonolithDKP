@@ -26,13 +26,26 @@ local function GetSortOptions()
 	return PlayerList;
 end
 
+local function DeleteLootHistoryEntry(target)
+	local search = MonDKP:Table_Search(MonDKP_Loot, target["date"]);
+
+	MonDKP:LootHistory_Reset()
+
+	if search then
+		table.remove(MonDKP_Loot, search[1][1])
+	end
+	MonDKP.Sync:SendData("MonDKPDeleteLoot", search[1][1])
+	MonDKP:SortLootTable()
+	MonDKP:LootHistory_Update("No Filter");
+end
+
 function CreateSortBox()
 	local PlayerList = GetSortOptions();
 	local curfilterName = "No Filter";
 
 	-- Create the dropdown, and configure its appearance
 	sortDropdown = CreateFrame("FRAME", "MonDKPConfigFilterNameDropDown", MonDKP.ConfigTab5, "MonolithDKPUIDropDownMenuTemplate")
-	sortDropdown:SetPoint("TOP", MonDKP.ConfigTab5, "TOP", -30, -6)
+	sortDropdown:SetPoint("TOP", MonDKP.ConfigTab5, "TOP", -13, -11)
 	UIDropDownMenu_SetWidth(sortDropdown, 150)
 	UIDropDownMenu_SetText(sortDropdown, "Filter Name")
 
@@ -95,24 +108,11 @@ function MonDKP:LootHistory_Reset()
 	end
 end
 
-function MonDKP:LootHistory_Update(filter)
+function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call, runs set assigned for when a filter is selected in dropdown.
 	local date;
 	local linesToUse = 1;
-	--local historyLength
 	MonDKP:SortLootTable()
 	
-
-
-	--[[for i=1, #MonDKP.ConfigTab5.looter do
-		MonDKP.ConfigTab5.looter[i]:SetText("")
-		MonDKP.ConfigTab5.lootFrame[i]:Hide()
-	end--]]
-
-	--[[if #MonDKP_Loot < 1000 then 
-		historyLength = #MonDKP_Loot
-	else
-		historyLength = 1000
-	end--]]
 	if filter then
 		MonDKP:LootHistory_Reset()
 	end
@@ -143,28 +143,65 @@ function MonDKP:LootHistory_Update(filter)
 		    end
 		    -- determine line height 
 	    	if linesToUse == 1 then
-				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight);
-				MonDKP.ConfigTab5.lootFrame[i]:SetSize(270, 14)
+				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight-2);
+				MonDKP.ConfigTab5.lootFrame[i]:SetSize(444, 14)
 				lineHeight = lineHeight-14;
 			elseif linesToUse == 2 then
 				lineHeight = lineHeight-14;
 				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight);
-				MonDKP.ConfigTab5.lootFrame[i]:SetSize(270, 28)
+				MonDKP.ConfigTab5.lootFrame[i]:SetSize(444, 28)
 				lineHeight = lineHeight-25;
 			elseif linesToUse == 3 then
 				lineHeight = lineHeight-14;
 				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight);
-				MonDKP.ConfigTab5.lootFrame[i]:SetSize(270, 42)
+				MonDKP.ConfigTab5.lootFrame[i]:SetSize(444, 38)
 				lineHeight = lineHeight-37;
 			end;
 
 			MonDKP.ConfigTab5.looter[i] = MonDKP.ConfigTab5.lootFrame[i]:CreateFontString(nil, "OVERLAY")
 			MonDKP.ConfigTab5.looter[i]:SetFontObject("MonDKPSmallLeft");
 			MonDKP.ConfigTab5.looter[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5.lootFrame[i], "TOPLEFT", 0, 0);
-		   
+		   	
+		   	if core.IsOfficer == true then
+				MonDKP.ConfigTab5.lootFrame[i].delete = CreateFrame("Button", nil, MonDKP.ConfigTab5.lootFrame[i], "UIPanelCloseButton")
+				MonDKP.ConfigTab5.lootFrame[i].delete:SetSize(18, 18)
+				MonDKP.ConfigTab5.lootFrame[i].delete:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab5.lootFrame[i], "BOTTOMRIGHT", -5, 1);
+				MonDKP.ConfigTab5.lootFrame[i].delete:SetScript("OnClick", function(self)
+					local deleteString = "Are you sure you'd like to delete the entry: "..MonDKP_Loot[i]["player"].." won "..MonDKP_Loot[i]["loot"].." for "..MonDKP_Loot[i]["cost"].." DKP?";
+
+					StaticPopupDialogs["DELETE_LOOT_ENTRY"] = {
+					  text = deleteString,
+					  button1 = "Yes",
+					  button2 = "No",
+					  OnAccept = function()
+					      DeleteLootHistoryEntry(MonDKP_Loot[i])
+					  end,
+					  timeout = 0,
+					  whileDead = true,
+					  hideOnEscape = true,
+					  preferredIndex = 3,
+					}
+					StaticPopup_Show ("DELETE_LOOT_ENTRY")
+				end)
+				MonDKP.ConfigTab5.lootFrame[i].delete:SetScript("OnEnter", function(self)
+					GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+					GameTooltip:SetText("Delete Entry")
+					GameTooltip:Show();
+					MonDKP.ConfigTab5.lootFrame[i]:SetBackdrop({
+					    bgFile   = "Interface\\COMMON\\talent-blue-glow", tile = false, tileSize = 10
+					});
+					MonDKP.ConfigTab5.lootFrame[i]:SetBackdropColor(1, 1, 1, 0.4)
+				end)
+				MonDKP.ConfigTab5.lootFrame[i].delete:SetScript("OnLeave", function()
+					GameTooltip:Hide();
+					MonDKP.ConfigTab5.lootFrame[i]:SetBackdrop({
+					    bgFile   = nil, tile = false,
+					});
+				end)
+			end
 
 		    -- print string to history
-		    local date1, date2, date3 = strsplit("/", strsub(date, 1, 8))    -- date is stored as yy/mm/dd for sorting purposes. rearranges numbers for printing to string
+		    local date1, date2, date3 = strsplit("/", strsub(date, 1, 8))
 
 		    local feedString;
 
@@ -201,7 +238,7 @@ function MonDKP:LootHistory_Update(filter)
 
 		    -- Set script for tooltip/linking
 		    MonDKP.ConfigTab5.lootFrame[i]:SetScript("OnEnter", function()
-		    	tooltip:SetOwner(MonDKP.UIConfig, "ANCHOR_RIGHT", 0, -425)
+		    	tooltip:SetOwner(MonDKP.ConfigTab5.looter[i], "ANCHOR_LEFT", 300, 0)
 		    	tooltip:SetHyperlink(itemToLink)
 		    	tooltip:Show();
 		    end)
@@ -240,25 +277,62 @@ function MonDKP:LootHistory_Update(filter)
 		    end
 		    -- determine line height 
 	    	if linesToUse == 1 then
-				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight);
-				MonDKP.ConfigTab5.lootFrame[i]:SetSize(270, 14)
+				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight-2);
+				MonDKP.ConfigTab5.lootFrame[i]:SetSize(444, 14)
 				lineHeight = lineHeight-14;
 			elseif linesToUse == 2 then
 				lineHeight = lineHeight-14;
 				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight);
-				MonDKP.ConfigTab5.lootFrame[i]:SetSize(270, 28)
+				MonDKP.ConfigTab5.lootFrame[i]:SetSize(444, 28)
 				lineHeight = lineHeight-25;
 			elseif linesToUse == 3 then
 				lineHeight = lineHeight-14;
 				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight);
-				MonDKP.ConfigTab5.lootFrame[i]:SetSize(270, 42)
+				MonDKP.ConfigTab5.lootFrame[i]:SetSize(444, 38)
 				lineHeight = lineHeight-37;
 			end;
 
 			MonDKP.ConfigTab5.looter[i] = MonDKP.ConfigTab5.lootFrame[i]:CreateFontString(nil, "OVERLAY")
 			MonDKP.ConfigTab5.looter[i]:SetFontObject("MonDKPSmallLeft");
 			MonDKP.ConfigTab5.looter[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5.lootFrame[i], "TOPLEFT", 0, 0);
-		   
+
+			if core.IsOfficer == true then
+				MonDKP.ConfigTab5.lootFrame[i].delete = CreateFrame("Button", nil, MonDKP.ConfigTab5.lootFrame[i], "UIPanelCloseButton")
+				MonDKP.ConfigTab5.lootFrame[i].delete:SetSize(18, 18)
+				MonDKP.ConfigTab5.lootFrame[i].delete:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab5.lootFrame[i], "BOTTOMRIGHT", -5, 1);
+				MonDKP.ConfigTab5.lootFrame[i].delete:SetScript("OnClick", function(self)
+					local deleteString = "Are you sure you'd like to delete the entry: "..MonDKP_Loot[i]["player"].." won "..MonDKP_Loot[i]["loot"].." for "..MonDKP_Loot[i]["cost"].." DKP?";
+
+					StaticPopupDialogs["DELETE_LOOT_ENTRY"] = {
+					  text = deleteString,
+					  button1 = "Yes",
+					  button2 = "No",
+					  OnAccept = function()
+					      DeleteLootHistoryEntry(MonDKP_Loot[i])
+					  end,
+					  timeout = 0,
+					  whileDead = true,
+					  hideOnEscape = true,
+					  preferredIndex = 3,
+					}
+					StaticPopup_Show ("DELETE_LOOT_ENTRY")
+				end)
+				MonDKP.ConfigTab5.lootFrame[i].delete:SetScript("OnEnter", function(self)
+					GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+					GameTooltip:SetText("Delete Entry")
+					GameTooltip:Show();
+					MonDKP.ConfigTab5.lootFrame[i]:SetBackdrop({
+					    bgFile   = "Interface\\COMMON\\talent-blue-glow", tile = false, tileSize = 10
+					});
+					MonDKP.ConfigTab5.lootFrame[i]:SetBackdropColor(1, 1, 1, 0.4)
+				end)
+				MonDKP.ConfigTab5.lootFrame[i].delete:SetScript("OnLeave", function()
+					GameTooltip:Hide();
+					MonDKP.ConfigTab5.lootFrame[i]:SetBackdrop({
+					    bgFile   = nil, tile = false,
+					});
+				end)
+			end
 
 		    -- print string to history
 		    local date1, date2, date3 = strsplit("/", strtrim(strsub(date, 1, 8), " "))    -- date is stored as yy/mm/dd for sorting purposes. rearranges numbers for printing to string
@@ -298,7 +372,7 @@ function MonDKP:LootHistory_Update(filter)
 
 		    -- Set script for tooltip/linking
 		    MonDKP.ConfigTab5.lootFrame[i]:SetScript("OnEnter", function()
-		    	tooltip:SetOwner(MonDKP.UIConfig, "ANCHOR_RIGHT", 0, -425)
+		    	tooltip:SetOwner(MonDKP.ConfigTab5.looter[i], "ANCHOR_LEFT", 300, 0)
 		    	tooltip:SetHyperlink(itemToLink)
 		    	tooltip:Show();
 		    end)

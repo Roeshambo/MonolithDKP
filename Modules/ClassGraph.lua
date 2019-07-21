@@ -12,7 +12,6 @@ function MonDKP:ClassGraph()
 
 	local icons = {}
 	graph.icons = icons;
-	local c = MonDKP:GetCColors();
 	local classCount = {}
 	local perc_height = {}
 	local perc = {}
@@ -84,4 +83,27 @@ function MonDKP:ClassGraph()
 	--tex:SetTexCoord(left, right, top, bottom)
 
 	return graph;
+end
+
+function MonDKP:ClassGraph_Update()
+	local classCount = {}
+	local perc_height = {}
+	local perc = {}
+	local BarMaxHeight = 400
+	local BarWidth = 25
+
+	for k, v in pairs(core.classes) do
+		local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, v)
+		tinsert(classCount, #classSearch)
+		local classPerc = round(#classSearch / #MonDKP_DKPTable, 4);
+		tinsert(perc, classPerc * 100)
+		local adjustBar = BarMaxHeight * classPerc;
+		tinsert(perc_height, adjustBar)
+	end
+
+	for i=1, 8 do
+  		core.ClassGraph.icons[i].bar:SetSize(BarWidth, perc_height[i])
+		core.ClassGraph.icons[i].percentage:SetText(round(perc[i], 1).."%")
+		core.ClassGraph.icons[i].count:SetText(classCount[i])
+	end
 end

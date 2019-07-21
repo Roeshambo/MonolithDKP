@@ -23,6 +23,23 @@
 			<Font font="Fonts\ARIALN.TTF" height="16" outline="NORMAL"/>
 		</Member>
 	</FontFamily>
+	<FontFamily  name="MonDKPTinyOutline" virtual="true">
+		<Member alphabet="roman">
+			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="10" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="korean">
+			<Font font="Fonts\2002.TTF" height="15" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="simplifiedchinese">
+			<Font font="Fonts\ARKai_C.ttf" height="14" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="traditionalchinese">
+			<Font font="Fonts\bHEI01B.TTF" height="14" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="russian">
+			<Font font="Fonts\ARIALN.TTF" height="16" outline="NORMAL"/>
+		</Member>
+	</FontFamily>
 	<FontFamily  name="MonDKPSmall" virtual="true">
 		<Member alphabet="roman">
 			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="12"/>
@@ -40,9 +57,43 @@
 			<Font font="Fonts\ARIALN.TTF" height="16" outline="NORMAL"/>
 		</Member>
 	</FontFamily>
+	<FontFamily  name="MonDKPSmallOutline" virtual="true">
+		<Member alphabet="roman">
+			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="12" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="korean">
+			<Font font="Fonts\2002.TTF" height="15" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="simplifiedchinese">
+			<Font font="Fonts\ARKai_C.ttf" height="14" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="traditionalchinese">
+			<Font font="Fonts\bHEI01B.TTF" height="14" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="russian">
+			<Font font="Fonts\ARIALN.TTF" height="16" outline="NORMAL"/>
+		</Member>
+	</FontFamily>
 	<FontFamily  name="MonDKPNormal" virtual="true">
 		<Member alphabet="roman">
 			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="13"/>
+		</Member>
+		<Member alphabet="korean">
+			<Font font="Fonts\2002.TTF" height="15" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="simplifiedchinese">
+			<Font font="Fonts\ARKai_C.ttf" height="14" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="traditionalchinese">
+			<Font font="Fonts\bHEI01B.TTF" height="14" outline="NORMAL"/>
+		</Member>
+		<Member alphabet="russian">
+			<Font font="Fonts\ARIALN.TTF" height="16" outline="NORMAL"/>
+		</Member>
+	</FontFamily>
+	<FontFamily  name="MonDKPNormalOutline" virtual="true">
+		<Member alphabet="roman">
+			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="13" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="korean">
 			<Font font="Fonts\2002.TTF" height="15" outline="NORMAL"/>
@@ -80,12 +131,21 @@
 	<Font name="MonDKPTinyCenter" inherits="MonDKPTiny" justifyH="CENTER" virtual="true"/>
 	<Font name="MonDKPTinyLeft" inherits="MonDKPTiny" justifyH="LEFT" virtual="true"/>
 	<Font name="MonDKPTinyRight" inherits="MonDKPTiny" justifyH="RIGHT" virtual="true"/>
+	<Font name="MonDKPTinyOutlineCenter" inherits="MonDKPTinyOutline" justifyH="CENTER" virtual="true"/>
+	<Font name="MonDKPTinyOutlineLeft" inherits="MonDKPTinyOutline" justifyH="LEFT" virtual="true"/>
+	<Font name="MonDKPTinyOutlineRight" inherits="MonDKPTinyOutline" justifyH="RIGHT" virtual="true"/>
 	<Font name="MonDKPSmallCenter" inherits="MonDKPSmall" justifyH="CENTER" virtual="true"/>
 	<Font name="MonDKPSmallLeft" inherits="MonDKPSmall" justifyH="LEFT" virtual="true"/>
 	<Font name="MonDKPSmallRight" inherits="MonDKPSmall" justifyH="RIGHT" virtual="true"/>
+	<Font name="MonDKPSmallOutlineCenter" inherits="MonDKPSmallOutline" justifyH="CENTER" virtual="true"/>
+	<Font name="MonDKPSmallOutlineLeft" inherits="MonDKPSmallOutline" justifyH="LEFT" virtual="true"/>
+	<Font name="MonDKPSmallOutlineRight" inherits="MonDKPSmallOutline" justifyH="RIGHT" virtual="true"/>
 	<Font name="MonDKPNormalCenter" inherits="MonDKPNormal" justifyH="CENTER" virtual="true"/>
 	<Font name="MonDKPNormalLeft" inherits="MonDKPNormal" justifyH="LEFT" virtual="true"/>
 	<Font name="MonDKPNormalRight" inherits="MonDKPNormal" justifyH="RIGHT" virtual="true"/>
+	<Font name="MonDKPNormalOutlineCenter" inherits="MonDKPNormalOutline" justifyH="CENTER" virtual="true"/>
+	<Font name="MonDKPNormalOutlineLeft" inherits="MonDKPNormalOutline" justifyH="LEFT" virtual="true"/>
+	<Font name="MonDKPNormalOutlineRight" inherits="MonDKPNormalOutline" justifyH="RIGHT" virtual="true"/>
 	<Font name="MonDKPLargeCenter" inherits="MonDKPLarge" justifyH="CENTER" virtual="true"/>
 	<Font name="MonDKPLargeLeft" inherits="MonDKPLarge" justifyH="LEFT" virtual="true"/>
 	<Font name="MonDKPLargeRight" inherits="MonDKPLarge" justifyH="RIGHT" virtual="true"/>
@@ -386,9 +446,9 @@
 				</Anchor>
 			</Anchors>
 		</ButtonText>
-		<NormalFont style="GameFontNormalSmall"/>
-		<HighlightFont style="GameFontHighlightSmall"/>
-		<DisabledFont style="GameFontHighlightSmall"/>
+		<NormalFont style="MonDKPSmallOutlineCenter"/>
+		<HighlightFont style="MonDKPSmallOutlineCenter"/>
+		<DisabledFont style="MonDKPSmallOutlineCenter"/>
 		<HighlightTexture name="$parentHighlightTexture" file="Interface\PaperDollInfoFrame\UI-Character-Tab-RealHighlight" alphaMode="ADD">
 			<Anchors>
 				<Anchor point="TOPLEFT">
@@ -408,16 +468,11 @@
 		<HitRectInsets>
 			<AbsInset left="0" right="0" top="-10" bottom="-10"/>
 		</HitRectInsets>
-		<Backdrop bgFile="Interface\Buttons\UI-SliderBar-Background" edgeFile="Interface\AddOns\MonolithDKP\Media\Textures\slider-border" tile="true">
+		<Backdrop bgFile="Interface\Buttons\UI-SliderBar-Background" edgeFile="Interface\ChatFrame\ChatFrameBackground" tile="true">
+			<BorderColor r="0.12" g="0.12" b="0.34" a="1" /> 
 			<EdgeSize>
 				<AbsValue val="1"/>
 			</EdgeSize>
-			<TileSize>
-				<AbsValue val="1"/>
-			</TileSize>
-			<BackgroundInsets>
-				<AbsInset left="3" right="3" top="6" bottom="6"/>
-			</BackgroundInsets>
 		</Backdrop>
 		<ThumbTexture parentKey="Thumb" name="$parentThumb" file="Interface\AddOns\MonolithDKP\Media\Textures\slider-pin">
 			<Size x="16" y="16"/>

@@ -6,16 +6,23 @@ local MonDKP = core.MonDKP;
 -- DBs are initiallized at the bottom of init.lua
 
 function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, the entire addon window
-  core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();
+  core.MonDKPUI = core.MonDKPUI or MonDKP:CreateMenu();
   core.MonDKPUI:SetShown(not core.MonDKPUI:IsShown())
-  core.IsOfficer = C_GuildInfo.CanEditOfficerNote()
+  if core.IsOfficer == "" then
+    core.IsOfficer = C_GuildInfo.CanEditOfficerNote()
+    core.MonDKPOptions = core.MonDKPOptions or MonDKP:Options()
+  end
   if not core.IsOfficer then
-    for i=2, 4 do
+    for i=2, 3 do
       _G["MonDKPMonDKP.ConfigTabMenuTab"..i]:Hide();
     end
-    _G["MonDKPMonDKP.ConfigTabMenuTab5"]:SetPoint("TOPLEFT", _G["MonDKPMonDKP.ConfigTabMenuTab1"], "TOPRIGHT", -14, 0)
+    _G["MonDKPMonDKP.ConfigTabMenuTab4"]:SetPoint("TOPLEFT", _G["MonDKPMonDKP.ConfigTabMenuTab1"], "TOPRIGHT", -14, 0)
+    _G["MonDKPMonDKP.ConfigTabMenuTab5"]:SetPoint("TOPLEFT", _G["MonDKPMonDKP.ConfigTabMenuTab4"], "TOPRIGHT", -14, 0)
     _G["MonDKPMonDKP.ConfigTabMenuTab6"]:SetPoint("TOPLEFT", _G["MonDKPMonDKP.ConfigTabMenuTab5"], "TOPRIGHT", -14, 0)
   end
+
+  core.MonDKPUI:SetScale(MonDKP_DB.DKPBonus.MonDKPScaleSize)
+  MonDKP:LootHistory_Update("No Filter");
   DKPTable_Update()
 end
 
@@ -206,6 +213,7 @@ function MonDKP:CreateMenu()
       MonDKP.UIConfig.TabMenu:Hide()
       MonDKP.UIConfig.expandtab:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\expand-arrow");
     end
+    PlaySound(62540)
     core.ShowState = not core.ShowState
   end)
 

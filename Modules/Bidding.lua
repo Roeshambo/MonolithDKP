@@ -119,13 +119,12 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
  		CurrItemForBid = loot;
  		CurrItemIcon = lootIcon
  		CurZone = GetRealZoneText()
- 		core.BossKilled = GetUnitName("target")
  		minBid = GetMinBid(itemName) or 70
  		core.BiddingWindow.minBid:SetText(minBid)
  		core.BiddingWindow.itemName:SetText(itemName)
  		core.BiddingWindow.bidTimer:SetText(core.settings["DKPBonus"]["BidTimer"])
  		core.BiddingWindow.cost:SetText(minBid)
- 		core.BiddingWindow.boss:SetText(core.BossKilled.." in "..CurZone)
+ 		core.BiddingWindow.boss:SetText(core.LastKilledBoss.." in "..CurZone)
  	end
  	UpdateBidWindow()
  	BidScrollFrame_Update()
@@ -134,7 +133,7 @@ end
 local function StartBidding()
 	if not core.BiddingWindow.item:GetText() or core.BiddingWindow.minBid:GetText() == "" then MonDKP:Print("No minimum bid and/or item to bid on!") return false end	-- stops the function if either an item or minBid is not selected
 
-	MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), "Bidding on "..core.BiddingWindow.item:GetText().." |cff00ff00Min Bid: "..core.BiddingWindow.minBid:GetText().."|r")
+	MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), CurrItemIcon)
 	local search = MonDKP:Table_Search(MonDKP_MinBids, core.BiddingWindow.itemName:GetText())
 	if not search then
 		tinsert(MonDKP_MinBids, {item=core.BiddingWindow.itemName:GetText(), minbid=core.BiddingWindow.minBid:GetText()})
@@ -142,8 +141,10 @@ local function StartBidding()
 		MonDKP_MinBids[search[1][1]].minbid = core.BiddingWindow.minBid:GetText();
 	end
 	core.BidInProgress = true;
-	SendChatMessage("Taking bids on "..core.BiddingWindow.item:GetText().." ("..core.BiddingWindow.minBid:GetText().." DKP Minimum bid)", "RAID_WARNING")
-	SendChatMessage("To bid whisper !bid <value> (ex: !bid "..core.BiddingWindow.minBid:GetText()..")", "RAID_WARNING")
+	if CurrItemForBid then
+		SendChatMessage("Taking bids on "..core.BiddingWindow.item:GetText().." ("..core.BiddingWindow.minBid:GetText().." DKP Minimum bid)", "RAID_WARNING")
+		SendChatMessage("To bid whisper !bid <value> (ex: !bid "..core.BiddingWindow.minBid:GetText()..")", "RAID_WARNING")
+	end
 end
 
 local function ToggleTimerBtn(self)
@@ -197,9 +198,9 @@ local function AwardItem()
 
 		SendChatMessage("Congrats "..winner.." on "..CurrItemForBid.." @ "..cost.."DKP", "RAID_WARNING")
 		MonDKP:DKPTable_Set(winner, "dkp", -cost)
-		tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=CurZone, date=date, boss=core.BossKilled, cost=cost})
+		tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=date, boss=core.LastKilledBoss, cost=cost})
 		local temp_table = {}
-		tinsert(temp_table, {player=winner, loot=CurrItemForBid, zone=CurZone, date=date, boss=core.BossKilled, cost=cost})
+		tinsert(temp_table, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=date, boss=core.LastKilledBoss, cost=cost})
 		MonDKP:LootHistory_Reset();
 		MonDKP:LootHistory_Update("No Filter")
 		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
@@ -210,10 +211,10 @@ local function AwardItem()
 	end
 end
 
-function MonDKP:BroadcastBidTimer(seconds, ...)       -- broadcasts timer and starts it natively
-	local title = ...;
-	MonDKP:StartBidTimer(seconds, ...)
-	MonDKP.Sync:SendData("MonDKPNotify", "StartBidTimer,"..seconds..","..title)
+function MonDKP:BroadcastBidTimer(seconds, title, itemIcon)       -- broadcasts timer and starts it natively
+	local title = title;
+	MonDKP:StartBidTimer(seconds, title, itemIcon)
+	MonDKP.Sync:SendData("MonDKPNotify", "StartBidTimer,"..seconds..","..title..","..itemIcon)
 end
 
 function MonDKP:BroadcastStopBidTimer()
@@ -222,7 +223,7 @@ function MonDKP:BroadcastStopBidTimer()
 	MonDKP.Sync:SendData("MonDKPNotify", "StopBidTimer")
 end
 
-function MonDKP_Register_ShiftClickLootWindowHook()			-- hook function into LootFrame window (BREAKS if more than 4 loot slots shown at a time)
+function MonDKP_Register_ShiftClickLootWindowHook()			-- hook function into LootFrame window (BREAKS if more than 4 loot slots... trying to fix)
 	for i = 1, 4 do 
 		getglobal("LootButton"..i):HookScript("OnClick", function()
 	        if ( IsShiftKeyDown() and IsAltKeyDown() ) then
@@ -234,15 +235,16 @@ function MonDKP_Register_ShiftClickLootWindowHook()			-- hook function into Loot
 	end
 end
 
-function MonDKP:StartBidTimer(seconds, ...)
+function MonDKP:StartBidTimer(seconds, title, itemIcon)
 	local duration = tonumber(seconds)
-	local title = ...;
+	local title = title;
 	local alpha = 1;
 
 	MonDKP.BidTimer = MonDKP.BidTimer or MonDKP:CreateTimer();		-- recycles bid timer frame so multiple instances aren't created
 	MonDKP.BidTimer:SetShown(not MonDKP.BidTimer:IsShown())					-- shows if not shown
 	MonDKP.BidTimer:SetMinMaxValues(0, duration or 20)
-	MonDKP.BidTimer.timerTitle:SetText(...)
+	MonDKP.BidTimer.timerTitle:SetText(title)
+	MonDKP.BidTimer.itemIcon:SetTexture(itemIcon)
 	PlaySound(8959)
 
 	if MonDKP_DB.timerpos then
@@ -316,13 +318,17 @@ function MonDKP:StartBidTimer(seconds, ...)
 		end
 		self:SetValue(timer)
 		if timer >= duration then
-			SendChatMessage("Bidding Closed!", "RAID_WARNING")
+			if CurrItemForBid then
+				SendChatMessage("Bidding Closed!", "RAID_WARNING")
+			end
 			core.BidInProgress = false;
-			_G["MonDKPBiddingStartBiddingButton"]:SetText("Start Bidding")
-			_G["MonDKPBiddingStartBiddingButton"]:SetScript("OnClick", function (self)
-				ToggleTimerBtn(self)
-			end)
-			timerToggle = 0;
+			if _G["MonDKPBiddingStartBiddingButton"] then
+				_G["MonDKPBiddingStartBiddingButton"]:SetText("Start Bidding")
+				_G["MonDKPBiddingStartBiddingButton"]:SetScript("OnClick", function (self)
+					ToggleTimerBtn(self)
+				end)
+				timerToggle = 0;
+			end
 			MonDKP.BidTimer:SetScript("OnUpdate", nil)
 			MonDKP.BidTimer:Hide();
 		end
@@ -332,7 +338,7 @@ end
 function MonDKP:CreateTimer()
 
 	local f = CreateFrame("StatusBar", nil, UIParent)
-	f:SetSize(250, 20)
+	f:SetSize(300, 25)
 	f:SetFrameStrata("DIALOG")
 	f:SetFrameLevel(18)
 	f:SetBackdrop({
@@ -342,6 +348,7 @@ function MonDKP:CreateTimer()
 	f:SetStatusBarTexture([[Interface\TargetingFrame\UI-TargetingFrame-BarFill]])
 	f:SetMovable(true);
 	f:EnableMouse(true);
+	f:SetScale(MonDKP_DB.DKPBonus.BidTimerSize)
 	f:RegisterForDrag("LeftButton");
 	f:SetScript("OnDragStart", f.StartMoving);
 	f:SetScript("OnDragStop", function()
@@ -360,7 +367,7 @@ function MonDKP:CreateTimer()
 	f.border:SetPoint("CENTER", f, "CENTER");
 	f.border:SetFrameStrata("DIALOG")
 	f.border:SetFrameLevel(19)
-	f.border:SetSize(250, 20);
+	f.border:SetSize(300, 25);
 	f.border:SetBackdrop( {
 		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
 		insets = { left = 0, right = 0, top = 0, bottom = 0 }
@@ -369,21 +376,28 @@ function MonDKP:CreateTimer()
 	f.border:SetBackdropBorderColor(1,1,1,1)
 
 	f.timerTitle = f:CreateFontString(nil, "OVERLAY")
-	f.timerTitle:SetFontObject("MonDKPSmallRight")
+	f.timerTitle:SetFontObject("MonDKPNormalOutlineLeft")
+	f.timerTitle:SetWidth(270)
+	f.timerTitle:SetHeight(25)
 	f.timerTitle:SetTextColor(1, 1, 1, 1);
-	f.timerTitle:SetPoint("BOTTOMLEFT", f, "TOPLEFT", 0, 2);
+	f.timerTitle:SetPoint("LEFT", f, "LEFT", 3, 0);
 	f.timerTitle:SetText(nil);
-		
+
 	f.timertext = f:CreateFontString(nil, "OVERLAY")
-	f.timertext:SetFontObject("MonDKPSmallRight")
+	f.timertext:SetFontObject("MonDKPSmallOutlineRight")
 	f.timertext:SetTextColor(1, 1, 1, 1);
-	f.timertext:SetPoint("TOPRIGHT", f, "BOTTOMRIGHT", 0, -2);
+	f.timertext:SetPoint("RIGHT", f, "RIGHT", -5, 0);
 	f.timertext:SetText(nil);
+
+	f.itemIcon = f:CreateTexture(nil, "OVERLAY", nil);   -- Title Bar Texture
+	f.itemIcon:SetPoint("RIGHT", f, "LEFT", 0, 0);
+	f.itemIcon:SetColorTexture(0, 0, 0, 1)
+	f.itemIcon:SetSize(25, 25);
 
 	return f;
 end
 
-local function BidRowOnClick(self)
+local function BidRow_OnClick(self)
 	for i=1, numrows do
 		core.BiddingWindow.bidTable.Rows[i]:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
 		core.BiddingWindow.bidTable.Rows[i]:GetNormalTexture():SetAlpha(0.2)
@@ -391,7 +405,7 @@ local function BidRowOnClick(self)
     self:SetNormalTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\ListBox-Highlight");
     self:GetNormalTexture():SetAlpha(1)
 
-    SelectedBidder = {player=self.Strings[1]:GetText(), bid=tonumber(self.Strings[2]:GetText())}
+    SelectedBidder = {player=strsub(self.Strings[1]:GetText(), 1, strfind(self.Strings[1]:GetText(), " ")-1), bid=tonumber(self.Strings[2]:GetText())}
 end
 
 function BidWindowCreateRow(parent, id) -- Create 3 buttons for each row in the list
@@ -401,7 +415,7 @@ function BidWindowCreateRow(parent, id) -- Create 3 buttons for each row in the 
     f:SetHighlightTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\ListBox-Highlight");
     f:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
     f:GetNormalTexture():SetAlpha(0.2)
-    f:SetScript("OnClick", BidRowOnClick)
+    f:SetScript("OnClick", BidRow_OnClick)
     for i=1, 3 do
         f.Strings[i] = f:CreateFontString(nil, "OVERLAY");
         f.Strings[i]:SetTextColor(1, 1, 1, 1);
@@ -490,7 +504,7 @@ function MonDKP:CreateBidWindow()
 	tinsert(UISpecialFrames, f:GetName()); -- Sets frame to close on "Escape"
 
 	  -- Close Button
-	f.closeContainer = CreateFrame("Frame", "MonDKPTitle", f)
+	f.closeContainer = CreateFrame("Frame", "MonDKPBiddingWindowCloseButtonContainer", f)
 	f.closeContainer:SetPoint("CENTER", f, "TOPRIGHT", -4, 0)
 	f.closeContainer:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
@@ -522,7 +536,7 @@ function MonDKP:CreateBidWindow()
 	f.itemHeader:SetPoint("TOP", f.bossHeader, "BOTTOM", 0, -25);
 	f.itemHeader:SetText("Item:")
 
-	f.itemIcon = f:CreateTexture(nil, "OVERLAY", nil);   -- Title Bar Texture
+	f.itemIcon = f:CreateTexture(nil, "OVERLAY", nil);
 	f.itemIcon:SetPoint("LEFT", f.itemHeader, "RIGHT", 8, 0);
 	f.itemIcon:SetColorTexture(0, 0, 0, 1)
 	f.itemIcon:SetSize(28, 28);

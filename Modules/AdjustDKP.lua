@@ -2,12 +2,16 @@ local _, core = ...;
 local _G = _G;
 local MonDKP = core.MonDKP;
 
+local curReason;
+
 local function AdjustDKP()
 	local adjustReason = curReason;
 	local c = MonDKP:GetCColors();
 	local date = time()
 
 	if (curReason == "Other") then adjustReason = "Other - "..MonDKP.ConfigTab2.otherReason:GetText(); end
+	if curReason == "Boss Kill Bonus" then adjustReason = core.CurrentRaidZone..": "..core.LastKilledBoss; end
+	if curReason == "New Boss Kill Bonus" then adjustReason = core.CurrentRaidZone..": "..core.LastKilledBoss.." (First Kill)" end
 	if (#core.SelectedData > 1 and adjustReason and adjustReason ~= "Other - Enter Other Reason Here") then
 		local tempString = "";       -- stores list of changes
 		local dkpHistoryString = ""   -- stores list for MonDKP_DKPHistory
@@ -117,8 +121,9 @@ function MonDKP:AdjustDKPTab_Create()
 
 	MonDKP.ConfigTab2.description = MonDKP.ConfigTab2:CreateFontString(nil, "OVERLAY")
 	MonDKP.ConfigTab2.description:SetPoint("TOPLEFT", MonDKP.ConfigTab2.header, "BOTTOMLEFT", 7, -10);
+	MonDKP.ConfigTab2.description:SetWidth(400)
 	MonDKP.ConfigTab2.description:SetFontObject("MonDKPNormalLeft")
-	MonDKP.ConfigTab2.description:SetText("Select individual players from the left (Shift+Click\nfor multiple players) or click \"Select All Visible\"\nbelow and enter amount to adjust.\n\n\"Select All Visible\" will only select entries visible.\nCan be narrowed down via the Filters Tab"); 
+	MonDKP.ConfigTab2.description:SetText("Select individual players from the left (Shift+Click for multiple players) or click \"Select All Visible\" below and enter amount to adjust.\n\n\"Select All Visible\" will only select entries visible. Can be narrowed down via the Filters Tab.\n\n (ex. limiting scope to \"In Party/Raid\" and checking \"Select All Visible\" will only apply changes to all in party/raid)"); 
 
 	-- Reason DROPDOWN box 
 	-- Create the dropdown, and configure its appearance
@@ -157,15 +162,22 @@ function MonDKP:AdjustDKPTab_Create()
 		local DKPSettings = MonDKP:GetDKPSettings()
 		UIDropDownMenu_SetText(MonDKP.ConfigTab2.reasonDropDown, curReason)
 
-		if (curReason == "On Time Bonus") then MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["OnTimeBonus"]))
-		elseif (curReason == "Boss Kill Bonus") then MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["BossKillBonus"]))
-		elseif (curReason == "Raid Completion Bonus") then MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["CompletionBonus"]))
-		elseif (curReason == "New Boss Kill Bonus") then MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["NewBossKillBonus"]))
-		elseif (curReason == "Unexcused Absence") then MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["UnexcusedAbsence"]))
-		else MonDKP.ConfigTab2.addDKP:SetText("")end
+		if (curReason == "On Time Bonus") then MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["OnTimeBonus"])); MonDKP.ConfigTab2.BossKilledDropdown:Hide()
+		elseif (curReason == "Boss Kill Bonus") then
+			MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["BossKillBonus"]));
+			MonDKP.ConfigTab2.BossKilledDropdown:Show()
+			UIDropDownMenu_SetText(MonDKP.ConfigTab2.BossKilledDropdown, core.CurrentRaidZone..": "..core.LastKilledBoss)
+		elseif (curReason == "Raid Completion Bonus") then MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["CompletionBonus"])); MonDKP.ConfigTab2.BossKilledDropdown:Hide()
+		elseif (curReason == "New Boss Kill Bonus") then
+			MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["NewBossKillBonus"]));
+			MonDKP.ConfigTab2.BossKilledDropdown:Show()
+			UIDropDownMenu_SetText(MonDKP.ConfigTab2.BossKilledDropdown, core.CurrentRaidZone..": "..core.LastKilledBoss)
+		elseif (curReason == "Unexcused Absence") then MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["UnexcusedAbsence"])); MonDKP.ConfigTab2.BossKilledDropdown:Hide()
+		else MonDKP.ConfigTab2.addDKP:SetText(""); MonDKP.ConfigTab2.BossKilledDropdown:Hide() end
 
 		if (curReason == "Other") then
 			MonDKP.ConfigTab2.otherReason:Show();
+			MonDKP.ConfigTab2.BossKilledDropdown:Hide()
 		else
 			MonDKP.ConfigTab2.otherReason:Hide();
 		end
@@ -212,7 +224,64 @@ function MonDKP:AdjustDKPTab_Create()
 	end)
 	MonDKP.ConfigTab2.otherReason:Hide();
 
-	 -- Add DKP Edit Box
+	-- Boss Killed Dropdown
+	MonDKP.ConfigTab2.BossKilledDropdown = CreateFrame("FRAME", "MonDKPBossKilledDropdown", MonDKP.ConfigTab2, "MonolithDKPUIDropDownMenuTemplate")
+	MonDKP.ConfigTab2.BossKilledDropdown:SetPoint("TOPLEFT", MonDKP.ConfigTab2.reasonDropDown, "BOTTOMLEFT", 0, 2)
+	MonDKP.ConfigTab2.BossKilledDropdown:Hide()
+	UIDropDownMenu_SetWidth(MonDKP.ConfigTab2.BossKilledDropdown, 250)
+	UIDropDownMenu_SetText(MonDKP.ConfigTab2.BossKilledDropdown, "Select Boss")
+
+	UIDropDownMenu_Initialize(MonDKP.ConfigTab2.BossKilledDropdown, function(self, level, menuList)
+		local boss = UIDropDownMenu_CreateInfo()
+		boss.fontObject = "MonDKPSmallCenter"
+		if (level or 1) == 1 then	  
+			boss.text, boss.checked, boss.menuList, boss.hasArrow = "Molten Core", core.CurrentRaidZone == "The Molten Core", "MC", true
+			UIDropDownMenu_AddButton(boss)
+			boss.text, boss.checked, boss.menuList, boss.hasArrow = "Blackwing Lair", core.CurrentRaidZone == "Blackwing Lair", "BWL", true
+			UIDropDownMenu_AddButton(boss)
+			boss.text, boss.checked, boss.menuList, boss.hasArrow = "Temple of Ahn'Qiraj", core.CurrentRaidZone == "Temple of Ahn'Qiraj", "AQ", true
+			UIDropDownMenu_AddButton(boss)
+			boss.text, boss.checked, boss.menuList, boss.hasArrow = "Naxxramas", core.CurrentRaidZone == "Naxxramas", "NAXX", true
+			UIDropDownMenu_AddButton(boss)
+		else
+			boss.func = self.SetValue
+			for i=1, #core.BossList[menuList] do
+				boss.text, boss.arg1, boss.checked = core.BossList[menuList][i], core.BossList[menuList][i], core.BossList[menuList][i] == core.LastKilledBoss
+				UIDropDownMenu_AddButton(boss, level)
+			end
+		end
+	end)
+
+	function MonDKP.ConfigTab2.BossKilledDropdown:SetValue(newValue)
+		local search = MonDKP:TableStrFind(core.BossList, newValue);
+		
+		if MonDKP:TableStrFind(core.BossList.MC, newValue) then
+			core.CurrentRaidZone = "The Molten Core"
+		elseif MonDKP:TableStrFind(core.BossList.BWL, newValue) then
+			core.CurrentRaidZone = "Blackwing Lair"
+		elseif MonDKP:TableStrFind(core.BossList.AQ, newValue) then
+			core.CurrentRaidZone = "Temple of Ahn'Qiraj"
+		elseif MonDKP:TableStrFind(core.BossList.NAXX, newValue) then
+			core.CurrentRaidZone = "Naxxramas"
+		end
+
+		if search then
+			core.LastKilledBoss = core.BossList[search[1][1]][search[1][2]]
+		else
+			return;
+		end
+
+		MonDKP_DB.bossargs["LastKilledBoss"] = core.LastKilledBoss;
+		MonDKP_DB.bossargs["CurrentRaidZone"] = core.CurrentRaidZone;
+
+		if curReason ~= "Boss Kill Bonus" and curReason ~= "New Boss Kill Bonus" then
+			MonDKP.ConfigTab2.reasonDropDown:SetValue("Boss Kill Bonus")
+		end
+		UIDropDownMenu_SetText(MonDKP.ConfigTab2.BossKilledDropdown, core.CurrentRaidZone..": "..core.LastKilledBoss)
+		CloseDropDownMenus()
+	end
+
+	-- Add DKP Edit Box
 	MonDKP.ConfigTab2.addDKP = CreateFrame("EditBox", nil, MonDKP.ConfigTab2)
 	MonDKP.ConfigTab2.addDKP:SetPoint("TOPLEFT", MonDKP.ConfigTab2.reasonDropDown, "BOTTOMLEFT", 20, -45)     
 	MonDKP.ConfigTab2.addDKP:SetAutoFocus(false)
@@ -336,9 +405,9 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.decayDKPHeader:SetText("Weekly DKP Decay:")
 
 	MonDKP.ConfigTab2.decayDKPFooter = MonDKP.ConfigTab2.decayDKP:CreateFontString(nil, "OVERLAY")
-  MonDKP.ConfigTab2.decayDKPFooter:SetFontObject("MonDKPNormalLeft");
-  MonDKP.ConfigTab2.decayDKPFooter:SetPoint("LEFT", MonDKP.ConfigTab2.decayDKP, "RIGHT", -15, 0);
-  MonDKP.ConfigTab2.decayDKPFooter:SetText("%")
+	MonDKP.ConfigTab2.decayDKPFooter:SetFontObject("MonDKPNormalLeft");
+	MonDKP.ConfigTab2.decayDKPFooter:SetPoint("LEFT", MonDKP.ConfigTab2.decayDKP, "RIGHT", -15, 0);
+	MonDKP.ConfigTab2.decayDKPFooter:SetText("%")
 
 	MonDKP.ConfigTab2.decayButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab2.decayDKP, "TOPRIGHT", 20, 0, "Apply Decay");
 	MonDKP.ConfigTab2.decayButton:SetSize(90,25)

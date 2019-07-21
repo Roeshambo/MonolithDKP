@@ -21,6 +21,7 @@ local function Remove_Entries()
 	MonDKP:FilterDKPTable(core.currentSort, "reset")
 	MonDKP:Print("Removed "..numPlayers.." player(s): "..removedUsers)
 	table.wipe(core.SelectedData)
+	MonDKP:ClassGraph_Update()
 	MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
 end
 
@@ -42,7 +43,7 @@ function AddRaidToDKPTable()
 		local numPlayers = 0;
 		local guildSize = GetNumGuildMembers();
 		local name;
-		local InGuild = false;
+		local InGuild = true;
 
 		for i=1, 40 do
 			tempName,_,_,_,tempClass = GetRaidRosterInfo(i)
@@ -75,6 +76,7 @@ function AddRaidToDKPTable()
 		if addedUsers then
 			MonDKP:Print("Added "..numPlayers.." player(s): "..addedUsers)
 		end
+		MonDKP:ClassGraph_Update()
 		MonDKP:FilterDKPTable(core.currentSort, "reset")
 		--MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)   removed broadcast on add to prevent crossfire from other officers. Move it to init in the event and guild leader ONLY
 	else
@@ -115,9 +117,10 @@ function MonDKP:ManageEntries()
 
 	MonDKP.ConfigTab3.add_raid_header = MonDKP.ConfigTab3:CreateFontString(nil, "OVERLAY")   -- Filters header
 	MonDKP.ConfigTab3.add_raid_header:ClearAllPoints();
+	MonDKP.ConfigTab3.add_raid_header:SetWidth(400)
 	MonDKP.ConfigTab3.add_raid_header:SetFontObject("MonDKPNormalLeft")
 	MonDKP.ConfigTab3.add_raid_header:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab3.add_raid_to_table, "TOPLEFT", -20, 10);
-	MonDKP.ConfigTab3.add_raid_header:SetText("Add any raid members that don't belong to the DKP table. Any\nmembers that belong to it will remain unchanged. This also adds\noffline raid/party members.");
+	MonDKP.ConfigTab3.add_raid_header:SetText("Add all raid members that are in guild to DKP table. This button is a redundency as the function is fired any time a new member joins the raid for Officers or higher.");
 
 	-- remove selected entries button
 	MonDKP.ConfigTab3.remove_entries = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 40, -200, "Remove Entries");
@@ -201,15 +204,21 @@ function MonDKP:ManageEntries()
 	MonDKP.ConfigTab3.broadcastLootButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3.broadcastButton, "TOPRIGHT", 10, 0, "Broadcast Loot History");
 	MonDKP.ConfigTab3.broadcastLootButton:SetSize(140,25)
 	MonDKP.ConfigTab3.broadcastLootButton:SetScript("OnClick", function()
-		MonDKP.Sync:SendData("MonDKPLogSync", MonDKP_Loot)
 		MonDKP.Sync:SendData("MonDKPBroadcast", "Loot history update in progress...")
+		MonDKP.Sync:SendData("MonDKPLogSync", MonDKP_Loot)
 	end)
 
-	MonDKP.ConfigTab3.broadcastDKPButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3.broadcastLootButton, "TOPRIGHT", 10, 0, "Broadcast Loot History");
+	MonDKP.ConfigTab3.broadcastDKPButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3.broadcastLootButton, "TOPRIGHT", 10, 0, "Broadcast DKP History");
 	MonDKP.ConfigTab3.broadcastDKPButton:SetSize(140,25)
 	MonDKP.ConfigTab3.broadcastDKPButton:SetScript("OnClick", function()
-		MonDKP.Sync:SendData("MonDKPDKPLogSync", MonDKP_DKPHistory)
 		MonDKP.Sync:SendData("MonDKPBroadcast", "DKP history update in progress...")
+		MonDKP.Sync:SendData("MonDKPDKPLogSync", MonDKP_DKPHistory)
 	end)
 
+	MonDKP.ConfigTab3.BroadcastHeader = MonDKP.ConfigTab3:CreateFontString(nil, "OVERLAY")   -- Filters header
+	MonDKP.ConfigTab3.BroadcastHeader:ClearAllPoints();
+	MonDKP.ConfigTab3.BroadcastHeader:SetWidth(450)
+	MonDKP.ConfigTab3.BroadcastHeader:SetFontObject("MonDKPNormalLeft")
+	MonDKP.ConfigTab3.BroadcastHeader:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab3.broadcastButton, "TOPLEFT", 0, 10);
+	MonDKP.ConfigTab3.BroadcastHeader:SetText("|cffff0000Warning: If DKP History or Loot history tables are larger than 100 entries it will take time to broadcast them due to Blizzard implemented anti-flood measures. 2500 entries could take up to 3-5 minutes. Please allow 1-2 seconds between broadcasts to allow simultaneous updates. \"Broadcast DKP Table\" should be relatively instant. All broadcasts are GUILD wide (with an exception to bid/raid timers which are restricted to RAID).");
 end

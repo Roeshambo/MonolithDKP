@@ -1,11 +1,6 @@
 --[[
 	Usage so far:  MonDKP.Sync:SendData(prefix, core.WorkingTable)  --sends table through comm channel for updates
 
-	TODO:
-	functions will be separated into more specific uses such as full DB upload (it's current state) as well as
-	individual entries (sending updates for one or more users. IE: if dkp is deducted from a single person)
-	Will also incorporate events to trigger the update for users that have an outdated DB as well as a cooldown mechanism to prevent flooding
-
 	Prefix's used: 	MonDKPDataSync - Syncs entire DKP log
 					MonDKPBroadcast - Message on broadcast
 					MonDKPLogSync - Syncs entire Loot Log
@@ -35,12 +30,17 @@ local function ValidateSender(sender)
 	end
 end
 
+-------------------------------------------------
+-- Register Broadcast Prefixs
+-------------------------------------------------
+
 function MonDKP.Sync:OnEnable()
 	MonDKP.Sync:RegisterComm("MonDKPDataSync", MonDKP.Sync:OnCommReceived())		-- broadcasts entire DKP table
 	MonDKP.Sync:RegisterComm("MonDKPBroadcast", MonDKP.Sync:OnCommReceived())		-- broadcasts a message that is printed as is
-	MonDKP.Sync:RegisterComm("MonDKPLogSync", MonDKP.Sync:OnCommReceived())			-- broadcasts entire loot table
 	MonDKP.Sync:RegisterComm("MonDKPNotify", MonDKP.Sync:OnCommReceived())			-- broadcasts a command (ex. timers, bid timers, stop all timers etc.)
+	MonDKP.Sync:RegisterComm("MonDKPLogSync", MonDKP.Sync:OnCommReceived())			-- broadcasts entire loot table
 	MonDKP.Sync:RegisterComm("MonDKPLootAward", MonDKP.Sync:OnCommReceived())		-- broadcasts individual loot award to loot table
+	MonDKP.Sync:RegisterComm("MonDKPDeleteLoot", MonDKP.Sync:OnCommReceived())		-- broadcasts deleted loot award entries
 	MonDKP.Sync:RegisterComm("MonDKPDKPLogSync", MonDKP.Sync:OnCommReceived())		-- broadcasts entire DKP history table
 	MonDKP.Sync:RegisterComm("MonDKPDKPAward", MonDKP.Sync:OnCommReceived())		-- broadcasts individual DKP award to DKP history table
 end
@@ -51,12 +51,12 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 			if (prefix == "MonDKPBroadcast") and sender ~= UnitName("player") then
 				MonDKP:Print(message)
 			elseif (prefix == "MonDKPNotify") then
-				local command, arg1, arg2 = strsplit(",", message);
+				local command, arg1, arg2, arg3 = strsplit(",", message);
 				if sender ~= UnitName("player") then
 					if command == "StartTimer" then
 						MonDKP:StartTimer(arg1, arg2)
 					elseif command == "StartBidTimer" then
-						MonDKP:StartBidTimer(arg1, arg2)
+						MonDKP:StartBidTimer(arg1, arg2, arg3)
 					elseif command == "StopBidTimer" then
 						if MonDKP.BidTimer then
 							MonDKP.BidTimer:SetScript("OnUpdate", nil)
@@ -66,7 +66,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				end
 			end
 			if (sender ~= UnitName("player")) then
-				if (prefix == "MonDKPDataSync" or prefix == "MonDKPLogSync" or prefix == "MonDKPLootAward" or prefix == "MonDKPDKPLogSync" or prefix == "MonDKPDKPAward") then
+				if (prefix == "MonDKPDataSync" or prefix == "MonDKPLogSync" or prefix == "MonDKPLootAward" or prefix == "MonDKPDKPLogSync" or prefix == "MonDKPDKPAward" or prefix == "MonDKPDeleteLoot") then
 					if (prefix == "MonDKPDataSync") then
 						MonDKP:Print("DKP database updated by "..sender.."...")
 					end
@@ -91,6 +91,11 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 							MonDKP:DKPHistory_Reset()
 	      					MonDKP:DKPHistory_Update()
 							MonDKP:Print("DKP history update complete.")
+						elseif prefix == "MonDKPDeleteLoot" then
+							table.remove(MonDKP_Loot, deserialized)
+							MonDKP:LootHistory_Reset()
+							MonDKP:SortLootTable()
+							MonDKP:LootHistory_Update("No Filter");						
 						else
 							MonDKP_DKPTable = deserialized;			-- commits to SavedVariables
 							MonDKP:FilterDKPTable(core.currentSort, "reset")
@@ -103,9 +108,12 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 			if (sender == UnitName("player") and prefix == "MonDKPLogSync") then
 				MonDKP:Print("Loot History Broadcast Complete")
 			end
+			if (sender == UnitName("player") and prefix == "MonDKPDKPLogSync") then
+				MonDKP:Print("DKP History Broadcast Complete")
+			end
 		else
 			if core.IsOfficer then
-				local msg = sender..", a non-officer, has attempted to modify the DKP tables."
+				local msg = sender..", a non-officer, has attempted to broadcast with \""..prefix.."\" prefix."
 				MonDKP:Print(msg)
 				StaticPopupDialogs["MODIFY_WARNING"] = {
 				text = msg,
@@ -127,8 +135,13 @@ function MonDKP.Sync:SendData(prefix, data)
 	local verInteg1 = false;
 	local verInteg2 = false;
 
-	if (prefix == "MonDKPBroadcast" or prefix == "MonDKPNotify") then
-		MonDKP.Sync:SendCommMessage(prefix, data, "PARTY")
+	if (prefix == "MonDKPNotify") then
+		MonDKP.Sync:SendCommMessage(prefix, data, "RAID")
+		return;
+	end
+
+	if (prefix == "MonDKPBroadcast") then
+		MonDKP.Sync:SendCommMessage(prefix, data, "GUILD")
 		return;
 	end
 
@@ -172,12 +185,18 @@ function MonDKP.Sync:SendData(prefix, data)
 	print("LZQ: ", strlen(lzwCompressed)) --]]
 
 	-- send packet
-	MonDKP.Sync:SendCommMessage(prefix, packet, "RAID")
+	if prefix == "MonDKPNotify" then
+		MonDKP.Sync:SendCommMessage(prefix, packet, "RAID")					-- broadcasts timers to raid, all else goes to guild
+	else
+		MonDKP.Sync:SendCommMessage(prefix, packet, "GUILD")
+	end
 
 	-- Verify Send
 	if (prefix == "MonDKPDataSync") then
 		MonDKP:Print("DKP Database Broadcasted")
 	elseif (prefix == "MonDKPLogSync") then
-		MonDKP:Print("Loot History Broadcasted")
+		MonDKP:Print("Broadcasting Loot History...")
+	elseif (prefix == "MonDKPDKPLogSync") then
+		MonDKP:Print("Broadcasting DKP History...")
 	end
 end

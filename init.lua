@@ -88,6 +88,23 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		if IsInRaid() and core.IsOfficer then
 			AddRaidToDKPTable()
 		end
+	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
+		--if IsInRaid() then
+			local _,arg1,_,_,_,_,_,_,arg2 = CombatLogGetCurrentEventInfo();			-- run operation when boss is killed
+			if arg1 == "UNIT_DIED" then
+				if MonDKP:TableStrFind(core.BossList, arg2) then
+					MonDKP.ConfigTab2.BossKilledDropdown:SetValue(arg2)
+				elseif arg2 == "Emperor Vek'lor" or arg2 == "Emperor Vek'nilash" then
+					MonDKP.ConfigTab2.BossKilledDropdown:SetValue("Twin Emperors")
+				elseif arg2 == "Princess Yauj" or arg2 == "Vem" or arg2 == "Lord Kri" then
+					MonDKP.ConfigTab2.BossKilledDropdown:SetValue("Bug Family")
+				elseif arg2 == "Highlord Mograine" or arg2 == "Thane Korth'azz" or arg2 == "Sir Zeliek" or arg2 == "Lady Blaumeux" then
+					MonDKP.ConfigTab2.BossKilledDropdown:SetValue("The Four Horsemen")
+				end
+			end
+		--end
+	elseif event == "LOOT_OPENED" then
+		MonDKP_Register_ShiftClickLootWindowHook()
 	end
 end
 
@@ -122,15 +139,19 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if (MonDKP_DKPHistory == nil) then MonDKP_DKPHistory = {} end;
 	    if (MonDKP_DB == nil) then 
 	    	MonDKP_DB = {
-	    		DKPBonus = { OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, HistoryLimit = 2500, DecayPercentage = 20},
-	    	} 
-	    end;
-
+	    		DKPBonus = { OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, HistoryLimit = 2500, DKPHistoryLimit = 2500, DecayPercentage = 20, BidTimerSize=1.0, MonDKPScaleSize=1.0, supressNotifications = false},
+	    	}
+		end;
+		if not MonDKP_DB.bossargs then
+	    	MonDKP_DB.bossargs = {}
+	    end
 	    ------------------------------------
 	    --	Import SavedVariables
 	    ------------------------------------
 	    core.settings = MonDKP_DB 				--imports default settings (Options Tab)
 	    core.WorkingTable = MonDKP_DKPTable;	--imports full DKP table to WorkingTable for list manipulation without altering the SavedVariable
+	    core.CurrentRaidZone = MonDKP_DB.bossargs.CurrentRaidZone;
+		core.LastKilledBoss = MonDKP_DB.bossargs.LastKilledBoss;
 
 		-- Populates SavedVariable MonDKP_DKPTable with fake values for testing purposes if they don't already exist
 		-- Delete this section and \WTF\AccountACCOUNT_NAME\SavedVariables\MonolithDKP.lua prior to actual use.
@@ -184,7 +205,6 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		
 		core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();
 		MonDKP:StartBidTimer(seconds, nil)
-		MonDKP_Register_ShiftClickLootWindowHook()
 		MonDKP:PurgeLootHistory()
 	end
 end
@@ -197,4 +217,6 @@ local events = CreateFrame("Frame");
 events:RegisterEvent("ADDON_LOADED");
 events:RegisterEvent("CHAT_MSG_WHISPER");
 events:RegisterEvent("GROUP_ROSTER_UPDATE");
+events:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+events:RegisterEvent("LOOT_OPENED")
 events:SetScript("OnEvent", MonDKP_OnEvent); -- calls the above MonDKP_OnEvent function to determine what to do with the event

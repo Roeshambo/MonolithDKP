@@ -38,9 +38,43 @@ core.settings = {             -- From MonDKP_DB
     UnexcusedAbsence = -25,
     BidTimer = 30,
     HistoryLimit = 2500,
-    DecayPercentage = 20
+    DKPHistoryLimit = 2500,
+    DecayPercentage = 20,
+    BidTimerSize = 1.0,
+    MonDKPScaleSize = 1.0,
+    supressNotifications = false,
   }
 }
+
+----------------------------------------------------
+-- Boss List
+-- search = MonDKP:Table_Search(core.BossList, "Lucifron") returns search[1] { 1 = MC, 2 = 1} (lucifron is at 1st spot in MC table)
+-- [1][1] will return "MC" and [1][2] will return "1" indicating the position of "Lucifron" in the MC table.
+-- core.BossList[search[1][1]][search[1][2]] would be core.BossList["MC"][1] = Lucifron
+--
+-- Can alternatively use tContains(core.BossList.MC, "Lucifron") for a true/false return if path isn't required
+----------------------------------------------------
+core.BossList = {
+  MC = {"Lucifron", "Magmadar", "Gehennas",
+          "Garr", "Baron Geddon", "Shazzrah", "Sulfuron Harbinger", 
+          "Golemagg the Incinerator", "Majordomo Executus", "Ragnaros"},
+
+  BWL = {"Razorgore the Untamed", "Vaelastrasz the Corrupt", "Broodlord Lashlayer",
+          "Firemaw", "Ebonroc", "Flamegor", "Chromaggus", 
+          "Nefarian"},
+
+  AQ = {"The Prophet Skeram", "Battleguard Sartura", "Fankriss the Unyielding",
+          "Princess Huhuran", "Twin Emperors", "C'Thun", 
+          "Bug Family", "Viscidus", "Ouro"},
+
+  NAXX = {"Anub'Rekhan", "Grand Widow Faerlina", "Maexxna",
+          "Noth the Plaguebringer", "Heigan the Unclean", "Loatheb", 
+          "Instructor Razuvious", "Gothik the Harvester", "The Four Horsemen",
+          "Patchwerk", "Grobbulus", "Gluth", "Thaddius",
+        "Sapphiron", "Kel'Thuzad"}
+}
+
+BossLocation = {"The Molten Core", "Blackwing Lair", "Onyxia's Lair", "Ahn'Qiraj", "Temple of Ahn'Qiraj", "Naxxramas", "The Arachnid Quarter", "The Plague Quarter", "The Military Quarter", "The Construct Quarter", "Frostwyrm Lair"}
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
@@ -53,7 +87,10 @@ core.SelectedRows = {};       -- tracks rows in DKPTable that are currently sele
 core.ShowState = false;
 core.currentSort = "class"		-- stores current sort selection
 core.BidInProgress = false;   -- flagged true if bidding in progress. else; false.
-core.BossKilled = nil
+core.NumLootItems = 0;        -- updates on LOOT_OPENED event
+
+core.CurrentRaidZone = ""
+core.LastKilledBoss = ""
 
 function MonDKP:GetCColors(class)
   if core.CColors then 
@@ -82,18 +119,18 @@ end
 
 function MonDKP:GetGuildRank(player)
   local name, rank;
-  local guildSize = GetNumGuildMembers();
+  local guildSize;
 
   if IsInGuild() then
+    guildSize = GetNumGuildMembers();
     for i=1, guildSize do
       name, rank = GetGuildRosterInfo(i)
       name = strsub(name, 1, string.find(name, "-")-1)  -- required to remove server name from player (can remove in classic if this is not an issue)
       if name == player then
         return rank;
-      else
-        return "No Rank";
       end
     end
+    return "No Rank";
   end
 end
 
@@ -148,7 +185,7 @@ function MonDKP:FormatTime(time)
   local TZ = date("%Z") -- Time Zone
   local str;
 
-  if strfind(TZ, "Eastern") then
+  --[[if strfind(TZ, "Eastern") then
     TZ = "Eastern"
   elseif strfind(TZ, "Central") then
     TZ = "Central"
@@ -156,21 +193,23 @@ function MonDKP:FormatTime(time)
     TZ = "Mountain"
   elseif strfind(TZ, "Pacific") then
     TZ = "Pacific"
-  end
+  end--]]
 
-  str = date("%y/%m/%d %H:%M:%S ", time)..TZ
+  str = date("%y/%m/%d %H:%M:%S", time)
 
   return str;
 end
 
 function MonDKP:Print(...)        --print function to add "MonolithDKP:" to the beginning of print() outputs.
-    local defaults = MonDKP:GetThemeColor();
-    local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "MonolithDKP:", defaults[2].hex:upper());
-    local suffix = "|r";
-    if postColor then
-      DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, ..., suffix, postColor));
-    else
-      DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, ..., suffix));
+    if not MonDKP_DB["DKPBonus"]["supressNotifications"] then
+      local defaults = MonDKP:GetThemeColor();
+      local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "MonolithDKP:", defaults[2].hex:upper());
+      local suffix = "|r";
+      if postColor then
+        DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, ..., suffix, postColor));
+      else
+        DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, ..., suffix));
+      end
     end
 end
 
@@ -199,7 +238,6 @@ end
 
 function MonDKP:StartTimer(seconds, ...)
   local duration = tonumber(seconds)
-  local title = ...;
   local alpha = 1;
 
   if not tonumber(seconds) then       -- cancels the function if the command was entered improperly (eg. no number for time)
@@ -317,6 +355,45 @@ function MonDKP:Table_Search(tar, val)
   end
 end
 
+function MonDKP:TableStrFind(tar, val)              -- same function as above, but searches values that contain the searched string rather than exact string matches
+  local value = string.upper(tostring(val));        -- ex. MonDKP:TableStrFind(MonDKP_DKPHistory, "Roeshambo") will return the path to any table element that contains "Roeshambo"
+  local location = {}
+  for k,v in pairs(tar) do
+    if(type(v) == "table") then
+      local temp1 = k
+      for k,v in pairs(v) do
+        if(type(v) == "table") then
+          local temp2 = k;
+          for k,v in pairs(v) do
+            if(type(v) == "table") then
+              local temp3 = k
+              for k,v in pairs(v) do
+                if strfind(string.upper(tostring(v)), value) then
+                  tinsert(location, {temp1, temp2, temp3, k} )
+                end;
+              end
+            end
+            if strfind(string.upper(tostring(v)), value) then
+              tinsert(location, {temp1, temp2, k} )
+            end;
+          end
+        end
+        if strfind(string.upper(tostring(v)), value) then
+          tinsert(location, {temp1, k} )
+        end;
+      end
+    end
+    if strfind(string.upper(tostring(v)), value) then  -- only returns in indexed arrays
+      tinsert(location, k)
+    end;
+  end
+  if (#location > 0) then
+    return location;
+  else
+    return false;
+  end
+end
+
 function MonDKP:DKPTable_Set(tar, field, value)                -- updates field with value where tar is found (IE: MonDKP:DKPTable_Set("Roeshambo", "dkp", 10) adds 10 dkp to user Roeshambo)
   local result = MonDKP:Table_Search(MonDKP_DKPTable, tar);
   for i=1, #result do
@@ -328,39 +405,4 @@ function MonDKP:DKPTable_Set(tar, field, value)                -- updates field 
     end
   end
   MonDKP:FilterDKPTable(core.currentSort, "reset")
-end
-  
-
-function MonDKP:PrintTable(tar)             --prints table structure for testing purposes
-  ChatFrame1:Clear()
-  for k,v in pairs(tar) do                  -- remove prior to RC
-    if (type(v) == "table") then
-      print(k)
-      for k,v in pairs(v) do
-        if (type(v) == "table") then
-          print("    ", k)
-          for k,v in pairs(v) do
-            if (type(v) == "table") then
-              print("        ", k)
-              for k,v in pairs(v) do
-                if (type(v) ~= "table") then
-                  print("            ", v)
-                end
-              end
-              print(" ")
-            else
-              print("        ", v)
-            end
-          end
-          print(" ")
-        else
-          print("    ", v)
-        end
-      end
-      print(" ")
-    else
-      print(v)
-    end
-  end
-  print(" ")
 end

@@ -119,9 +119,9 @@ function MonDKP:DKPHistory_Update()
 		end
 		
 		if not strfind(dkp, "-") then
-			MonDKP.ConfigTab6.history[i].d:SetText("|cff00ff00"..dkp.." DKP|r ("..reason..") @ "..time);
+			MonDKP.ConfigTab6.history[i].d:SetText("|cff00ff00"..dkp.." DKP|r - "..reason.." @ "..time);
 		else
-			MonDKP.ConfigTab6.history[i].d:SetText("|cffff0000"..dkp.." DKP|r ("..reason..") @ "..time);
+			MonDKP.ConfigTab6.history[i].d:SetText("|cffff0000"..dkp.." DKP|r - "..reason.." @ "..time);
 		end
 
 		MonDKP.ConfigTab6.history[i].d:Show()

@@ -57,6 +57,41 @@ function DKPTable_OnClick(self)
   --MonDKP.Sync:SendData("MonDKPDataSync", core.WorkingTable)
 end
 
+local function DisplayUserHistory(self, player)
+  local PlayerTable = {}
+  local PlayerSearch;
+  local RowCount;
+  local curDate;
+
+  GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, 0);
+  GameTooltip:SetText("Recent DKP History for "..player, 0.25, 0.75, 0.90, 1, true);
+  PlayerSearch = MonDKP:TableStrFind(MonDKP_DKPHistory, player)
+
+  if PlayerSearch then
+    if #PlayerSearch > 15 then
+      RowCount = 15
+    else
+      RowCount = #PlayerSearch;
+    end
+
+    for i=1, RowCount do
+      if date("%m/%d/%y", MonDKP_DKPHistory[PlayerSearch[i][1]].date) ~= curDate then
+        curDate = date("%m/%d/%y", MonDKP_DKPHistory[PlayerSearch[i][1]].date)
+        GameTooltip:AddLine(date("%m/%d/%y", MonDKP_DKPHistory[PlayerSearch[i][1]].date), 1.0, 1.0, 1.0, true);
+      end
+      if strfind(MonDKP_DKPHistory[PlayerSearch[i][1]].dkp, "%%") or tonumber(MonDKP_DKPHistory[PlayerSearch[i][1]].dkp) < 0 then
+        GameTooltip:AddDoubleLine("  "..MonDKP_DKPHistory[PlayerSearch[i][1]].reason, "|cffff0000"..MonDKP_DKPHistory[PlayerSearch[i][1]].dkp.." DKP|r", 1.0, 1.0, 1.0);
+      else
+        GameTooltip:AddDoubleLine("  "..MonDKP_DKPHistory[PlayerSearch[i][1]].reason, "|cff00ff00"..MonDKP_DKPHistory[PlayerSearch[i][1]].dkp.." DKP|r", 1.0, 1.0, 1.0);
+      end
+    end
+  else
+    GameTooltip:AddLine("No DKP Entries", 1.0, 1.0, 1.0, true);
+  end
+
+  GameTooltip:Show();
+end
+
 local function CreateRow(parent, id) -- Create 3 buttons for each row in the list
     local f = CreateFrame("Button", "$parentLine"..id, parent)
     f.DKPInfo = {}
@@ -105,9 +140,9 @@ function DKPTable_Update()
     row = MonDKP.DKPTable.Rows[i];
     row:Hide();
   end
-  for i=1, #MonDKP_DKPTable do
+  --[[for i=1, #MonDKP_DKPTable do
     if MonDKP_DKPTable[i].dkp < 0 then MonDKP_DKPTable[i].dkp = 0 end  -- cleans negative numbers from SavedVariables
-  end
+  end--]]
   for i=1, core.TableNumRows do     -- show rows if they have values
     row = MonDKP.DKPTable.Rows[i]
     index = offset + i
@@ -116,6 +151,7 @@ function DKPTable_Update()
       c = MonDKP:GetCColors(core.WorkingTable[index].class);
       row:Show()
       row.index = index
+      local CurPlayer = core.WorkingTable[index].player;
       rank = MonDKP:GetGuildRank(core.WorkingTable[index].player) or "None"
       row.DKPInfo[1]:SetText(core.WorkingTable[index].player.." |cff444444("..rank..")|r")
       row.DKPInfo[1].rowCounter:SetText(index)
@@ -141,6 +177,12 @@ function DKPTable_Update()
         MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\ListBox-Highlight")
         MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
       end
+      MonDKP.DKPTable.Rows[i]:SetScript("OnEnter", function(self)
+        DisplayUserHistory(self, CurPlayer)
+      end)
+      MonDKP.DKPTable.Rows[i]:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+      end)
     else
       row:Hide()
     end
