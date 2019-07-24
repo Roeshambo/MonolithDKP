@@ -21,3 +21,4 @@ Modules\Options.lua
 TableFunctions.lua
 XMLFunctions.lua
 MonolithDKP.xml
+Modules\exportDKP.lua

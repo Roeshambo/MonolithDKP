@@ -85,7 +85,7 @@ end
 local tooltip = CreateFrame('GameTooltip', "nil", UIParent, 'GameTooltipTemplate')
 local CurrentPosition = 0
 local CurrentLimit = 50;
-local lineHeight = -30;
+local lineHeight = -50;
 local ButtonText = 50;
 local curDate = 1;
 local curZone;
@@ -94,7 +94,7 @@ local curBoss;
 function MonDKP:LootHistory_Reset()
 	CurrentPosition = 0
 	CurrentLimit = 50;
-	lineHeight = -30;
+	lineHeight = -50;
 	ButtonText = 50;
 	curDate = 1;
 	curZone = nil;
@@ -150,12 +150,12 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 				lineHeight = lineHeight-14;
 				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight);
 				MonDKP.ConfigTab5.lootFrame[i]:SetSize(444, 28)
-				lineHeight = lineHeight-25;
+				lineHeight = lineHeight-24;
 			elseif linesToUse == 3 then
 				lineHeight = lineHeight-14;
 				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight);
 				MonDKP.ConfigTab5.lootFrame[i]:SetSize(444, 38)
-				lineHeight = lineHeight-37;
+				lineHeight = lineHeight-36;
 			end;
 
 			MonDKP.ConfigTab5.looter[i] = MonDKP.ConfigTab5.lootFrame[i]:CreateFontString(nil, "OVERLAY")
@@ -238,7 +238,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 
 		    -- Set script for tooltip/linking
 		    MonDKP.ConfigTab5.lootFrame[i]:SetScript("OnEnter", function()
-		    	tooltip:SetOwner(MonDKP.ConfigTab5.looter[i], "ANCHOR_LEFT", 300, 0)
+		    	tooltip:SetOwner(MonDKP.ConfigTab5.looter[i], "ANCHOR_RIGHT", -50, 0)
 		    	tooltip:SetHyperlink(itemToLink)
 		    	tooltip:Show();
 		    end)
@@ -284,12 +284,12 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 				lineHeight = lineHeight-14;
 				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight);
 				MonDKP.ConfigTab5.lootFrame[i]:SetSize(444, 28)
-				lineHeight = lineHeight-25;
+				lineHeight = lineHeight-24;
 			elseif linesToUse == 3 then
 				lineHeight = lineHeight-14;
 				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight);
 				MonDKP.ConfigTab5.lootFrame[i]:SetSize(444, 38)
-				lineHeight = lineHeight-37;
+				lineHeight = lineHeight-36;
 			end;
 
 			MonDKP.ConfigTab5.looter[i] = MonDKP.ConfigTab5.lootFrame[i]:CreateFontString(nil, "OVERLAY")
@@ -372,7 +372,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 
 		    -- Set script for tooltip/linking
 		    MonDKP.ConfigTab5.lootFrame[i]:SetScript("OnEnter", function()
-		    	tooltip:SetOwner(MonDKP.ConfigTab5.looter[i], "ANCHOR_LEFT", 300, 0)
+		    	tooltip:SetOwner(MonDKP.ConfigTab5.looter[i], "ANCHOR_RIGHT", -50, 0)
 		    	tooltip:SetHyperlink(itemToLink)
 		    	tooltip:Show();
 		    end)
@@ -396,7 +396,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
  	end
  	if CurrentLimit < #MonDKP_Loot and not MonDKP.ConfigTab5.LoadHistory then
 	 	-- Load More History Button
-		MonDKP.ConfigTab5.LoadHistory = self:CreateButton("TOPLEFT", MonDKP.ConfigTab5.lootFrame[CurrentLimit], "BOTTOMLEFT", 0, 0, "Load 50 More...");
+		MonDKP.ConfigTab5.LoadHistory = self:CreateButton("TOP", MonDKP.ConfigTab5.lootFrame[CurrentLimit], "BOTTOM", 0, 0, "Load 50 More...");
 		MonDKP.ConfigTab5.LoadHistory:SetSize(110,25)
 		MonDKP.ConfigTab5.LoadHistory:SetScript("OnClick", function()
 			CurrentLimit = CurrentLimit + 50

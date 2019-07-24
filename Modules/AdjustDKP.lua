@@ -235,7 +235,7 @@ function MonDKP:AdjustDKPTab_Create()
 		local boss = UIDropDownMenu_CreateInfo()
 		boss.fontObject = "MonDKPSmallCenter"
 		if (level or 1) == 1 then	  
-			boss.text, boss.checked, boss.menuList, boss.hasArrow = "Molten Core", core.CurrentRaidZone == "The Molten Core", "MC", true
+			boss.text, boss.checked, boss.menuList, boss.hasArrow = "Molten Core", core.CurrentRaidZone == "Molten Core", "MC", true
 			UIDropDownMenu_AddButton(boss)
 			boss.text, boss.checked, boss.menuList, boss.hasArrow = "Blackwing Lair", core.CurrentRaidZone == "Blackwing Lair", "BWL", true
 			UIDropDownMenu_AddButton(boss)
@@ -256,7 +256,7 @@ function MonDKP:AdjustDKPTab_Create()
 		local search = MonDKP:TableStrFind(core.BossList, newValue);
 		
 		if MonDKP:TableStrFind(core.BossList.MC, newValue) then
-			core.CurrentRaidZone = "The Molten Core"
+			core.CurrentRaidZone = "Molten Core"
 		elseif MonDKP:TableStrFind(core.BossList.BWL, newValue) then
 			core.CurrentRaidZone = "Blackwing Lair"
 		elseif MonDKP:TableStrFind(core.BossList.AQ, newValue) then

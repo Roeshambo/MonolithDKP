@@ -131,8 +131,6 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 end
 
 local function StartBidding()
-	if not core.BiddingWindow.item:GetText() or core.BiddingWindow.minBid:GetText() == "" then MonDKP:Print("No minimum bid and/or item to bid on!") return false end	-- stops the function if either an item or minBid is not selected
-
 	MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), CurrItemIcon)
 	local search = MonDKP:Table_Search(MonDKP_MinBids, core.BiddingWindow.itemName:GetText())
 	if not search then
@@ -150,6 +148,7 @@ end
 local function ToggleTimerBtn(self)
 	--if IsInRaid() then
 		if timerToggle == 0 then
+			if not IsInRaid() then MonDKP:Print("You are not in a raid.") return false end
 			if not core.BiddingWindow.item:GetText() or core.BiddingWindow.minBid:GetText() == "" then MonDKP:Print("No minimum bid and/or item to bid on!") return false end
 			timerToggle = 1;
 			self:SetText("End Bidding")

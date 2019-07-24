@@ -54,37 +54,67 @@ function DKPTable_OnClick(self)
       MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
     end
   end
-  --MonDKP.Sync:SendData("MonDKPDataSync", core.WorkingTable)
 end
 
-local function DisplayUserHistory(self, player)
+local function DisplayUserHistory(self, player, numrows)
   local PlayerTable = {}
+  local c;
   local PlayerSearch;
+  local PlayerSearch2;
+  local LifetimeSearch;
   local RowCount;
   local curDate;
 
-  GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, 0);
-  GameTooltip:SetText("Recent DKP History for "..player, 0.25, 0.75, 0.90, 1, true);
   PlayerSearch = MonDKP:TableStrFind(MonDKP_DKPHistory, player)
+  PlayerSearch2 = MonDKP:TableStrFind(MonDKP_Loot, player)
+  LifetimeSearch = MonDKP:Table_Search(MonDKP_DKPTable, player)
+
+  c = MonDKP:GetCColors(MonDKP_DKPTable[LifetimeSearch[1][1]].class)
+
+  GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, 0);
+  GameTooltip:SetText("Recent History for |cff"..c.hex..player.."|r\n", 0.25, 0.75, 0.90, 1, true);
 
   if PlayerSearch then
-    if #PlayerSearch > 15 then
-      RowCount = 15
+    for i=1, #PlayerSearch do
+      tinsert(PlayerTable, {reason = MonDKP_DKPHistory[PlayerSearch[i][1]].reason, date = MonDKP_DKPHistory[PlayerSearch[i][1]].date, dkp = MonDKP_DKPHistory[PlayerSearch[i][1]].dkp})
+    end
+  end
+
+  if PlayerSearch2 then
+    for i=1, #PlayerSearch2 do -- loot zone date boss cost
+      tinsert(PlayerTable, {loot = MonDKP_Loot[PlayerSearch2[i][1]].loot, date = MonDKP_Loot[PlayerSearch2[i][1]].date, zone = MonDKP_Loot[PlayerSearch2[i][1]].zone, boss = MonDKP_Loot[PlayerSearch2[i][1]].boss, cost = MonDKP_Loot[PlayerSearch2[i][1]].cost})
+    end
+  end
+
+  table.sort(PlayerTable, function(a, b)
+    return a["date"] > b["date"]
+  end)
+
+  if #PlayerTable > 0 then
+    if #PlayerTable > numrows then
+      RowCount = numrows
     else
-      RowCount = #PlayerSearch;
+      RowCount = #PlayerTable;
     end
 
     for i=1, RowCount do
-      if date("%m/%d/%y", MonDKP_DKPHistory[PlayerSearch[i][1]].date) ~= curDate then
-        curDate = date("%m/%d/%y", MonDKP_DKPHistory[PlayerSearch[i][1]].date)
-        GameTooltip:AddLine(date("%m/%d/%y", MonDKP_DKPHistory[PlayerSearch[i][1]].date), 1.0, 1.0, 1.0, true);
+      if date("%m/%d/%y", PlayerTable[i].date) ~= curDate then
+        curDate = date("%m/%d/%y", PlayerTable[i].date)
+        GameTooltip:AddLine(date("%m/%d/%y", PlayerTable[i].date), 1.0, 1.0, 1.0, true);
       end
-      if strfind(MonDKP_DKPHistory[PlayerSearch[i][1]].dkp, "%%") or tonumber(MonDKP_DKPHistory[PlayerSearch[i][1]].dkp) < 0 then
-        GameTooltip:AddDoubleLine("  "..MonDKP_DKPHistory[PlayerSearch[i][1]].reason, "|cffff0000"..MonDKP_DKPHistory[PlayerSearch[i][1]].dkp.." DKP|r", 1.0, 1.0, 1.0);
-      else
-        GameTooltip:AddDoubleLine("  "..MonDKP_DKPHistory[PlayerSearch[i][1]].reason, "|cff00ff00"..MonDKP_DKPHistory[PlayerSearch[i][1]].dkp.." DKP|r", 1.0, 1.0, 1.0);
+      if PlayerTable[i].dkp then
+        if strfind(PlayerTable[i].dkp, "%%") or tonumber(PlayerTable[i].dkp) < 0 then
+          GameTooltip:AddDoubleLine("  "..PlayerTable[i].reason, "|cffff0000"..PlayerTable[i].dkp.." DKP|r", 1.0, 0, 0);
+        else
+          GameTooltip:AddDoubleLine("  "..PlayerTable[i].reason, "|cff00ff00"..PlayerTable[i].dkp.." DKP|r", 0, 1.0, 0);
+        end
+      elseif PlayerTable[i].cost then
+        GameTooltip:AddDoubleLine("  "..PlayerTable[i].zone..": |cffff0000"..PlayerTable[i].boss.."|r", PlayerTable[i].loot.." |cffff0000(-"..PlayerTable[i].cost.." DKP)|r", 1.0, 1.0, 1.0);
       end
     end
+    GameTooltip:AddDoubleLine(" ", " ", 1.0, 1.0, 1.0);
+    GameTooltip:AddLine("  |cff00ff00Lifetime Earned: "..MonDKP_DKPTable[LifetimeSearch[1][1]].lifetime_gained.."|r", 1.0, 1.0, 1.0, true);
+    GameTooltip:AddLine("  |cffff0000Lifetime Spent: "..MonDKP_DKPTable[LifetimeSearch[1][1]].lifetime_spent.."|r", 1.0, 1.0, 1.0, true);
   else
     GameTooltip:AddLine("No DKP Entries", 1.0, 1.0, 1.0, true);
   end
@@ -178,7 +208,7 @@ function DKPTable_Update()
         MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
       end
       MonDKP.DKPTable.Rows[i]:SetScript("OnEnter", function(self)
-        DisplayUserHistory(self, CurPlayer)
+        DisplayUserHistory(self, CurPlayer, 20)
       end)
       MonDKP.DKPTable.Rows[i]:SetScript("OnLeave", function()
         GameTooltip:Hide()

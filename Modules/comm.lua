@@ -20,8 +20,8 @@ local LibAceSerializer = LibStub:GetLibrary("AceSerializer-3.0")
 local LibCompress = LibStub:GetLibrary("LibCompress")
 local LibCompressAddonEncodeTable = LibCompress:GetAddonEncodeTable()
 
-local function ValidateSender(sender)
-	local rankIndex = MonDKP:GetGuildRankIndex(sender);
+local function ValidateSender(sender)								-- returns true if "sender" has permission to write officer notes. false if not or not found.
+	local rankIndex = MonDKP:GetGuildRankIndex(sender);				-- validates user has permission to push table update broadcasts.
 	
 	if rankIndex then
 		return C_GuildInfo.GuildControlGetRankFlags(rankIndex)[12]
@@ -113,7 +113,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 			end
 		else
 			if core.IsOfficer then
-				local msg = sender..", a non-officer, has attempted to broadcast with \""..prefix.."\" prefix."
+				local msg = sender..", has attempted to broadcast with \""..prefix.."\" prefix."
 				MonDKP:Print(msg)
 				StaticPopupDialogs["MODIFY_WARNING"] = {
 				text = msg,

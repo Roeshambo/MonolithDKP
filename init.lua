@@ -30,8 +30,8 @@ MonDKP.Commands = {
 			MonDKP:BroadcastTimer(tonumber(time), title)
 		end
 	end,
-	["test"] = function(time, ...)
-		MonDKP:BroadcastBidTimer(20, "Don't worry about it")
+	["export"] = function(time, ...)
+		MonDKP:ToggleExportWindow()
 	end,
 	["help"] = function()
 		print(" ");
@@ -40,6 +40,7 @@ MonDKP.Commands = {
 		MonDKP:Print("|cff00cc66/dkp ?|r - Shows Help Info");
 		MonDKP:Print("|cff00cc66/dkp reset|r - Resets DKP Window Position/Size");
 		MonDKP:Print("|cff00cc66/dkp timer|r - Creates Raid Timer (Officers Only) (eg. /dkp timer 120 Pizza Break!");
+		MonDKP:Print("|cff00cc66/dkp export|r - Opens window to export all DKP information to HTML.");
 		print(" ");
 	end,
 };
@@ -150,8 +151,8 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	    ------------------------------------
 	    core.settings = MonDKP_DB 				--imports default settings (Options Tab)
 	    core.WorkingTable = MonDKP_DKPTable;	--imports full DKP table to WorkingTable for list manipulation without altering the SavedVariable
-	    core.CurrentRaidZone = MonDKP_DB.bossargs.CurrentRaidZone;
-		core.LastKilledBoss = MonDKP_DB.bossargs.LastKilledBoss;
+	    core.CurrentRaidZone = MonDKP_DB.bossargs.CurrentRaidZone;	-- stores raid zone as a redundency
+		core.LastKilledBoss = MonDKP_DB.bossargs.LastKilledBoss;	-- stores last boss killed as a redundency
 
 		-- Populates SavedVariable MonDKP_DKPTable with fake values for testing purposes if they don't already exist
 		-- Delete this section and \WTF\AccountACCOUNT_NAME\SavedVariables\MonolithDKP.lua prior to actual use.
@@ -206,6 +207,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();
 		MonDKP:StartBidTimer(seconds, nil)
 		MonDKP:PurgeLootHistory()
+		MonDKP:PurgeDKPHistory()
 	end
 end
 

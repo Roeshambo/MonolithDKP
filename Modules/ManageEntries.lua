@@ -60,7 +60,9 @@ function AddRaidToDKPTable()
 						player=tempName,
 						class=tempClass,
 						dkp=0,
-						previous_dkp=0
+						previous_dkp=0,
+						lifetime_gained = 0,
+						lifetime_spent = 0,
 					});
 					numPlayers = numPlayers + 1;
 					c = MonDKP:GetCColors(tempClass)

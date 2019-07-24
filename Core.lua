@@ -74,8 +74,6 @@ core.BossList = {
         "Sapphiron", "Kel'Thuzad"}
 }
 
-BossLocation = {"The Molten Core", "Blackwing Lair", "Onyxia's Lair", "Ahn'Qiraj", "Temple of Ahn'Qiraj", "Naxxramas", "The Arachnid Quarter", "The Plague Quarter", "The Military Quarter", "The Construct Quarter", "Frostwyrm Lair"}
-
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
@@ -88,7 +86,6 @@ core.ShowState = false;
 core.currentSort = "class"		-- stores current sort selection
 core.BidInProgress = false;   -- flagged true if bidding in progress. else; false.
 core.NumLootItems = 0;        -- updates on LOOT_OPENED event
-
 core.CurrentRaidZone = ""
 core.LastKilledBoss = ""
 
@@ -177,6 +174,17 @@ function MonDKP:PurgeLootHistory()     -- cleans old loot history beyond history
   if #MonDKP_Loot > limit then
     for i=limit+1, #MonDKP_Loot do
       tremove(MonDKP_Loot, i)
+    end
+  end
+end
+
+function MonDKP:PurgeDKPHistory()     -- cleans old DKP history beyond history limit to reduce native system load
+  local limit = core.settings["DKPBonus"]["DKPHistoryLimit"]
+  MonDKP:SortDKPHistoryTable()
+
+  if #MonDKP_DKPHistory > limit then
+    for i=limit+1, #MonDKP_DKPHistory do
+      tremove(MonDKP_DKPHistory, i)
     end
   end
 end
@@ -400,6 +408,11 @@ function MonDKP:DKPTable_Set(tar, field, value)                -- updates field 
     local current = MonDKP_DKPTable[result[i][1]][field];
     if(field == "dkp") then
       MonDKP_DKPTable[result[i][1]][field] = current + value
+      if value > 0 then
+        MonDKP_DKPTable[result[i][1]]["lifetime_gained"] = MonDKP_DKPTable[result[i][1]]["lifetime_gained"] + value
+      elseif value < 0 then
+        MonDKP_DKPTable[result[i][1]]["lifetime_spent"] = MonDKP_DKPTable[result[i][1]]["lifetime_spent"] + value
+      end
     else
       MonDKP_DKPTable[result[i][1]][field] = value
     end

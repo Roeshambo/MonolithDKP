@@ -60,11 +60,11 @@ function MonDKP:DKPHistory_Update()
 			if i==1 then
 				MonDKP.ConfigTab6.history[i] = CreateFrame("Frame", "MonDKP_DKPHistoryTab", MonDKP.ConfigTab6);
 				MonDKP.ConfigTab6.history[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab6, "TOPLEFT", 0, -45)
-				MonDKP.ConfigTab6.history[i]:SetWidth(477)
+				MonDKP.ConfigTab6.history[i]:SetWidth(400)
 			else
 				MonDKP.ConfigTab6.history[i] = CreateFrame("Frame", "MonDKP_DKPHistoryTab", MonDKP.ConfigTab6);
 				MonDKP.ConfigTab6.history[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab6.history[i-1], "BOTTOMLEFT", 0, 0)
-				MonDKP.ConfigTab6.history[i]:SetWidth(477)
+				MonDKP.ConfigTab6.history[i]:SetWidth(400)
 			end
 
 			MonDKP.ConfigTab6.history[i].h = MonDKP.ConfigTab6:CreateFontString(nil, "OVERLAY")
@@ -148,12 +148,12 @@ function MonDKP:DKPHistory_Update()
 		MonDKP.ConfigTab6.loadMoreBtn:GetFontString():SetTextColor(1, 1, 1, 1)
 		MonDKP.ConfigTab6.loadMoreBtn:SetNormalFontObject("MonDKPSmallCenter");
 		MonDKP.ConfigTab6.loadMoreBtn:SetHighlightFontObject("MonDKPSmallCenter");
-		MonDKP.ConfigTab6.loadMoreBtn:SetPoint("TOPLEFT", MonDKP.ConfigTab6.history[currentRow], "BOTTOMLEFT", 40, 0);
+		MonDKP.ConfigTab6.loadMoreBtn:SetPoint("TOP", MonDKP.ConfigTab6.history[currentRow], "BOTTOM", 0, -10);
 		MonDKP.ConfigTab6.loadMoreBtn:SetScript("OnClick", function()
 			currentLength = currentLength + 50;
 			MonDKP:DKPHistory_Update();
 			MonDKP.ConfigTab6.loadMoreBtn:SetText("Load "..btnText.." more...")
-			MonDKP.ConfigTab6.loadMoreBtn:SetPoint("TOPLEFT", MonDKP.ConfigTab6.history[currentRow], "BOTTOMLEFT", 40, 0)
+			MonDKP.ConfigTab6.loadMoreBtn:SetPoint("TOP", MonDKP.ConfigTab6.history[currentRow], "BOTTOM", 0, -10)
 		end)
 	end
 
@@ -162,6 +162,6 @@ function MonDKP:DKPHistory_Update()
 	elseif MonDKP.ConfigTab6.loadMoreBtn and currentRow < #MonDKP_DKPHistory then
 		MonDKP.ConfigTab6.loadMoreBtn:Show();
 		MonDKP.ConfigTab6.loadMoreBtn:SetText("Load "..btnText.." more...")
-		MonDKP.ConfigTab6.loadMoreBtn:SetPoint("TOPLEFT", MonDKP.ConfigTab6.history[currentRow], "BOTTOMLEFT", 40, 0);
+		MonDKP.ConfigTab6.loadMoreBtn:SetPoint("TOP", MonDKP.ConfigTab6.history[currentRow], "BOTTOM", 0, -10);
 	end
 end
