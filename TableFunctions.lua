@@ -56,14 +56,9 @@ function DKPTable_OnClick(self)
   end
 end
 
-local function DisplayUserHistory(self, player, numrows)
+local function DisplayUserHistory(self, player)
   local PlayerTable = {}
-  local c;
-  local PlayerSearch;
-  local PlayerSearch2;
-  local LifetimeSearch;
-  local RowCount;
-  local curDate;
+  local c, PlayerSearch, PlayerSearch2, LifetimeSearch, RowCount, curDate;
 
   PlayerSearch = MonDKP:TableStrFind(MonDKP_DKPHistory, player)
   PlayerSearch2 = MonDKP:TableStrFind(MonDKP_Loot, player)
@@ -71,7 +66,7 @@ local function DisplayUserHistory(self, player, numrows)
 
   c = MonDKP:GetCColors(MonDKP_DKPTable[LifetimeSearch[1][1]].class)
 
-  GameTooltip:SetOwner(self, "ANCHOR_LEFT", 0, 0);
+  GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
   GameTooltip:SetText("Recent History for |cff"..c.hex..player.."|r\n", 0.25, 0.75, 0.90, 1, true);
 
   if PlayerSearch then
@@ -81,7 +76,7 @@ local function DisplayUserHistory(self, player, numrows)
   end
 
   if PlayerSearch2 then
-    for i=1, #PlayerSearch2 do -- loot zone date boss cost
+    for i=1, #PlayerSearch2 do
       tinsert(PlayerTable, {loot = MonDKP_Loot[PlayerSearch2[i][1]].loot, date = MonDKP_Loot[PlayerSearch2[i][1]].date, zone = MonDKP_Loot[PlayerSearch2[i][1]].zone, boss = MonDKP_Loot[PlayerSearch2[i][1]].boss, cost = MonDKP_Loot[PlayerSearch2[i][1]].cost})
     end
   end
@@ -91,8 +86,8 @@ local function DisplayUserHistory(self, player, numrows)
   end)
 
   if #PlayerTable > 0 then
-    if #PlayerTable > numrows then
-      RowCount = numrows
+    if #PlayerTable > core.settings.DKPBonus["TooltipHistoryCount"] then
+      RowCount = core.settings.DKPBonus["TooltipHistoryCount"]
     else
       RowCount = #PlayerTable;
     end
@@ -208,7 +203,7 @@ function DKPTable_Update()
         MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
       end
       MonDKP.DKPTable.Rows[i]:SetScript("OnEnter", function(self)
-        DisplayUserHistory(self, CurPlayer, 20)
+        DisplayUserHistory(self, CurPlayer)
       end)
       MonDKP.DKPTable.Rows[i]:SetScript("OnLeave", function()
         GameTooltip:Hide()
@@ -219,6 +214,7 @@ function DKPTable_Update()
   end
   MonDKP.DKPTable.counter.t:SetText(#core.WorkingTable.." Entries Shown");    -- updates "Entries Shown" at bottom of DKPTable
   MonDKP.DKPTable.counter.t:SetFontObject("MonDKPSmallLeft")
+
   FauxScrollFrame_Update(MonDKP.DKPTable, numOptions, core.TableNumRows, core.TableRowHeight, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding
 end
 
@@ -248,4 +244,49 @@ function MonDKP:DKPTable_Create()
   MonDKP.DKPTable:SetScript("OnVerticalScroll", function(self, offset)
     FauxScrollFrame_OnVerticalScroll(self, offset, core.TableRowHeight, DKPTable_Update)
   end)
+  
+  MonDKP.DKPTable.SeedVerify = CreateFrame("Frame", nil, MonDKP.DKPTable);
+  MonDKP.DKPTable.SeedVerify:SetPoint("TOPLEFT", MonDKP.DKPTable, "BOTTOMLEFT", 0, -15);
+  MonDKP.DKPTable.SeedVerify:SetSize(18, 18);
+  MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function(self)
+    GameTooltip:Hide()
+  end)
+
+  MonDKP.DKPTable.SeedVerifyIcon = MonDKP.DKPTable:CreateTexture(nil, "OVERLAY", nil)             -- seed verify (bottom left) indicator
+  MonDKP.DKPTable.SeedVerifyIcon:SetPoint("TOPLEFT", MonDKP.DKPTable.SeedVerify, "TOPLEFT", 0, 0);
+  MonDKP.DKPTable.SeedVerifyIcon:SetColorTexture(0, 0, 0, 1)
+  MonDKP.DKPTable.SeedVerifyIcon:SetSize(18, 18);
+  MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\out-of-date")
+end
+
+function MonDKP:SeedVerify_Update()
+  if IsInGuild() then
+    local leader = MonDKP:GetGuildRankGroup(1)
+
+    if MonDKP_DB.seed >= tonumber(leader[1].note) then
+      MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\up-to-date")
+      MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
+        GameTooltip:SetText("DKP Status", 0.25, 0.75, 0.90, 1, true);
+        GameTooltip:AddLine("Your DKP Table is currently |cff00ff00up-to-date|r.", 1.0, 1.0, 1.0, false);
+        GameTooltip:Show()
+      end)
+    else
+      MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\out-of-date")
+      MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
+        GameTooltip:SetText("DKP Status", 0.25, 0.75, 0.90, 1, true);
+        GameTooltip:AddLine("Your DKP Table is currently |cffff0000out-of-date|r.", 1.0, 1.0, 1.0, false);
+        GameTooltip:AddLine("Request updated tables from an officer.", 1.0, 1.0, 1.0, false);
+        GameTooltip:Show()
+      end)
+    end
+  else
+    MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
+        GameTooltip:SetText("DKP Status", 0.25, 0.75, 0.90, 1, true);
+        GameTooltip:AddLine("You are not currently in a guild. DKP status can not be queried.", 1.0, 1.0, 1.0, true);
+        GameTooltip:Show()
+      end)
+  end
 end

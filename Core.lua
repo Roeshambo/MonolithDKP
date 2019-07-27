@@ -43,6 +43,7 @@ core.settings = {             -- From MonDKP_DB
     BidTimerSize = 1.0,
     MonDKPScaleSize = 1.0,
     supressNotifications = false,
+    TooltipHistoryCount = 15,
   }
 }
 
@@ -147,6 +148,24 @@ function MonDKP:GetGuildRankIndex(player)
   end
 end
 
+function MonDKP:GetGuildRankGroup(index)                -- returns all members within a specific rank index as well as their index in the guild list (for use with GuildRosterSetPublicNote(index, "msg") and GuildRosterSetOfficerNote)
+  local name, rank, note;                               -- local temp = MonDKP:GetGuildRankGroup(1)
+  local group = {}                                      -- print(temp[1]["name"])
+  local guildSize,_,_ = GetNumGuildMembers();
+
+  if IsInGuild() then
+    for i=1, tonumber(guildSize) do
+      name,_,rank,_,_,_,note = GetGuildRosterInfo(i)
+      rank = rank+1;
+      name = strsub(name, 1, string.find(name, "-")-1)  -- required to remove server name from player (can remove in classic if this is not an issue)
+      if rank == index then
+        tinsert(group, { name = name, index = i, note = note })
+      end
+    end
+    return group;
+  end
+end
+
 function MonDKP:GetThemeColor()
   local c = {defaults.theme, defaults.theme2};
   return c;
@@ -233,7 +252,7 @@ function MonDKP:CreateButton(point, relativeFrame, relativePoint, xOffset, yOffs
 end
 
 function MonDKP:BroadcastTimer(seconds, ...)       -- broadcasts timer and starts it natively
-  if IsInRaid() and core.IsOfficer then
+  if IsInRaid() and core.IsOfficer == true then
     local title = ...;
     if not tonumber(seconds) then       -- cancels the function if the command was entered improperly (eg. no number for time)
       MonDKP:Print("Invalid Timer");
@@ -402,15 +421,15 @@ function MonDKP:TableStrFind(tar, val)              -- same function as above, b
   end
 end
 
-function MonDKP:DKPTable_Set(tar, field, value)                -- updates field with value where tar is found (IE: MonDKP:DKPTable_Set("Roeshambo", "dkp", 10) adds 10 dkp to user Roeshambo)
+function MonDKP:DKPTable_Set(tar, field, value, loot)                -- updates field with value where tar is found (IE: MonDKP:DKPTable_Set("Roeshambo", "dkp", 10) adds 10 dkp to user Roeshambo). loot = true/false if it's to alter lifetime_spent
   local result = MonDKP:Table_Search(MonDKP_DKPTable, tar);
   for i=1, #result do
     local current = MonDKP_DKPTable[result[i][1]][field];
     if(field == "dkp") then
       MonDKP_DKPTable[result[i][1]][field] = current + value
-      if value > 0 then
+      if value > 0 and loot == false then
         MonDKP_DKPTable[result[i][1]]["lifetime_gained"] = MonDKP_DKPTable[result[i][1]]["lifetime_gained"] + value
-      elseif value < 0 then
+      elseif value < 0 and loot == true then
         MonDKP_DKPTable[result[i][1]]["lifetime_spent"] = MonDKP_DKPTable[result[i][1]]["lifetime_spent"] + value
       end
     else

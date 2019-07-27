@@ -11,12 +11,13 @@ MonDKP.Commands = {
 	["bid"] = function(...)
 		local item = strjoin(" ", ...)
 		
-		if core.IsOfficer then	
+		if core.IsOfficer == true then	
 			if ... == nil then
 				MonDKP.ToggleBidWindow()
 			else
+				local _,_,_,_,_,_,_,_,_,itemIcon = GetItemInfo(item)
 				MonDKP:Print("Opening Bid Window for: ".. item)
-				MonDKP:ToggleBidWindow(item)
+				MonDKP:ToggleBidWindow(item, itemIcon)
 			end
 		else
 			MonDKP:Print("You do not have permission to access that feature.")
@@ -82,15 +83,15 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 	if event == "ADDON_LOADED" then
 		MonDKP:OnInitialize(event, arg1)
 	elseif event == "CHAT_MSG_WHISPER" then
-		if core.IsOfficer then
+		if core.IsOfficer == true then
 			MonDKP_CHAT_MSG_WHISPER(arg1, ...)
 		end
 	elseif event == "GROUP_ROSTER_UPDATE" then
-		if IsInRaid() and core.IsOfficer then
+		if IsInRaid() and core.IsOfficer == true then
 			AddRaidToDKPTable()
 		end
 	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-		--if IsInRaid() then
+		--if IsInRaid() and core.IsOfficer == true then
 			local _,arg1,_,_,_,_,_,_,arg2 = CombatLogGetCurrentEventInfo();			-- run operation when boss is killed
 			if arg1 == "UNIT_DIED" then
 				if MonDKP:TableStrFind(core.BossList, arg2) then
@@ -140,7 +141,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if (MonDKP_DKPHistory == nil) then MonDKP_DKPHistory = {} end;
 	    if (MonDKP_DB == nil) then 
 	    	MonDKP_DB = {
-	    		DKPBonus = { OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, HistoryLimit = 2500, DKPHistoryLimit = 2500, DecayPercentage = 20, BidTimerSize=1.0, MonDKPScaleSize=1.0, supressNotifications = false},
+	    		DKPBonus = { OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, HistoryLimit = 2500, DKPHistoryLimit = 2500, DecayPercentage = 20, BidTimerSize=1.0, MonDKPScaleSize=1.0, supressNotifications = false, TooltipHistoryCount = 15 },
 	    	}
 		end;
 		if not MonDKP_DB.bossargs then

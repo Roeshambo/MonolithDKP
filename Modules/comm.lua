@@ -41,6 +41,7 @@ function MonDKP.Sync:OnEnable()
 	MonDKP.Sync:RegisterComm("MonDKPLogSync", MonDKP.Sync:OnCommReceived())			-- broadcasts entire loot table
 	MonDKP.Sync:RegisterComm("MonDKPLootAward", MonDKP.Sync:OnCommReceived())		-- broadcasts individual loot award to loot table
 	MonDKP.Sync:RegisterComm("MonDKPDeleteLoot", MonDKP.Sync:OnCommReceived())		-- broadcasts deleted loot award entries
+	MonDKP.Sync:RegisterComm("MonDKPEditLoot", MonDKP.Sync:OnCommReceived())		-- broadcasts edited loot award entries
 	MonDKP.Sync:RegisterComm("MonDKPDKPLogSync", MonDKP.Sync:OnCommReceived())		-- broadcasts entire DKP history table
 	MonDKP.Sync:RegisterComm("MonDKPDKPAward", MonDKP.Sync:OnCommReceived())		-- broadcasts individual DKP award to DKP history table
 end
@@ -66,7 +67,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				end
 			end
 			if (sender ~= UnitName("player")) then
-				if (prefix == "MonDKPDataSync" or prefix == "MonDKPLogSync" or prefix == "MonDKPLootAward" or prefix == "MonDKPDKPLogSync" or prefix == "MonDKPDKPAward" or prefix == "MonDKPDeleteLoot") then
+				if (prefix == "MonDKPDataSync" or prefix == "MonDKPLogSync" or prefix == "MonDKPLootAward" or prefix == "MonDKPDKPLogSync" or prefix == "MonDKPDKPAward" or prefix == "MonDKPDeleteLoot" or prefix == "MonDKPEditLoot") then
 					if (prefix == "MonDKPDataSync") then
 						MonDKP:Print("DKP database updated by "..sender.."...")
 					end
@@ -95,10 +96,20 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 							table.remove(MonDKP_Loot, deserialized)
 							MonDKP:LootHistory_Reset()
 							MonDKP:SortLootTable()
-							MonDKP:LootHistory_Update("No Filter");						
+							MonDKP:LootHistory_Update("No Filter");
+						elseif prefix == "MonDKPEditLoot" then
+							local search = MonDKP:Table_Search(MonDKP_Loot, deserialized.entry)
+							if search then
+								MonDKP_Loot[search[1][1]].player = deserialized.newplayer
+							end
+							MonDKP:SortLootTable()
+							MonDKP:LootHistory_Update("No Filter");
+							DKPTable_Update()
 						else
 							MonDKP_DKPTable = deserialized;			-- commits to SavedVariables
 							MonDKP:FilterDKPTable(core.currentSort, "reset")
+							MonDKP_DB.seed = time();				-- stores last update time to compare to seed on guild leader pub note
+							MonDKP:SeedVerify_Update()
 						end
 					else
 						print(deserialized)  -- error reporting if string doesn't get deserialized correctly
@@ -112,7 +123,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				MonDKP:Print("DKP History Broadcast Complete")
 			end
 		else
-			if core.IsOfficer then
+			if core.IsOfficer == true then
 				local msg = sender..", has attempted to broadcast with \""..prefix.."\" prefix."
 				MonDKP:Print(msg)
 				StaticPopupDialogs["MODIFY_WARNING"] = {
@@ -185,10 +196,13 @@ function MonDKP.Sync:SendData(prefix, data)
 	print("LZQ: ", strlen(lzwCompressed)) --]]
 
 	-- send packet
-	if prefix == "MonDKPNotify" then
-		MonDKP.Sync:SendCommMessage(prefix, packet, "RAID")					-- broadcasts timers to raid, all else goes to guild
-	else
-		MonDKP.Sync:SendCommMessage(prefix, packet, "GUILD")
+	MonDKP.Sync:SendCommMessage(prefix, packet, "GUILD")
+
+	if prefix == "MonDKPDataSync" then
+		local leader = MonDKP:GetGuildRankGroup(1)
+
+		GuildRosterSetPublicNote(leader[1].index, time())	-- updates guild leader public note with seed to check for current version
+		MonDKP_DB.seed = time();
 	end
 
 	-- Verify Send

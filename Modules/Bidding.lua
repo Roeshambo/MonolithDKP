@@ -32,7 +32,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 	local dkp;
 	local response;
 
-	if string.find(text, "!bid") == 1 and core.IsOfficer then
+	if string.find(text, "!bid") == 1 and core.IsOfficer == true then
 		if core.BidInProgress then
 			cmd = BidCmd(text)
 			if string.find(name, "-") then					-- finds and removes server name from name if exists
@@ -69,7 +69,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 							response = "Your bid of "..cmd.." DKP was Accepted."
 							BidScrollFrame_Update()
 						else
-							response = "Bid Denied! Below minimum bid!"
+							response = "Bid Denied! Below minimum bid of "..core.BiddingWindow.minBid:GetNumber().."!"
 						end
 					else
 						response = "Bid Denied! You only have "..dkp.." DKP"
@@ -112,22 +112,25 @@ end
 
 function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 	local minBid;
-	core.BiddingWindow = core.BiddingWindow or MonDKP:CreateBidWindow();
- 	core.BiddingWindow:SetShown(true)
-	
- 	if loot then
- 		CurrItemForBid = loot;
- 		CurrItemIcon = lootIcon
- 		CurZone = GetRealZoneText()
- 		minBid = GetMinBid(itemName) or 70
- 		core.BiddingWindow.minBid:SetText(minBid)
- 		core.BiddingWindow.itemName:SetText(itemName)
- 		core.BiddingWindow.bidTimer:SetText(core.settings["DKPBonus"]["BidTimer"])
- 		core.BiddingWindow.cost:SetText(minBid)
- 		core.BiddingWindow.boss:SetText(core.LastKilledBoss.." in "..CurZone)
- 	end
- 	UpdateBidWindow()
- 	BidScrollFrame_Update()
+
+	if core.IsOfficer == true then
+		core.BiddingWindow = core.BiddingWindow or MonDKP:CreateBidWindow();
+	 	core.BiddingWindow:SetShown(true)
+		
+	 	if loot then
+	 		CurrItemForBid = loot;
+	 		CurrItemIcon = lootIcon
+	 		CurZone = GetRealZoneText()
+	 		minBid = GetMinBid(itemName) or 70
+	 		core.BiddingWindow.minBid:SetText(minBid)
+	 		core.BiddingWindow.itemName:SetText(itemName)
+	 		core.BiddingWindow.bidTimer:SetText(core.settings["DKPBonus"]["BidTimer"])
+	 		core.BiddingWindow.cost:SetText(minBid)
+	 		core.BiddingWindow.boss:SetText(core.LastKilledBoss.." in "..CurZone)
+	 	end
+	 	UpdateBidWindow()
+	 	BidScrollFrame_Update()
+	 end
 end
 
 local function StartBidding()
@@ -146,23 +149,19 @@ local function StartBidding()
 end
 
 local function ToggleTimerBtn(self)
-	--if IsInRaid() then
-		if timerToggle == 0 then
-			if not IsInRaid() then MonDKP:Print("You are not in a raid.") return false end
-			if not core.BiddingWindow.item:GetText() or core.BiddingWindow.minBid:GetText() == "" then MonDKP:Print("No minimum bid and/or item to bid on!") return false end
-			timerToggle = 1;
-			self:SetText("End Bidding")
-			StartBidding()
-		else
-			timerToggle = 0;
-			core.BidInProgress = false;
-			self:SetText("Start Bidding")
-			SendChatMessage("Bidding Closed!", "RAID_WARNING")
-			MonDKP:BroadcastStopBidTimer()
-		end
-	--else
-		--MonDKP:Print("You are not in a raid.")
-	--end
+	if timerToggle == 0 then
+		if not IsInRaid() then MonDKP:Print("You are not in a raid.") return false end
+		if not core.BiddingWindow.item:GetText() or core.BiddingWindow.minBid:GetText() == "" then MonDKP:Print("No minimum bid and/or item to bid on!") return false end
+		timerToggle = 1;
+		self:SetText("End Bidding")
+		StartBidding()
+	else
+		timerToggle = 0;
+		core.BidInProgress = false;
+		self:SetText("Start Bidding")
+		SendChatMessage("Bidding Closed!", "RAID_WARNING")
+		MonDKP:BroadcastStopBidTimer()
+	end
 end
 
 local function ClearBidWindow()
@@ -196,7 +195,7 @@ local function AwardItem()
 		date = time()
 
 		SendChatMessage("Congrats "..winner.." on "..CurrItemForBid.." @ "..cost.."DKP", "RAID_WARNING")
-		MonDKP:DKPTable_Set(winner, "dkp", -cost)
+		MonDKP:DKPTable_Set(winner, "dkp", -cost, true)
 		tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=date, boss=core.LastKilledBoss, cost=cost})
 		local temp_table = {}
 		tinsert(temp_table, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=date, boss=core.LastKilledBoss, cost=cost})

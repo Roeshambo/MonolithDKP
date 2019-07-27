@@ -21,7 +21,7 @@ function MonDKP:Options()
   MonDKP.ConfigTab4.description:SetPoint("TOPLEFT", MonDKP.ConfigTab4.header, "BOTTOMLEFT", 7, -15);
   MonDKP.ConfigTab4.description:SetText("Default Monolith DKP Settings.");
 
-  if core.IsOfficer then
+  if core.IsOfficer == true then
     for i=1, 6 do
       MonDKP.ConfigTab4.default[i] = CreateFrame("EditBox", nil, MonDKP.ConfigTab4)
       MonDKP.ConfigTab4.default[i]:SetAutoFocus(false)
@@ -140,7 +140,7 @@ function MonDKP:Options()
 
     -- Bid Timer Slider
     MonDKP.ConfigTab4.bidTimerSlider = CreateFrame("SLIDER", "$parentBidTimerSlider", MonDKP.ConfigTab4, "MonDKPOptionsSliderTemplate");
-    MonDKP.ConfigTab4.bidTimerSlider:SetPoint("TOP", MonDKP.ConfigTab4.CompleteHeader, "BOTTOM", 150, -40);
+    MonDKP.ConfigTab4.bidTimerSlider:SetPoint("TOP", MonDKP.ConfigTab4.CompleteHeader, "BOTTOM", 68, -40);
     MonDKP.ConfigTab4.bidTimerSlider:SetMinMaxValues(10, 45);
     MonDKP.ConfigTab4.bidTimerSlider:SetValue(DKPSettings["BidTimer"]);
     MonDKP.ConfigTab4.bidTimerSlider:SetValueStep(1);
@@ -185,12 +185,63 @@ function MonDKP:Options()
     MonDKP.ConfigTab4.bidTimer:SetText(MonDKP.ConfigTab4.bidTimerSlider:GetValue())
   end
 
+  -- Tooltip History Slider
+  MonDKP.ConfigTab4.TooltipHistorySlider = CreateFrame("SLIDER", "$parentTooltipHistorySlider", MonDKP.ConfigTab4, "MonDKPOptionsSliderTemplate");
+  if MonDKP.ConfigTab4.bidTimer then
+    MonDKP.ConfigTab4.TooltipHistorySlider:SetPoint("LEFT", MonDKP.ConfigTab4.bidTimerSlider, "RIGHT", 30, 0);
+  else
+    MonDKP.ConfigTab4.TooltipHistorySlider:SetPoint("TOP", MonDKP.ConfigTab4, "TOP", 0, -111);
+  end
+  MonDKP.ConfigTab4.TooltipHistorySlider:SetMinMaxValues(5, 35);
+  MonDKP.ConfigTab4.TooltipHistorySlider:SetValue(DKPSettings["TooltipHistoryCount"]);
+  MonDKP.ConfigTab4.TooltipHistorySlider:SetValueStep(1);
+  MonDKP.ConfigTab4.TooltipHistorySlider.tooltipText = 'Tooltip History Count'
+  MonDKP.ConfigTab4.TooltipHistorySlider.tooltipRequirement = "Number of loot/dkp history entries listed in tooltip."
+  MonDKP.ConfigTab4.TooltipHistorySlider:SetObeyStepOnDrag(true);
+  getglobal(MonDKP.ConfigTab4.TooltipHistorySlider:GetName().."Low"):SetText("5")
+  getglobal(MonDKP.ConfigTab4.TooltipHistorySlider:GetName().."High"):SetText("35")
+  MonDKP.ConfigTab4.TooltipHistorySlider:SetScript("OnValueChanged", function(self)    -- clears focus on esc
+    MonDKP.ConfigTab4.TooltipHistory:SetText(MonDKP.ConfigTab4.TooltipHistorySlider:GetValue())
+  end)
+
+  MonDKP.ConfigTab4.TooltipHistoryHeader = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab4.TooltipHistoryHeader:SetFontObject("MonDKPTinyCenter");
+  MonDKP.ConfigTab4.TooltipHistoryHeader:SetPoint("BOTTOM", MonDKP.ConfigTab4.TooltipHistorySlider, "TOP", 0, 3);
+  MonDKP.ConfigTab4.TooltipHistoryHeader:SetText("Tooltip History Count")
+
+  MonDKP.ConfigTab4.TooltipHistory = CreateFrame("EditBox", nil, MonDKP.ConfigTab4)
+  MonDKP.ConfigTab4.TooltipHistory:SetAutoFocus(false)
+  MonDKP.ConfigTab4.TooltipHistory:SetMultiLine(false)
+  MonDKP.ConfigTab4.TooltipHistory:SetSize(50, 18)
+  MonDKP.ConfigTab4.TooltipHistory:SetBackdrop({
+    bgFile   = "Textures\\white.blp", tile = true,
+    edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 1, edgeSize = 1, 
+  });
+  MonDKP.ConfigTab4.TooltipHistory:SetBackdropColor(0,0,0,0.9)
+  MonDKP.ConfigTab4.TooltipHistory:SetBackdropBorderColor(0.12,0.12, 0.34, 1)
+  MonDKP.ConfigTab4.TooltipHistory:SetMaxLetters(4)
+  MonDKP.ConfigTab4.TooltipHistory:SetTextColor(1, 1, 1, 1)
+  MonDKP.ConfigTab4.TooltipHistory:SetFontObject("MonDKPTinyCenter")
+  MonDKP.ConfigTab4.TooltipHistory:SetTextInsets(10, 10, 5, 5)
+  MonDKP.ConfigTab4.TooltipHistory:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
+    self:ClearFocus()
+  end)
+  MonDKP.ConfigTab4.TooltipHistory:SetScript("OnEnterPressed", function(self)    -- clears focus on esc
+    self:ClearFocus()
+  end)
+  MonDKP.ConfigTab4.TooltipHistory:SetScript("OnEditFocusLost", function(self)    -- clears focus on esc
+    MonDKP.ConfigTab4.TooltipHistorySlider:SetValue(MonDKP.ConfigTab4.TooltipHistory:GetNumber());
+  end)
+  MonDKP.ConfigTab4.TooltipHistory:SetPoint("TOP", MonDKP.ConfigTab4.TooltipHistorySlider, "BOTTOM", 0, -3)     
+  MonDKP.ConfigTab4.TooltipHistory:SetText(MonDKP.ConfigTab4.TooltipHistorySlider:GetValue())
+
+
   -- Loot History Limit Slider
   MonDKP.ConfigTab4.historySlider = CreateFrame("SLIDER", "$parentHistorySlider", MonDKP.ConfigTab4, "MonDKPOptionsSliderTemplate");
   if MonDKP.ConfigTab4.bidTimer then
-    MonDKP.ConfigTab4.historySlider:SetPoint("TOPRIGHT", MonDKP.ConfigTab4.bidTimerSlider, "BOTTOMLEFT", 60, -50);
+    MonDKP.ConfigTab4.historySlider:SetPoint("TOPLEFT", MonDKP.ConfigTab4.bidTimerSlider, "BOTTOMLEFT", 0, -50);
   else
-    MonDKP.ConfigTab4.historySlider:SetPoint("TOPLEFT", MonDKP.ConfigTab4, "TOPLEFT", 60, -110);
+    MonDKP.ConfigTab4.historySlider:SetPoint("TOPRIGHT", MonDKP.ConfigTab4.TooltipHistorySlider, "BOTTOMLEFT", 56, -50);
   end
   MonDKP.ConfigTab4.historySlider:SetMinMaxValues(500, 2500);
   MonDKP.ConfigTab4.historySlider:SetValue(DKPSettings["HistoryLimit"]);
@@ -411,7 +462,7 @@ function MonDKP:Options()
   MonDKP.ConfigTab4.submitSettings = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab4, "BOTTOMLEFT", 30, 30, "Save Settings");
   MonDKP.ConfigTab4.submitSettings:SetSize(90,25)
   MonDKP.ConfigTab4.submitSettings:SetScript("OnClick", function()
-    if core.IsOfficer then
+    if core.IsOfficer == true then
       for i=1, 6 do
         if not tonumber(MonDKP.ConfigTab4.default[i]:GetText()) then
           StaticPopupDialogs["OPTIONS_VALIDATION"] = {
@@ -429,7 +480,7 @@ function MonDKP:Options()
       end
     end
     if MonDKP.ConfigTab4.default[1] then
-      core.MonDKPUI:SetScale(DKPSettings["MonDKPScaleSize"]);
+      core.MonDKPUI:SetScale(MonDKP_DB["DKPBonus"]["MonDKPScaleSize"]);
       MonDKP_DB["DKPBonus"]["OnTimeBonus"] = MonDKP.ConfigTab4.default[1]:GetNumber();
       MonDKP_DB["DKPBonus"]["BossKillBonus"] = MonDKP.ConfigTab4.default[2]:GetNumber();
       MonDKP_DB["DKPBonus"]["CompletionBonus"] = MonDKP.ConfigTab4.default[3]:GetNumber();
@@ -446,7 +497,9 @@ function MonDKP:Options()
     end
     MonDKP_DB["DKPBonus"]["HistoryLimit"] = MonDKP.ConfigTab4.history:GetNumber();
     MonDKP_DB["DKPBonus"]["DKPHistoryLimit"] = MonDKP.ConfigTab4.DKPHistory:GetNumber();
+    MonDKP_DB["DKPBonus"]["TooltipHistoryCount"] = MonDKP.ConfigTab4.TooltipHistory:GetNumber();
     MonDKP:Print("Default settings saved.")
+    DKPTable_Update()
   end)
 
 

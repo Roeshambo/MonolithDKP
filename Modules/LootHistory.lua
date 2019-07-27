@@ -2,6 +2,13 @@ local _, core = ...;
 local _G = _G;
 local MonDKP = core.MonDKP;
 
+local menu = {}
+local curfilterName = "No Filter";
+
+local menuFrame = CreateFrame("Frame", "MonDKPDeleteLootMenuFrame", UIParent, "UIDropDownMenuTemplate")
+
+--MonDKP_Loot[i]["loot"].." for "..MonDKP_Loot[i]["cost"].." DKP
+
 function MonDKP:SortLootTable()             -- sorts the Loot History Table by date
   table.sort(MonDKP_Loot, function(a, b)
     return a["date"] > b["date"]
@@ -28,30 +35,144 @@ end
 
 local function DeleteLootHistoryEntry(target)
 	local search = MonDKP:Table_Search(MonDKP_Loot, target["date"]);
+	local search_player = MonDKP:Table_Search(MonDKP_DKPTable, target["player"]);
 
 	MonDKP:LootHistory_Reset()
+
+	MonDKP_DKPTable[search_player[1][1]].dkp = MonDKP_DKPTable[search_player[1][1]].dkp + target.cost 							-- refund previous looter
+	MonDKP_DKPTable[search_player[1][1]].lifetime_spent = MonDKP_DKPTable[search_player[1][1]].lifetime_spent - target.cost 	-- remove from lifetime_spent
 
 	if search then
 		table.remove(MonDKP_Loot, search[1][1])
 	end
+
 	MonDKP.Sync:SendData("MonDKPDeleteLoot", search[1][1])
 	MonDKP:SortLootTable()
+	DKPTable_Update()
 	MonDKP:LootHistory_Update("No Filter");
+	MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
+end
+
+local function ReassignLootEntry(entry)
+	if entry.player ~= core.SelectedData[1].player then
+		local search_before = MonDKP:Table_Search(MonDKP_DKPTable, entry.player);
+		local search_after = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[1].player)
+
+		MonDKP:LootHistory_Reset()
+
+		if search_before and search_after then
+			entry.player = core.SelectedData[1].player
+			MonDKP_DKPTable[search_before[1][1]].dkp = MonDKP_DKPTable[search_before[1][1]].dkp + entry.cost 							-- refund previous looter
+			MonDKP_DKPTable[search_before[1][1]].lifetime_spent = MonDKP_DKPTable[search_before[1][1]].lifetime_spent - entry.cost 		-- remove from lifetime_spent
+			MonDKP_DKPTable[search_after[1][1]].dkp = MonDKP_DKPTable[search_after[1][1]].dkp - entry.cost 								-- charge new looter
+			MonDKP_DKPTable[search_after[1][1]].lifetime_spent = MonDKP_DKPTable[search_after[1][1]].lifetime_spent + entry.cost 		-- charge to lifetime_spent
+		end
+
+		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
+
+		local search = MonDKP:Table_Search(MonDKP_Loot, entry.date)
+		local temp_table = { entry = MonDKP_Loot[search[1][1]].date, newplayer = core.SelectedData[1].player }
+
+		MonDKP:SortLootTable()
+		MonDKP.Sync:SendData("MonDKPEditLoot", temp_table)
+		MonDKP:LootHistory_Update("No Filter");
+		DKPTable_Update()
+		table.wipe(temp_table);
+	else
+		StaticPopupDialogs["REASSIGN_LOOT_ENTRY_FAIL"] = {
+			text = "That item is already assigned to that player.",
+			button1 = "Ok",
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = true,
+			preferredIndex = 3,
+		}
+		StaticPopup_Show ("REASSIGN_LOOT_ENTRY_FAIL")
+	end
+end
+
+local function ReassignLootEntryConfirmation(entry)
+	local c = MonDKP:GetCColors(core.SelectedData[1].class);
+	local search = MonDKP:Table_Search(MonDKP_DKPTable, MonDKP_Loot[entry]["player"])
+	local cl = MonDKP:GetCColors(MonDKP_DKPTable[search[1][1]].class)
+	local deleteString = "Are you sure you'd like to reassign "..MonDKP_Loot[entry]["loot"].." ("..MonDKP_Loot[entry]["cost"].." DKP) to |cff"..c.hex..core.SelectedData[1].player.."|r?\n\n(This will refund "..MonDKP_Loot[entry]["cost"].." DKP to |cff"..cl.hex..MonDKP_Loot[entry]["player"].."|r and charge it to |cff"..c.hex..core.SelectedData[1].player.."|r)";
+
+	StaticPopupDialogs["REASSIGN_LOOT_ENTRY"] = {
+	  text = deleteString,
+	  button1 = "Yes",
+	  button2 = "No",
+	  OnAccept = function()
+	    ReassignLootEntry(MonDKP_Loot[entry])
+	  end,
+	  timeout = 0,
+	  whileDead = true,
+	  hideOnEscape = true,
+	  preferredIndex = 3,
+	}
+	StaticPopup_Show ("REASSIGN_LOOT_ENTRY")
+end
+
+local function MonDKPDeleteMenu(item)
+	local search = MonDKP:Table_Search(MonDKP_DKPTable, MonDKP_Loot[item]["player"])
+	local c = MonDKP:GetCColors(MonDKP_DKPTable[search[1][1]].class)
+	local deleteString = "Are you sure you'd like to delete the entry: |cff"..c.hex..MonDKP_Loot[item]["player"].."|r won "..MonDKP_Loot[item]["loot"].." for "..MonDKP_Loot[item]["cost"].." DKP?\n\n(This will refund |cff"..c.hex..MonDKP_Loot[item].player.."|r "..MonDKP_Loot[item]["cost"].." DKP)";
+
+	StaticPopupDialogs["DELETE_LOOT_ENTRY"] = {
+	  text = deleteString,
+	  button1 = "Yes",
+	  button2 = "No",
+	  OnAccept = function()
+	    DeleteLootHistoryEntry(MonDKP_Loot[item])
+	  end,
+	  timeout = 0,
+	  whileDead = true,
+	  hideOnEscape = true,
+	  preferredIndex = 3,
+	}
+	StaticPopup_Show ("DELETE_LOOT_ENTRY")
+end
+
+local function RightClickLootMenu(self, item)  -- called by right click function on ~201 row:SetScript
+  menu = {
+      { text = MonDKP_Loot[item]["loot"].." for "..MonDKP_Loot[item]["cost"].." DKP", isTitle = true},
+      { text = "Delete Entry", func = function()
+        MonDKPDeleteMenu(item)
+      end },
+      { text = "Reassign to Selected Player", func = function()
+      	if core.SelectedData[1] then
+      		ReassignLootEntryConfirmation(item)
+      	else
+			StaticPopupDialogs["PLAYER_NOT_SELECTED_LOOT"] = {
+				text = "No player selected to transfer loot.",
+				button1 = "Ok",
+				timeout = 0,
+				whileDead = true,
+				hideOnEscape = true,
+				preferredIndex = 3,
+			}
+			StaticPopup_Show ("PLAYER_NOT_SELECTED_LOOT")
+      	end
+      end }
+  }
+  EasyMenu(menu, menuFrame, "cursor", 0 , 0, "MENU");
 end
 
 function CreateSortBox()
 	local PlayerList = GetSortOptions();
-	local curfilterName = "No Filter";
 
 	-- Create the dropdown, and configure its appearance
-	sortDropdown = CreateFrame("FRAME", "MonDKPConfigFilterNameDropDown", MonDKP.ConfigTab5, "MonolithDKPUIDropDownMenuTemplate")
-	sortDropdown:SetPoint("TOP", MonDKP.ConfigTab5, "TOP", -13, -11)
+	if not sortDropdown then
+		sortDropdown = CreateFrame("FRAME", "MonDKPConfigFilterNameDropDown", MonDKP.ConfigTab5, "MonolithDKPUIDropDownMenuTemplate")
+		sortDropdown:SetPoint("TOP", MonDKP.ConfigTab5, "TOP", -13, -11)
+	end
 	UIDropDownMenu_SetWidth(sortDropdown, 150)
-	UIDropDownMenu_SetText(sortDropdown, "Filter Name")
+	UIDropDownMenu_SetText(sortDropdown, curfilterName or "Filter Name")
 
 	-- Create and bind the initialization function to the dropdown menu
 	UIDropDownMenu_Initialize(sortDropdown, function(self, level, menuList)
-		local filterName = UIDropDownMenu_CreateInfo()
+		if not filterName then
+			filterName = UIDropDownMenu_CreateInfo()
+		end
 		filterName.func = self.FilterSetValue
 		filterName.fontObject = "MonDKPSmallCenter"
 		filterName.text, filterName.arg1, filterName.checked, filterName.isNotRadio = "No Filter", "No Filter", "No Filter" == curfilterName, true
@@ -112,9 +233,19 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 	local date;
 	local linesToUse = 1;
 	MonDKP:SortLootTable()
+
+	if filter and filter == "No Filter" then
+		curfilterName = "No Filter"
+		CreateSortBox()
+	end
 	
 	if filter then
 		MonDKP:LootHistory_Reset()
+	end
+
+	MonDKP.ConfigTab5.inst:SetText("Shift+Click to link item\nAlt+Click to link line");
+	if core.IsOfficer == true then
+		MonDKP.ConfigTab5.inst:SetText(MonDKP.ConfigTab5.inst:GetText().."\nRight Click to edit entry")
 	end
 
 	if CurrentLimit > #MonDKP_Loot then CurrentLimit = #MonDKP_Loot end;
@@ -144,61 +275,23 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		    -- determine line height 
 	    	if linesToUse == 1 then
 				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight-2);
-				MonDKP.ConfigTab5.lootFrame[i]:SetSize(444, 14)
+				MonDKP.ConfigTab5.lootFrame[i]:SetSize(200, 14)
 				lineHeight = lineHeight-14;
 			elseif linesToUse == 2 then
 				lineHeight = lineHeight-14;
 				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight);
-				MonDKP.ConfigTab5.lootFrame[i]:SetSize(444, 28)
+				MonDKP.ConfigTab5.lootFrame[i]:SetSize(200, 28)
 				lineHeight = lineHeight-24;
 			elseif linesToUse == 3 then
 				lineHeight = lineHeight-14;
 				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight);
-				MonDKP.ConfigTab5.lootFrame[i]:SetSize(444, 38)
+				MonDKP.ConfigTab5.lootFrame[i]:SetSize(200, 38)
 				lineHeight = lineHeight-36;
 			end;
 
 			MonDKP.ConfigTab5.looter[i] = MonDKP.ConfigTab5.lootFrame[i]:CreateFontString(nil, "OVERLAY")
 			MonDKP.ConfigTab5.looter[i]:SetFontObject("MonDKPSmallLeft");
 			MonDKP.ConfigTab5.looter[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5.lootFrame[i], "TOPLEFT", 0, 0);
-		   	
-		   	if core.IsOfficer == true then
-				MonDKP.ConfigTab5.lootFrame[i].delete = CreateFrame("Button", nil, MonDKP.ConfigTab5.lootFrame[i], "UIPanelCloseButton")
-				MonDKP.ConfigTab5.lootFrame[i].delete:SetSize(18, 18)
-				MonDKP.ConfigTab5.lootFrame[i].delete:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab5.lootFrame[i], "BOTTOMRIGHT", -5, 1);
-				MonDKP.ConfigTab5.lootFrame[i].delete:SetScript("OnClick", function(self)
-					local deleteString = "Are you sure you'd like to delete the entry: "..MonDKP_Loot[i]["player"].." won "..MonDKP_Loot[i]["loot"].." for "..MonDKP_Loot[i]["cost"].." DKP?";
-
-					StaticPopupDialogs["DELETE_LOOT_ENTRY"] = {
-					  text = deleteString,
-					  button1 = "Yes",
-					  button2 = "No",
-					  OnAccept = function()
-					      DeleteLootHistoryEntry(MonDKP_Loot[i])
-					  end,
-					  timeout = 0,
-					  whileDead = true,
-					  hideOnEscape = true,
-					  preferredIndex = 3,
-					}
-					StaticPopup_Show ("DELETE_LOOT_ENTRY")
-				end)
-				MonDKP.ConfigTab5.lootFrame[i].delete:SetScript("OnEnter", function(self)
-					GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-					GameTooltip:SetText("Delete Entry")
-					GameTooltip:Show();
-					MonDKP.ConfigTab5.lootFrame[i]:SetBackdrop({
-					    bgFile   = "Interface\\COMMON\\talent-blue-glow", tile = false, tileSize = 10
-					});
-					MonDKP.ConfigTab5.lootFrame[i]:SetBackdropColor(1, 1, 1, 0.4)
-				end)
-				MonDKP.ConfigTab5.lootFrame[i].delete:SetScript("OnLeave", function()
-					GameTooltip:Hide();
-					MonDKP.ConfigTab5.lootFrame[i]:SetBackdrop({
-					    bgFile   = nil, tile = false,
-					});
-				end)
-			end
 
 		    -- print string to history
 		    local date1, date2, date3 = strsplit("/", strsub(date, 1, 8))
@@ -242,16 +335,22 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		    	tooltip:SetHyperlink(itemToLink)
 		    	tooltip:Show();
 		    end)
-		    MonDKP.ConfigTab5.lootFrame[i]:SetScript("OnMouseDown", function()
-		    	if IsShiftKeyDown() then
-		    		ChatFrame1EditBox:Show();
-		    		ChatFrame1EditBox:SetText(ChatFrame1EditBox:GetText()..select(2,GetItemInfo(itemToLink)))
-		    		ChatFrame1EditBox:SetFocus();
-		    	elseif IsAltKeyDown() then
-		    		ChatFrame1EditBox:Show();
-		    		ChatFrame1EditBox:SetText(ChatFrame1EditBox:GetText()..MonDKP_Loot[i]["player"].." won "..select(2,GetItemInfo(itemToLink)).." off "..MonDKP_Loot[i]["boss"].." in "..MonDKP_Loot[i]["zone"].." ("..date2.."/"..date3.."/"..date1..") for "..MonDKP_Loot[i]["cost"].." DKP")
-		    		ChatFrame1EditBox:SetFocus();		    		
-		    	end
+		    MonDKP.ConfigTab5.lootFrame[i]:SetScript("OnMouseDown", function(self, button)
+		    	if button == "RightButton" then
+	   				if core.IsOfficer == true then
+	   					RightClickLootMenu(self, i)
+	   				end
+	   			elseif button == "LeftButton" then
+	   				if IsShiftKeyDown() then
+			    		ChatFrame1EditBox:Show();
+			    		ChatFrame1EditBox:SetText(ChatFrame1EditBox:GetText()..select(2,GetItemInfo(itemToLink)))
+			    		ChatFrame1EditBox:SetFocus();
+			    	elseif IsAltKeyDown() then
+			    		ChatFrame1EditBox:Show();
+			    		ChatFrame1EditBox:SetText(ChatFrame1EditBox:GetText()..MonDKP_Loot[i]["player"].." won "..select(2,GetItemInfo(itemToLink)).." off "..MonDKP_Loot[i]["boss"].." in "..MonDKP_Loot[i]["zone"].." ("..date2.."/"..date3.."/"..date1..") for "..MonDKP_Loot[i]["cost"].." DKP")
+			    		ChatFrame1EditBox:SetFocus();		    		
+			    	end
+	   			end
 		    end)
 		    MonDKP.ConfigTab5.lootFrame[i]:SetScript("OnLeave", function()
 		    	tooltip:Hide();
@@ -278,61 +377,23 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		    -- determine line height 
 	    	if linesToUse == 1 then
 				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight-2);
-				MonDKP.ConfigTab5.lootFrame[i]:SetSize(444, 14)
+				MonDKP.ConfigTab5.lootFrame[i]:SetSize(200, 14)
 				lineHeight = lineHeight-14;
 			elseif linesToUse == 2 then
 				lineHeight = lineHeight-14;
 				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight);
-				MonDKP.ConfigTab5.lootFrame[i]:SetSize(444, 28)
+				MonDKP.ConfigTab5.lootFrame[i]:SetSize(200, 28)
 				lineHeight = lineHeight-24;
 			elseif linesToUse == 3 then
 				lineHeight = lineHeight-14;
 				MonDKP.ConfigTab5.lootFrame[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 5, lineHeight);
-				MonDKP.ConfigTab5.lootFrame[i]:SetSize(444, 38)
+				MonDKP.ConfigTab5.lootFrame[i]:SetSize(200, 38)
 				lineHeight = lineHeight-36;
 			end;
 
 			MonDKP.ConfigTab5.looter[i] = MonDKP.ConfigTab5.lootFrame[i]:CreateFontString(nil, "OVERLAY")
 			MonDKP.ConfigTab5.looter[i]:SetFontObject("MonDKPSmallLeft");
 			MonDKP.ConfigTab5.looter[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab5.lootFrame[i], "TOPLEFT", 0, 0);
-
-			if core.IsOfficer == true then
-				MonDKP.ConfigTab5.lootFrame[i].delete = CreateFrame("Button", nil, MonDKP.ConfigTab5.lootFrame[i], "UIPanelCloseButton")
-				MonDKP.ConfigTab5.lootFrame[i].delete:SetSize(18, 18)
-				MonDKP.ConfigTab5.lootFrame[i].delete:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab5.lootFrame[i], "BOTTOMRIGHT", -5, 1);
-				MonDKP.ConfigTab5.lootFrame[i].delete:SetScript("OnClick", function(self)
-					local deleteString = "Are you sure you'd like to delete the entry: "..MonDKP_Loot[i]["player"].." won "..MonDKP_Loot[i]["loot"].." for "..MonDKP_Loot[i]["cost"].." DKP?";
-
-					StaticPopupDialogs["DELETE_LOOT_ENTRY"] = {
-					  text = deleteString,
-					  button1 = "Yes",
-					  button2 = "No",
-					  OnAccept = function()
-					      DeleteLootHistoryEntry(MonDKP_Loot[i])
-					  end,
-					  timeout = 0,
-					  whileDead = true,
-					  hideOnEscape = true,
-					  preferredIndex = 3,
-					}
-					StaticPopup_Show ("DELETE_LOOT_ENTRY")
-				end)
-				MonDKP.ConfigTab5.lootFrame[i].delete:SetScript("OnEnter", function(self)
-					GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-					GameTooltip:SetText("Delete Entry")
-					GameTooltip:Show();
-					MonDKP.ConfigTab5.lootFrame[i]:SetBackdrop({
-					    bgFile   = "Interface\\COMMON\\talent-blue-glow", tile = false, tileSize = 10
-					});
-					MonDKP.ConfigTab5.lootFrame[i]:SetBackdropColor(1, 1, 1, 0.4)
-				end)
-				MonDKP.ConfigTab5.lootFrame[i].delete:SetScript("OnLeave", function()
-					GameTooltip:Hide();
-					MonDKP.ConfigTab5.lootFrame[i]:SetBackdrop({
-					    bgFile   = nil, tile = false,
-					});
-				end)
-			end
 
 		    -- print string to history
 		    local date1, date2, date3 = strsplit("/", strtrim(strsub(date, 1, 8), " "))    -- date is stored as yy/mm/dd for sorting purposes. rearranges numbers for printing to string
@@ -376,16 +437,22 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		    	tooltip:SetHyperlink(itemToLink)
 		    	tooltip:Show();
 		    end)
-		    MonDKP.ConfigTab5.lootFrame[i]:SetScript("OnMouseDown", function()
-		    	if IsShiftKeyDown() then
-		    		ChatFrame1EditBox:Show();
-		    		ChatFrame1EditBox:SetText(ChatFrame1EditBox:GetText()..select(2,GetItemInfo(itemToLink)))
-		    		ChatFrame1EditBox:SetFocus();
-		    	elseif IsAltKeyDown() then
-		    		ChatFrame1EditBox:Show();
-		    		ChatFrame1EditBox:SetText(ChatFrame1EditBox:GetText()..MonDKP_Loot[i]["player"].." won "..select(2,GetItemInfo(itemToLink)).." off "..MonDKP_Loot[i]["boss"].." in "..MonDKP_Loot[i]["zone"].." ("..date2.."/"..date3.."/"..date1..") for "..MonDKP_Loot[i]["cost"].." DKP")
-		    		ChatFrame1EditBox:SetFocus();
-		    	end
+		    MonDKP.ConfigTab5.lootFrame[i]:SetScript("OnMouseDown", function(self, button)
+	   			if button == "RightButton" then
+	   				if core.IsOfficer == true then
+	   					RightClickLootMenu(self, i)
+	   				end
+	   			elseif button == "LeftButton" then
+	   				if IsShiftKeyDown() then
+			    		ChatFrame1EditBox:Show();
+			    		ChatFrame1EditBox:SetText(ChatFrame1EditBox:GetText()..select(2,GetItemInfo(itemToLink)))
+			    		ChatFrame1EditBox:SetFocus();
+			    	elseif IsAltKeyDown() then
+			    		ChatFrame1EditBox:Show();
+			    		ChatFrame1EditBox:SetText(ChatFrame1EditBox:GetText()..MonDKP_Loot[i]["player"].." won "..select(2,GetItemInfo(itemToLink)).." off "..MonDKP_Loot[i]["boss"].." in "..MonDKP_Loot[i]["zone"].." ("..date2.."/"..date3.."/"..date1..") for "..MonDKP_Loot[i]["cost"].." DKP")
+			    		ChatFrame1EditBox:SetFocus();
+			    	end
+	   			end		    	
 		    end)
 		    MonDKP.ConfigTab5.lootFrame[i]:SetScript("OnLeave", function()
 		    	tooltip:Hide();

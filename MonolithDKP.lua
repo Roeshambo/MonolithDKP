@@ -12,7 +12,7 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
     core.IsOfficer = C_GuildInfo.CanEditOfficerNote()
     core.MonDKPOptions = core.MonDKPOptions or MonDKP:Options()
   end
-  if not core.IsOfficer then
+  if core.IsOfficer == false then
     for i=2, 3 do
       _G["MonDKPMonDKP.ConfigTabMenuTab"..i]:Hide();
     end
@@ -23,6 +23,7 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
 
   core.MonDKPUI:SetScale(MonDKP_DB.DKPBonus.MonDKPScaleSize)
   MonDKP:LootHistory_Update("No Filter");
+  MonDKP:SeedVerify_Update()
   DKPTable_Update()
 end
 
