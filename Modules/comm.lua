@@ -24,7 +24,7 @@ local function ValidateSender(sender)								-- returns true if "sender" has per
 	local rankIndex = MonDKP:GetGuildRankIndex(sender);				-- validates user has permission to push table update broadcasts.
 	
 	if rankIndex then
-		return C_GuildInfo.GuildControlGetRankFlags(rankIndex)[12]
+		return C_GuildInfo.GuildControlGetRankFlags(rankIndex)[12]		-- returns true/false if player can write to officer notes
 	else
 		return false;
 	end
@@ -48,7 +48,7 @@ end
 
 function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 	if (prefix) then
-		if ValidateSender(sender) then
+		if ValidateSender(sender) then		-- validates sender as an officer. fail-safe to prevent addon alterations to manipulate DKP table
 			if (prefix == "MonDKPBroadcast") and sender ~= UnitName("player") then
 				MonDKP:Print(message)
 			elseif (prefix == "MonDKPNotify") then
@@ -89,7 +89,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 	      					MonDKP:DKPHistory_Update()
 						elseif prefix == "MonDKPDKPLogSync" then
 							MonDKP_DKPHistory = deserialized
-							MonDKP:DKPHistory_Reset()
+							if MonDKP.ConfigTab6.history then
+								MonDKP:DKPHistory_Reset()
+							end
 	      					MonDKP:DKPHistory_Update()
 							MonDKP:Print("DKP history update complete.")
 						elseif prefix == "MonDKPDeleteLoot" then
@@ -141,76 +143,78 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 end
 
 function MonDKP.Sync:SendData(prefix, data)
-	local serialized = nil;
-	local packet = nil;
-	local verInteg1 = false;
-	local verInteg2 = false;
+	if IsInGuild() then
+		local serialized = nil;
+		local packet = nil;
+		local verInteg1 = false;
+		local verInteg2 = false;
 
-	if (prefix == "MonDKPNotify") then
-		MonDKP.Sync:SendCommMessage(prefix, data, "RAID")
-		return;
-	end
+		if (prefix == "MonDKPNotify") then
+			MonDKP.Sync:SendCommMessage(prefix, data, "RAID")
+			return;
+		end
 
-	if (prefix == "MonDKPBroadcast") then
-		MonDKP.Sync:SendCommMessage(prefix, data, "GUILD")
-		return;
-	end
+		if (prefix == "MonDKPBroadcast") then
+			MonDKP.Sync:SendCommMessage(prefix, data, "GUILD")
+			return;
+		end
 
-	if data then
-		serialized = LibAceSerializer:Serialize(data);
-	end
+		if data then
+			serialized = LibAceSerializer:Serialize(data);
+		end
 
-	-- compress serialized string with both possible compressions for comparison
-	-- I do both in case one of them doesn't retain integrity after decompression and decoding, the other is sent
-	local huffmanCompressed = LibCompress:CompressHuffman(serialized);
-	if huffmanCompressed then
-		huffmanCompressed = LibCompressAddonEncodeTable:Encode(huffmanCompressed);
-	end
-	local lzwCompressed = LibCompress:CompressLZW(serialized);
-	if lzwCompressed then
-		lzwCompressed = LibCompressAddonEncodeTable:Encode(lzwCompressed);
-	end
+		-- compress serialized string with both possible compressions for comparison
+		-- I do both in case one of them doesn't retain integrity after decompression and decoding, the other is sent
+		local huffmanCompressed = LibCompress:CompressHuffman(serialized);
+		if huffmanCompressed then
+			huffmanCompressed = LibCompressAddonEncodeTable:Encode(huffmanCompressed);
+		end
+		local lzwCompressed = LibCompress:CompressLZW(serialized);
+		if lzwCompressed then
+			lzwCompressed = LibCompressAddonEncodeTable:Encode(lzwCompressed);
+		end
 
-	-- Decode to test integrity
-	local test1 = LibCompress:Decompress(LibCompressAddonEncodeTable:Decode(huffmanCompressed))
-	if test1 == serialized then
-		verInteg1 = true
-	end
-	local test2 = LibCompress:Decompress(LibCompressAddonEncodeTable:Decode(lzwCompressed))
-	if test2 == serialized then
-		verInteg2 = true
-	end
-	-- check which string with verified integrity is shortest. Huffman usually is
-	if (strlen(huffmanCompressed) < strlen(lzwCompressed) and verInteg1 == true) then
-		packet = huffmanCompressed;
-	elseif (strlen(huffmanCompressed) > strlen(lzwCompressed) and verInteg2 == true) then
-		packet = lzwCompressed
-	elseif (strlen(huffmanCompressed) == strlen(lzwCompressed)) then
-		if verInteg1 == true then packet = huffmanCompressed
-		elseif verInteg2 == true then packet = lzwCompressed end
-	end
+		-- Decode to test integrity
+		local test1 = LibCompress:Decompress(LibCompressAddonEncodeTable:Decode(huffmanCompressed))
+		if test1 == serialized then
+			verInteg1 = true
+		end
+		local test2 = LibCompress:Decompress(LibCompressAddonEncodeTable:Decode(lzwCompressed))
+		if test2 == serialized then
+			verInteg2 = true
+		end
+		-- check which string with verified integrity is shortest. Huffman usually is
+		if (strlen(huffmanCompressed) < strlen(lzwCompressed) and verInteg1 == true) then
+			packet = huffmanCompressed;
+		elseif (strlen(huffmanCompressed) > strlen(lzwCompressed) and verInteg2 == true) then
+			packet = lzwCompressed
+		elseif (strlen(huffmanCompressed) == strlen(lzwCompressed)) then
+			if verInteg1 == true then packet = huffmanCompressed
+			elseif verInteg2 == true then packet = lzwCompressed end
+		end
 
-	--debug lengths, uncomment to see string lengths of each uncompressed, Huffman and LZQ compressions
-	--[[print("Uncompressed: ", strlen(serialized))
-	print("Huffman: ", strlen(huffmanCompressed))
-	print("LZQ: ", strlen(lzwCompressed)) --]]
+		--debug lengths, uncomment to see string lengths of each uncompressed, Huffman and LZQ compressions
+		--[[print("Uncompressed: ", strlen(serialized))
+		print("Huffman: ", strlen(huffmanCompressed))
+		print("LZQ: ", strlen(lzwCompressed)) --]]
 
-	-- send packet
-	MonDKP.Sync:SendCommMessage(prefix, packet, "GUILD")
+		-- send packet
+		MonDKP.Sync:SendCommMessage(prefix, packet, "GUILD")
 
-	if prefix == "MonDKPDataSync" then
-		local leader = MonDKP:GetGuildRankGroup(1)
+		if prefix == "MonDKPDataSync" then
+			local leader = MonDKP:GetGuildRankGroup(1)
 
-		GuildRosterSetPublicNote(leader[1].index, time())	-- updates guild leader public note with seed to check for current version
-		MonDKP_DB.seed = time();
-	end
+			GuildRosterSetPublicNote(leader[1].index, time())	-- updates guild leader public note with seed to check for current version
+			MonDKP_DB.seed = time();
+		end
 
-	-- Verify Send
-	if (prefix == "MonDKPDataSync") then
-		MonDKP:Print("DKP Database Broadcasted")
-	elseif (prefix == "MonDKPLogSync") then
-		MonDKP:Print("Broadcasting Loot History...")
-	elseif (prefix == "MonDKPDKPLogSync") then
-		MonDKP:Print("Broadcasting DKP History...")
+		-- Verify Send
+		if (prefix == "MonDKPDataSync") then
+			MonDKP:Print("DKP Database Broadcasted")
+		elseif (prefix == "MonDKPLogSync") then
+			MonDKP:Print("Broadcasting Loot History...")
+		elseif (prefix == "MonDKPDKPLogSync") then
+			MonDKP:Print("Broadcasting DKP History...")
+		end
 	end
 end

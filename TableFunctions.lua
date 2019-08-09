@@ -4,6 +4,18 @@ local MonDKP = core.MonDKP;
 
 local SelectedRow = 0;        -- sets the row that is being clicked
 
+function MonDKPSelectionCount_Update()
+  if #core.SelectedRows == 0 then
+    MonDKP.DKPTable.counter.s:SetText("");    -- updates "Entries Shown" at bottom of DKPTable
+  else
+    if #core.SelectedRows == 1 then
+      MonDKP.DKPTable.counter.s:SetText("("..#core.SelectedRows.." Entry Selected)");
+    else
+      MonDKP.DKPTable.counter.s:SetText("("..#core.SelectedRows.." Entries Selected)");
+    end
+  end
+end
+
 function DKPTable_OnClick(self)   
   local offset = FauxScrollFrame_GetOffset(MonDKP.DKPTable) or 0
   local index, TempSearch;
@@ -13,6 +25,9 @@ function DKPTable_OnClick(self)
       core.SelectedData = {}
       TempSearch = MonDKP:Table_Search(core.SelectedRows, SelectedRow);
       core.SelectedRows = {}
+      if MonDKP.ConfigTab2.selectAll:GetChecked() then
+        MonDKP.ConfigTab2.selectAll:SetChecked(false)
+      end
       if (TempSearch == false) then
         tinsert(core.SelectedRows, {SelectedRow});
       else
@@ -40,8 +55,10 @@ function DKPTable_OnClick(self)
       dkp=core.WorkingTable[SelectedRow].dkp,
       previous_dkp=core.WorkingTable[SelectedRow].previous_dkp
     });
+    PlaySound(808)
   else
     tremove(core.SelectedData, TempSearch[1][1])
+    PlaySound(868)
   end
   for i=1, core.TableNumRows do
     index = offset + i;
@@ -54,6 +71,7 @@ function DKPTable_OnClick(self)
       MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
     end
   end
+  MonDKPSelectionCount_Update()
 end
 
 local function DisplayUserHistory(self, player)
@@ -262,8 +280,12 @@ end
 function MonDKP:SeedVerify_Update()
   if IsInGuild() then
     local leader = MonDKP:GetGuildRankGroup(1)
+    
+    if leader[1].note == "" then    -- zeros out note if no note has been created yet
+      leader[1].note = 0
+    end
 
-    if MonDKP_DB.seed >= tonumber(leader[1].note) then
+    if MonDKP_DB.seed >= tonumber(leader[1].note) then         -- tonumber(leader[1].note)      in place of 0
       MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\up-to-date")
       MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);

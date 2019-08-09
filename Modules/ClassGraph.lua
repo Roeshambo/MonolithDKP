@@ -42,6 +42,7 @@ function MonDKP:ClassGraph()
   		graph.icons[i].bar:SetSize(BarWidth, perc_height[i])
   		graph.icons[i].bar:SetBackdrop({
 			bgFile   = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\graph-bar", tile = false,
+			insets = { left = 1, right = 1, top = 1, bottom = 1}
 		});
   		graph.icons[i]:SetTexture("Interface\\GLUES\\CHARACTERCREATE\\UI-CharacterCreate-Classes");
 
@@ -63,22 +64,41 @@ function MonDKP:ClassGraph()
 		--MonDKP.ConfigTab2.header:SetScale(1.2)
 	end
 
-	--druid
-	graph.icons[1]:SetTexCoord(0.740, 0.9921, 0.005, 0.247)
-	--hunter
-	graph.icons[2]:SetTexCoord(0, 0.25, 0.2549, 0.5019)
-	--mage
-	graph.icons[3]:SetTexCoord(0.25, 0.494, 0, 0.25)
-	--priest
-	graph.icons[4]:SetTexCoord(0.5, 0.75, 0.25, 0.5)
-	--rogue
-	graph.icons[5]:SetTexCoord(0.5, 0.74, 0, 0.25)
-	--shaman
-	graph.icons[6]:SetTexCoord(0.25, 0.5, 0.25, 0.5)
-	--warlock
-	graph.icons[7]:SetTexCoord(0.74, 1, 0.25, 0.5)
-	--warrior
-	graph.icons[8]:SetTexCoord(0, 0.25, 0, 0.255)
+	if core.faction == "Horde" then
+		--druid
+		graph.icons[1]:SetTexCoord(0.740, 0.9921, 0.005, 0.247)
+		--hunter
+		graph.icons[2]:SetTexCoord(0, 0.25, 0.2549, 0.5019)
+		--mage
+		graph.icons[3]:SetTexCoord(0.25, 0.494, 0, 0.25)
+		--priest
+		graph.icons[4]:SetTexCoord(0.5, 0.75, 0.25, 0.5)
+		--rogue
+		graph.icons[5]:SetTexCoord(0.5, 0.74, 0, 0.25)
+		--shaman
+		graph.icons[6]:SetTexCoord(0.25, 0.5, 0.25, 0.5)
+		--warlock
+		graph.icons[7]:SetTexCoord(0.74, 1, 0.25, 0.5)
+		--warrior
+		graph.icons[8]:SetTexCoord(0, 0.25, 0, 0.255)
+	elseif core.faction == "Alliance" then
+		--druid
+		graph.icons[1]:SetTexCoord(0.740, 0.9921, 0.005, 0.247)
+		--hunter
+		graph.icons[2]:SetTexCoord(0, 0.25, 0.2549, 0.5019)
+		--mage
+		graph.icons[3]:SetTexCoord(0.25, 0.494, 0, 0.25)
+		--paladin
+		graph.icons[4]:SetTexCoord(0, 0.25, 0.5, 0.75)
+		--priest
+		graph.icons[5]:SetTexCoord(0.5, 0.75, 0.25, 0.5)
+		--rogue
+		graph.icons[6]:SetTexCoord(0.5, 0.74, 0, 0.25)
+		--warlock
+		graph.icons[7]:SetTexCoord(0.74, 1, 0.25, 0.5)
+		--warrior
+		graph.icons[8]:SetTexCoord(0, 0.25, 0, 0.255)
+	end
 	
 	--tex:SetTexCoord(left, right, top, bottom)
 

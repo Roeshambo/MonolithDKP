@@ -43,7 +43,7 @@ function AddRaidToDKPTable()
 		local numPlayers = 0;
 		local guildSize = GetNumGuildMembers();
 		local name;
-		local InGuild = true;
+		local InGuild = false; -- Only adds player to list if the player is found in the guild roster.
 
 		for i=1, 40 do
 			tempName,_,_,_,tempClass = GetRaidRosterInfo(i)

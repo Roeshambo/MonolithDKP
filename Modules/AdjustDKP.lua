@@ -83,10 +83,9 @@ local function DecayDKP(amount, deductionType)
 		local dkp = value["dkp"]
 		local player = value["player"]
 		local amount = amount;
-		if tonumber(amount) < 100 then
-			amount = tonumber("0."..amount);
-		elseif amount == 100 then
-			amount = 1
+		amount = tonumber(amount) / 100		-- converts percentage to a decimal
+		if amount < 0 then
+			amount = amount * -1			-- flips value to positive if officer accidently used negative number in editbox
 		end
 		local deducted;
 
@@ -101,6 +100,9 @@ local function DecayDKP(amount, deductionType)
 		end
 		playerString = playerString..player..",";
 	end
+
+	if tonumber(amount) < 0 then amount = amount * -1 end		-- flips value to positive if officer accidently used a negative number
+
 	tinsert(MonDKP_DKPHistory, {players=playerString, dkp="-"..amount.."%", reason="Weekly Decay", date=time()})
 	MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
 	MonDKP:DKPHistory_Reset()
@@ -123,7 +125,7 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.description:SetPoint("TOPLEFT", MonDKP.ConfigTab2.header, "BOTTOMLEFT", 7, -10);
 	MonDKP.ConfigTab2.description:SetWidth(400)
 	MonDKP.ConfigTab2.description:SetFontObject("MonDKPNormalLeft")
-	MonDKP.ConfigTab2.description:SetText("Select individual players from the left (Shift+Click for multiple players) or click \"Select All Visible\" below and enter amount to adjust.\n\n\"Select All Visible\" will only select entries visible. Can be narrowed down via the Filters Tab.\n\n (ex. limiting scope to \"In Party/Raid\" and checking \"Select All Visible\" will only apply changes to all in party/raid)"); 
+	MonDKP.ConfigTab2.description:SetText("Select individual players from the left (Shift+Click for multiple players) or click \"Select All Visible\" below and enter amount to adjust.\n\nScope can be adjusted with \"Show Raid Only\" below or on the \"Filters\" tab."); 
 
 	-- Reason DROPDOWN box 
 	-- Create the dropdown, and configure its appearance
@@ -185,12 +187,24 @@ function MonDKP:AdjustDKPTab_Create()
 		CloseDropDownMenus()
 	end
 
+	MonDKP.ConfigTab2.reasonDropDown:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText("Reason", 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine("Select reason for DKP adjustment. If \"Boss Kill Bonus\" or \"New Boss Kill Bonus\" is selected, an additional dropdown will be created to select the zone and boss. \"Other\" will create a textbox for you to enter a custom reason.", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("When a boss is killed, the appropriate zone and boss will be auto-selected for you.", 1.0, 0, 0, true);
+		GameTooltip:Show();
+	end)
+	MonDKP.ConfigTab2.reasonDropDown:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+
 	MonDKP.ConfigTab2.reasonHeader = MonDKP.ConfigTab2:CreateFontString(nil, "OVERLAY")
 	MonDKP.ConfigTab2.reasonHeader:SetFontObject("GameFontHighlightLeft");
 	MonDKP.ConfigTab2.reasonHeader:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab2.reasonDropDown, "TOPLEFT", 25, 0);
 	MonDKP.ConfigTab2.reasonHeader:SetFontObject("MonDKPSmallLeft")
 	MonDKP.ConfigTab2.reasonHeader:SetText("Reason for Adjustment:")
 
+	-- Other Reason Editbox. Hidden unless "Other" is selected in dropdown
 	MonDKP.ConfigTab2.otherReason = CreateFrame("EditBox", nil, MonDKP.ConfigTab2)
 	MonDKP.ConfigTab2.otherReason:SetPoint("TOPLEFT", MonDKP.ConfigTab2.reasonDropDown, "BOTTOMLEFT", 19, 2)     
 	MonDKP.ConfigTab2.otherReason:SetAutoFocus(false)
@@ -224,7 +238,8 @@ function MonDKP:AdjustDKPTab_Create()
 	end)
 	MonDKP.ConfigTab2.otherReason:Hide();
 
-	-- Boss Killed Dropdown
+	-- Boss Killed Dropdown - Hidden unless "Boss Kill Bonus" or "New Boss Kill Bonus" is selected
+	-- Killing a boss on the list will auto select that boss
 	MonDKP.ConfigTab2.BossKilledDropdown = CreateFrame("FRAME", "MonDKPBossKilledDropdown", MonDKP.ConfigTab2, "MonolithDKPUIDropDownMenuTemplate")
 	MonDKP.ConfigTab2.BossKilledDropdown:SetPoint("TOPLEFT", MonDKP.ConfigTab2.reasonDropDown, "BOTTOMLEFT", 0, 2)
 	MonDKP.ConfigTab2.BossKilledDropdown:Hide()
@@ -301,30 +316,77 @@ function MonDKP:AdjustDKPTab_Create()
 		self:SetText("")
 		self:ClearFocus()
 	end)
+	MonDKP.ConfigTab2.addDKP:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText("Points", 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine("Enter amount of DKP to be distributed to selected players on the DKP table. Default values can be changed in the \"Options\" tab below.", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("Use a negative number to remove DKP from selected players.", 1.0, 0, 0, true);
+		GameTooltip:Show();
+	end)
+	MonDKP.ConfigTab2.addDKP:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
 
 	MonDKP.ConfigTab2.pointsHeader = MonDKP.ConfigTab2:CreateFontString(nil, "OVERLAY")
 	MonDKP.ConfigTab2.pointsHeader:SetFontObject("GameFontHighlightLeft");
 	MonDKP.ConfigTab2.pointsHeader:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab2.addDKP, "TOPLEFT", 3, 3);
 	MonDKP.ConfigTab2.pointsHeader:SetFontObject("MonDKPSmallLeft")
-	MonDKP.ConfigTab2.pointsHeader:SetText("Points: (Use a negative number to deduct DKP)")
+	MonDKP.ConfigTab2.pointsHeader:SetText("Points:")
+
+	-- Raid Only Checkbox
+	MonDKP.ConfigTab2.RaidOnlyCheck = CreateFrame("CheckButton", nil, MonDKP.ConfigTab2, "UICheckButtonTemplate");
+	MonDKP.ConfigTab2.RaidOnlyCheck:SetChecked(false)
+	MonDKP.ConfigTab2.RaidOnlyCheck:SetScale(0.6);
+	MonDKP.ConfigTab2.RaidOnlyCheck.text:SetText("  |cff5151deShow Raid Only|r");
+	MonDKP.ConfigTab2.RaidOnlyCheck.text:SetScale(1.5);
+	MonDKP.ConfigTab2.RaidOnlyCheck.text:SetFontObject("MonDKPSmallLeft")
+	MonDKP.ConfigTab2.RaidOnlyCheck:SetPoint("LEFT", MonDKP.ConfigTab2.addDKP, "RIGHT", 15, 13);
+	MonDKP.ConfigTab2.RaidOnlyCheck:SetScript("OnClick", function()
+		MonDKP.ConfigTab1.checkBtn[10]:SetChecked(not MonDKP.ConfigTab1.checkBtn[10]:GetChecked());		-- utilizes Filters tab Raid Only filter without rewriting functions or events
+		MonDKPSetFilterChecks(MonDKP.ConfigTab1.checkBtn[10]);
+
+	end)
+	MonDKP.ConfigTab2.RaidOnlyCheck:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText("Show Raid Only", 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine("Filters DKP table to only show players in your raid party. Use with \"Select All Visible\" below to apply DKP bonuses to only those currently present.", 1.0, 1.0, 1.0, true);
+		GameTooltip:Show();
+	end)
+	MonDKP.ConfigTab2.RaidOnlyCheck:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
 
 	-- Select All Checkbox
 	MonDKP.ConfigTab2.selectAll = CreateFrame("CheckButton", nil, MonDKP.ConfigTab2, "UICheckButtonTemplate");
 	MonDKP.ConfigTab2.selectAll:SetChecked(false)
 	MonDKP.ConfigTab2.selectAll:SetScale(0.6);
-	MonDKP.ConfigTab2.selectAll.text:SetText("  Select All Visible");
+	MonDKP.ConfigTab2.selectAll.text:SetText("  |cff5151deSelect All Visible|r");
 	MonDKP.ConfigTab2.selectAll.text:SetScale(1.5);
 	MonDKP.ConfigTab2.selectAll.text:SetFontObject("MonDKPSmallLeft")
-	MonDKP.ConfigTab2.selectAll:SetPoint("LEFT", MonDKP.ConfigTab2.addDKP, "RIGHT", 15, 0);
+	MonDKP.ConfigTab2.selectAll:SetPoint("LEFT", MonDKP.ConfigTab2.addDKP, "RIGHT", 15, -13);
 	MonDKP.ConfigTab2.selectAll:SetScript("OnClick", function(self)
 		if (MonDKP.ConfigTab2.selectAll:GetChecked() == true) then
 			core.SelectedRows = core.WorkingTable;
 			core.SelectedData = core.WorkingTable;
+			PlaySound(808)
+			MonDKPSelectionCount_Update()
 		else
 			core.SelectedRows = {}
 			core.SelectedData = {}
+			PlaySound(868)
+			MonDKPSelectionCount_Update()
 		end
 		MonDKP:FilterDKPTable(core.currentSort, "reset");
+	end)
+	MonDKP.ConfigTab2.selectAll:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText("Select All Visible", 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine("Selects all players visible in the current scope of the DKP table. This scope can be limited on the \"Filters\" tab.", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("Filters are automatically applied to selection. Selecting all and then applying filters to the list will limit the scope recursively.", 1.0, 0, 0, true);
+		GameTooltip:Show();
+	end)
+	MonDKP.ConfigTab2.selectAll:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
 	end)
 
 		-- Adjust DKP Button
@@ -365,6 +427,16 @@ function MonDKP:AdjustDKPTab_Create()
 			AdjustDKP();
 		end
 	end)
+	MonDKP.ConfigTab2.adjustButton:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText("Adjust DKP", 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine("Apply above entry to all selected players in the DKP table.", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("This entry will be broadcasted to all online players in your guild.", 1.0, 0, 0, true);
+		GameTooltip:Show();
+	end)
+	MonDKP.ConfigTab2.adjustButton:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
 
 	-- weekly decay
 	MonDKP.ConfigTab2.decayDKP = CreateFrame("EditBox", nil, MonDKP.ConfigTab2)
@@ -388,15 +460,15 @@ function MonDKP:AdjustDKPTab_Create()
 	end)
 
 	MonDKP.ConfigTab2.decayDKP:SetScript("OnEnter", function(self)
-    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-    GameTooltip:SetText("Weekly DKP Decay", 0.25, 0.75, 0.90, 1, true);
-    GameTooltip:AddLine("Amount of DKP you wish to reduce all DKP entries by as a weekly decay.", 1.0, 1.0, 1.0, true);
-    GameTooltip:AddLine("Warning: Can not be undone.", 1.0, 0, 0, true);
-    GameTooltip:Show();
-  end)
-  MonDKP.ConfigTab2.decayDKP:SetScript("OnLeave", function(self)
-    GameTooltip:Hide()
-  end)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText("Weekly DKP Decay", 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine("Amount of DKP you wish to reduce all DKP entries by as a weekly decay. This should be a positive number and no selections on the DKP table must be made.", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("Warning: Can not be undone.", 1.0, 0, 0, true);
+		GameTooltip:Show();
+	end)
+	MonDKP.ConfigTab2.decayDKP:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
 
 	MonDKP.ConfigTab2.decayDKPHeader = MonDKP.ConfigTab2:CreateFontString(nil, "OVERLAY")
 	MonDKP.ConfigTab2.decayDKPHeader:SetFontObject("GameFontHighlightLeft");
@@ -427,5 +499,15 @@ function MonDKP:AdjustDKPTab_Create()
 				preferredIndex = 3,
 			}
 			StaticPopup_Show ("ADJUST_DKP")
+	end)
+	MonDKP.ConfigTab2.decayButton:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText("Weekly DKP Decay", 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine("Amount of DKP you wish to reduce all DKP entries by as a weekly decay. This should be a positive number and no selections on the DKP table must be made.", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("Warning: Can not be undone.", 1.0, 0, 0, true);
+		GameTooltip:Show();
+	end)
+	MonDKP.ConfigTab2.decayButton:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
 	end)
 end

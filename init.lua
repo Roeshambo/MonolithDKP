@@ -21,6 +21,7 @@ MonDKP.Commands = {
 			end
 		else
 			MonDKP:Print("You do not have permission to access that feature.")
+			print(core.IsOfficer)
 		end
 	end,
 	["timer"] = function(time, ...)
@@ -82,16 +83,19 @@ end
 function MonDKP_OnEvent(self, event, arg1, ...)
 	if event == "ADDON_LOADED" then
 		MonDKP:OnInitialize(event, arg1)
+		self:UnregisterEvent("ADDON_LOADED")
 	elseif event == "CHAT_MSG_WHISPER" then
 		if core.IsOfficer == true then
 			MonDKP_CHAT_MSG_WHISPER(arg1, ...)
 		end
+	elseif event == "CHAT_MSG_SYSTEM" then
+		--MonoDKP_CHAT_MSG_SYSTEM(arg1)
 	elseif event == "GROUP_ROSTER_UPDATE" then
 		if IsInRaid() and core.IsOfficer == true then
 			AddRaidToDKPTable()
 		end
 	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-		--if IsInRaid() and core.IsOfficer == true then
+		if IsInRaid() and core.IsOfficer == true then
 			local _,arg1,_,_,_,_,_,_,arg2 = CombatLogGetCurrentEventInfo();			-- run operation when boss is killed
 			if arg1 == "UNIT_DIED" then
 				if MonDKP:TableStrFind(core.BossList, arg2) then
@@ -104,7 +108,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 					MonDKP.ConfigTab2.BossKilledDropdown:SetValue("The Four Horsemen")
 				end
 			end
-		--end
+		end
 	elseif event == "LOOT_OPENED" then
 		MonDKP_Register_ShiftClickLootWindowHook()
 	end
@@ -121,32 +125,31 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	----------------------------------
 	-- Register Slash Commands!
 	----------------------------------
-	SLASH_RELOADUI1 = "/rl"; -- new slash command for reloading UI
+	SLASH_MonolithDKP1 = "/dkp";
+	SlashCmdList.MonolithDKP = HandleSlashCommands;
+
+	--[[SLASH_RELOADUI1 = "/rl"; -- new slash command for reloading UI 				-- for debugging
 	SlashCmdList.RELOADUI = ReloadUI;
 
 	SLASH_FRAMESTK1 = "/fs"; -- new slash command for showing framestack tool
 	SlashCmdList.FRAMESTK = function()
 		LoadAddOn("Blizzard_DebugTools");
 		FrameStackTooltip_Toggle();
-	end
-
-	SLASH_MonolithDKP1 = "/dkp";
-	SlashCmdList.MonolithDKP = HandleSlashCommands;
+	end--]]
 
     if(event == "ADDON_LOADED") then
-    	core.loaded = 1;
-		if (MonDKP_DKPTable == nil) then MonDKP_DKPTable = {} end;
-		if (MonDKP_Loot == nil) then MonDKP_Loot = {} end;
-		if (MonDKP_MinBids == nil) then MonDKP_MinBids = {} end;
-		if (MonDKP_DKPHistory == nil) then MonDKP_DKPHistory = {} end;
-	    if (MonDKP_DB == nil) then 
+		if not MonDKP_DKPTable then MonDKP_DKPTable = {} end;
+		if not MonDKP_Loot then MonDKP_Loot = {} end;
+		if not MonDKP_MinBids then MonDKP_MinBids = {} end;
+		if not MonDKP_DKPHistory then MonDKP_DKPHistory = {} end;
+		if not MonDKP_DB then 
 	    	MonDKP_DB = {
-	    		DKPBonus = { OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, HistoryLimit = 2500, DKPHistoryLimit = 2500, DecayPercentage = 20, BidTimerSize=1.0, MonDKPScaleSize=1.0, supressNotifications = false, TooltipHistoryCount = 15 },
+	    		DKPBonus = { OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, HistoryLimit = 2500, DKPHistoryLimit = 2500, DecayPercentage = 20,
+	    		BidTimerSize=1.0, MonDKPScaleSize=1.0, supressNotifications = false, TooltipHistoryCount = 15 },
 	    	}
 		end;
-		if not MonDKP_DB.bossargs then
-	    	MonDKP_DB.bossargs = {}
-	    end
+		if not MonDKP_DB.bossargs then MonDKP_DB.bossargs = {} end
+		if not MonDKP_DB.seed then MonDKP_DB.seed = 0 end
 	    ------------------------------------
 	    --	Import SavedVariables
 	    ------------------------------------
@@ -155,49 +158,6 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	    core.CurrentRaidZone = MonDKP_DB.bossargs.CurrentRaidZone;	-- stores raid zone as a redundency
 		core.LastKilledBoss = MonDKP_DB.bossargs.LastKilledBoss;	-- stores last boss killed as a redundency
 
-		-- Populates SavedVariable MonDKP_DKPTable with fake values for testing purposes if they don't already exist
-		-- Delete this section and \WTF\AccountACCOUNT_NAME\SavedVariables\MonolithDKP.lua prior to actual use.
-		--[[local player_names = {"Qulyolalima", "Cadhangwong", "Gilingerth", "Emondeatt", "Puthuguth", "Eminin", "Mormiannis", "Hemilionter", "Malcologan", "Alerahm", "Cricordinus", "Arommoth", "Barnamnon", "Eughtor", "Aldreavus", "Loylencel", "Barredgar", "Gerneheav", "Julivente", "Barlannel", "Audeacell", "Derneth", "Fredeond", "Gutrichas", "Wiliannel", "Siertlan", "Simitram", "Ronettius", "Livendley", "Mordannichas", "Tevistavus", "Jaspian"}
-		local classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
-		local bosses = { "Ragnaros", "Garr", "Onyxia"}
-		local items = { 
-			"|cffa335ee|Hitem:169058::::::::120::::1:4778:|h[Salvaged Incendiary Tool]|h|r",
-			"|cff0070dd|Hitem:166483::::::::120::::2:5126:1517:|h[Sentinel's Tomahawk]|h|r",
-			"|cffa335ee|Hitem:168902::::::::120::::2:4798:1487:|h[Dream's End]|h|r",
-			"|cffa335ee|Hitem:168901::::::::120::::2:4799:1502:|h[Royal Scaleguard's Battleaxe]|h|r",
-			"|cffa335ee|Hitem:165601::::::::120::::2:4798:1507:|h[Storm-Toothed Kasuyu]|h|r"
-		}
-		local day = { "04/01", "05/05", "05/10", "04/08", "03/15", "05/20", "10/25", "05/30"}
-		
-		for i=1, 100 do
-			local d = day[math.random(1,8)];
-			local m = math.random(1, 59);
-			local y = math.random(18, 19)
-			if m<10 then
-				m = "0"..m
-			end
-			tinsert(MonDKP_Loot, {
-				player=player_names[math.random(1, #player_names)],
-				loot=items[math.random(1, #items)],
-				date=y.."/"..d.." "..date("%H:")..m..date(":%S"),
-				zone="Molten Core",
-				boss=bosses[math.random(1, #bosses)],
-				cost=math.random(35, 100)
-			})
-		end--]]
-		--[[for i=1, #player_names do
-			local p = player_names[i]
-			if (MonDKP:Table_Search(MonDKP_DKPTable, p) == false) then 		--
-				tinsert(MonDKP_DKPTable, {
-					player=p,
-					class=classes[math.random(1, #classes)],
-					previous_dkp=math.random(1000),
-					dkp=math.random(0, 1000)
-				})
-			end
-		end--]]
-		-- End testing DB
-
 		table.sort(MonDKP_DKPTable, function(a, b)
 			return a["player"] < b["player"]
 		end)
@@ -205,10 +165,10 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		MonDKP:Print("Welcome back, "..UnitName("player").."!");
 		MonDKP:Print("Loaded "..#MonDKP_DKPTable.." player records and "..#MonDKP_Loot.." loot history records.");
 		
-		core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();
-		MonDKP:StartBidTimer(seconds, nil)
-		MonDKP:PurgeLootHistory()
-		MonDKP:PurgeDKPHistory()
+		core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();		-- creates main menu
+		MonDKP:StartBidTimer(seconds, nil)							-- initiates timer frame for use
+		MonDKP:PurgeLootHistory()									-- purges Loot History entries that exceed the "HistoryLimit" option variable (oldest entries)
+		MonDKP:PurgeDKPHistory()									-- purges DKP History entries that exceed the "DKPHistoryLimit" option variable (oldest entries)
 	end
 end
 

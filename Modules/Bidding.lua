@@ -756,3 +756,20 @@ function MonDKP:CreateBidWindow()
 
 	return f;
 end
+
+
+--[[
+
+--use this to add a roll feature in the bidding window
+
+local pattern = string.gsub(RANDOM_ROLL_RESULT, "[%(%)-]", "%%%1")
+pattern = string.gsub(pattern, "%%s", "(.+)")
+pattern = string.gsub(pattern, "%%d", "%(%%d+%)")
+
+function MonoDKP_CHAT_MSG_SYSTEM(msg)
+  for name, roll, low, high in string.gmatch(msg, pattern) do
+    print(name, " -> ", roll, " -> ", low, "->", high)
+  end
+end
+
+--]]

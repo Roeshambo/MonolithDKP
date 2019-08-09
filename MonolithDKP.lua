@@ -9,7 +9,9 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
   core.MonDKPUI = core.MonDKPUI or MonDKP:CreateMenu();
   core.MonDKPUI:SetShown(not core.MonDKPUI:IsShown())
   if core.IsOfficer == "" then
-    core.IsOfficer = C_GuildInfo.CanEditOfficerNote()
+    local curPlayerRank = MonDKP:GetGuildRankIndex(UnitName("player"))
+    core.IsOfficer = C_GuildInfo.GuildControlGetRankFlags(curPlayerRank)[12]
+    --core.IsOfficer = C_GuildInfo.CanEditOfficerNote()  -- seemingly removed from classic API
     core.MonDKPOptions = core.MonDKPOptions or MonDKP:Options()
   end
   if core.IsOfficer == false then
@@ -48,6 +50,11 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
       end
     end
   end
+  if MonDKP.ConfigTab2.selectAll:GetChecked() == true then
+    core.SelectedRows = core.WorkingTable;
+    core.SelectedData = core.WorkingTable;
+    MonDKPSelectionCount_Update()
+  end
   MonDKP:SortDKPTable(sort, reset);
 end
 
@@ -70,6 +77,11 @@ function MonDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable 
       if(id == "dkp") then return a[button.Id] < b[button.Id] else return a[button.Id] > b[button.Id] end
     end
   end)
+  if reset == "Clear" then
+    core.SelectedRows = {}
+    core.SelectedData = {}
+    MonDKPSelectionCount_Update()
+  end
   core.currentSort = id;
   DKPTable_Update()
 end
@@ -152,7 +164,7 @@ function MonDKP:CreateMenu()
     v.Id = k
     v:SetHighlightTexture("Interface\\BUTTONS\\BlueGrad64_faded.blp");
     v:SetSize((core.TableWidth/3)-1, core.TableRowHeight)
-    v:SetScript("OnClick", function(self) MonDKP:SortDKPTable(self.Id) end)
+    v:SetScript("OnClick", function(self) MonDKP:SortDKPTable(self.Id, "Clear") end)
   end
 
   SortButtons.player.t = SortButtons.player:CreateFontString(nil, "OVERLAY")
@@ -182,6 +194,11 @@ function MonDKP:CreateMenu()
   MonDKP.DKPTable.counter.t:SetFontObject("MonDKPNormal");
   MonDKP.DKPTable.counter.t:SetTextColor(1, 1, 1, 0.7);
   MonDKP.DKPTable.counter.t:SetPoint("CENTER", MonDKP.DKPTable.counter, "CENTER");
+
+  MonDKP.DKPTable.counter.s = MonDKP.DKPTable.counter:CreateFontString(nil, "OVERLAY")
+  MonDKP.DKPTable.counter.s:SetFontObject("MonDKPTiny");
+  MonDKP.DKPTable.counter.s:SetTextColor(1, 1, 1, 0.7);
+  MonDKP.DKPTable.counter.s:SetPoint("CENTER", MonDKP.DKPTable.counter, "CENTER", 0, -15);
 
   ---------------------------------------
   -- Expand / Collapse Arrow

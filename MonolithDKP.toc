@@ -1,4 +1,4 @@
-## Interface: 80200
+## Interface: 11302
 ## Title: M|cffaeaeddonlith|r |cffff0000DKP|r
 ## Author: Roeshambo
 ## Version: 0.1

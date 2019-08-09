@@ -44,7 +44,12 @@ local function FilterChecks(self)         -- sets/unsets check boxes in conjunct
       core.classFiltered[v] = false;
     end
   end
+  PlaySound(62538)
   MonDKP:FilterDKPTable(core.currentSort, "reset");
+end
+
+function MonDKPSetFilterChecks(self)    -- used to run FilterChecks as a global
+  FilterChecks(self);
 end
 
 local function Tab_OnClick(self)
