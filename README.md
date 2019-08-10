@@ -13,7 +13,7 @@ Features
 	- Bid timer displaying what is currently up for bid as well as it's minimum bid.  
   
 Officer only features  
-	- Bid window (opened by SHIFT+ALT clicking an item in the loot window or by typing /dkp bid [item link]) that starts bidding, collects all bids submitted, and awards the item.  
+	- Bid window (opened by SHIFT+ALT clicking an item in the loot window or by typing /dkp bid [item link]) that starts bidding, collects all bids submitted, and awards the item. NOTE: Shift+Alt clicking an item only works if the item in in one of the first 4 slots of the loot window due to restrictions at the moment. If the item you wish to bid on isn't on the first page, either loot all items on that first page, close and reopen window. Or simply use /dkp bid [item link]  
 	- Adjust DKP tab (awarding DKP). Also includes a DKP Decay option that reduces all entries by X% (default set in options or change on the fly in the Adjust DKP tab)   
 	- Manage Tab. Used to broadcast complete tables to everyone in the guild if required as well as add/remove player entries.  
 	- Shift+Click entries in the table to select multiple players to modify.  
