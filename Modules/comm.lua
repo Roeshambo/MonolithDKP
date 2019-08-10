@@ -85,7 +85,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 							MonDKP:LootHistory_Update("No Filter")
 						elseif prefix == "MonDKPDKPAward" then
 							tinsert(MonDKP_DKPHistory, deserialized)
-							MonDKP:DKPHistory_Reset()
+							if MonDKP.ConfigTab6.history then
+								MonDKP:DKPHistory_Reset()
+							end
 	      					MonDKP:DKPHistory_Update()
 						elseif prefix == "MonDKPDKPLogSync" then
 							MonDKP_DKPHistory = deserialized

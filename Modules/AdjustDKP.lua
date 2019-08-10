@@ -28,7 +28,9 @@ local function AdjustDKP()
 		end
 		tinsert(MonDKP_DKPHistory, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
 		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
-		MonDKP:DKPHistory_Reset()
+		if MonDKP.ConfigTab6.history then
+			MonDKP:DKPHistory_Reset()
+		end
 		MonDKP:DKPHistory_Update()
 		local temp_table = {}
 		tinsert(temp_table, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
@@ -47,7 +49,9 @@ local function AdjustDKP()
 			MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable) -- broadcast updated DKP table
 			MonDKP.Sync:SendData("MonDKPBroadcast", "|cff"..c[core.SelectedData[1]["class"]].hex..core.SelectedData[1]["player"].."s|r|cffff6060 DKP adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for reason: "..adjustReason.."|r")
 			tinsert(MonDKP_DKPHistory, {players=core.SelectedData[1]["player"], dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
-			MonDKP:DKPHistory_Reset()
+			if MonDKP.ConfigTab6.history then
+				MonDKP:DKPHistory_Reset()
+			end
 			MonDKP:DKPHistory_Update()
 			local temp_table = {}
 			tinsert(temp_table, {players=core.SelectedData[1]["player"], dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
@@ -107,7 +111,9 @@ local function DecayDKP(amount, deductionType, GetSelections)
 
 	tinsert(MonDKP_DKPHistory, {players=playerString, dkp="-"..amount.."%", reason="Weekly Decay", date=time()})
 	MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
-	MonDKP:DKPHistory_Reset()
+	if MonDKP.ConfigTab6.history then
+		MonDKP:DKPHistory_Reset()
+	end
 	MonDKP:DKPHistory_Update()
 	local temp_table = {}
 	tinsert(temp_table, {players=playerString, dkp="-"..amount.."%", reason="Weekly Decay", date=time()})

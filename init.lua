@@ -153,7 +153,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	    		BidTimerSize=1.0, MonDKPScaleSize=1.0, supressNotifications = false, TooltipHistoryCount = 15 },
 	    	}
 		end;
-		if not MonDKP_DB.bossargs then MonDKP_DB.bossargs = {} end
+		if not MonDKP_DB.bossargs then MonDKP_DB.bossargs = { ["CurrentRaidZone"] = "Molten Core", ["LastKilledBoss"] = "Lucifron" } end
 		if not MonDKP_DB.seed then MonDKP_DB.seed = 0 end
 	    ------------------------------------
 	    --	Import SavedVariables
