@@ -8,12 +8,8 @@ local MonDKP = core.MonDKP;
 function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, the entire addon window
   core.MonDKPUI = core.MonDKPUI or MonDKP:CreateMenu();
   core.MonDKPUI:SetShown(not core.MonDKPUI:IsShown())
-  if core.IsOfficer == "" then
-    local curPlayerRank = MonDKP:GetGuildRankIndex(UnitName("player"))
-    core.IsOfficer = C_GuildInfo.GuildControlGetRankFlags(curPlayerRank)[12]
-    --core.IsOfficer = C_GuildInfo.CanEditOfficerNote()  -- seemingly removed from classic API
-    core.MonDKPOptions = core.MonDKPOptions or MonDKP:Options()
-  end
+  MonDKP:CheckOfficer()
+  --core.IsOfficer = C_GuildInfo.CanEditOfficerNote()  -- seemingly removed from classic API
   if core.IsOfficer == false then
     for i=2, 3 do
       _G["MonDKPMonDKP.ConfigTabMenuTab"..i]:Hide();

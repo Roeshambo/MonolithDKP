@@ -10,18 +10,18 @@ MonDKP.Commands = {
 	["reset"] = MonDKP.ResetPosition,
 	["bid"] = function(...)
 		local item = strjoin(" ", ...)
-		
+		MonDKP:CheckOfficer()
+
 		if core.IsOfficer == true then	
 			if ... == nil then
 				MonDKP.ToggleBidWindow()
 			else
-				local _,_,_,_,_,_,_,_,_,itemIcon = GetItemInfo(item)
+				local itemName,_,_,_,_,_,_,_,_,itemIcon = GetItemInfo(item)
 				MonDKP:Print("Opening Bid Window for: ".. item)
-				MonDKP:ToggleBidWindow(item, itemIcon)
+				MonDKP:ToggleBidWindow(item, itemIcon, itemName)
 			end
 		else
 			MonDKP:Print("You do not have permission to access that feature.")
-			print(core.IsOfficer)
 		end
 	end,
 	["timer"] = function(time, ...)
@@ -43,6 +43,7 @@ MonDKP.Commands = {
 		MonDKP:Print("|cff00cc66/dkp reset|r - Resets DKP Window Position/Size");
 		MonDKP:Print("|cff00cc66/dkp timer|r - Creates Raid Timer (Officers Only) (eg. /dkp timer 120 Pizza Break!");
 		MonDKP:Print("|cff00cc66/dkp export|r - Opens window to export all DKP information to HTML.");
+		MonDKP:Print("|cff00cc66/dkp bid|r - Opens Bid Window (Officers Only) (eg. /dkp bid [item link]");
 		print(" ");
 	end,
 };
@@ -85,6 +86,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		MonDKP:OnInitialize(event, arg1)
 		self:UnregisterEvent("ADDON_LOADED")
 	elseif event == "CHAT_MSG_WHISPER" then
+		if core.IsOfficer == "" then MonDKP:CheckOfficer() end
 		if core.IsOfficer == true then
 			MonDKP_CHAT_MSG_WHISPER(arg1, ...)
 		end
@@ -95,17 +97,20 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			AddRaidToDKPTable()
 		end
 	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-		if IsInRaid() and core.IsOfficer == true then
-			local _,arg1,_,_,_,_,_,_,arg2 = CombatLogGetCurrentEventInfo();			-- run operation when boss is killed
-			if arg1 == "UNIT_DIED" then
-				if MonDKP:TableStrFind(core.BossList, arg2) then
-					MonDKP.ConfigTab2.BossKilledDropdown:SetValue(arg2)
-				elseif arg2 == "Emperor Vek'lor" or arg2 == "Emperor Vek'nilash" then
-					MonDKP.ConfigTab2.BossKilledDropdown:SetValue("Twin Emperors")
-				elseif arg2 == "Princess Yauj" or arg2 == "Vem" or arg2 == "Lord Kri" then
-					MonDKP.ConfigTab2.BossKilledDropdown:SetValue("Bug Family")
-				elseif arg2 == "Highlord Mograine" or arg2 == "Thane Korth'azz" or arg2 == "Sir Zeliek" or arg2 == "Lady Blaumeux" then
-					MonDKP.ConfigTab2.BossKilledDropdown:SetValue("The Four Horsemen")
+		if IsInRaid() then 					-- only processes combat log events if in raid
+			MonDKP:CheckOfficer()
+			if core.IsOfficer == true then
+				local _,arg1,_,_,_,_,_,_,arg2 = CombatLogGetCurrentEventInfo();			-- run operation when boss is killed
+				if arg1 == "UNIT_DIED" then
+					if MonDKP:TableStrFind(core.BossList, arg2) then
+						MonDKP.ConfigTab2.BossKilledDropdown:SetValue(arg2)
+					elseif arg2 == "Emperor Vek'lor" or arg2 == "Emperor Vek'nilash" then
+						MonDKP.ConfigTab2.BossKilledDropdown:SetValue("Twin Emperors")
+					elseif arg2 == "Princess Yauj" or arg2 == "Vem" or arg2 == "Lord Kri" then
+						MonDKP.ConfigTab2.BossKilledDropdown:SetValue("Bug Family")
+					elseif arg2 == "Highlord Mograine" or arg2 == "Thane Korth'azz" or arg2 == "Sir Zeliek" or arg2 == "Lady Blaumeux" then
+						MonDKP.ConfigTab2.BossKilledDropdown:SetValue("The Four Horsemen")
+					end
 				end
 			end
 		end

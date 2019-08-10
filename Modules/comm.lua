@@ -125,6 +125,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				MonDKP:Print("DKP History Broadcast Complete")
 			end
 		else
+			MonDKP:CheckOfficer()
 			if core.IsOfficer == true then
 				local msg = sender..", has attempted to broadcast with \""..prefix.."\" prefix."
 				MonDKP:Print(msg)

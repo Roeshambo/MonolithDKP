@@ -44,7 +44,7 @@ local function FilterChecks(self)         -- sets/unsets check boxes in conjunct
       core.classFiltered[v] = false;
     end
   end
-  PlaySound(62538)
+  PlaySound(808)
   MonDKP:FilterDKPTable(core.currentSort, "reset");
 end
 
@@ -66,7 +66,7 @@ local function Tab_OnClick(self)
     scrollChild:Hide();
   end
   
-  PlaySound(62538)
+  PlaySound(808)
   MonDKP.UIConfig.TabMenu.ScrollFrame:SetScrollChild(self.content);
   self.content:Show();
   MonDKP.UIConfig.TabMenu.ScrollFrame:SetVerticalScroll(0)

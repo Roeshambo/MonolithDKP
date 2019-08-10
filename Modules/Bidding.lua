@@ -225,6 +225,7 @@ function MonDKP_Register_ShiftClickLootWindowHook()			-- hook function into Loot
 	for i = 1, 4 do 
 		getglobal("LootButton"..i):HookScript("OnClick", function()
 	        if ( IsShiftKeyDown() and IsAltKeyDown() ) then
+	        	MonDKP:CheckOfficer();
         		lootIcon, itemName, _, _, _ = GetLootSlotInfo(i)
         		itemLink = GetLootSlotLink(i)
 	            MonDKP:ToggleBidWindow(itemLink, lootIcon, itemName)

@@ -76,7 +76,7 @@ local function AdjustDKP()
 	end
 end
 
-local function DecayDKP(amount, deductionType)
+local function DecayDKP(amount, deductionType, GetSelections)
 	local playerString = "";
 
 	for key, value in pairs(MonDKP_DKPTable) do
@@ -89,16 +89,18 @@ local function DecayDKP(amount, deductionType)
 		end
 		local deducted;
 
-		if dkp > 0 then
-			if deductionType == "percent" then
-				deducted = dkp * amount
-				dkp = round(dkp - deducted, 0);
-				value["dkp"] = tonumber(round(dkp, 0));
-			elseif deductionType == "points" then
-				-- do stuff for flat point deductions
+		if (GetSelections and MonDKP:Table_Search(core.SelectedData, player)) or GetSelections == false then
+			if dkp > 0 then
+				if deductionType == "percent" then
+					deducted = dkp * amount
+					dkp = round(dkp - deducted, 0);
+					value["dkp"] = tonumber(round(dkp, 0));
+				elseif deductionType == "points" then
+					-- do stuff for flat point deductions
+				end
 			end
+			playerString = playerString..player..",";
 		end
-		playerString = playerString..player..",";
 	end
 
 	if tonumber(amount) < 0 then amount = amount * -1 end		-- flips value to positive if officer accidently used a negative number
@@ -440,7 +442,7 @@ function MonDKP:AdjustDKPTab_Create()
 
 	-- weekly decay
 	MonDKP.ConfigTab2.decayDKP = CreateFrame("EditBox", nil, MonDKP.ConfigTab2)
-	MonDKP.ConfigTab2.decayDKP:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab2, "BOTTOMLEFT", 20, 35)     
+	MonDKP.ConfigTab2.decayDKP:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab2, "BOTTOMLEFT", 20, 70)     
 	MonDKP.ConfigTab2.decayDKP:SetAutoFocus(false)
 	MonDKP.ConfigTab2.decayDKP:SetMultiLine(false)
 	MonDKP.ConfigTab2.decayDKP:SetSize(100, 24)
@@ -462,7 +464,7 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.decayDKP:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 		GameTooltip:SetText("Weekly DKP Decay", 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine("Amount of DKP you wish to reduce all DKP entries by as a weekly decay. This should be a positive number and no selections on the DKP table must be made.", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("Amount of DKP you wish to reduce DKP entries by as a weekly decay. This should be a positive number. If \"Selected Players Only\" is not selected below, it will apply to all entries.", 1.0, 1.0, 1.0, true);
 		GameTooltip:AddLine("Warning: Can not be undone.", 1.0, 0, 0, true);
 		GameTooltip:Show();
 	end)
@@ -481,17 +483,40 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.decayDKPFooter:SetPoint("LEFT", MonDKP.ConfigTab2.decayDKP, "RIGHT", -15, 0);
 	MonDKP.ConfigTab2.decayDKPFooter:SetText("%")
 
+	-- selected players only checkbox
+	MonDKP.ConfigTab2.SelectedOnlyCheck = CreateFrame("CheckButton", nil, MonDKP.ConfigTab2, "UICheckButtonTemplate");
+	MonDKP.ConfigTab2.SelectedOnlyCheck:SetChecked(false)
+	MonDKP.ConfigTab2.SelectedOnlyCheck:SetScale(0.6);
+	MonDKP.ConfigTab2.SelectedOnlyCheck.text:SetText("  |cff5151deSelected Players Only|r");
+	MonDKP.ConfigTab2.SelectedOnlyCheck.text:SetScale(1.5);
+	MonDKP.ConfigTab2.SelectedOnlyCheck.text:SetFontObject("MonDKPSmallLeft")
+	MonDKP.ConfigTab2.SelectedOnlyCheck:SetPoint("TOP", MonDKP.ConfigTab2.decayDKP, "BOTTOMLEFT", 15, -13);
+	MonDKP.ConfigTab2.SelectedOnlyCheck:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText("Selected Players Only", 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine("Applies the above DKP Decay to |cffff0000ONLY|r selected players on the DKP table", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("Useful to apply a decay to players beyond a threshold.", 1.0, 0, 0, true);
+		GameTooltip:Show();
+	end)
+	MonDKP.ConfigTab2.SelectedOnlyCheck:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+
 	MonDKP.ConfigTab2.decayButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab2.decayDKP, "TOPRIGHT", 20, 0, "Apply Decay");
 	MonDKP.ConfigTab2.decayButton:SetSize(90,25)
 	MonDKP.ConfigTab2.decayButton:SetScript("OnClick", function()
-		local selected = "Are you sure you'd like to decay all DKP entries by "..MonDKP.ConfigTab2.decayDKP:GetNumber().."%%";
+		local SelectedToggle;
+		local selected;
+
+		if MonDKP.ConfigTab2.SelectedOnlyCheck:GetChecked() then SelectedToggle = "|cffff0000selected|r" else SelectedToggle = "|cffff0000all|r" end
+		selected = "Are you sure you'd like to decay "..SelectedToggle.." DKP entries by "..MonDKP.ConfigTab2.decayDKP:GetNumber().."%%";
 
 			StaticPopupDialogs["ADJUST_DKP"] = {
 				text = selected,
 				button1 = "Yes",
 				button2 = "No",
 				OnAccept = function()
-					DecayDKP(MonDKP.ConfigTab2.decayDKP:GetNumber(), "percent")
+					DecayDKP(MonDKP.ConfigTab2.decayDKP:GetNumber(), "percent", MonDKP.ConfigTab2.SelectedOnlyCheck:GetChecked())
 				end,
 				timeout = 0,
 				whileDead = true,
@@ -503,7 +528,7 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.decayButton:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 		GameTooltip:SetText("Weekly DKP Decay", 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine("Amount of DKP you wish to reduce all DKP entries by as a weekly decay. This should be a positive number and no selections on the DKP table must be made.", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("Amount of DKP you wish to reduce DKP entries by as a weekly decay. This should be a positive number. If \"Selected Players Only\" is not selected below, it will apply to all entries.", 1.0, 1.0, 1.0, true);
 		GameTooltip:AddLine("Warning: Can not be undone.", 1.0, 0, 0, true);
 		GameTooltip:Show();
 	end)
