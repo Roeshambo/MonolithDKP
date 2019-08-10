@@ -30,7 +30,7 @@ function MonDKP:ClassGraph()
 			tinsert(classCount, 0)
 			local classPerc = 0;
 			tinsert(perc, 0)
-			local adjustBar = 1;
+			local adjustBar = 3;
 			tinsert(perc_height, adjustBar)
 		end
 	end

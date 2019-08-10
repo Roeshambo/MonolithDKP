@@ -161,7 +161,11 @@ function MonDKP:CheckOfficer()      -- checks if user is an officer IF core.IsOf
   if core.IsOfficer == "" then
     local curPlayerRank = MonDKP:GetGuildRankIndex(UnitName("player"))
 
-    core.IsOfficer = C_GuildInfo.GuildControlGetRankFlags(curPlayerRank)[12]
+    if IsInGuild() then
+      core.IsOfficer = C_GuildInfo.GuildControlGetRankFlags(curPlayerRank)[12]
+    else
+      core.IsOfficer = false;
+    end
     core.MonDKPOptions = core.MonDKPOptions or MonDKP:Options()
   end
 end

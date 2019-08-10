@@ -306,7 +306,7 @@ function MonDKP:AdjustDKPTab_Create()
 
 	-- Add DKP Edit Box
 	MonDKP.ConfigTab2.addDKP = CreateFrame("EditBox", nil, MonDKP.ConfigTab2)
-	MonDKP.ConfigTab2.addDKP:SetPoint("TOPLEFT", MonDKP.ConfigTab2.reasonDropDown, "BOTTOMLEFT", 20, -45)     
+	MonDKP.ConfigTab2.addDKP:SetPoint("TOPLEFT", MonDKP.ConfigTab2.reasonDropDown, "BOTTOMLEFT", 20, -44)     
 	MonDKP.ConfigTab2.addDKP:SetAutoFocus(false)
 	MonDKP.ConfigTab2.addDKP:SetMultiLine(false)
 	MonDKP.ConfigTab2.addDKP:SetSize(100, 24)
@@ -448,7 +448,7 @@ function MonDKP:AdjustDKPTab_Create()
 
 	-- weekly decay
 	MonDKP.ConfigTab2.decayDKP = CreateFrame("EditBox", nil, MonDKP.ConfigTab2)
-	MonDKP.ConfigTab2.decayDKP:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab2, "BOTTOMLEFT", 20, 70)     
+	MonDKP.ConfigTab2.decayDKP:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab2, "BOTTOMLEFT", 21, 70)     
 	MonDKP.ConfigTab2.decayDKP:SetAutoFocus(false)
 	MonDKP.ConfigTab2.decayDKP:SetMultiLine(false)
 	MonDKP.ConfigTab2.decayDKP:SetSize(100, 24)

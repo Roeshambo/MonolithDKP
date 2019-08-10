@@ -130,7 +130,9 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 	 	end
 	 	UpdateBidWindow()
 	 	BidScrollFrame_Update()
-	 end
+	else
+		MonDKP:Print("You do not have permission to access that feature.")
+	end
 end
 
 local function StartBidding()

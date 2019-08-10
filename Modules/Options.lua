@@ -62,11 +62,11 @@ function MonDKP:Options()
       end)
 
       if i==1 then
-        MonDKP.ConfigTab4.default[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab4, "TOPLEFT", 155, -95)
+        MonDKP.ConfigTab4.default[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab4, "TOPLEFT", 155, -84)
       elseif i==4 then
         MonDKP.ConfigTab4.default[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab4.default[1], "TOPLEFT", 200, 0)
       else
-        MonDKP.ConfigTab4.default[i]:SetPoint("TOP", MonDKP.ConfigTab4.default[i-1], "BOTTOM", 0, -15)
+        MonDKP.ConfigTab4.default[i]:SetPoint("TOP", MonDKP.ConfigTab4.default[i-1], "BOTTOM", 0, -22)
       end
     end
 
@@ -140,7 +140,7 @@ function MonDKP:Options()
 
     -- Bid Timer Slider
     MonDKP.ConfigTab4.bidTimerSlider = CreateFrame("SLIDER", "$parentBidTimerSlider", MonDKP.ConfigTab4, "MonDKPOptionsSliderTemplate");
-    MonDKP.ConfigTab4.bidTimerSlider:SetPoint("TOP", MonDKP.ConfigTab4.CompleteHeader, "BOTTOM", 68, -40);
+    MonDKP.ConfigTab4.bidTimerSlider:SetPoint("TOP", MonDKP.ConfigTab4.CompleteHeader, "BOTTOM", 69, -40);
     MonDKP.ConfigTab4.bidTimerSlider:SetMinMaxValues(10, 45);
     MonDKP.ConfigTab4.bidTimerSlider:SetValue(DKPSettings["BidTimer"]);
     MonDKP.ConfigTab4.bidTimerSlider:SetValueStep(1);
@@ -190,7 +190,7 @@ function MonDKP:Options()
   if MonDKP.ConfigTab4.bidTimer then
     MonDKP.ConfigTab4.TooltipHistorySlider:SetPoint("LEFT", MonDKP.ConfigTab4.bidTimerSlider, "RIGHT", 30, 0);
   else
-    MonDKP.ConfigTab4.TooltipHistorySlider:SetPoint("TOP", MonDKP.ConfigTab4, "TOP", 0, -111);
+    MonDKP.ConfigTab4.TooltipHistorySlider:SetPoint("TOP", MonDKP.ConfigTab4, "TOP", 0, -107);
   end
   MonDKP.ConfigTab4.TooltipHistorySlider:SetMinMaxValues(5, 35);
   MonDKP.ConfigTab4.TooltipHistorySlider:SetValue(DKPSettings["TooltipHistoryCount"]);
@@ -241,7 +241,7 @@ function MonDKP:Options()
   if MonDKP.ConfigTab4.bidTimer then
     MonDKP.ConfigTab4.historySlider:SetPoint("TOPLEFT", MonDKP.ConfigTab4.bidTimerSlider, "BOTTOMLEFT", 0, -50);
   else
-    MonDKP.ConfigTab4.historySlider:SetPoint("TOPRIGHT", MonDKP.ConfigTab4.TooltipHistorySlider, "BOTTOMLEFT", 56, -50);
+    MonDKP.ConfigTab4.historySlider:SetPoint("TOPRIGHT", MonDKP.ConfigTab4.TooltipHistorySlider, "BOTTOMLEFT", 56, -49);
   end
   MonDKP.ConfigTab4.historySlider:SetMinMaxValues(500, 2500);
   MonDKP.ConfigTab4.historySlider:SetValue(DKPSettings["HistoryLimit"]);
