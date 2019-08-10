@@ -26,6 +26,12 @@ function MonDKP:ClassGraph()
 			tinsert(perc, classPerc * 100)
 			local adjustBar = BarMaxHeight * classPerc;
 			tinsert(perc_height, adjustBar)
+		else
+			tinsert(classCount, 0)
+			local classPerc = 0;
+			tinsert(perc, 0)
+			local adjustBar = 1;
+			tinsert(perc_height, adjustBar)
 		end
 	end
 
@@ -41,7 +47,7 @@ function MonDKP:ClassGraph()
   		graph.icons[i].bar = CreateFrame("Frame", "MonDKP"..i.."Graph", graph)
 		graph.icons[i].bar:SetPoint("BOTTOM", icons[i], "TOP", 0, 5)
 		graph.icons[i].bar:SetBackdropBorderColor(1,1,1,0)
-  		graph.icons[i].bar:SetSize(BarWidth, perc_height[i] or 1)
+  		graph.icons[i].bar:SetSize(BarWidth, perc_height[i])
   		graph.icons[i].bar:SetBackdrop({
 			bgFile   = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\graph-bar", tile = false,
 			insets = { left = 1, right = 1, top = 1, bottom = 1}

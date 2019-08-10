@@ -150,7 +150,7 @@ end
 
 local function ToggleTimerBtn(self)
 	if timerToggle == 0 then
-		if not IsInRaid() then MonDKP:Print("You are not in a raid.") return false end
+		--if not IsInRaid() then MonDKP:Print("You are not in a raid.") return false end
 		if not core.BiddingWindow.item:GetText() or core.BiddingWindow.minBid:GetText() == "" then MonDKP:Print("No minimum bid and/or item to bid on!") return false end
 		timerToggle = 1;
 		self:SetText("End Bidding")
