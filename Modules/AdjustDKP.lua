@@ -352,7 +352,6 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.RaidOnlyCheck:SetScript("OnClick", function()
 		MonDKP.ConfigTab1.checkBtn[10]:SetChecked(not MonDKP.ConfigTab1.checkBtn[10]:GetChecked());		-- utilizes Filters tab Raid Only filter without rewriting functions or events
 		MonDKPSetFilterChecks(MonDKP.ConfigTab1.checkBtn[10]);
-
 	end)
 	MonDKP.ConfigTab2.RaidOnlyCheck:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
@@ -497,6 +496,9 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.SelectedOnlyCheck.text:SetScale(1.5);
 	MonDKP.ConfigTab2.SelectedOnlyCheck.text:SetFontObject("MonDKPSmallLeft")
 	MonDKP.ConfigTab2.SelectedOnlyCheck:SetPoint("TOP", MonDKP.ConfigTab2.decayDKP, "BOTTOMLEFT", 15, -13);
+	MonDKP.ConfigTab2.SelectedOnlyCheck:SetScript("OnClick", function(self)
+		PlaySound(808)
+	end)
 	MonDKP.ConfigTab2.SelectedOnlyCheck:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 		GameTooltip:SetText("Selected Players Only", 0.25, 0.75, 0.90, 1, true);

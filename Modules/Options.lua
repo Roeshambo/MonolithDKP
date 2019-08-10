@@ -456,6 +456,7 @@ function MonDKP:Options()
       MonDKP_DB["DKPBonus"]["supressNotifications"] = false;
       MonDKP:Print("Notifications like this are now |cff00ff00visible|r.")
     end
+    PlaySound(808)
   end)
 
 -- Save Settings Button
