@@ -20,11 +20,13 @@ function MonDKP:ClassGraph()
 
 	for k, v in pairs(core.classes) do
 		local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, v)
-		tinsert(classCount, #classSearch)
-		local classPerc = round(#classSearch / #MonDKP_DKPTable, 4);
-		tinsert(perc, classPerc * 100)
-		local adjustBar = BarMaxHeight * classPerc;
-		tinsert(perc_height, adjustBar)
+		if classSearch and #classSearch > 0 then
+			tinsert(classCount, #classSearch)
+			local classPerc = round(#classSearch / #MonDKP_DKPTable, 4);
+			tinsert(perc, classPerc * 100)
+			local adjustBar = BarMaxHeight * classPerc;
+			tinsert(perc_height, adjustBar)
+		end
 	end
 
 	for i=1, 8 do
@@ -39,7 +41,7 @@ function MonDKP:ClassGraph()
   		graph.icons[i].bar = CreateFrame("Frame", "MonDKP"..i.."Graph", graph)
 		graph.icons[i].bar:SetPoint("BOTTOM", icons[i], "TOP", 0, 5)
 		graph.icons[i].bar:SetBackdropBorderColor(1,1,1,0)
-  		graph.icons[i].bar:SetSize(BarWidth, perc_height[i])
+  		graph.icons[i].bar:SetSize(BarWidth, perc_height[i] or 1)
   		graph.icons[i].bar:SetBackdrop({
 			bgFile   = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\graph-bar", tile = false,
 			insets = { left = 1, right = 1, top = 1, bottom = 1}
@@ -52,7 +54,7 @@ function MonDKP:ClassGraph()
 		graph.icons[i].percentage = graph.icons[i].bar:CreateFontString(nil, "OVERLAY")
 		graph.icons[i].percentage:SetPoint("BOTTOM", graph.icons[i].bar, "TOP", 0, 3)
 		graph.icons[i].percentage:SetFontObject("MonDKPSmallCenter")
-		graph.icons[i].percentage:SetText(round(perc[i], 1).."%")
+		graph.icons[i].percentage:SetText(round(perc[i] or 0, 1).."%")
 		graph.icons[i].percentage:SetTextColor(1, 1, 1, 1)
 
 		graph.icons[i].count = graph.icons[i].bar:CreateFontString(nil, "OVERLAY")
