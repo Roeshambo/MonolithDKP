@@ -98,10 +98,10 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		end
 	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
 		if IsInRaid() then 					-- only processes combat log events if in raid
-			MonDKP:CheckOfficer()
-			if core.IsOfficer == true then
-				local _,arg1,_,_,_,_,_,_,arg2 = CombatLogGetCurrentEventInfo();			-- run operation when boss is killed
-				if arg1 == "UNIT_DIED" then
+			local _,arg1,_,_,_,_,_,_,arg2 = CombatLogGetCurrentEventInfo();			-- run operation when boss is killed
+			if arg1 == "UNIT_DIED" then
+				MonDKP:CheckOfficer()
+				if core.IsOfficer == true then
 					if MonDKP:TableStrFind(core.BossList, arg2) then
 						MonDKP.ConfigTab2.BossKilledDropdown:SetValue(arg2)
 					elseif arg2 == "Emperor Vek'lor" or arg2 == "Emperor Vek'nilash" then

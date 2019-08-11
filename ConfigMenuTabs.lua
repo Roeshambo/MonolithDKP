@@ -208,9 +208,8 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab1.checkBtn[10]:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab1.checkBtn[2], "TOPLEFT", 25, 0);
   MonDKP.ConfigTab1.checkBtn[10].text:SetText("|cff5151deIn Party/Raid|r");         -- executed in filterDKPTable (MonolithDKP.lua)
 
-  if MonDKP_DKPTable and #MonDKP_DKPTable > 0 then
-    core.ClassGraph = MonDKP:ClassGraph()  -- draws class graph on tab1
-  end
+  core.ClassGraph = MonDKP:ClassGraph()  -- draws class graph on tab1
+  
 
   ---------------------------------------
   -- Adjust DKP TAB

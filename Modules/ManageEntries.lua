@@ -80,7 +80,7 @@ function AddRaidToDKPTable()
 		end
 		if core.ClassGraph then
 			MonDKP:ClassGraph_Update()
-		elseif #MonDKP_DKPTable > 0 then
+		else
 			MonDKP:ClassGraph()
 		end
 		MonDKP:FilterDKPTable(core.currentSort, "reset")
