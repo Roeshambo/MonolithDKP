@@ -316,7 +316,7 @@ function MonDKP:AdjustDKPTab_Create()
 	});
 	MonDKP.ConfigTab2.addDKP:SetBackdropColor(0,0,0,0.9)
 	MonDKP.ConfigTab2.addDKP:SetBackdropBorderColor(1,1,1,0.6)
-	MonDKP.ConfigTab2.addDKP:SetMaxLetters(4)
+	MonDKP.ConfigTab2.addDKP:SetMaxLetters(10)
 	MonDKP.ConfigTab2.addDKP:SetTextColor(1, 1, 1, 1)
 	MonDKP.ConfigTab2.addDKP:SetFontObject("MonDKPNormalRight")
 	MonDKP.ConfigTab2.addDKP:SetTextInsets(10, 10, 5, 5)

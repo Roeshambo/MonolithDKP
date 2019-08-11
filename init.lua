@@ -149,16 +149,24 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_DKPHistory then MonDKP_DKPHistory = {} end;
 		if not MonDKP_DB then 
 	    	MonDKP_DB = {
-	    		DKPBonus = { OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, HistoryLimit = 2500, DKPHistoryLimit = 2500, DecayPercentage = 20,
-	    		BidTimerSize=1.0, MonDKPScaleSize=1.0, supressNotifications = false, TooltipHistoryCount = 15, SubZeroBidding = false, },
+	    		DKPBonus = { 
+	    			OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, HistoryLimit = 2500, DKPHistoryLimit = 2500, DecayPercentage = 20,
+	    			BidTimerSize = 1.0, MonDKPScaleSize = 1.0, supressNotifications = false, TooltipHistoryCount = 15, SubZeroBidding = false, 
+	    		},
 	    	}
 		end;
+		if not MonDKP_DB.MinBidBySlot then
+			MonDKP_DB.MinBidBySlot = {
+    			Head = 70, Neck = 70, Shoulders = 70, Cloak = 70, Chest = 70, Bracers = 70, Hands = 70, Belt = 70, Legs = 70, Boots = 70, Ring = 70, Trinket = 70, OneHanded = 70, TwoHanded = 70, OffHand = 70, Range = 70, Other = 70,
+    		}
+    	end
 		if not MonDKP_DB.bossargs then MonDKP_DB.bossargs = { ["CurrentRaidZone"] = "Molten Core", ["LastKilledBoss"] = "Lucifron" } end
 		if not MonDKP_DB.seed then MonDKP_DB.seed = 0 end
 	    ------------------------------------
 	    --	Import SavedVariables
 	    ------------------------------------
-	    core.settings = MonDKP_DB 				--imports default settings (Options Tab)
+	    core.settings.DKPBonus = MonDKP_DB.DKPBonus 				--imports default settings (Options Tab)
+	    core.settings.MinBidBySlot = MonDKP_DB.MinBidBySlot			--imports default minimum bids (Options Tab)
 	    core.WorkingTable = MonDKP_DKPTable;	--imports full DKP table to WorkingTable for list manipulation without altering the SavedVariable
 	    core.CurrentRaidZone = MonDKP_DB.bossargs.CurrentRaidZone;	-- stores raid zone as a redundency
 		core.LastKilledBoss = MonDKP_DB.bossargs.LastKilledBoss;	-- stores last boss killed as a redundency
@@ -167,8 +175,9 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 			return a["player"] < b["player"]
 		end)
 
-		MonDKP:Print("Welcome back, "..UnitName("player").."!");
-		MonDKP:Print("Loaded "..#MonDKP_DKPTable.." player records and "..#MonDKP_Loot.." loot history records.");
+		MonDKP:Print("Version "..core.MonVersion..", created and maintained by Roeshambo@Herod-PvP");
+		MonDKP:Print("Loaded "..#MonDKP_DKPTable.." player records, "..#MonDKP_Loot.." loot history records and "..#MonDKP_DKPHistory.." dkp history records.");
+		MonDKP:Print("Submit any bugs @ https://github.com/Roeshambo/MonolithDKP/issues");
 		
 		core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();		-- creates main menu
 		MonDKP:StartBidTimer(seconds, nil)							-- initiates timer frame for use

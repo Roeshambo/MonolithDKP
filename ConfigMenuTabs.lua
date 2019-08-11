@@ -57,6 +57,8 @@ local function Tab_OnClick(self)
   
   if self:GetID() > 4 then
     MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:Show()
+  elseif self:GetID() == 4 and core.IsOfficer == true then
+  	MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:Show()
   else
     MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:Hide()
   end

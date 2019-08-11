@@ -101,16 +101,44 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 	end)
 end
 
-local function GetMinBid(itemName)
-	local minbid
-	for i=1, #MonDKP_MinBids do
-		if MonDKP_MinBids[i].item == itemName then
-			minbid = MonDKP_MinBids[i].minbid
+local function GetMinBid(itemLink)
+	local _,_,_,_,_,_,_,_,loc = GetItemInfo(itemLink);
 
-			return minbid;
-		end
+	if loc == "INVTYPE_HEAD" then
+		return MonDKP_DB.MinBidBySlot.Head
+	elseif loc == "INVTYPE_NECK" then
+		return MonDKP_DB.MinBidBySlot.Neck
+	elseif loc == "INVTYPE_SHOULDER" then
+		return MonDKP_DB.MinBidBySlot.Shoulders
+	elseif loc == "INVTYPE_CLOAK" then
+		return MonDKP_DB.MinBidBySlot.Cloak
+	elseif loc == "INVTYPE_CHEST" or loc == "INVTYPE_ROBE" then
+		return MonDKP_DB.MinBidBySlot.Chest
+	elseif loc == "INVTYPE_WRIST" then
+		return MonDKP_DB.MinBidBySlot.Bracers
+	elseif loc == "INVTYPE_HAND" then
+		return MonDKP_DB.MinBidBySlot.Hands
+	elseif loc == "INVTYPE_WAIST" then
+		return MonDKP_DB.MinBidBySlot.Belt
+	elseif loc == "INVTYPE_LEGS" then
+		return MonDKP_DB.MinBidBySlot.Legs
+	elseif loc == "INVTYPE_FEET" then
+		return MonDKP_DB.MinBidBySlot.Boots
+	elseif loc == "INVTYPE_FINGER" then
+		return MonDKP_DB.MinBidBySlot.Ring
+	elseif loc == "INVTYPE_TRINKET" then
+		return MonDKP_DB.MinBidBySlot.Trinket
+	elseif loc == "INVTYPE_WEAPON" or loc == "INVTYPE_WEAPONMAINHAND" or loc == "INVTYPE_WEAPONOFFHAND" then
+		return MonDKP_DB.MinBidBySlot.OneHanded
+	elseif loc == "INVTYPE_2HWEAPON" then
+		return MonDKP_DB.MinBidBySlot.TwoHanded
+	elseif loc == "INVTYPE_HOLDABLE" or loc == "INVTYPE_SHIELD" then
+		return MonDKP_DB.MinBidBySlot.OffHand
+	elseif loc == "INVTYPE_RANGED" or loc == "INVTYPE_THROWN" or loc == "INVTYPE_RANGEDRIGHT" or loc == "INVTYPE_RELIC" then
+		return MonDKP_DB.MinBidBySlot.Range
+	else
+		return MonDKP_DB.MinBidBySlot.Other
 	end
-	return false;
 end
 
 function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
@@ -124,7 +152,7 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 	 		CurrItemForBid = loot;
 	 		CurrItemIcon = lootIcon
 	 		CurZone = GetRealZoneText()
-	 		minBid = GetMinBid(itemName) or 70
+	 		minBid = GetMinBid(CurrItemForBid) or 70
 	 		core.BiddingWindow.minBid:SetText(minBid)
 	 		core.BiddingWindow.itemName:SetText(itemName)
 	 		core.BiddingWindow.bidTimer:SetText(core.settings["DKPBonus"]["BidTimer"])
@@ -140,12 +168,6 @@ end
 
 local function StartBidding()
 	MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), CurrItemIcon)
-	local search = MonDKP:Table_Search(MonDKP_MinBids, core.BiddingWindow.itemName:GetText())
-	if not search then
-		tinsert(MonDKP_MinBids, {item=core.BiddingWindow.itemName:GetText(), minbid=core.BiddingWindow.minBid:GetText()})
-	else
-		MonDKP_MinBids[search[1][1]].minbid = core.BiddingWindow.minBid:GetText();
-	end
 	core.BidInProgress = true;
 	if CurrItemForBid then
 		SendChatMessage("Taking bids on "..core.BiddingWindow.item:GetText().." ("..core.BiddingWindow.minBid:GetText().." DKP Minimum bid)", "RAID_WARNING")
@@ -603,7 +625,7 @@ function MonDKP:CreateBidWindow()
       self:ClearFocus()
     end)
 
-    -- Raid Only Checkbox
+    -- Sub Zero Bidding Checkbox
 	f.SubZeroBidding = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
 	f.SubZeroBidding:SetChecked(MonDKP_DB.DKPBonus.SubZeroBidding)
 	f.SubZeroBidding:SetScale(0.6);

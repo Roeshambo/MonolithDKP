@@ -69,6 +69,25 @@ core.settings = {             -- From MonDKP_DB
     MonDKPScaleSize = 1.0,
     supressNotifications = false,
     TooltipHistoryCount = 15,
+  },
+  MinBidBySlot = {
+  	Head = 70,
+  	Neck = 70,
+  	Shoulders = 70,
+  	Cloak = 70,
+  	Chest = 70,
+  	Bracers = 70,
+  	Hands = 70,
+  	Belt = 70,
+  	Legs = 70,
+  	Boots = 70,
+  	Ring = 70,
+  	Trinket = 70,
+  	OneHanded = 70,
+  	TwoHanded = 70,
+  	OffHand = 70,
+  	Range = 70,
+  	Other = 70,
   }
 }
 
@@ -101,11 +120,11 @@ core.BossList = {
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
+core.MonVersion = "v1.1.0";
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
 core.IsOfficer = "";
-core.MonVersion = "v1.0.5 (Release)";
 core.SelectedRows = {};       -- tracks rows in DKPTable that are currently selected for SetHighlightTexture
 core.ShowState = false;
 core.currentSort = "class"		-- stores current sort selection
@@ -221,6 +240,10 @@ end
 
 function MonDKP:GetDKPSettings()
   return core.settings["DKPBonus"];
+end
+
+function MonDKP:GetMinBidSettings()
+  return core.settings["MinBidBySlot"];
 end
 
 function MonDKP:PurgeLootHistory()     -- cleans old loot history beyond history limit to reduce native system load
