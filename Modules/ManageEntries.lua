@@ -78,7 +78,11 @@ function AddRaidToDKPTable()
 		if addedUsers then
 			MonDKP:Print("Added "..numPlayers.." player(s): "..addedUsers)
 		end
-		MonDKP:ClassGraph_Update()
+		if core.ClassGraph then
+			MonDKP:ClassGraph_Update()
+		elseif #MonDKP_DKPTable > 0 then
+			MonDKP:ClassGraph()
+		end
 		MonDKP:FilterDKPTable(core.currentSort, "reset")
 		--MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)   removed broadcast on add to prevent crossfire from other officers. Move it to init in the event and guild leader ONLY
 	else

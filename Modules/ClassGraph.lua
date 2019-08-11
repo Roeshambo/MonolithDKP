@@ -122,11 +122,19 @@ function MonDKP:ClassGraph_Update()
 
 	for k, v in pairs(core.classes) do
 		local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, v)
-		tinsert(classCount, #classSearch)
-		local classPerc = round(#classSearch / #MonDKP_DKPTable, 4);
-		tinsert(perc, classPerc * 100)
-		local adjustBar = BarMaxHeight * classPerc;
-		tinsert(perc_height, adjustBar)
+		if classSearch and #classSearch > 0 then
+			tinsert(classCount, #classSearch)
+			local classPerc = round(#classSearch / #MonDKP_DKPTable, 4);
+			tinsert(perc, classPerc * 100)
+			local adjustBar = BarMaxHeight * classPerc;
+			tinsert(perc_height, adjustBar)
+		else
+			tinsert(classCount, 0)
+			local classPerc = 0;
+			tinsert(perc, 0)
+			local adjustBar = 3;
+			tinsert(perc_height, adjustBar)
+		end
 	end
 
 	for i=1, 8 do

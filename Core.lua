@@ -105,7 +105,7 @@ core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width,
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
 core.IsOfficer = "";
-core.MonVersion = "v1.0.2 (Release)";
+core.MonVersion = "v1.0.3 (Release)";
 core.SelectedRows = {};       -- tracks rows in DKPTable that are currently selected for SetHighlightTexture
 core.ShowState = false;
 core.currentSort = "class"		-- stores current sort selection
@@ -159,9 +159,8 @@ end
 
 function MonDKP:CheckOfficer()      -- checks if user is an officer IF core.IsOfficer is empty. Use before checks against core.IsOfficer
   if core.IsOfficer == "" then
-    local curPlayerRank = MonDKP:GetGuildRankIndex(UnitName("player"))
-
     if IsInGuild() then
+      local curPlayerRank = MonDKP:GetGuildRankIndex(UnitName("player"))
       core.IsOfficer = C_GuildInfo.GuildControlGetRankFlags(curPlayerRank)[12]
     else
       core.IsOfficer = false;

@@ -56,7 +56,7 @@ end
 
 function MonDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable based on id passed. Avail IDs are "class", "player" and "dkp"
   local button = SortButtons[id]        -- passing "reset" forces it to do initial sort (A to Z repeatedly instead of A to Z then Z to A toggled)
-  if reset then                         -- reset is useful for check boxes when you don't want it repeatedly reversing the sort
+  if reset and reset ~= "Clear" then                         -- reset is useful for check boxes when you don't want it repeatedly reversing the sort
     button.Ascend = true
   else
     button.Ascend = not button.Ascend
