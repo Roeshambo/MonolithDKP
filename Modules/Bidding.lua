@@ -58,7 +58,8 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 			if tonumber(cmd) then
 				dkp = tonumber(MonDKP:GetPlayerDKP(name))
 				if dkp then
-					if cmd <= dkp then
+					if not MonDKP_DB.DKPBonus.SubZeroBidding then MonDKP_DB.DKPBonus.SubZeroBidding = false end
+					if cmd <= dkp or (MonDKP_DB.DKPBonus.SubZeroBidding == true and dkp >= 0) then
 						if tonumber(core.BiddingWindow.minBid:GetNumber()) <= cmd then
 							for i=1, #Bids_Submitted do 					-- checks if a bid was submitted, removes last bid if it was
 								if Bids_Submitted[i] and Bids_Submitted[i].player == name then
@@ -71,6 +72,8 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 						else
 							response = "Bid Denied! Below minimum bid of "..core.BiddingWindow.minBid:GetNumber().."!"
 						end
+					elseif MonDKP_DB.DKPBonus.SubZeroBidding == true and dkp < 0 then
+						response = "Bid Denied! Your DKP is in the negative ("..dkp.." DKP)."
 					else
 						response = "Bid Denied! You only have "..dkp.." DKP"
 					end
@@ -152,7 +155,7 @@ end
 
 local function ToggleTimerBtn(self)
 	if timerToggle == 0 then
-		if not IsInRaid() then MonDKP:Print("You are not in a raid.") return false end
+		--if not IsInRaid() then MonDKP:Print("You are not in a raid.") return false end
 		if not core.BiddingWindow.item:GetText() or core.BiddingWindow.minBid:GetText() == "" then MonDKP:Print("No minimum bid and/or item to bid on!") return false end
 		timerToggle = 1;
 		self:SetText("End Bidding")
@@ -599,6 +602,33 @@ function MonDKP:CreateBidWindow()
     f.bidTimer:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
       self:ClearFocus()
     end)
+
+    -- Raid Only Checkbox
+	f.SubZeroBidding = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
+	f.SubZeroBidding:SetChecked(MonDKP_DB.DKPBonus.SubZeroBidding)
+	f.SubZeroBidding:SetScale(0.6);
+	f.SubZeroBidding.text:SetText("  |cff5151deSub Zero Bidding|r");
+	f.SubZeroBidding.text:SetScale(1.5);
+	f.SubZeroBidding.text:SetFontObject("MonDKPSmallLeft")
+	f.SubZeroBidding:SetPoint("TOP", f.bidTimer, "BOTTOMLEFT", 0, -10);
+	f.SubZeroBidding:SetScript("OnClick", function(self)
+		if not MonDKP_DB.DKPBonus.SubZeroBidding then MonDKP_DB.DKPBonus.SubZeroBidding = false end
+		if self:GetChecked() == true then
+			MonDKP_DB.DKPBonus.SubZeroBidding = true;
+		else
+			MonDKP_DB.DKPBonus.SubZeroBidding = false;
+		end
+	end)
+	f.SubZeroBidding:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText("Sub Zero Bidding", 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine("Allows players to bid below their available dkp enabling them to go into the negative. If unchecked, bids will be rejected if it excedes their available DKP.", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("The state of this option will persist indefinitely until manually disabled/enabled.", 1.0, 0, 0, true);
+		GameTooltip:Show();
+	end)
+	f.SubZeroBidding:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
 
 	f.StartBidding = CreateFrame("Button", "MonDKPBiddingStartBiddingButton", f, "MonolithDKPButtonTemplate")
 	f.StartBidding:SetPoint("LEFT", f.minBid, "RIGHT", 80, 2);

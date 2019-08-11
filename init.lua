@@ -150,7 +150,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_DB then 
 	    	MonDKP_DB = {
 	    		DKPBonus = { OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, HistoryLimit = 2500, DKPHistoryLimit = 2500, DecayPercentage = 20,
-	    		BidTimerSize=1.0, MonDKPScaleSize=1.0, supressNotifications = false, TooltipHistoryCount = 15 },
+	    		BidTimerSize=1.0, MonDKPScaleSize=1.0, supressNotifications = false, TooltipHistoryCount = 15, SubZeroBidding = false, },
 	    	}
 		end;
 		if not MonDKP_DB.bossargs then MonDKP_DB.bossargs = { ["CurrentRaidZone"] = "Molten Core", ["LastKilledBoss"] = "Lucifron" } end
