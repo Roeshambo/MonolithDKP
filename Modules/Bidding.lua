@@ -622,7 +622,7 @@ function MonDKP:CreateBidWindow()
 	f.SubZeroBidding:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 		GameTooltip:SetText("Sub Zero Bidding", 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine("Allows players to bid below their available dkp enabling them to go into the negative. If unchecked, bids will be rejected if it excedes their available DKP.", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("Allows players to bid below their available dkp enabling them to go into the negative. But only if their available DKP is greater than 0. If unchecked, bids will be rejected if it excedes their available DKP.", 1.0, 1.0, 1.0, true);
 		GameTooltip:AddLine("The state of this option will persist indefinitely until manually disabled/enabled.", 1.0, 0, 0, true);
 		GameTooltip:Show();
 	end)
