@@ -145,7 +145,6 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
     if(event == "ADDON_LOADED") then
 		if not MonDKP_DKPTable then MonDKP_DKPTable = {} end;
 		if not MonDKP_Loot then MonDKP_Loot = {} end;
-		if not MonDKP_MinBids then MonDKP_MinBids = {} end;
 		if not MonDKP_DKPHistory then MonDKP_DKPHistory = {} end;
 		if not MonDKP_DB then 
 	    	MonDKP_DB = {

@@ -1,9 +1,9 @@
 ## Interface: 11302
 ## Title: M|cffaeaeddonlith|r |cffff0000DKP|r
 ## Author: Roeshambo
-## Version: 0.1
+## Version: 1.1.0
 ## DefaultState: enabled
-## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_MinBids, MonDKP_DKPHistory
+## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_DKPHistory
 
 embeds.xml
 Core.lua
