@@ -596,9 +596,29 @@ function MonDKP:CreateBidWindow()
     f.minBid:SetTextColor(1, 1, 1, 1)
     f.minBid:SetFontObject("GameFontNormalRight")
     f.minBid:SetTextInsets(10, 10, 5, 5)
+    f.minBid.tooltipText = "Minimum Bid";
+    f.minBid.tooltipDescription = "Minimum bid value that will be accepted."
+    f.minBid.tooltipWarning = "Defaults can be set in Options tab."
     f.minBid:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
       self:ClearFocus()
     end)
+    f.minBid:SetScript("OnEnter", function(self)
+		if (self.tooltipText) then
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText(self.tooltipText, 0.25, 0.75, 0.90, 1, true);
+		end
+		if (self.tooltipDescription) then
+			GameTooltip:AddLine(self.tooltipDescription, 1.0, 1.0, 1.0, true);
+			GameTooltip:Show();
+		end
+		if (self.tooltipWarning) then
+			GameTooltip:AddLine(self.tooltipWarning, 1.0, 0, 0, true);
+			GameTooltip:Show();
+		end
+	end)
+	f.minBid:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
 
     f.bidTimerHeader = f:CreateFontString(nil, "OVERLAY")
 	f.bidTimerHeader:SetFontObject("MonDKPLargeRight");
@@ -621,9 +641,32 @@ function MonDKP:CreateBidWindow()
     f.bidTimer:SetTextColor(1, 1, 1, 1)
     f.bidTimer:SetFontObject("GameFontNormalRight")
     f.bidTimer:SetTextInsets(10, 10, 5, 5)
+    f.bidTimer.tooltipText = "Bid Timer";
+    f.bidTimer.tooltipDescription = "How long bidding for this item will stay open in seconds."
+    f.bidTimer.tooltipWarning = "Default can be set in Options tab."
     f.bidTimer:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
       self:ClearFocus()
     end)
+    f.bidTimer:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
+      self:ClearFocus()
+    end)
+    f.bidTimer:SetScript("OnEnter", function(self)
+		if (self.tooltipText) then
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText(self.tooltipText, 0.25, 0.75, 0.90, 1, true);
+		end
+		if (self.tooltipDescription) then
+			GameTooltip:AddLine(self.tooltipDescription, 1.0, 1.0, 1.0, true);
+			GameTooltip:Show();
+		end
+		if (self.tooltipWarning) then
+			GameTooltip:AddLine(self.tooltipWarning, 1.0, 0, 0, true);
+			GameTooltip:Show();
+		end
+	end)
+	f.bidTimer:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
 
     -- Sub Zero Bidding Checkbox
 	f.SubZeroBidding = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
@@ -662,10 +705,29 @@ function MonDKP:CreateBidWindow()
 	f.StartBidding:SetScript("OnClick", function (self)
 		ToggleTimerBtn(self)
 	end)
+	f.StartBidding:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText("Start Bidding", 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine("Begins bidding for current item. Bids will only be accepted while this is running.", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("Bidding duration can be set in \"Bid Timer\" box.", 1.0, 0, 0, true);
+		GameTooltip:Show();
+	end)
+	f.StartBidding:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
 
 	f.ClearBidWindow = MonDKP:CreateButton("TOP", f.StartBidding, "BOTTOM", 0, -10, "Clear Window");
 	f.ClearBidWindow:SetSize(90,25)
 	f.ClearBidWindow:SetScript("OnClick", ClearBidWindow)
+	f.ClearBidWindow:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText("Clear Window", 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine("Clears all item information and submitted bids from window.", 1.0, 1.0, 1.0, true);
+		GameTooltip:Show();
+	end)
+	f.ClearBidWindow:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
 
 
 	--------------------------------------------------
