@@ -3,7 +3,7 @@
 ## Author: Roeshambo
 ## Version: 1.1.0
 ## DefaultState: enabled
-## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_DKPHistory
+## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_DKPHistory, MonDKP_MinBids
 
 embeds.xml
 Core.lua

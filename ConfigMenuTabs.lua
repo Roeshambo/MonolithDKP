@@ -276,6 +276,12 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab6.text:SetText("DKP History");
   MonDKP.ConfigTab6.text:SetScale(1.2)
 
+  MonDKP.ConfigTab6.inst = MonDKP.ConfigTab6:CreateFontString(nil, "OVERLAY")
+  MonDKP.ConfigTab6.inst:ClearAllPoints();
+  MonDKP.ConfigTab6.inst:SetFontObject("MonDKPSmallRight");
+  MonDKP.ConfigTab6.inst:SetTextColor(0.3, 0.3, 0.3, 0.7)
+  MonDKP.ConfigTab6.inst:SetPoint("TOPRIGHT", MonDKP.ConfigTab6, "TOPRIGHT", -40, -13);
+  
   if #MonDKP_DKPHistory > 0 then
     MonDKP:DKPHistory_Update()
   end

@@ -690,6 +690,7 @@ function MonDKP:Options()
     MonDKP_DB["DKPBonus"]["DKPHistoryLimit"] = MonDKP.ConfigTab4.DKPHistory:GetNumber();
     MonDKP_DB["DKPBonus"]["TooltipHistoryCount"] = MonDKP.ConfigTab4.TooltipHistory:GetNumber();
     MonDKP:Print("Default settings saved.")
+    PlaySoundFile("sound/interface/iquestlogclosea.ogg")
     DKPTable_Update()
   end)
 

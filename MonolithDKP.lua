@@ -8,6 +8,8 @@ local MonDKP = core.MonDKP;
 function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, the entire addon window
   core.MonDKPUI = core.MonDKPUI or MonDKP:CreateMenu();
   core.MonDKPUI:SetShown(not core.MonDKPUI:IsShown())
+  MonDKP.UIConfig:SetFrameLevel(10)
+  if core.BiddingWindow then core.BiddingWindow:SetFrameLevel(5) end
   MonDKP:CheckOfficer()
   --core.IsOfficer = C_GuildInfo.CanEditOfficerNote()  -- seemingly removed from classic API
   if core.IsOfficer == false then
@@ -32,7 +34,7 @@ local SortButtons = {}
 
 function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTable based on classes in classFiltered table. core.currentSort should be used in most cases
   core.WorkingTable = {}
-  for k,v in pairs(MonDKP_DKPTable) do        -- sort and reset are used to pass along to MonDKP:SortDKPTable()
+  for k,v in ipairs(MonDKP_DKPTable) do        -- sort and reset are used to pass along to MonDKP:SortDKPTable()
     if(core.classFiltered[MonDKP_DKPTable[k]["class"]] == true) then
       if MonDKP.ConfigTab1.checkBtn[10]:GetChecked() == true then
         for i=1, 40 do
@@ -93,13 +95,14 @@ function MonDKP:CreateMenu()
   MonDKP.UIConfig:SetBackdropColor(0,0,0,0.8);
   MonDKP.UIConfig:SetMovable(true);
   MonDKP.UIConfig:EnableMouse(true);
-  MonDKP.UIConfig:SetFrameLevel(10)
   --MonDKP.UIConfig:SetResizable(true);
   --MonDKP.UIConfig:SetMaxResize(1400, 875)
   --MonDKP.UIConfig:SetMinResize(1000, 590)
   MonDKP.UIConfig:RegisterForDrag("LeftButton");
   MonDKP.UIConfig:SetScript("OnDragStart", MonDKP.UIConfig.StartMoving);
   MonDKP.UIConfig:SetScript("OnDragStop", MonDKP.UIConfig.StopMovingOrSizing);
+  MonDKP.UIConfig:SetFrameStrata("DIALOG")
+  MonDKP.UIConfig:SetFrameLevel(10)
   MonDKP.UIConfig:SetScript("OnMouseDown", function(self)
     self:SetFrameLevel(10)
     if core.BiddingWindow then

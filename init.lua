@@ -11,6 +11,7 @@ MonDKP.Commands = {
 	["bid"] = function(...)
 		local item = strjoin(" ", ...)
 		MonDKP:CheckOfficer()
+		MonDKP:SeedVerify_Update()
 
 		if core.IsOfficer == true then	
 			if ... == nil then
@@ -86,15 +87,18 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		MonDKP:OnInitialize(event, arg1)
 		self:UnregisterEvent("ADDON_LOADED")
 	elseif event == "CHAT_MSG_WHISPER" then
-		if core.IsOfficer == "" then MonDKP:CheckOfficer() end
+		MonDKP:CheckOfficer()
 		if core.IsOfficer == true then
 			MonDKP_CHAT_MSG_WHISPER(arg1, ...)
 		end
 	elseif event == "CHAT_MSG_SYSTEM" then
 		--MonoDKP_CHAT_MSG_SYSTEM(arg1)
 	elseif event == "GROUP_ROSTER_UPDATE" then
-		if IsInRaid() and core.IsOfficer == true then
-			AddRaidToDKPTable()
+		if not C_GuildInfo.GuildRoster() then
+			MonDKP:CheckOfficer()
+			if core.IsOfficer == true then
+				AddRaidToDKPTable()
+			end
 		end
 	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
 		if IsInRaid() then 					-- only processes combat log events if in raid
@@ -146,6 +150,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_DKPTable then MonDKP_DKPTable = {} end;
 		if not MonDKP_Loot then MonDKP_Loot = {} end;
 		if not MonDKP_DKPHistory then MonDKP_DKPHistory = {} end;
+		if not MonDKP_MinBids then MonDKP_MinBids = {} end;
 		if not MonDKP_DB then 
 	    	MonDKP_DB = {
 	    		DKPBonus = { 
@@ -154,13 +159,16 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	    		},
 	    	}
 		end;
+		if not MonDKP_DKPTable.seed then MonDKP_DKPTable.seed = 0 end
+		if not MonDKP_DKPHistory.seed then MonDKP_DKPHistory.seed = 0 end
+		if not MonDKP_Loot.seed then MonDKP_Loot.seed = 0 end
 		if not MonDKP_DB.MinBidBySlot then
 			MonDKP_DB.MinBidBySlot = {
     			Head = 70, Neck = 70, Shoulders = 70, Cloak = 70, Chest = 70, Bracers = 70, Hands = 70, Belt = 70, Legs = 70, Boots = 70, Ring = 70, Trinket = 70, OneHanded = 70, TwoHanded = 70, OffHand = 70, Range = 70, Other = 70,
     		}
     	end
 		if not MonDKP_DB.bossargs then MonDKP_DB.bossargs = { ["CurrentRaidZone"] = "Molten Core", ["LastKilledBoss"] = "Lucifron" } end
-		if not MonDKP_DB.seed then MonDKP_DB.seed = 0 end
+
 	    ------------------------------------
 	    --	Import SavedVariables
 	    ------------------------------------
@@ -176,7 +184,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 
 		MonDKP:Print("Version "..core.MonVersion..", created and maintained by Roeshambo@Herod-PvP");
 		MonDKP:Print("Loaded "..#MonDKP_DKPTable.." player records, "..#MonDKP_Loot.." loot history records and "..#MonDKP_DKPHistory.." dkp history records.");
-		MonDKP:Print("Submit any bugs @ https://github.com/Roeshambo/MonolithDKP/issues");
+		MonDKP:Print("Use /dkp ? for help and submit any bugs @ https://github.com/Roeshambo/MonolithDKP/issues");
 		
 		core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();		-- creates main menu
 		MonDKP:StartBidTimer(seconds, nil)							-- initiates timer frame for use
@@ -189,7 +197,7 @@ end
 -- Register Events and Initiallize AddOn
 ----------------------------------
 
-local events = CreateFrame("Frame");
+local events = CreateFrame("Frame", "EventsFrame");
 events:RegisterEvent("ADDON_LOADED");
 events:RegisterEvent("CHAT_MSG_WHISPER");
 events:RegisterEvent("GROUP_ROSTER_UPDATE");

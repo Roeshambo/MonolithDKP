@@ -5,6 +5,7 @@ local MonDKP = core.MonDKP;
 local players;
 local reason;
 local dkp;
+local formdate = date;
 local date;
 local year;
 local month;
@@ -19,6 +20,7 @@ local currentRow = 0;
 local btnText = 50;
 local curDate;
 local history = {};
+local menuFrame = CreateFrame("Frame", "MonDKPDeleteDKPMenuFrame", UIParent, "UIDropDownMenuTemplate")
 
 function MonDKP:SortDKPHistoryTable()             -- sorts the DKP History Table by date/time
   table.sort(MonDKP_DKPHistory, function(a, b)
@@ -47,6 +49,70 @@ function MonDKP:DKPHistory_Reset()
 			MonDKP.ConfigTab6.history[i]:Hide()
 		end
 	end
+end
+
+local function MonDKPDeleteDKPEntry(item)
+	-- pop confirmation. If yes, cycles through MonDKP_DKPHistory.players and every name it finds, it refunds them (or strips them of) dkp.
+	-- if deleted is the weekly decay,     curdkp * (100 / (100 - decayvalue))
+	local reason_header = MonDKP.ConfigTab6.history[item].d:GetText();
+	if strfind(reason_header, "%%") then
+		reason_header = gsub(reason_header, "%%", "%%%%")
+	end
+	local confirm_string = "Are you sure you'd like to delete the entry:\n\n"..reason_header.."\n\n|CFFFF0000Warning|r: Any DKP impacted by this entry will be refunded/removed from each player listed.";
+
+	StaticPopupDialogs["CONFIRM_DELETE"] = {
+
+		text = confirm_string,
+		button1 = "Yes",
+		button2 = "No",
+		OnAccept = function()
+			local dkp_value;
+			local ModType;
+
+			if strfind(MonDKP_DKPHistory[item].dkp, "%%") then
+				dkp_value = gsub(MonDKP_DKPHistory[item].dkp, "%%", "")
+				ModType = "perc"
+			else
+				dkp_value = MonDKP_DKPHistory[item].dkp
+				ModType = "whole"
+			end
+			for i=1, #MonDKP_DKPTable do
+				local search = strfind(string.upper(tostring(MonDKP_DKPHistory[item].players)), string.upper(MonDKP_DKPTable[i].player))
+				
+				if search then
+					if ModType == "perc" then
+						MonDKP_DKPTable[i].dkp = round(MonDKP_DKPTable[i].dkp * (100 / (100 + dkp_value)), 0)
+					elseif ModType == "whole" then
+						MonDKP_DKPTable[i].dkp = MonDKP_DKPTable[i].dkp - dkp_value;
+					end
+				end
+			end
+
+			table.remove(MonDKP_DKPHistory, item)
+			if MonDKP.ConfigTab6.history then
+				MonDKP:DKPHistory_Reset()
+			end
+			MonDKP:DKPHistory_Update()
+			DKPTable_Update()
+			MonDKP.Sync:SendData("MonDKPDKPDelSync", { seed = MonDKP_DKPHistory.seed, item })
+		end,
+		timeout = 0,
+		whileDead = true,
+		hideOnEscape = true,
+		preferredIndex = 3,
+	}
+	StaticPopup_Show ("CONFIRM_DELETE")
+
+end
+
+local function RightClickDKPMenu(self, item)
+	menu = {
+	{ text = MonDKP_DKPHistory[item]["dkp"].." DKP - "..MonDKP_DKPHistory[item]["reason"].." @ "..formdate("%m/%d/%y %H:%M:%S", MonDKP_DKPHistory[item]["date"]), isTitle = true},
+	{ text = "Delete DKP Entry", func = function()
+		MonDKPDeleteDKPEntry(item)
+	end },
+	}
+	EasyMenu(menu, menuFrame, "cursor", 0 , 0, "MENU", 2);
 end
 
 function MonDKP:DKPHistory_Update()
@@ -81,6 +147,14 @@ function MonDKP:DKPHistory_Update()
 			MonDKP.ConfigTab6.history[i].s:SetFontObject("MonDKPTinyLeft");
 			MonDKP.ConfigTab6.history[i].s:SetPoint("TOPLEFT", MonDKP.ConfigTab6.history[i].d, "BOTTOMLEFT", 15, -4);
 			MonDKP.ConfigTab6.history[i].s:SetWidth(400)
+
+			MonDKP.ConfigTab6.history[i]:SetScript("OnMouseDown", function(self, button)
+		    	if button == "RightButton" then
+	   				if core.IsOfficer == true then
+	   					RightClickDKPMenu(self, i)
+	   				end
+	   			end
+		    end)
 		end
 
 		players = MonDKP_DKPHistory[i].players;

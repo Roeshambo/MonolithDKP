@@ -125,6 +125,7 @@ core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width,
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
 core.IsOfficer = "";
+core.UpToDate = false;
 core.SelectedRows = {};       -- tracks rows in DKPTable that are currently selected for SetHighlightTexture
 core.ShowState = false;
 core.currentSort = "class"		-- stores current sort selection
@@ -227,6 +228,24 @@ function MonDKP:GetThemeColor()
   return c;
 end
 
+function MonDKP:UpdateSeeds()
+	local curTime = time()
+
+	local leader = MonDKP:GetGuildRankGroup(1)
+	GuildRosterSetPublicNote(leader[1].index, curTime)
+	MonDKP_DKPTable.seed = curTime
+	MonDKP_DKPHistory.seed = curTime
+	MonDKP_Loot.seed = curTime
+end
+
+function MonDKP:UpdateSeeds_Received()
+	local curTime = time()
+
+	MonDKP_DKPTable.seed = curTime
+	MonDKP_DKPHistory.seed = curTime
+	MonDKP_Loot.seed = curTime
+end
+
 function MonDKP:GetPlayerDKP(player)
   local search = MonDKP:Table_Search(MonDKP_DKPTable, player)
   local dkp;
@@ -300,7 +319,7 @@ function MonDKP:Print(...)        --print function to add "MonolithDKP:" to the 
     end
 end
 
-function MonDKP:CreateButton(point, relativeFrame, relativePoint, xOffset, yOffset, text)  -- temp function for testing purpose only
+function MonDKP:CreateButton(point, relativeFrame, relativePoint, xOffset, yOffset, text)
   local btn = CreateFrame("Button", nil, relativeFrame, "MonolithDKPButtonTemplate")
   btn:SetPoint(point, relativeFrame, relativePoint, xOffset, yOffset);
   btn:SetSize(100, 30);

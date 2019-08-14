@@ -36,48 +36,118 @@ end
 local function DeleteLootHistoryEntry(target)
 	local search = MonDKP:Table_Search(MonDKP_Loot, target["date"]);
 	local search_player = MonDKP:Table_Search(MonDKP_DKPTable, target["player"]);
+	
+	MonDKP:SeedVerify_Update()
+	if core.UpToDate == false and core.IsOfficer == true then
+		StaticPopupDialogs["CONFIRM_DELETE"] = {
+			text = "|CFFFF0000WARNING|r: You are attempting to modify an outdated DKP table. This may inadvertently corrupt data for the officers that have the most recent tables.\n\n Are you sure you would like to do this?",
+			button1 = "Yes",
+			button2 = "No",
+			OnAccept = function()
+				MonDKP:LootHistory_Reset()
+				MonDKP_DKPTable[search_player[1][1]].dkp = MonDKP_DKPTable[search_player[1][1]].dkp + target.cost 							-- refund previous looter
+				MonDKP_DKPTable[search_player[1][1]].lifetime_spent = MonDKP_DKPTable[search_player[1][1]].lifetime_spent - target.cost 	-- remove from lifetime_spent
 
-	MonDKP:LootHistory_Reset()
+				if search then
+					table.remove(MonDKP_Loot, search[1][1])
+				end
 
-	MonDKP_DKPTable[search_player[1][1]].dkp = MonDKP_DKPTable[search_player[1][1]].dkp + target.cost 							-- refund previous looter
-	MonDKP_DKPTable[search_player[1][1]].lifetime_spent = MonDKP_DKPTable[search_player[1][1]].lifetime_spent - target.cost 	-- remove from lifetime_spent
+				MonDKP.Sync:SendData("MonDKPDeleteLoot", {seed = MonDKP_Loot.seed, search[1][1]})
+				MonDKP:SortLootTable()
+				DKPTable_Update()
+				MonDKP:LootHistory_Update("No Filter");
+				MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
+			end,
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = true,
+			preferredIndex = 3,
+		}
+		StaticPopup_Show ("CONFIRM_DELETE")
+	else
+		MonDKP:LootHistory_Reset()
 
-	if search then
-		table.remove(MonDKP_Loot, search[1][1])
+		MonDKP_DKPTable[search_player[1][1]].dkp = MonDKP_DKPTable[search_player[1][1]].dkp + target.cost 							-- refund previous looter
+		MonDKP_DKPTable[search_player[1][1]].lifetime_spent = MonDKP_DKPTable[search_player[1][1]].lifetime_spent - target.cost 	-- remove from lifetime_spent
+
+		if search then
+			table.remove(MonDKP_Loot, search[1][1])
+		end
+
+		MonDKP.Sync:SendData("MonDKPDeleteLoot", {seed = MonDKP_Loot.seed, search[1][1]})
+		MonDKP:SortLootTable()
+		DKPTable_Update()
+		MonDKP:LootHistory_Update("No Filter");
+		MonDKP:UpdateSeeds()
+		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
 	end
-
-	MonDKP.Sync:SendData("MonDKPDeleteLoot", search[1][1])
-	MonDKP:SortLootTable()
-	DKPTable_Update()
-	MonDKP:LootHistory_Update("No Filter");
-	MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
 end
 
 local function ReassignLootEntry(entry)
 	if entry.player ~= core.SelectedData[1].player then
-		local search_before = MonDKP:Table_Search(MonDKP_DKPTable, entry.player);
-		local search_after = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[1].player)
+		MonDKP:SeedVerify_Update()
+		if core.UpToDate == false and core.IsOfficer == true then
+			StaticPopupDialogs["CONFIRM_ADJUST2"] = {
+				text = "|CFFFF0000WARNING|r: You are attempting to modify an outdated DKP table. This may inadvertently corrupt data for the officers that have the most recent tables.\n\n Are you sure you would like to do this?",
+				button1 = "Yes",
+				button2 = "No",
+				OnAccept = function()
+					local search_before = MonDKP:Table_Search(MonDKP_DKPTable, entry.player);
+					local search_after = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[1].player)
 
-		MonDKP:LootHistory_Reset()
+					MonDKP:LootHistory_Reset()
 
-		if search_before and search_after then
-			entry.player = core.SelectedData[1].player
-			MonDKP_DKPTable[search_before[1][1]].dkp = MonDKP_DKPTable[search_before[1][1]].dkp + entry.cost 							-- refund previous looter
-			MonDKP_DKPTable[search_before[1][1]].lifetime_spent = MonDKP_DKPTable[search_before[1][1]].lifetime_spent - entry.cost 		-- remove from lifetime_spent
-			MonDKP_DKPTable[search_after[1][1]].dkp = MonDKP_DKPTable[search_after[1][1]].dkp - entry.cost 								-- charge new looter
-			MonDKP_DKPTable[search_after[1][1]].lifetime_spent = MonDKP_DKPTable[search_after[1][1]].lifetime_spent + entry.cost 		-- charge to lifetime_spent
+					if search_before and search_after then
+						entry.player = core.SelectedData[1].player
+						MonDKP_DKPTable[search_before[1][1]].dkp = MonDKP_DKPTable[search_before[1][1]].dkp + entry.cost 							-- refund previous looter
+						MonDKP_DKPTable[search_before[1][1]].lifetime_spent = MonDKP_DKPTable[search_before[1][1]].lifetime_spent - entry.cost 		-- remove from lifetime_spent
+						MonDKP_DKPTable[search_after[1][1]].dkp = MonDKP_DKPTable[search_after[1][1]].dkp - entry.cost 								-- charge new looter
+						MonDKP_DKPTable[search_after[1][1]].lifetime_spent = MonDKP_DKPTable[search_after[1][1]].lifetime_spent + entry.cost 		-- charge to lifetime_spent
+					end
+
+					MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
+
+					local search = MonDKP:Table_Search(MonDKP_Loot, entry.date)
+					local temp_table = { seed = MonDKP_Loot.seed, { entry = MonDKP_Loot[search[1][1]].date, newplayer = core.SelectedData[1].player }}
+
+					MonDKP:SortLootTable()
+					MonDKP.Sync:SendData("MonDKPEditLoot", temp_table)
+					MonDKP:LootHistory_Update("No Filter");
+					DKPTable_Update()
+					table.wipe(temp_table);
+				end,
+				timeout = 0,
+				whileDead = true,
+				hideOnEscape = true,
+				preferredIndex = 3,
+			}
+			StaticPopup_Show ("CONFIRM_ADJUST2")
+		else
+			local search_before = MonDKP:Table_Search(MonDKP_DKPTable, entry.player);
+			local search_after = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[1].player)
+
+			MonDKP:LootHistory_Reset()
+
+			if search_before and search_after then
+				entry.player = core.SelectedData[1].player
+				MonDKP_DKPTable[search_before[1][1]].dkp = MonDKP_DKPTable[search_before[1][1]].dkp + entry.cost 							-- refund previous looter
+				MonDKP_DKPTable[search_before[1][1]].lifetime_spent = MonDKP_DKPTable[search_before[1][1]].lifetime_spent - entry.cost 		-- remove from lifetime_spent
+				MonDKP_DKPTable[search_after[1][1]].dkp = MonDKP_DKPTable[search_after[1][1]].dkp - entry.cost 								-- charge new looter
+				MonDKP_DKPTable[search_after[1][1]].lifetime_spent = MonDKP_DKPTable[search_after[1][1]].lifetime_spent + entry.cost 		-- charge to lifetime_spent
+			end
+
+			MonDKP:UpdateSeeds()
+			MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
+
+			local search = MonDKP:Table_Search(MonDKP_Loot, entry.date)
+			local temp_table = { seed = MonDKP_Loot.seed, { entry = MonDKP_Loot[search[1][1]].date, newplayer = core.SelectedData[1].player }}
+
+			MonDKP:SortLootTable()
+			MonDKP.Sync:SendData("MonDKPEditLoot", temp_table)
+			MonDKP:LootHistory_Update("No Filter");
+			DKPTable_Update()
+			table.wipe(temp_table);
 		end
-
-		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
-
-		local search = MonDKP:Table_Search(MonDKP_Loot, entry.date)
-		local temp_table = { entry = MonDKP_Loot[search[1][1]].date, newplayer = core.SelectedData[1].player }
-
-		MonDKP:SortLootTable()
-		MonDKP.Sync:SendData("MonDKPEditLoot", temp_table)
-		MonDKP:LootHistory_Update("No Filter");
-		DKPTable_Update()
-		table.wipe(temp_table);
 	else
 		StaticPopupDialogs["REASSIGN_LOOT_ENTRY_FAIL"] = {
 			text = "That item is already assigned to that player.",
@@ -139,8 +209,18 @@ local function RightClickLootMenu(self, item)  -- called by right click function
         MonDKPDeleteMenu(item)
       end },
       { text = "Reassign to Selected Player", func = function()
-      	if core.SelectedData[1] then
+      	if #core.SelectedData == 1 then
       		ReassignLootEntryConfirmation(item)
+      	elseif #core.SelectedData > 1 then
+      		StaticPopupDialogs["TOO_MANY_SELECTED_LOOT"] = {
+				text = "Too many players selected.",
+				button1 = "Ok",
+				timeout = 0,
+				whileDead = true,
+				hideOnEscape = true,
+				preferredIndex = 3,
+			}
+			StaticPopup_Show ("TOO_MANY_SELECTED_LOOT")
       	else
 			StaticPopupDialogs["PLAYER_NOT_SELECTED_LOOT"] = {
 				text = "No player selected to transfer loot.",
@@ -246,6 +326,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 	MonDKP.ConfigTab5.inst:SetText("Shift+Click to link item\nAlt+Click to link line");
 	if core.IsOfficer == true then
 		MonDKP.ConfigTab5.inst:SetText(MonDKP.ConfigTab5.inst:GetText().."\nRight Click to edit entry")
+		MonDKP.ConfigTab6.inst:SetText("Right Click To Delete Entry")
 	end
 
 	if CurrentLimit > #MonDKP_Loot then CurrentLimit = #MonDKP_Loot end;

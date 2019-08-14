@@ -285,20 +285,22 @@ function MonDKP:SeedVerify_Update()
       leader[1].note = 0
     end
 
-    if MonDKP_DB.seed >= tonumber(leader[1].note) then         -- tonumber(leader[1].note)      in place of 0
+    if MonDKP_DKPTable.seed >= tonumber(leader[1].note) and MonDKP_Loot.seed >= tonumber(leader[1].note) and MonDKP_DKPHistory.seed >= tonumber(leader[1].note) then         -- tonumber(leader[1].note)      in place of 0
+      core.UpToDate = true;
       MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\up-to-date")
       MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
         GameTooltip:SetText("DKP Status", 0.25, 0.75, 0.90, 1, true);
-        GameTooltip:AddLine("Your DKP Table is currently |cff00ff00up-to-date|r.", 1.0, 1.0, 1.0, false);
+        GameTooltip:AddLine("All of your tables are currently |cff00ff00up-to-date|r.", 1.0, 1.0, 1.0, false);
         GameTooltip:Show()
       end)
     else
+      core.UpToDate = false;
       MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\out-of-date")
       MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
         GameTooltip:SetText("DKP Status", 0.25, 0.75, 0.90, 1, true);
-        GameTooltip:AddLine("Your DKP Table is currently |cffff0000out-of-date|r.", 1.0, 1.0, 1.0, false);
+        GameTooltip:AddLine("One or more of your tables are currently |cffff0000out-of-date|r.", 1.0, 1.0, 1.0, false);
         GameTooltip:AddLine("Request updated tables from an officer.", 1.0, 1.0, 1.0, false);
         GameTooltip:Show()
       end)

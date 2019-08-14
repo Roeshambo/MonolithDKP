@@ -13,50 +13,126 @@ local function AdjustDKP()
 	if curReason == "Boss Kill Bonus" then adjustReason = core.CurrentRaidZone..": "..core.LastKilledBoss; end
 	if curReason == "New Boss Kill Bonus" then adjustReason = core.CurrentRaidZone..": "..core.LastKilledBoss.." (First Kill)" end
 	if (#core.SelectedData > 1 and adjustReason and adjustReason ~= "Other - Enter Other Reason Here") then
-		local tempString = "";       -- stores list of changes
-		local dkpHistoryString = ""   -- stores list for MonDKP_DKPHistory
-		for i=1, #core.SelectedData do
-			if MonDKP:Table_Search(core.WorkingTable, core.SelectedData[i]["player"]) then
-					if i < #core.SelectedData then
-						tempString = tempString.."|cff"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r, ";
-					else
-						tempString = tempString.."|cff"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r";
+		MonDKP:SeedVerify_Update()
+		if core.UpToDate == false and core.IsOfficer == true then
+			StaticPopupDialogs["CONFIRM_ADJUST1"] = {
+				text = "|CFFFF0000WARNING|r: You are attempting to modify an outdated DKP table. This may inadvertently corrupt data for the officers that have the most recent tables.\n\n Are you sure you would like to do this?",
+				button1 = "Yes",
+				button2 = "No",
+				OnAccept = function()
+					local tempString = "";       -- stores list of changes
+					local dkpHistoryString = ""   -- stores list for MonDKP_DKPHistory
+					for i=1, #core.SelectedData do
+						if MonDKP:Table_Search(core.WorkingTable, core.SelectedData[i]["player"]) then
+								if i < #core.SelectedData then
+									tempString = tempString.."|cff"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r, ";
+								else
+									tempString = tempString.."|cff"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r";
+								end
+								dkpHistoryString = dkpHistoryString..core.SelectedData[i]["player"]..","
+								MonDKP:DKPTable_Set(core.SelectedData[i]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber(), false)
+						end
 					end
-					dkpHistoryString = dkpHistoryString..core.SelectedData[i]["player"]..","
-					MonDKP:DKPTable_Set(core.SelectedData[i]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber(), false)
-			end
-		end
-		tinsert(MonDKP_DKPHistory, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
-		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
-		if MonDKP.ConfigTab6.history then
-			MonDKP:DKPHistory_Reset()
-		end
-		MonDKP:DKPHistory_Update()
-		local temp_table = {}
-		tinsert(temp_table, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
-		MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
-		table.wipe(temp_table)
-		if (MonDKP.ConfigTab1.checkBtn[10]:GetChecked() and MonDKP.ConfigTab2.selectAll:GetChecked()) then
-			MonDKP.Sync:SendData("MonDKPBroadcast", "Raid DKP Adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for reason: "..adjustReason)
+					tinsert(MonDKP_DKPHistory, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
+					MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
+					if MonDKP.ConfigTab6.history then
+						MonDKP:DKPHistory_Reset()
+					end
+					MonDKP:DKPHistory_Update()
+					local temp_table = {}
+					tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date}})
+					MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
+					table.wipe(temp_table)
+					if (MonDKP.ConfigTab1.checkBtn[10]:GetChecked() and MonDKP.ConfigTab2.selectAll:GetChecked()) then
+						MonDKP.Sync:SendData("MonDKPBroadcast", "Raid DKP Adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for reason: "..adjustReason)
+					else
+						MonDKP.Sync:SendData("MonDKPBroadcast", "DKP Adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for the following players: ")
+						MonDKP.Sync:SendData("MonDKPBroadcast", tempString)
+						MonDKP.Sync:SendData("MonDKPBroadcast", "Reason: "..adjustReason)
+					end
+				end,
+				timeout = 0,
+				whileDead = true,
+				hideOnEscape = true,
+				preferredIndex = 3,
+			}
+			StaticPopup_Show ("CONFIRM_ADJUST1")
 		else
-			MonDKP.Sync:SendData("MonDKPBroadcast", "DKP Adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for the following players: ")
-			MonDKP.Sync:SendData("MonDKPBroadcast", tempString)
-			MonDKP.Sync:SendData("MonDKPBroadcast", "Reason: "..adjustReason)
-		end
-	elseif (#core.SelectedData == 1 and adjustReason and adjustReason ~= "Other - Enter Other Reason Here") then
-		if core.SelectedData[1]["player"] and MonDKP:Table_Search(core.WorkingTable, core.SelectedData[1]["player"]) then
-			MonDKP:DKPTable_Set(core.SelectedData[1]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber(), false)
-			MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable) -- broadcast updated DKP table
-			MonDKP.Sync:SendData("MonDKPBroadcast", "|cff"..c[core.SelectedData[1]["class"]].hex..core.SelectedData[1]["player"].."s|r|cffff6060 DKP adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for reason: "..adjustReason.."|r")
-			tinsert(MonDKP_DKPHistory, {players=core.SelectedData[1]["player"], dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
+			local tempString = "";       -- stores list of changes
+			local dkpHistoryString = ""   -- stores list for MonDKP_DKPHistory
+			for i=1, #core.SelectedData do
+				if MonDKP:Table_Search(core.WorkingTable, core.SelectedData[i]["player"]) then
+						if i < #core.SelectedData then
+							tempString = tempString.."|cff"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r, ";
+						else
+							tempString = tempString.."|cff"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r";
+						end
+						dkpHistoryString = dkpHistoryString..core.SelectedData[i]["player"]..","
+						MonDKP:DKPTable_Set(core.SelectedData[i]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber(), false)
+				end
+			end
+			tinsert(MonDKP_DKPHistory, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
+			MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
 			if MonDKP.ConfigTab6.history then
 				MonDKP:DKPHistory_Reset()
 			end
 			MonDKP:DKPHistory_Update()
 			local temp_table = {}
-			tinsert(temp_table, {players=core.SelectedData[1]["player"], dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
+			tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date}})
 			MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
 			table.wipe(temp_table)
+			MonDKP:UpdateSeeds()
+			if (MonDKP.ConfigTab1.checkBtn[10]:GetChecked() and MonDKP.ConfigTab2.selectAll:GetChecked()) then
+				MonDKP.Sync:SendData("MonDKPBroadcast", "Raid DKP Adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for reason: "..adjustReason)
+			else
+				MonDKP.Sync:SendData("MonDKPBroadcast", "DKP Adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for the following players: ")
+				MonDKP.Sync:SendData("MonDKPBroadcast", tempString)
+				MonDKP.Sync:SendData("MonDKPBroadcast", "Reason: "..adjustReason)
+			end
+		end
+	elseif (#core.SelectedData == 1 and adjustReason and adjustReason ~= "Other - Enter Other Reason Here") then
+		if core.SelectedData[1]["player"] and MonDKP:Table_Search(core.WorkingTable, core.SelectedData[1]["player"]) then
+			MonDKP:SeedVerify_Update()
+			if core.UpToDate == false and core.IsOfficer == true then
+				StaticPopupDialogs["CONFIRM_ADJUST2"] = {
+					text = "|CFFFF0000WARNING|r: You are attempting to modify an outdated DKP table. This may inadvertently corrupt data for the officers that have the most recent tables.\n\n Are you sure you would like to do this?",
+					button1 = "Yes",
+					button2 = "No",
+					OnAccept = function()
+						MonDKP:DKPTable_Set(core.SelectedData[1]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber(), false)
+						MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable) -- broadcast updated DKP table
+						MonDKP.Sync:SendData("MonDKPBroadcast", "|cff"..c[core.SelectedData[1]["class"]].hex..core.SelectedData[1]["player"].."s|r|cffff6060 DKP adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for reason: "..adjustReason.."|r")
+						tinsert(MonDKP_DKPHistory, {players=core.SelectedData[1]["player"], dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
+						if MonDKP.ConfigTab6.history then
+							MonDKP:DKPHistory_Reset()
+						end
+						MonDKP:DKPHistory_Update()
+						local temp_table = {}
+						tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=core.SelectedData[1]["player"], dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date}})
+						MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
+						table.wipe(temp_table)
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopup_Show ("CONFIRM_ADJUST2")
+			else
+				MonDKP:UpdateSeeds()
+				MonDKP:DKPTable_Set(core.SelectedData[1]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber(), false)
+				MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable) -- broadcast updated DKP table
+				MonDKP.Sync:SendData("MonDKPBroadcast", "|cff"..c[core.SelectedData[1]["class"]].hex..core.SelectedData[1]["player"].."s|r|cffff6060 DKP adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for reason: "..adjustReason.."|r")
+				tinsert(MonDKP_DKPHistory, {players=core.SelectedData[1]["player"], dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
+				if MonDKP.ConfigTab6.history then
+					MonDKP:DKPHistory_Reset()
+				end
+				MonDKP:DKPHistory_Update()
+				local temp_table = {}
+				tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=core.SelectedData[1]["player"], dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date}})
+				MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
+				table.wipe(temp_table)
+			end
 		end
 	else
 		local validation;
@@ -83,43 +159,97 @@ end
 local function DecayDKP(amount, deductionType, GetSelections)
 	local playerString = "";
 
-	for key, value in pairs(MonDKP_DKPTable) do
-		local dkp = value["dkp"]
-		local player = value["player"]
-		local amount = amount;
-		amount = tonumber(amount) / 100		-- converts percentage to a decimal
-		if amount < 0 then
-			amount = amount * -1			-- flips value to positive if officer accidently used negative number in editbox
-		end
-		local deducted;
+	MonDKP:SeedVerify_Update()
+	if core.UpToDate == false and core.IsOfficer == true then
+		StaticPopupDialogs["CONFIRM_DECAY"] = {
+			text = "|CFFFF0000WARNING|r: You are attempting to modify an outdated DKP table. This may inadvertently corrupt data for the officers that have the most recent tables.\n\n Are you sure you would like to do this?",
+			button1 = "Yes",
+			button2 = "No",
+			OnAccept = function()
+				for key, value in ipairs(MonDKP_DKPTable) do
+					local dkp = value["dkp"]
+					local player = value["player"]
+					local amount = amount;
+					amount = tonumber(amount) / 100		-- converts percentage to a decimal
+					if amount < 0 then
+						amount = amount * -1			-- flips value to positive if officer accidently used negative number in editbox
+					end
+					local deducted;
 
-		if (GetSelections and MonDKP:Table_Search(core.SelectedData, player)) or GetSelections == false then
-			if dkp > 0 then
-				if deductionType == "percent" then
-					deducted = dkp * amount
-					dkp = round(dkp - deducted, 0);
-					value["dkp"] = tonumber(round(dkp, 0));
-				elseif deductionType == "points" then
-					-- do stuff for flat point deductions
+					if (GetSelections and MonDKP:Table_Search(core.SelectedData, player)) or GetSelections == false then
+						if dkp > 0 then
+							if deductionType == "percent" then
+								deducted = dkp * amount
+								dkp = round(dkp - deducted, 0);
+								value["dkp"] = tonumber(round(dkp, 0));
+							elseif deductionType == "points" then
+								-- do stuff for flat point deductions
+							end
+						end
+						playerString = playerString..player..",";
+					end
 				end
+
+				if tonumber(amount) < 0 then amount = amount * -1 end		-- flips value to positive if officer accidently used a negative number
+
+				tinsert(MonDKP_DKPHistory, {players=playerString, dkp="-"..amount.."%", reason="Weekly Decay", date=time()})
+				MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
+				if MonDKP.ConfigTab6.history then
+					MonDKP:DKPHistory_Reset()
+				end
+				MonDKP:DKPHistory_Update()
+				local temp_table = {}
+				tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=playerString, dkp="-"..amount.."%", reason="Weekly Decay", date=time()}})
+				MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
+				table.wipe(temp_table)
+				DKPTable_Update()
+			end,
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = true,
+			preferredIndex = 3,
+		}
+		StaticPopup_Show ("CONFIRM_DECAY")
+	else
+		for key, value in ipairs(MonDKP_DKPTable) do
+			local dkp = value["dkp"]
+			local player = value["player"]
+			local amount = amount;
+			amount = tonumber(amount) / 100		-- converts percentage to a decimal
+			if amount < 0 then
+				amount = amount * -1			-- flips value to positive if officer accidently used negative number in editbox
 			end
-			playerString = playerString..player..",";
+			local deducted;
+
+			if (GetSelections and MonDKP:Table_Search(core.SelectedData, player)) or GetSelections == false then
+				if dkp > 0 then
+					if deductionType == "percent" then
+						deducted = dkp * amount
+						dkp = round(dkp - deducted, 0);
+						value["dkp"] = tonumber(round(dkp, 0));
+					elseif deductionType == "points" then
+						-- do stuff for flat point deductions
+					end
+				end
+				playerString = playerString..player..",";
+			end
 		end
-	end
 
-	if tonumber(amount) < 0 then amount = amount * -1 end		-- flips value to positive if officer accidently used a negative number
+		if tonumber(amount) < 0 then amount = amount * -1 end		-- flips value to positive if officer accidently used a negative number
 
-	tinsert(MonDKP_DKPHistory, {players=playerString, dkp="-"..amount.."%", reason="Weekly Decay", date=time()})
-	MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
-	if MonDKP.ConfigTab6.history then
-		MonDKP:DKPHistory_Reset()
+		tinsert(MonDKP_DKPHistory, {players=playerString, dkp="-"..amount.."%", reason="Weekly Decay", date=time()})
+		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
+		if MonDKP.ConfigTab6.history then
+			MonDKP:DKPHistory_Reset()
+		end
+		MonDKP:DKPHistory_Update()
+		local temp_table = {}
+		tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=playerString, dkp="-"..amount.."%", reason="Weekly Decay", date=time()}})
+		MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
+		table.wipe(temp_table)
+		MonDKP:UpdateSeeds()
+		DKPTable_Update()
 	end
-	MonDKP:DKPHistory_Update()
-	local temp_table = {}
-	tinsert(temp_table, {players=playerString, dkp="-"..amount.."%", reason="Weekly Decay", date=time()})
-	MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
-	table.wipe(temp_table)
-	DKPTable_Update()
 end
 
 function MonDKP:AdjustDKPTab_Create()
