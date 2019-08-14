@@ -45,6 +45,7 @@ function MonDKP.Sync:OnEnable()
 	MonDKP.Sync:RegisterComm("MonDKPDKPLogSync", MonDKP.Sync:OnCommReceived())		-- broadcasts entire DKP history table
 	MonDKP.Sync:RegisterComm("MonDKPDKPDelSync", MonDKP.Sync:OnCommReceived())		-- broadcasts deleated DKP history entries
 	MonDKP.Sync:RegisterComm("MonDKPDKPAward", MonDKP.Sync:OnCommReceived())		-- broadcasts individual DKP award to DKP history table
+	MonDKP.Sync:RegisterComm("MonDKPMinBids", MonDKP.Sync:OnCommReceived())		-- broadcasts minimum dkp values (set in Options tab or custom values in bid window)
 end
 
 function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
@@ -67,9 +68,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 					end
 				end
 			end
-			if (sender ~= UnitName("player")) then
+			if (sender ~= UnitName("player")) then --(sender ~= UnitName("player"))
 				if (prefix == "MonDKPDataSync" or prefix == "MonDKPLogSync" or prefix == "MonDKPLootAward" or prefix == "MonDKPDKPLogSync" or prefix == "MonDKPDKPAward"
-				or prefix == "MonDKPDeleteLoot" or prefix == "MonDKPEditLoot" or prefix == "MonDKPDKPDelSync") then
+				or prefix == "MonDKPDeleteLoot" or prefix == "MonDKPEditLoot" or prefix == "MonDKPDKPDelSync" or prefix == "MonDKPMinBids") then
 					decoded = LibCompress:Decompress(LibCompressAddonEncodeTable:Decode(message))
 					local success, deserialized = LibAceSerializer:Deserialize(decoded);
 					if success then
@@ -265,6 +266,32 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								MonDKP:DKPHistory_Update()
 								DKPTable_Update()
 								MonDKP:UpdateSeeds_Received()
+							end
+						elseif prefix == "MonDKPMinBids" then
+							if core.IsOfficer then
+								StaticPopupDialogs["CONFIRM_MINBIDS"] = {
+									text = "|CFF00FF00UPDATE|r: "..sender.." has broadcast their minimum bid settings. Do you wish to accept?",
+									button1 = "Yes",
+									button2 = "No",
+									OnAccept = function()
+										MonDKP_DB.MinBidBySlot = deserialized[1]
+
+										for i=1, #deserialized[2] do
+											local search = MonDKP:Table_Search(MonDKP_MinBids, deserialized[2][i].item)
+											if search then
+												MonDKP_MinBids[search[1][1]].minbid = deserialized[2][i].minbid
+											else
+												table.insert(MonDKP_MinBids, deserialized[2][i])
+											end
+										end
+										MonDKP:Print("Minimum Bid Values Received from "..sender)
+									end,
+									timeout = 0,
+									whileDead = true,
+									hideOnEscape = true,
+									preferredIndex = 3,
+								}
+								StaticPopup_Show ("CONFIRM_MINBIDS")
 							end
 						else
 							if tonumber(leader[1].note) > deserialized.seed and core.IsOfficer == true then

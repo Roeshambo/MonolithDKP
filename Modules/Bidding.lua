@@ -189,16 +189,21 @@ local function StartBidding()
 	local search = MonDKP:Table_Search(MonDKP_MinBids, core.BiddingWindow.itemName:GetText())
 	local val = GetMinBid(CurrItemForBid);
 	
-	if not search and tonumber(core.BiddingWindow.itemName:GetText()) ~= tonumber(val) then
-		tinsert(MonDKP_MinBids, {item=core.BiddingWindow.itemName:GetText(), minbid=core.BiddingWindow.minBid:GetText()})
-	elseif search and tonumber(core.BiddingWindow.itemName:GetText()) ~= tonumber(val) and core.BiddingWindow.CustomMinBid:GetChecked() == true then
-		if MonDKP_MinBids[search[1][1]].minbid ~= core.BiddingWindow.minBid:GetText() then
-			MonDKP_MinBids[search[1][1]].minbid = core.BiddingWindow.minBid:GetText();
+	if not search and core.BiddingWindow.minBid:GetNumber() ~= tonumber(val) then
+		tinsert(MonDKP_MinBids, {item=core.BiddingWindow.itemName:GetText(), minbid=core.BiddingWindow.minBid:GetNumber()})
+		core.BiddingWindow.CustomMinBid:SetShown(true);
+	 	core.BiddingWindow.CustomMinBid:SetChecked(true);
+	elseif search and core.BiddingWindow.minBid:GetNumber() ~= tonumber(val) and core.BiddingWindow.CustomMinBid:GetChecked() == true then
+		if MonDKP_MinBids[search[1][1]].minbid ~= core.BiddingWindow.minBid:GetNumber() then
+			MonDKP_MinBids[search[1][1]].minbid = core.BiddingWindow.minBid:GetNumber();
+			core.BiddingWindow.CustomMinBid:SetShown(true);
+	 		core.BiddingWindow.CustomMinBid:SetChecked(true);
 		end
 	end
 
 	if search and core.BiddingWindow.CustomMinBid:GetChecked() == false then
 		table.remove(MonDKP_MinBids, search[1][1])
+		core.BiddingWindow.CustomMinBid:SetShown(false);
 	end
 
 	core.BidInProgress = true;
@@ -494,14 +499,22 @@ function MonDKP:CreateTimer()
 end
 
 local function BidRow_OnClick(self)
-	for i=1, numrows do
-		core.BiddingWindow.bidTable.Rows[i]:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
-		core.BiddingWindow.bidTable.Rows[i]:GetNormalTexture():SetAlpha(0.2)
-	end
-    self:SetNormalTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\ListBox-Highlight");
-    self:GetNormalTexture():SetAlpha(1)
+	if SelectedBidder.player == strsub(self.Strings[1]:GetText(), 1, strfind(self.Strings[1]:GetText(), " ")-1) then
+		for i=1, numrows do
+			core.BiddingWindow.bidTable.Rows[i]:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
+			core.BiddingWindow.bidTable.Rows[i]:GetNormalTexture():SetAlpha(0.2)
+		end
+		SelectedBidder = {}
+	else
+		for i=1, numrows do
+			core.BiddingWindow.bidTable.Rows[i]:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
+			core.BiddingWindow.bidTable.Rows[i]:GetNormalTexture():SetAlpha(0.2)
+		end
+	    self:SetNormalTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\ListBox-Highlight");
+	    self:GetNormalTexture():SetAlpha(0.7)
 
-    SelectedBidder = {player=strsub(self.Strings[1]:GetText(), 1, strfind(self.Strings[1]:GetText(), " ")-1), bid=tonumber(self.Strings[2]:GetText())}
+	    SelectedBidder = {player=strsub(self.Strings[1]:GetText(), 1, strfind(self.Strings[1]:GetText(), " ")-1), bid=tonumber(self.Strings[2]:GetText())}
+    end
 end
 
 function BidWindowCreateRow(parent, id) -- Create 3 buttons for each row in the list

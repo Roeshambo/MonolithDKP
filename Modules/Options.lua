@@ -202,7 +202,7 @@ function MonDKP:Options()
         elseif i==9 then
           MonDKP.ConfigTab4.DefaultMinBids.SlotBox[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab4.DefaultMinBids.SlotBox[1], "TOPLEFT", 172, 0)
         elseif i==17 then
-          MonDKP.ConfigTab4.DefaultMinBids.SlotBox[i]:SetPoint("TOP", MonDKP.ConfigTab4.DefaultMinBids.SlotBox[16], "BOTTOM", -80, -22)
+          MonDKP.ConfigTab4.DefaultMinBids.SlotBox[i]:SetPoint("TOP", MonDKP.ConfigTab4.DefaultMinBids.SlotBox[8], "BOTTOM", 0, -22)
         else
           MonDKP.ConfigTab4.DefaultMinBids.SlotBox[i]:SetPoint("TOP", MonDKP.ConfigTab4.DefaultMinBids.SlotBox[i-1], "BOTTOM", 0, -22)
         end
@@ -292,6 +292,41 @@ function MonDKP:Options()
       MonDKP.ConfigTab4.DefaultMinBids.SlotBox[17]:SetText(tonumber(MinBidSettings["Other"]))
       MonDKP.ConfigTab4.DefaultMinBids.SlotBox[17].tooltipText = "Other"
       MonDKP.ConfigTab4.DefaultMinBids.SlotBox[17].tooltipDescription = "Minimum bid for all other items that do not fall into the above categories (Heads, Hearts, Hunter Leaf etc.)"
+
+      -- Broadcast Minimum Bids Button
+      MonDKP.ConfigTab4.BroadcastMinBids = self:CreateButton("TOP", MonDKP.ConfigTab4, "BOTTOM", 30, 30, "Broadcast Values");
+      MonDKP.ConfigTab4.BroadcastMinBids:ClearAllPoints();
+      MonDKP.ConfigTab4.BroadcastMinBids:SetPoint("LEFT", MonDKP.ConfigTab4.DefaultMinBids.SlotBox[17], "RIGHT", 60, 0)
+      MonDKP.ConfigTab4.BroadcastMinBids:SetSize(110,25)
+      MonDKP.ConfigTab4.BroadcastMinBids:SetScript("OnClick", function()
+        StaticPopupDialogs["SEND_MINBIDS"] = {
+          text = "Are you sure you'd like to broadcast your minimum bid settings to all officers?",
+          button1 = "Yes",
+          button2 = "No",
+          OnAccept = function()
+            local temptable = {}
+            table.insert(temptable, MonDKP_DB.MinBidBySlot)
+            table.insert(temptable, MonDKP_MinBids)
+            MonDKP.Sync:SendData("MonDKPMinBids", temptable)
+            MonDKP:Print("Minimum Bid Values Sent")
+          end,
+          timeout = 0,
+          whileDead = true,
+          hideOnEscape = true,
+          preferredIndex = 3,
+        }
+        StaticPopup_Show ("SEND_MINBIDS")
+      end);
+      MonDKP.ConfigTab4.BroadcastMinBids:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+        GameTooltip:SetText("Broadcast Values", 0.25, 0.75, 0.90, 1, true)
+        GameTooltip:AddLine("Broadcast above minimum bid values to all officers. This will also broadcast any custom values set for specific items in the bid window.", 1.0, 1.0, 1.0, true);
+        GameTooltip:AddLine("Current values will not be overwritten. Receiving this broadcast will update values already set or add values that don't exist. Any values they may have that are not sent will remain unchanged.", 1.0, 0, 0, true);
+        GameTooltip:Show()
+      end)
+      MonDKP.ConfigTab4.BroadcastMinBids:SetScript("OnLeave", function()
+        GameTooltip:Hide()
+      end)
 
     -- Bid Timer Slider
     MonDKP.ConfigTab4.bidTimerSlider = CreateFrame("SLIDER", "$parentBidTimerSlider", MonDKP.ConfigTab4, "MonDKPOptionsSliderTemplate");
@@ -614,7 +649,7 @@ function MonDKP:Options()
     PlaySound(808)
   end)
 
--- Save Settings Button
+  -- Save Settings Button
   MonDKP.ConfigTab4.submitSettings = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab4, "BOTTOMLEFT", 30, 30, "Save Settings");
   MonDKP.ConfigTab4.submitSettings:ClearAllPoints();
   MonDKP.ConfigTab4.submitSettings:SetPoint("TOP", MonDKP.ConfigTab4.supressNotifications, "BOTTOMLEFT", 20, -20)
