@@ -124,7 +124,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 					end
 				end
 			end
-		--end
+		end
 	elseif event == "LOOT_OPENED" then
 		MonDKP_Register_ShiftClickLootWindowHook()
 	end
