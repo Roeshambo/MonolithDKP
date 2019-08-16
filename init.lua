@@ -108,7 +108,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			end
 		end
 	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-		--if IsInRaid() then 					-- only processes combat log events if in raid
+		if IsInRaid() then 					-- only processes combat log events if in raid
 			local _,arg1,_,_,_,_,_,_,arg2 = CombatLogGetCurrentEventInfo();			-- run operation when boss is killed
 			if arg1 == "UNIT_DIED" then
 				MonDKP:CheckOfficer()
