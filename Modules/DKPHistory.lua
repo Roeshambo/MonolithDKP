@@ -37,7 +37,7 @@ function MonDKP:DKPHistory_Reset()
 		MonDKP.ConfigTab6.loadMoreBtn:SetText("Load "..btnText.." more...")
 	end
 
-	for i=1, #MonDKP_DKPHistory do
+	for i=1, #MonDKP.ConfigTab6.history do
 		if MonDKP.ConfigTab6.history[i] then
 			MonDKP.ConfigTab6.history[i].h:SetText("")
 			MonDKP.ConfigTab6.history[i].h:Hide()
@@ -77,7 +77,7 @@ local function MonDKPDeleteDKPEntry(item)
 				ModType = "whole"
 			end
 			for i=1, #MonDKP_DKPTable do
-				local search = strfind(string.upper(tostring(MonDKP_DKPHistory[item].players)), string.upper(MonDKP_DKPTable[i].player))
+				local search = strfind(string.upper(tostring(MonDKP_DKPHistory[item].players)), string.upper(MonDKP_DKPTable[i].player)..",")
 				
 				if search then
 					if ModType == "perc" then
@@ -90,6 +90,9 @@ local function MonDKPDeleteDKPEntry(item)
 
 			table.remove(MonDKP_DKPHistory, item)
 			if MonDKP.ConfigTab6.history then
+				MonDKP:DKPHistory_Reset()
+			end
+			if MonDKP.ConfigTab6.history and #MonDKP_DKPHistory == 0 then
 				MonDKP:DKPHistory_Reset()
 			end
 			MonDKP:DKPHistory_Update()
@@ -163,7 +166,7 @@ function MonDKP:DKPHistory_Update()
 		date = MonDKP:FormatTime(MonDKP_DKPHistory[i].date);
 		
 		player_table = { strsplit(",", players) } or players
-		if player_table[1] ~= nil and #player_table > 1 then
+		if player_table[1] ~= nil and #player_table > 1 then	-- removes last entry in table which ends up being nil, which creates an additional comma at the end of the string
 			tremove(player_table, #player_table)
 		end
 

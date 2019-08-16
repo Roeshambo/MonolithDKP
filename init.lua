@@ -91,17 +91,24 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		if core.IsOfficer == true then
 			MonDKP_CHAT_MSG_WHISPER(arg1, ...)
 		end
-	elseif event == "CHAT_MSG_SYSTEM" then
+	--elseif event == "CHAT_MSG_SYSTEM" then
 		--MonoDKP_CHAT_MSG_SYSTEM(arg1)
-	elseif event == "GROUP_ROSTER_UPDATE" then
+	--[[elseif event == "GROUP_ROSTER_UPDATE" then 			-- functionality unneccessary
 		if not C_GuildInfo.GuildRoster() then
 			MonDKP:CheckOfficer()
 			if core.IsOfficer == true then
 				AddRaidToDKPTable()
 			end
+		end--]]
+	elseif event == "GUILD_ROSTER_UPDATE" then 		-- checks if player is an officer on load
+		if IsInGuild() then
+			MonDKP:CheckOfficer()
+			if core.IsOfficer ~= "" then
+				self:UnregisterEvent("GUILD_ROSTER_UPDATE")
+			end
 		end
 	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
-		if IsInRaid() then 					-- only processes combat log events if in raid
+		--if IsInRaid() then 					-- only processes combat log events if in raid
 			local _,arg1,_,_,_,_,_,_,arg2 = CombatLogGetCurrentEventInfo();			-- run operation when boss is killed
 			if arg1 == "UNIT_DIED" then
 				MonDKP:CheckOfficer()
@@ -117,7 +124,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 					end
 				end
 			end
-		end
+		--end
 	elseif event == "LOOT_OPENED" then
 		MonDKP_Register_ShiftClickLootWindowHook()
 	end
@@ -151,6 +158,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_Loot then MonDKP_Loot = {} end;
 		if not MonDKP_DKPHistory then MonDKP_DKPHistory = {} end;
 		if not MonDKP_MinBids then MonDKP_MinBids = {} end;
+		if not MonDKP_Whitelist then MonDKP_Whitelist = {} end;
 		if not MonDKP_DB then 
 	    	MonDKP_DB = {
 	    		DKPBonus = { 
@@ -203,4 +211,5 @@ events:RegisterEvent("CHAT_MSG_WHISPER");
 events:RegisterEvent("GROUP_ROSTER_UPDATE");
 events:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 events:RegisterEvent("LOOT_OPENED")
+events:RegisterEvent("GUILD_ROSTER_UPDATE")
 events:SetScript("OnEvent", MonDKP_OnEvent); -- calls the above MonDKP_OnEvent function to determine what to do with the event

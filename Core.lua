@@ -9,16 +9,16 @@ local _G = _G;
 core.MonDKP = {};       -- UI Frames global
 local MonDKP = core.MonDKP;
 
-local race,_,_ = UnitRace("player");
+--[[local race,_,_ = UnitRace("player");
 if race == "Undead" or race == "Tauren" or race == "Orc" or race == "Troll" then
   core.faction = "Horde";
 elseif race == "Gnome" or race == "Human" or race == "Night Elf" or race == "Dwarf" then
   core.faction = "Alliance";
 else
-  core.faction = "Horde";  -- account for live races (delete before release)
-end
+  core.faction = "Horde";
+end--]]
 
-
+core.faction = UnitFactionGroup("player")
 if core.faction == "Horde" then
   core.CColors = {   -- class colors
     ["Druid"] = { r = 1, g = 0.49, b = 0.04, hex = "FF7D0A" },
@@ -194,14 +194,29 @@ function MonDKP:GetGuildRankIndex(player)
 end
 
 function MonDKP:CheckOfficer()      -- checks if user is an officer IF core.IsOfficer is empty. Use before checks against core.IsOfficer
-  if core.IsOfficer == "" then
+  if core.IsOfficer == "" then      -- used as a redundency as it should be set on load in init.lua GUILD_ROSTER_UPDATE event
+    if MonDKP:GetGuildRankIndex(UnitName("player")) == 1 then       -- automatically gives permissions above all settings if player is guild leader
+      core.IsOfficer = true
+      MonDKP.ConfigTab3.WhitelistContainer:Show()
+      return;
+    end
     if IsInGuild() then
-      local curPlayerRank = MonDKP:GetGuildRankIndex(UnitName("player"))
-      core.IsOfficer = C_GuildInfo.GuildControlGetRankFlags(curPlayerRank)[12]
+      if #MonDKP_Whitelist > 0 then
+        core.IsOfficer = false;
+        for i=1, #MonDKP_Whitelist do
+          if MonDKP_Whitelist[i] == UnitName("player") then
+            core.IsOfficer = true;
+          end
+        end
+      else
+        local curPlayerRank = MonDKP:GetGuildRankIndex(UnitName("player"))
+        if curPlayerRank then
+          core.IsOfficer = C_GuildInfo.GuildControlGetRankFlags(curPlayerRank)[12]
+        end
+      end
     else
       core.IsOfficer = false;
     end
-    core.MonDKPOptions = core.MonDKPOptions or MonDKP:Options()
   end
 end
 

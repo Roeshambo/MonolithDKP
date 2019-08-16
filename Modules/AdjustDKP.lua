@@ -12,7 +12,7 @@ local function AdjustDKP()
 	if (curReason == "Other") then adjustReason = "Other - "..MonDKP.ConfigTab2.otherReason:GetText(); end
 	if curReason == "Boss Kill Bonus" then adjustReason = core.CurrentRaidZone..": "..core.LastKilledBoss; end
 	if curReason == "New Boss Kill Bonus" then adjustReason = core.CurrentRaidZone..": "..core.LastKilledBoss.." (First Kill)" end
-	if (#core.SelectedData > 1 and adjustReason and adjustReason ~= "Other - Enter Other Reason Here") then
+	if (adjustReason and adjustReason ~= "Other - Enter Other Reason Here") then
 		MonDKP:SeedVerify_Update()
 		if core.UpToDate == false and core.IsOfficer == true then
 			StaticPopupDialogs["CONFIRM_ADJUST1"] = {
@@ -90,7 +90,7 @@ local function AdjustDKP()
 				MonDKP.Sync:SendData("MonDKPBroadcast", "Reason: "..adjustReason)
 			end
 		end
-	elseif (#core.SelectedData == 1 and adjustReason and adjustReason ~= "Other - Enter Other Reason Here") then
+	elseif (#core.SelectedData == 1 and adjustReason and adjustReason ~= "Other - Enter Other Reason Here") then		-- delete from here
 		if core.SelectedData[1]["player"] and MonDKP:Table_Search(core.WorkingTable, core.SelectedData[1]["player"]) then
 			MonDKP:SeedVerify_Update()
 			if core.UpToDate == false and core.IsOfficer == true then
@@ -102,7 +102,7 @@ local function AdjustDKP()
 						MonDKP:DKPTable_Set(core.SelectedData[1]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber(), false)
 						MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable) -- broadcast updated DKP table
 						MonDKP.Sync:SendData("MonDKPBroadcast", "|cff"..c[core.SelectedData[1]["class"]].hex..core.SelectedData[1]["player"].."s|r|cffff6060 DKP adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for reason: "..adjustReason.."|r")
-						tinsert(MonDKP_DKPHistory, {players=core.SelectedData[1]["player"], dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
+						tinsert(MonDKP_DKPHistory, {players=core.SelectedData[1]["player"]..",", dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
 						if MonDKP.ConfigTab6.history then
 							MonDKP:DKPHistory_Reset()
 						end
@@ -123,7 +123,7 @@ local function AdjustDKP()
 				MonDKP:DKPTable_Set(core.SelectedData[1]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber(), false)
 				MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable) -- broadcast updated DKP table
 				MonDKP.Sync:SendData("MonDKPBroadcast", "|cff"..c[core.SelectedData[1]["class"]].hex..core.SelectedData[1]["player"].."s|r|cffff6060 DKP adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for reason: "..adjustReason.."|r")
-				tinsert(MonDKP_DKPHistory, {players=core.SelectedData[1]["player"], dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
+				tinsert(MonDKP_DKPHistory, {players=core.SelectedData[1]["player"]..",", dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
 				if MonDKP.ConfigTab6.history then
 					MonDKP:DKPHistory_Reset()
 				end
@@ -133,7 +133,7 @@ local function AdjustDKP()
 				MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
 				table.wipe(temp_table)
 			end
-		end
+		end	-- to here
 	else
 		local validation;
 		if (#core.SelectedData == 0 and not adjustReason) then

@@ -20,13 +20,25 @@ local LibAceSerializer = LibStub:GetLibrary("AceSerializer-3.0")
 local LibCompress = LibStub:GetLibrary("LibCompress")
 local LibCompressAddonEncodeTable = LibCompress:GetAddonEncodeTable()
 
-local function ValidateSender(sender)								-- returns true if "sender" has permission to write officer notes. false if not or not found.
-	local rankIndex = MonDKP:GetGuildRankIndex(sender);				-- validates user has permission to push table update broadcasts.
-	
-	if rankIndex then
-		return C_GuildInfo.GuildControlGetRankFlags(rankIndex)[12]		-- returns true/false if player can write to officer notes
-	else
+function MonDKP:ValidateSender(sender)								-- returns true if "sender" has permission to write officer notes. false if not or not found.
+	if MonDKP:GetGuildRankIndex(UnitName("player")) == 1 then       -- automatically gives permissions above all settings if player is guild leader
+		return true;
+    end
+	if #MonDKP_Whitelist > 0 then									-- if a whitelist exists, checks that rather than officer note permissions
+		for i=1, #MonDKP_Whitelist do
+			if MonDKP_Whitelist[i] == sender then
+				return true;
+			end
+		end
 		return false;
+	else
+		local rankIndex = MonDKP:GetGuildRankIndex(sender);				-- validates user has permission to push table update broadcasts.
+
+		if rankIndex then
+			return C_GuildInfo.GuildControlGetRankFlags(rankIndex)[12]		-- returns true/false if player can write to officer notes
+		else
+			return false;
+		end
 	end
 end
 
@@ -45,12 +57,13 @@ function MonDKP.Sync:OnEnable()
 	MonDKP.Sync:RegisterComm("MonDKPDKPLogSync", MonDKP.Sync:OnCommReceived())		-- broadcasts entire DKP history table
 	MonDKP.Sync:RegisterComm("MonDKPDKPDelSync", MonDKP.Sync:OnCommReceived())		-- broadcasts deleated DKP history entries
 	MonDKP.Sync:RegisterComm("MonDKPDKPAward", MonDKP.Sync:OnCommReceived())		-- broadcasts individual DKP award to DKP history table
-	MonDKP.Sync:RegisterComm("MonDKPMinBids", MonDKP.Sync:OnCommReceived())		-- broadcasts minimum dkp values (set in Options tab or custom values in bid window)
+	MonDKP.Sync:RegisterComm("MonDKPMinBids", MonDKP.Sync:OnCommReceived())			-- broadcasts minimum dkp values (set in Options tab or custom values in bid window)
+	MonDKP.Sync:RegisterComm("MonDKPWhitelist", MonDKP.Sync:OnCommReceived())		-- broadcasts whitelist
 end
 
 function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 	if (prefix) then
-		if ValidateSender(sender) then		-- validates sender as an officer. fail-safe to prevent addon alterations to manipulate DKP table
+		if MonDKP:ValidateSender(sender) then		-- validates sender as an officer. fail-safe to prevent addon alterations to manipulate DKP table
 			if (prefix == "MonDKPBroadcast") and sender ~= UnitName("player") then
 				MonDKP:Print(message)
 			elseif (prefix == "MonDKPNotify") then
@@ -70,7 +83,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 			end
 			if (sender ~= UnitName("player")) then --(sender ~= UnitName("player"))
 				if (prefix == "MonDKPDataSync" or prefix == "MonDKPLogSync" or prefix == "MonDKPLootAward" or prefix == "MonDKPDKPLogSync" or prefix == "MonDKPDKPAward"
-				or prefix == "MonDKPDeleteLoot" or prefix == "MonDKPEditLoot" or prefix == "MonDKPDKPDelSync" or prefix == "MonDKPMinBids") then
+				or prefix == "MonDKPDeleteLoot" or prefix == "MonDKPEditLoot" or prefix == "MonDKPDKPDelSync" or prefix == "MonDKPMinBids" or prefix == "MonDKPWhitelist") then
 					decoded = LibCompress:Decompress(LibCompressAddonEncodeTable:Decode(message))
 					local success, deserialized = LibAceSerializer:Deserialize(decoded);
 					if success then
@@ -293,6 +306,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								}
 								StaticPopup_Show ("CONFIRM_MINBIDS")
 							end
+						elseif prefix == "MonDKPWhitelist" then
+							if not MonDKP_Whitelist then MonDKP_Whitelist = deserialized end
+							MonDKP_Whitelist = deserialized;
 						else
 							if tonumber(leader[1].note) > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_DKP_BROADCAST"] = {
@@ -332,8 +348,14 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 			end
 		else
 			MonDKP:CheckOfficer()
-			if core.IsOfficer == true then
-				local msg = sender..", has attempted to broadcast with \""..prefix.."\" prefix."
+			if core.IsOfficer == true and UnitName("player") ~= sender then
+				local msg;
+
+				if #MonDKP_Whitelist > 0 then
+					msg = sender..", has attempted to broadcast modified tables. He is not a part of your whitelisted officers.";
+				else
+					msg = sender..", has attempted to broadcast modified tables. He is not a designated officer in your guild.";
+				end
 				MonDKP:Print(msg)
 				StaticPopupDialogs["MODIFY_WARNING"] = {
 				text = msg,

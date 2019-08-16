@@ -97,10 +97,12 @@ local function ReassignLootEntry(entry)
 
 					MonDKP:LootHistory_Reset()
 
-					if search_before and search_after then
-						entry.player = core.SelectedData[1].player
+					entry.player = core.SelectedData[1].player
+					if search_before then
 						MonDKP_DKPTable[search_before[1][1]].dkp = MonDKP_DKPTable[search_before[1][1]].dkp + entry.cost 							-- refund previous looter
 						MonDKP_DKPTable[search_before[1][1]].lifetime_spent = MonDKP_DKPTable[search_before[1][1]].lifetime_spent - entry.cost 		-- remove from lifetime_spent
+					end
+					if search_after then
 						MonDKP_DKPTable[search_after[1][1]].dkp = MonDKP_DKPTable[search_after[1][1]].dkp - entry.cost 								-- charge new looter
 						MonDKP_DKPTable[search_after[1][1]].lifetime_spent = MonDKP_DKPTable[search_after[1][1]].lifetime_spent + entry.cost 		-- charge to lifetime_spent
 					end
@@ -128,10 +130,12 @@ local function ReassignLootEntry(entry)
 
 			MonDKP:LootHistory_Reset()
 
-			if search_before and search_after then
-				entry.player = core.SelectedData[1].player
+			entry.player = core.SelectedData[1].player
+			if search_before then
 				MonDKP_DKPTable[search_before[1][1]].dkp = MonDKP_DKPTable[search_before[1][1]].dkp + entry.cost 							-- refund previous looter
 				MonDKP_DKPTable[search_before[1][1]].lifetime_spent = MonDKP_DKPTable[search_before[1][1]].lifetime_spent - entry.cost 		-- remove from lifetime_spent
+			end
+			if search_after then
 				MonDKP_DKPTable[search_after[1][1]].dkp = MonDKP_DKPTable[search_after[1][1]].dkp - entry.cost 								-- charge new looter
 				MonDKP_DKPTable[search_after[1][1]].lifetime_spent = MonDKP_DKPTable[search_after[1][1]].lifetime_spent + entry.cost 		-- charge to lifetime_spent
 			end
@@ -162,9 +166,14 @@ local function ReassignLootEntry(entry)
 end
 
 local function ReassignLootEntryConfirmation(entry)
+	local cl
 	local c = MonDKP:GetCColors(core.SelectedData[1].class);
 	local search = MonDKP:Table_Search(MonDKP_DKPTable, MonDKP_Loot[entry]["player"])
-	local cl = MonDKP:GetCColors(MonDKP_DKPTable[search[1][1]].class)
+	if search then
+		cl = MonDKP:GetCColors(MonDKP_DKPTable[search[1][1]].class)
+	else
+		cl = { hex="444444" }
+	end
 	local deleteString = "Are you sure you'd like to reassign "..MonDKP_Loot[entry]["loot"].." ("..MonDKP_Loot[entry]["cost"].." DKP) to |cff"..c.hex..core.SelectedData[1].player.."|r?\n\n(This will refund "..MonDKP_Loot[entry]["cost"].." DKP to |cff"..cl.hex..MonDKP_Loot[entry]["player"].."|r and charge it to |cff"..c.hex..core.SelectedData[1].player.."|r)";
 
 	StaticPopupDialogs["REASSIGN_LOOT_ENTRY"] = {

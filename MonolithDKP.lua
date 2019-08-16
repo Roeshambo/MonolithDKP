@@ -5,12 +5,19 @@ local MonDKP = core.MonDKP;
 -- DBs required: MonDKP_DB (log app settings), MonDKP_Loot(log kills/dkp distributed), MonDKP_DKPTable(Member/class/dkp list), MonDKP_Tables, MonDKP_Loot(loot and who got it)
 -- DBs are initiallized at the bottom of init.lua
 
+local OptionsLoaded = false;
+
 function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, the entire addon window
   core.MonDKPUI = core.MonDKPUI or MonDKP:CreateMenu();
   core.MonDKPUI:SetShown(not core.MonDKPUI:IsShown())
   MonDKP.UIConfig:SetFrameLevel(10)
   if core.BiddingWindow then core.BiddingWindow:SetFrameLevel(5) end
-  MonDKP:CheckOfficer()
+  if not C_GuildInfo.GuildRoster() then
+    MonDKP:CheckOfficer()
+  else
+    MonDKP:Print("Failed rank validation. Please try again.")
+    return
+  end
   --core.IsOfficer = C_GuildInfo.CanEditOfficerNote()  -- seemingly removed from classic API
   if core.IsOfficer == false then
     for i=2, 3 do
@@ -21,6 +28,10 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
     _G["MonDKPMonDKP.ConfigTabMenuTab6"]:SetPoint("TOPLEFT", _G["MonDKPMonDKP.ConfigTabMenuTab5"], "TOPRIGHT", -14, 0)
   end
 
+  if not OptionsLoaded then
+    core.MonDKPOptions = core.MonDKPOptions or MonDKP:Options()
+    OptionsLoaded = true;
+  end
   core.MonDKPUI:SetScale(MonDKP_DB.DKPBonus.MonDKPScaleSize)
   MonDKP:LootHistory_Update("No Filter");
   MonDKP:SeedVerify_Update()

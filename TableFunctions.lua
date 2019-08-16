@@ -281,7 +281,7 @@ function MonDKP:SeedVerify_Update()
   if IsInGuild() then
     local leader = MonDKP:GetGuildRankGroup(1)
     
-    if leader[1].note == "" then    -- zeros out note if no note has been created yet
+    if leader[1].note == "" or not tonumber(leader[1].note) then    -- zeros out note if no note has been created yet
       leader[1].note = 0
     end
 
