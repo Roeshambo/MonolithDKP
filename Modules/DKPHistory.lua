@@ -97,6 +97,8 @@ local function MonDKPDeleteDKPEntry(item)
 			end
 			MonDKP:DKPHistory_Update()
 			DKPTable_Update()
+			MonDKP:UpdateSeeds()
+			MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
 			MonDKP.Sync:SendData("MonDKPDKPDelSync", { seed = MonDKP_DKPHistory.seed, item })
 		end,
 		timeout = 0,

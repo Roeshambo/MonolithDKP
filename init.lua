@@ -167,6 +167,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	    		},
 	    	}
 		end;
+		if MonDKP_DB.DKPBonus.SupressTells == nil then MonDKP_DB.DKPBonus.SupressTells = true end
 		if not MonDKP_DKPTable.seed then MonDKP_DKPTable.seed = 0 end
 		if not MonDKP_DKPHistory.seed then MonDKP_DKPHistory.seed = 0 end
 		if not MonDKP_Loot.seed then MonDKP_Loot.seed = 0 end

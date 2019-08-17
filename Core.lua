@@ -69,6 +69,7 @@ core.settings = {             -- From MonDKP_DB
     MonDKPScaleSize = 1.0,
     supressNotifications = false,
     TooltipHistoryCount = 15,
+    SupressTells = true,
   },
   MinBidBySlot = {
   	Head = 70,
@@ -243,19 +244,11 @@ function MonDKP:GetThemeColor()
   return c;
 end
 
-function MonDKP:UpdateSeeds()
+function MonDKP:UpdateSeeds()		-- updates seeds on leaders note as well as all 3 tables
 	local curTime = time()
 
 	local leader = MonDKP:GetGuildRankGroup(1)
 	GuildRosterSetPublicNote(leader[1].index, curTime)
-	MonDKP_DKPTable.seed = curTime
-	MonDKP_DKPHistory.seed = curTime
-	MonDKP_Loot.seed = curTime
-end
-
-function MonDKP:UpdateSeeds_Received()
-	local curTime = time()
-
 	MonDKP_DKPTable.seed = curTime
 	MonDKP_DKPHistory.seed = curTime
 	MonDKP_Loot.seed = curTime

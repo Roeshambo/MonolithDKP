@@ -53,11 +53,11 @@ local function Remove_Entries()
 				numPlayers = numPlayers + 1
 			end
 		end
+		MonDKP:UpdateSeeds()
 		MonDKP:FilterDKPTable(core.currentSort, "reset")
 		MonDKP:Print("Removed "..numPlayers.." player(s): "..removedUsers)
 		table.wipe(core.SelectedData)
 		MonDKP:ClassGraph_Update()
-		MonDKP:UpdateSeeds()
 		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
 	end
 end

@@ -109,7 +109,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								StaticPopup_Show ("CONFIRM_HIST_BCAST1")
 							else
 								MonDKP_Loot = deserialized;
-								MonDKP:UpdateSeeds_Received()
+								MonDKP_DKPHistory.seed = deserialized.seed
+								MonDKP_DKPTable.seed = deserialized.seed
+								--MonDKP:UpdateSeeds_Received()
 								MonDKP:LootHistory_Reset()
 								MonDKP:LootHistory_Update("No Filter")
 								MonDKP:Print("Loot history update complete.")
@@ -133,7 +135,10 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								StaticPopup_Show ("CONFIRM_LOOT_AWARD_BCAST")
 							else
 								tinsert(MonDKP_Loot, deserialized[1])
-								MonDKP:UpdateSeeds_Received()
+								MonDKP_Loot.seed = deserialized.seed
+								MonDKP_DKPHistory.seed = deserialized.seed
+								MonDKP_DKPTable.seed = deserialized.seed
+								--MonDKP:UpdateSeeds_Received()
 								MonDKP:LootHistory_Reset()
 								MonDKP:LootHistory_Update("No Filter")
 							end
@@ -158,7 +163,10 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								StaticPopup_Show ("CONFIRM_DKP_AWARD_BCAST")
 							else
 								tinsert(MonDKP_DKPHistory, deserialized[1])
-								MonDKP:UpdateSeeds_Received()
+								MonDKP_Loot.seed = deserialized.seed
+								MonDKP_DKPHistory.seed = deserialized.seed
+								MonDKP_DKPTable.seed = deserialized.seed
+								--MonDKP:UpdateSeeds_Received()
 								if MonDKP.ConfigTab6.history then
 									MonDKP:DKPHistory_Reset()
 								end
@@ -186,7 +194,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								StaticPopup_Show ("CONFIRM_HIST_BCAST2")
 							else
 								MonDKP_DKPHistory = deserialized
-								MonDKP:UpdateSeeds_Received()
+								MonDKP_Loot.seed = deserialized.seed
+								MonDKP_DKPTable.seed = deserialized.seed
+								--MonDKP:UpdateSeeds_Received()
 								if MonDKP.ConfigTab6.history then
 									MonDKP:DKPHistory_Reset()
 								end
@@ -215,9 +225,11 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 							else
 								MonDKP:SortLootTable()
 								table.remove(MonDKP_Loot, deserialized[1])
-								MonDKP:UpdateSeeds_Received()
+								MonDKP_Loot.seed = deserialized.seed
+								MonDKP_DKPHistory.seed = deserialized.seed
+								MonDKP_DKPTable.seed = deserialized.seed
+								--MonDKP:UpdateSeeds_Received()
 								MonDKP:LootHistory_Reset()
-								MonDKP:SortLootTable()
 								MonDKP:LootHistory_Update("No Filter");
 							end
 						elseif prefix == "MonDKPEditLoot" then
@@ -227,7 +239,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 									button1 = "Yes",
 									button2 = "No",
 									OnAccept = function()
-										local search = MonDKP:Table_Search(MonDKP_Loot, deserialized.entry)
+										local search = MonDKP:Table_Search(MonDKP_Loot, deserialized[1].entry)
 										if search then
 											MonDKP_Loot[search[1][1]].player = deserialized[1].newplayer
 										end
@@ -242,11 +254,15 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								}
 								StaticPopup_Show ("CONFIRM_LOOT_ADJUST_BCAST")
 							else
-								local search = MonDKP:Table_Search(MonDKP_Loot, deserialized.entry)
+								local search = MonDKP:Table_Search(MonDKP_Loot, tonumber(deserialized[1].entry))
+				
 								if search then
 									MonDKP_Loot[search[1][1]].player = deserialized[1].newplayer
 								end
-								MonDKP:UpdateSeeds_Received()
+								MonDKP_Loot.seed = deserialized.seed
+								MonDKP_DKPHistory.seed = deserialized.seed
+								MonDKP_DKPTable.seed = deserialized.seed
+								--MonDKP:UpdateSeeds_Received()
 								MonDKP:SortLootTable()
 								MonDKP:LootHistory_Update("No Filter");
 								DKPTable_Update()
@@ -273,12 +289,15 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								StaticPopup_Show ("CONFIRM_DKP_DELETE_BCAST")
 							else
 								table.remove(MonDKP_DKPHistory, deserialized[1])
+								MonDKP_Loot.seed = deserialized.seed
+								MonDKP_DKPHistory.seed = deserialized.seed
+								MonDKP_DKPTable.seed = deserialized.seed
 								if MonDKP.ConfigTab6.history then
 									MonDKP:DKPHistory_Reset()
 								end
 								MonDKP:DKPHistory_Update()
 								DKPTable_Update()
-								MonDKP:UpdateSeeds_Received()
+								--MonDKP:UpdateSeeds_Received()
 							end
 						elseif prefix == "MonDKPMinBids" then
 							if core.IsOfficer then
@@ -329,7 +348,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								StaticPopup_Show ("CONFIRM_DKP_BROADCAST")
 							else
 								MonDKP_DKPTable = deserialized;			-- commits to SavedVariables
-								MonDKP:UpdateSeeds_Received()
+								--MonDKP:UpdateSeeds_Received()
+								MonDKP_Loot.seed = deserialized.seed
+								MonDKP_DKPHistory.seed = deserialized.seed
 								MonDKP:FilterDKPTable(core.currentSort, "reset")
 								MonDKP:SeedVerify_Update()
 								MonDKP:Print("DKP database updated by "..sender.."...")
@@ -430,11 +451,11 @@ function MonDKP.Sync:SendData(prefix, data)
 		-- send packet
 		MonDKP.Sync:SendCommMessage(prefix, packet, "GUILD")
 
-		if prefix == "MonDKPDataSync" then
+		--[[if prefix == "MonDKPDataSync" then
 			if core.UpToDate == true then
 				MonDKP:UpdateSeeds()
 			end
-		end
+		end--]]
 
 		-- Verify Send
 		if (prefix == "MonDKPDataSync") then

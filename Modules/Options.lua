@@ -649,6 +649,36 @@ function MonDKP:Options()
     PlaySound(808)
   end)
 
+  if core.IsOfficer == true then
+    -- Supress Broadcast Notifications checkbox
+    MonDKP.ConfigTab4.supressTells = CreateFrame("CheckButton", nil, MonDKP.ConfigTab4, "UICheckButtonTemplate");
+    MonDKP.ConfigTab4.supressTells:SetPoint("LEFT", MonDKP.ConfigTab4.supressNotifications, "RIGHT", 200, 0)
+    MonDKP.ConfigTab4.supressTells:SetChecked(DKPSettings["SupressTells"])
+    MonDKP.ConfigTab4.supressTells:SetScale(0.8)
+    MonDKP.ConfigTab4.supressTells.text:SetText("|cff5151deSupress Bid Whispers|r");
+    MonDKP.ConfigTab4.supressTells.text:SetFontObject("MonDKPSmall")
+    MonDKP.ConfigTab4.supressTells:SetScript("OnEnter", function(self)
+      GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+      GameTooltip:SetText("Supress Bid Whispers", 0.25, 0.75, 0.90, 1, true)
+      GameTooltip:AddLine("Supresses incoming and outgoing whispers related to bidding while a bid is in progress.", 1.0, 1.0, 1.0, true);
+      GameTooltip:AddLine("All other non-bidding related whispers will still be displayed.", 1.0, 0, 0, true);
+      GameTooltip:Show()
+    end)
+    MonDKP.ConfigTab4.supressTells:SetScript("OnLeave", function()
+      GameTooltip:Hide()
+    end)
+    MonDKP.ConfigTab4.supressTells:SetScript("OnClick", function()
+      if MonDKP.ConfigTab4.supressTells:GetChecked() then
+        MonDKP:Print("Bid whispers are now |cffff0000hidden|r.")
+        MonDKP_DB["DKPBonus"]["SupressTells"] = true;
+      else
+        MonDKP_DB["DKPBonus"]["SupressTells"] = false;
+        MonDKP:Print("Bid whispers are now |cff00ff00visible|r.")
+      end
+      PlaySound(808)
+    end)
+  end
+
   -- Save Settings Button
   MonDKP.ConfigTab4.submitSettings = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab4, "BOTTOMLEFT", 30, 30, "Save Settings");
   MonDKP.ConfigTab4.submitSettings:ClearAllPoints();
@@ -725,7 +755,6 @@ function MonDKP:Options()
     MonDKP_DB["DKPBonus"]["DKPHistoryLimit"] = MonDKP.ConfigTab4.DKPHistory:GetNumber();
     MonDKP_DB["DKPBonus"]["TooltipHistoryCount"] = MonDKP.ConfigTab4.TooltipHistory:GetNumber();
     MonDKP:Print("Default settings saved.")
-    PlaySoundFile("sound/interface/iquestlogclosea.ogg")
     DKPTable_Update()
   end)
 

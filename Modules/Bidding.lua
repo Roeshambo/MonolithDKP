@@ -88,14 +88,49 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 		else
 			SendChatMessage("No Bids in Progress", "WHISPER", nil, name)
 		end	
+	elseif string.find(text, "!dkp") == 1 and core.IsOfficer == true then
+		cmd = BidCmd(text)
+
+		if string.find(name, "-") then					-- finds and removes server name from name if exists
+			local dashPos = string.find(name, "-")
+			name = strsub(name, 1, dashPos-1)
+		end
+
+		if cmd and cmd:gsub("%s+", "") ~= "" then		-- allows command if it has content (removes empty spaces)
+			local search = MonDKP:Table_Search(MonDKP_DKPTable, cmd)
+			
+			if search then
+				response = "MonolithDKP: "..MonDKP_DKPTable[search[1][1]].player.." currently has "..MonDKP_DKPTable[search[1][1]].dkp.." DKP available."
+			else
+				response = "MonolithDKP: That player was not found."
+			end
+		else
+			local search = MonDKP:Table_Search(MonDKP_DKPTable, name)
+
+			if search then
+				response = "MonolithDKP: You currently have "..MonDKP_DKPTable[search[1][1]].dkp.." DKP.";
+			end
+		end
+
+		SendChatMessage(response, "WHISPER", nil, name)
 	end
 
-	ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", function(self, event, msg, ...)			-- suppresses outgoing whisper responses to limit spam
-		if strfind(msg, "Bid Accepted!") then
+	ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", function(self, event, msg, ...)			-- suppresses incoming and outgoing whisper responses to limit spam
+		if core.BidInProgress and MonDKP_DB.DKPBonus.SupressTells then
+			if strfind(msg, "Your bid of") == 1 then
+				return true
+			elseif strfind(msg, "!bid") == 1 then
+				return true
+			elseif strfind(msg, "Bid Denied!") == 1 then
+				return true
+			end
+		end
+
+		if strfind(msg, "MonolithDKP: ") == 1 then
 			return true
-		elseif strfind(msg, "Your bid of") then
+		elseif strfind(msg, "!dkp") == 1 then
 			return true
-		elseif strfind(msg, "Bid Denied!") then
+		elseif strfind(msg, "No Bids in Progress") == 1 then
 			return true
 		end
 	end)
@@ -295,13 +330,13 @@ local function AwardItem()
 			SendChatMessage("Congrats "..winner.." on "..CurrItemForBid.." @ "..cost.."DKP", "RAID_WARNING")
 			MonDKP:DKPTable_Set(winner, "dkp", -cost, true)
 			tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=date, boss=core.LastKilledBoss, cost=cost})
+			MonDKP:UpdateSeeds()
 			local temp_table = {}
 			tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=date, boss=core.LastKilledBoss, cost=cost}})
 			MonDKP:LootHistory_Reset();
 			MonDKP:LootHistory_Update("No Filter")
 			local leader = MonDKP:GetGuildRankGroup(1)
 			GuildRosterSetPublicNote(leader[1].index, time())
-			MonDKP:UpdateSeeds()
 			MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
 			MonDKP.Sync:SendData("MonDKPLootAward", temp_table[1])
 			ClearBidWindow()

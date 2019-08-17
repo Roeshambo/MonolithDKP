@@ -74,11 +74,11 @@ local function DeleteLootHistoryEntry(target)
 			table.remove(MonDKP_Loot, search[1][1])
 		end
 
+		MonDKP:UpdateSeeds()
 		MonDKP.Sync:SendData("MonDKPDeleteLoot", {seed = MonDKP_Loot.seed, search[1][1]})
 		MonDKP:SortLootTable()
 		DKPTable_Update()
 		MonDKP:LootHistory_Update("No Filter");
-		MonDKP:UpdateSeeds()
 		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
 	end
 end
@@ -310,7 +310,7 @@ function MonDKP:LootHistory_Reset()
 	curZone = nil;
 	curBoss = nil;
 
-	for i=1, #MonDKP_Loot do
+	for i=1, #MonDKP_Loot+1 do
 		if MonDKP.ConfigTab5.looter[i] then
 			MonDKP.ConfigTab5.looter[i]:SetText("")
 			MonDKP.ConfigTab5.lootFrame[i]:Hide()
