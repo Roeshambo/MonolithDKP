@@ -212,7 +212,7 @@ local function DecayDKP(amount, deductionType, GetSelections)
 		StaticPopup_Show ("CONFIRM_DECAY")
 	else
 		for key, value in ipairs(MonDKP_DKPTable) do
-			local dkp = value["dkp"]
+			local dkp = tonumber(value["dkp"])
 			local player = value["player"]
 			local amount = amount;
 			amount = tonumber(amount) / 100		-- converts percentage to a decimal

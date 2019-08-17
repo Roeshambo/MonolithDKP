@@ -81,7 +81,7 @@ local function MonDKPDeleteDKPEntry(item)
 				
 				if search then
 					if ModType == "perc" then
-						MonDKP_DKPTable[i].dkp = round(MonDKP_DKPTable[i].dkp * (100 / (100 + dkp_value)), 0)
+						MonDKP_DKPTable[i].dkp = tonumber(round(MonDKP_DKPTable[i].dkp * (100 / (100 + dkp_value)), 0))
 					elseif ModType == "whole" then
 						MonDKP_DKPTable[i].dkp = MonDKP_DKPTable[i].dkp - dkp_value;
 					end
