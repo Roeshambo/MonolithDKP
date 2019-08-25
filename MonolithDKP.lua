@@ -11,7 +11,9 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
   core.MonDKPUI = core.MonDKPUI or MonDKP:CreateMenu();
   core.MonDKPUI:SetShown(not core.MonDKPUI:IsShown())
   MonDKP.UIConfig:SetFrameLevel(10)
-  if core.BiddingWindow then core.BiddingWindow:SetFrameLevel(5) end
+  if core.BiddingWindow then core.BiddingWindow:SetFrameLevel(6) end
+  if core.ModesWindow then core.ModesWindow:SetFrameLevel(2) end
+    
   if not C_GuildInfo.GuildRoster() then
     MonDKP:CheckOfficer()
   else
@@ -32,7 +34,7 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
     core.MonDKPOptions = core.MonDKPOptions or MonDKP:Options()
     OptionsLoaded = true;
   end
-  core.MonDKPUI:SetScale(MonDKP_DB.DKPBonus.MonDKPScaleSize)
+  core.MonDKPUI:SetScale(MonDKP_DB.defaults.MonDKPScaleSize)
   MonDKP:LootHistory_Update("No Filter");
   MonDKP:SeedVerify_Update()
   DKPTable_Update()
@@ -59,11 +61,6 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
       end
     end
   end
-  if MonDKP.ConfigTab2.selectAll:GetChecked() == true then
-    core.SelectedRows = core.WorkingTable;
-    core.SelectedData = core.WorkingTable;
-    MonDKPSelectionCount_Update()
-  end
   MonDKP:SortDKPTable(sort, reset);
 end
 
@@ -86,11 +83,6 @@ function MonDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable 
       if(id == "dkp") then return a[button.Id] < b[button.Id] else return a[button.Id] > b[button.Id] end
     end
   end)
-  if reset == "Clear" then
-    core.SelectedRows = {}
-    core.SelectedData = {}
-    MonDKPSelectionCount_Update()
-  end
   core.currentSort = id;
   DKPTable_Update()
 end
@@ -116,9 +108,8 @@ function MonDKP:CreateMenu()
   MonDKP.UIConfig:SetFrameLevel(10)
   MonDKP.UIConfig:SetScript("OnMouseDown", function(self)
     self:SetFrameLevel(10)
-    if core.BiddingWindow then
-      core.BiddingWindow:SetFrameLevel(5)
-    end
+    if core.ModesWindow then core.ModesWindow:SetFrameLevel(6) end
+    if core.BiddingWindow then core.BiddingWindow:SetFrameLevel(2) end
   end)
 
   -- Close Button
@@ -177,23 +168,39 @@ function MonDKP:CreateMenu()
     v:SetScript("OnClick", function(self) MonDKP:SortDKPTable(self.Id, "Clear") end)
   end
 
+  SortButtons.player:SetSize((core.TableWidth*0.4)-1, core.TableRowHeight)
+  SortButtons.class:SetSize((core.TableWidth*0.2)-1, core.TableRowHeight)
+  SortButtons.dkp:SetSize((core.TableWidth*0.4)-1, core.TableRowHeight)
+
   SortButtons.player.t = SortButtons.player:CreateFontString(nil, "OVERLAY")
   SortButtons.player.t:SetFontObject("MonDKPNormal")
   SortButtons.player.t:SetTextColor(1, 1, 1, 1);
-  SortButtons.player.t:SetPoint("CENTER", SortButtons.player, "CENTER", 0, -1);
+  SortButtons.player.t:SetPoint("LEFT", SortButtons.player, "LEFT", 50, 0);
   SortButtons.player.t:SetText("Player"); 
 
   SortButtons.class.t = SortButtons.class:CreateFontString(nil, "OVERLAY")
   SortButtons.class.t:SetFontObject("MonDKPNormal");
   SortButtons.class.t:SetTextColor(1, 1, 1, 1);
-  SortButtons.class.t:SetPoint("CENTER", SortButtons.class, "CENTER", 0, -1);
+  SortButtons.class.t:SetPoint("CENTER", SortButtons.class, "CENTER", 0, 0);
   SortButtons.class.t:SetText("Class"); 
 
   SortButtons.dkp.t = SortButtons.dkp:CreateFontString(nil, "OVERLAY")
   SortButtons.dkp.t:SetFontObject("MonDKPNormal")
   SortButtons.dkp.t:SetTextColor(1, 1, 1, 1);
-  SortButtons.dkp.t:SetPoint("CENTER", SortButtons.dkp, "CENTER", 0, -1);
-  SortButtons.dkp.t:SetText("Total DKP");
+  if MonDKP_DB.modes.mode == "Roll Based Bidding" then
+    SortButtons.dkp.t:SetPoint("RIGHT", SortButtons.dkp, "RIGHT", -50, 0);
+    SortButtons.dkp.t:SetText("Total DKP");
+
+    SortButtons.dkp.roll = SortButtons.dkp:CreateFontString(nil, "OVERLAY");
+    SortButtons.dkp.roll:SetFontObject("MonDKPNormal")
+    SortButtons.dkp.roll:SetScale("0.8")
+    SortButtons.dkp.roll:SetTextColor(1, 1, 1, 1);
+    SortButtons.dkp.roll:SetPoint("LEFT", SortButtons.dkp, "LEFT", 20, -1);
+    SortButtons.dkp.roll:SetText("Roll Range")
+  else
+    SortButtons.dkp.t:SetPoint("CENTER", SortButtons.dkp, "CENTER", 20, 0);
+    SortButtons.dkp.t:SetText("Total DKP");
+  end
 
   ----- Counter below DKP Table
   MonDKP.DKPTable.counter = CreateFrame("Frame", "MonDKPDisplayFrameCounter", MonDKP.UIConfig);

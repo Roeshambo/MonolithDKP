@@ -1,13 +1,5 @@
 --[[
 	Usage so far:  MonDKP.Sync:SendData(prefix, core.WorkingTable)  --sends table through comm channel for updates
-
-	Prefix's used: 	MonDKPDataSync - Syncs entire DKP log
-					MonDKPBroadcast - Message on broadcast
-					MonDKPLogSync - Syncs entire Loot Log
-					MonDKPNotify - string of variables to be broken down to launch modules (eg. timer 20 timer_title_string)
-					MonDKPLootAward - individual loot awards (primarily when someone wins a bid, broadcasts that single win to loot table)
-
-
 --]]	
 
 local _, core = ...;
@@ -59,6 +51,10 @@ function MonDKP.Sync:OnEnable()
 	MonDKP.Sync:RegisterComm("MonDKPDKPAward", MonDKP.Sync:OnCommReceived())		-- broadcasts individual DKP award to DKP history table
 	MonDKP.Sync:RegisterComm("MonDKPMinBids", MonDKP.Sync:OnCommReceived())			-- broadcasts minimum dkp values (set in Options tab or custom values in bid window)
 	MonDKP.Sync:RegisterComm("MonDKPWhitelist", MonDKP.Sync:OnCommReceived())		-- broadcasts whitelist
+	MonDKP.Sync:RegisterComm("MonDKPModes", MonDKP.Sync:OnCommReceived())			-- broadcasts DKP Mode settings
+	MonDKP.Sync:RegisterComm("MonDKPStandby", MonDKP.Sync:OnCommReceived())			-- broadcasts standby list
+	MonDKP.Sync:RegisterComm("MonDKPRaidTimer", MonDKP.Sync:OnCommReceived())		-- broadcasts Raid Timer Commands
+	MonDKP.Sync:RegisterComm("MonDKPZeroSum", MonDKP.Sync:OnCommReceived())		-- broadcasts Raid Timer Commands
 end
 
 function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
@@ -80,10 +76,24 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						end
 					end
 				end
+			elseif prefix == "MonDKPRaidTimer" and sender ~= UnitName("player") and core.IsOfficer then
+				local command, arg1 = strsplit(",", message);
+				if command == "start" then
+					if arg1 == "true" then
+						arg1 = true
+					else
+						arg1 = false
+					end
+
+					MonDKP:StartRaidTimer(arg1)
+				elseif command == "stop" then
+					MonDKP:StopRaidTimer()
+				end
 			end
-			if (sender ~= UnitName("player")) then --(sender ~= UnitName("player"))
+			if (sender ~= UnitName("player")) then
 				if (prefix == "MonDKPDataSync" or prefix == "MonDKPLogSync" or prefix == "MonDKPLootAward" or prefix == "MonDKPDKPLogSync" or prefix == "MonDKPDKPAward"
-				or prefix == "MonDKPDeleteLoot" or prefix == "MonDKPEditLoot" or prefix == "MonDKPDKPDelSync" or prefix == "MonDKPMinBids" or prefix == "MonDKPWhitelist") then
+				or prefix == "MonDKPDeleteLoot" or prefix == "MonDKPEditLoot" or prefix == "MonDKPDKPDelSync" or prefix == "MonDKPMinBids" or prefix == "MonDKPWhitelist"
+				or prefix == "MonDKPModes" or prefix == "MonDKPStandby" or prefix == "MonDKPZeroSum") then
 					decoded = LibCompress:Decompress(LibCompressAddonEncodeTable:Decode(message))
 					local success, deserialized = LibAceSerializer:Deserialize(decoded);
 					if success then
@@ -111,7 +121,6 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								MonDKP_Loot = deserialized;
 								MonDKP_DKPHistory.seed = deserialized.seed
 								MonDKP_DKPTable.seed = deserialized.seed
-								--MonDKP:UpdateSeeds_Received()
 								MonDKP:LootHistory_Reset()
 								MonDKP:LootHistory_Update("No Filter")
 								MonDKP:Print("Loot history update complete.")
@@ -138,7 +147,6 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								MonDKP_Loot.seed = deserialized.seed
 								MonDKP_DKPHistory.seed = deserialized.seed
 								MonDKP_DKPTable.seed = deserialized.seed
-								--MonDKP:UpdateSeeds_Received()
 								MonDKP:LootHistory_Reset()
 								MonDKP:LootHistory_Update("No Filter")
 							end
@@ -166,7 +174,6 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								MonDKP_Loot.seed = deserialized.seed
 								MonDKP_DKPHistory.seed = deserialized.seed
 								MonDKP_DKPTable.seed = deserialized.seed
-								--MonDKP:UpdateSeeds_Received()
 								if MonDKP.ConfigTab6.history then
 									MonDKP:DKPHistory_Reset()
 								end
@@ -196,7 +203,6 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								MonDKP_DKPHistory = deserialized
 								MonDKP_Loot.seed = deserialized.seed
 								MonDKP_DKPTable.seed = deserialized.seed
-								--MonDKP:UpdateSeeds_Received()
 								if MonDKP.ConfigTab6.history then
 									MonDKP:DKPHistory_Reset()
 								end
@@ -228,7 +234,6 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								MonDKP_Loot.seed = deserialized.seed
 								MonDKP_DKPHistory.seed = deserialized.seed
 								MonDKP_DKPTable.seed = deserialized.seed
-								--MonDKP:UpdateSeeds_Received()
 								MonDKP:LootHistory_Reset()
 								MonDKP:LootHistory_Update("No Filter");
 							end
@@ -262,7 +267,6 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								MonDKP_Loot.seed = deserialized.seed
 								MonDKP_DKPHistory.seed = deserialized.seed
 								MonDKP_DKPTable.seed = deserialized.seed
-								--MonDKP:UpdateSeeds_Received()
 								MonDKP:SortLootTable()
 								MonDKP:LootHistory_Update("No Filter");
 								DKPTable_Update()
@@ -297,37 +301,49 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								end
 								MonDKP:DKPHistory_Update()
 								DKPTable_Update()
-								--MonDKP:UpdateSeeds_Received()
 							end
 						elseif prefix == "MonDKPMinBids" then
 							if core.IsOfficer then
-								StaticPopupDialogs["CONFIRM_MINBIDS"] = {
-									text = "|CFF00FF00UPDATE|r: "..sender.." has broadcast their minimum bid settings. Do you wish to accept?",
-									button1 = "Yes",
-									button2 = "No",
-									OnAccept = function()
-										MonDKP_DB.MinBidBySlot = deserialized[1]
+								MonDKP_DB.MinBidBySlot = deserialized[1]
 
-										for i=1, #deserialized[2] do
-											local search = MonDKP:Table_Search(MonDKP_MinBids, deserialized[2][i].item)
-											if search then
-												MonDKP_MinBids[search[1][1]].minbid = deserialized[2][i].minbid
-											else
-												table.insert(MonDKP_MinBids, deserialized[2][i])
-											end
-										end
-										MonDKP:Print("Minimum Bid Values Received from "..sender)
-									end,
-									timeout = 0,
-									whileDead = true,
-									hideOnEscape = true,
-									preferredIndex = 3,
-								}
-								StaticPopup_Show ("CONFIRM_MINBIDS")
+								for i=1, #deserialized[2] do
+									local search = MonDKP:Table_Search(MonDKP_MinBids, deserialized[2][i].item)
+									if search then
+										MonDKP_MinBids[search[1][1]].minbid = deserialized[2][i].minbid
+									else
+										table.insert(MonDKP_MinBids, deserialized[2][i])
+									end
+								end
+								MonDKP:Print("Minimum Bid Values Received from "..sender)
 							end
 						elseif prefix == "MonDKPWhitelist" then
-							if not MonDKP_Whitelist then MonDKP_Whitelist = deserialized end
 							MonDKP_Whitelist = deserialized;
+						elseif prefix == "MonDKPStandby" then
+							MonDKP_Standby = deserialized;
+						elseif prefix == "MonDKPZeroSum" then
+							if core.IsOfficer then
+								MonDKP_DB.modes.ZeroSumBank = deserialized;
+								if core.ZeroSumBank then
+									MonDKP:ZeroSumBank_Update()
+								end
+							end
+						elseif prefix == "MonDKPModes" then
+							MonDKP_DB.modes = deserialized[1]
+							MonDKP_DB.DKPBonus = deserialized[2]
+							MonDKP_DB.raiders = deserialized[3]
+							StaticPopupDialogs["SEND_MODES"] = {
+								text = sender.." has updated the DKP definitions. Do you wish to reload your UI to reflect these changes?",
+								button1 = "Yes",
+								button2 = "No",
+								OnAccept = function()
+									ReloadUI();
+								end,
+								timeout = 0,
+								whileDead = true,
+								hideOnEscape = true,
+								preferredIndex = 3,
+							}
+							StaticPopup_Show ("SEND_MODES")
 						else
 							if tonumber(leader[1].note) > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_DKP_BROADCAST"] = {
@@ -348,7 +364,6 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								StaticPopup_Show ("CONFIRM_DKP_BROADCAST")
 							else
 								MonDKP_DKPTable = deserialized;			-- commits to SavedVariables
-								--MonDKP:UpdateSeeds_Received()
 								MonDKP_Loot.seed = deserialized.seed
 								MonDKP_DKPHistory.seed = deserialized.seed
 								MonDKP:FilterDKPTable(core.currentSort, "reset")
@@ -399,7 +414,7 @@ function MonDKP.Sync:SendData(prefix, data)
 		local verInteg1 = false;
 		local verInteg2 = false;
 
-		if (prefix == "MonDKPNotify") then
+		if (prefix == "MonDKPNotify" or prefix == "MonDKPRaidTimer") then
 			MonDKP.Sync:SendCommMessage(prefix, data, "RAID")
 			return;
 		end
@@ -449,6 +464,11 @@ function MonDKP.Sync:SendData(prefix, data)
 		print("LZQ: ", strlen(lzwCompressed)) --]]
 
 		-- send packet
+		if (prefix == "MonDKPZeroSum") then							-- Zero Sum bank data. Keep to raid.
+			MonDKP.Sync:SendCommMessage(prefix, packet, "RAID")
+			return;
+		end
+
 		MonDKP.Sync:SendCommMessage(prefix, packet, "GUILD")
 
 		--[[if prefix == "MonDKPDataSync" then

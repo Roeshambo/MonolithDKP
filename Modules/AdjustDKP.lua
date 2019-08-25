@@ -12,7 +12,7 @@ local function AdjustDKP()
 	if (curReason == "Other") then adjustReason = "Other - "..MonDKP.ConfigTab2.otherReason:GetText(); end
 	if curReason == "Boss Kill Bonus" then adjustReason = core.CurrentRaidZone..": "..core.LastKilledBoss; end
 	if curReason == "New Boss Kill Bonus" then adjustReason = core.CurrentRaidZone..": "..core.LastKilledBoss.." (First Kill)" end
-	if (adjustReason and adjustReason ~= "Other - Enter Other Reason Here") then
+	if (#core.SelectedData > 0 and adjustReason and adjustReason ~= "Other - Enter Other Reason Here") then
 		MonDKP:SeedVerify_Update()
 		if core.UpToDate == false and core.IsOfficer == true then
 			StaticPopupDialogs["CONFIRM_ADJUST1"] = {
@@ -90,50 +90,23 @@ local function AdjustDKP()
 				MonDKP.Sync:SendData("MonDKPBroadcast", "Reason: "..adjustReason)
 			end
 		end
-	elseif (#core.SelectedData == 1 and adjustReason and adjustReason ~= "Other - Enter Other Reason Here") then		-- delete from here
-		if core.SelectedData[1]["player"] and MonDKP:Table_Search(core.WorkingTable, core.SelectedData[1]["player"]) then
-			MonDKP:SeedVerify_Update()
-			if core.UpToDate == false and core.IsOfficer == true then
-				StaticPopupDialogs["CONFIRM_ADJUST2"] = {
-					text = "|CFFFF0000WARNING|r: You are attempting to modify an outdated DKP table. This may inadvertently corrupt data for the officers that have the most recent tables.\n\n Are you sure you would like to do this?",
-					button1 = "Yes",
-					button2 = "No",
-					OnAccept = function()
-						MonDKP:DKPTable_Set(core.SelectedData[1]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber(), false)
-						MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable) -- broadcast updated DKP table
-						MonDKP.Sync:SendData("MonDKPBroadcast", "|cff"..c[core.SelectedData[1]["class"]].hex..core.SelectedData[1]["player"].."s|r|cffff6060 DKP adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for reason: "..adjustReason.."|r")
-						tinsert(MonDKP_DKPHistory, {players=core.SelectedData[1]["player"]..",", dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
-						if MonDKP.ConfigTab6.history then
-							MonDKP:DKPHistory_Reset()
-						end
-						MonDKP:DKPHistory_Update()
-						local temp_table = {}
-						tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=core.SelectedData[1]["player"], dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date}})
-						MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
-						table.wipe(temp_table)
-					end,
-					timeout = 0,
-					whileDead = true,
-					hideOnEscape = true,
-					preferredIndex = 3,
-				}
-				StaticPopup_Show ("CONFIRM_ADJUST2")
-			else
-				MonDKP:UpdateSeeds()
-				MonDKP:DKPTable_Set(core.SelectedData[1]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber(), false)
-				MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable) -- broadcast updated DKP table
-				MonDKP.Sync:SendData("MonDKPBroadcast", "|cff"..c[core.SelectedData[1]["class"]].hex..core.SelectedData[1]["player"].."s|r|cffff6060 DKP adjusted by "..MonDKP.ConfigTab2.addDKP:GetNumber().." for reason: "..adjustReason.."|r")
-				tinsert(MonDKP_DKPHistory, {players=core.SelectedData[1]["player"]..",", dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
-				if MonDKP.ConfigTab6.history then
-					MonDKP:DKPHistory_Reset()
+		if core.CurView == "limited" then
+			local tempTable = {}
+
+			for i=1, #core.WorkingTable do
+				local search = MonDKP:Table_Search(MonDKP_DKPTable, core.WorkingTable[i].player)
+
+				if search then
+					table.insert(tempTable, MonDKP_DKPTable[search[1][1]])
 				end
-				MonDKP:DKPHistory_Update()
-				local temp_table = {}
-				tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=core.SelectedData[1]["player"], dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date}})
-				MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
-				table.wipe(temp_table)
 			end
-		end	-- to here
+			core.WorkingTable = CopyTable(tempTable)
+			table.wipe(tempTable)
+			DKPTable_Update()
+		end
+		--[[MonDKP.ConfigTab2.RaidOnlyCheck:SetChecked(false)
+		MonDKP.ConfigTab2.selectAll:SetChecked(false)
+		core.CurView = "all"--]]
 	else
 		local validation;
 		if (#core.SelectedData == 0 and not adjustReason) then
@@ -174,17 +147,25 @@ local function DecayDKP(amount, deductionType, GetSelections)
 					if amount < 0 then
 						amount = amount * -1			-- flips value to positive if officer accidently used negative number in editbox
 					end
-					local deducted;
+					local deducted;		-- stores dkp * amount percentage as a decimal (20% = 0.2)
 
 					if (GetSelections and MonDKP:Table_Search(core.SelectedData, player)) or GetSelections == false then
 						if dkp > 0 then
 							if deductionType == "percent" then
 								deducted = dkp * amount
-								dkp = round(dkp - deducted, 0);
-								value["dkp"] = tonumber(round(dkp, 0));
+								dkp = round(dkp - deducted, MonDKP_DB.modes.rounding);
+								value["dkp"] = tonumber(round(dkp, MonDKP_DB.modes.rounding));
 							elseif deductionType == "points" then
 								-- do stuff for flat point deductions
 							end
+						elseif dkp < 0 and MonDKP.ConfigTab2.AddNegative:GetChecked() then
+							if deductionType == "percent" then
+								deducted = dkp * amount
+								dkp = round(deducted - dkp, MonDKP_DB.modes.rounding) * -1
+								value["dkp"] = tonumber(round(dkp, MonDKP_DB.modes.rounding))
+							elseif deductionType == "points" then
+								-- do stuff for flat point deductions
+							end	
 						end
 						playerString = playerString..player..",";
 					end
@@ -225,11 +206,19 @@ local function DecayDKP(amount, deductionType, GetSelections)
 				if dkp > 0 then
 					if deductionType == "percent" then
 						deducted = dkp * amount
-						dkp = round(dkp - deducted, 0);
-						value["dkp"] = tonumber(round(dkp, 0));
+						dkp = round(dkp - deducted, MonDKP_DB.modes.rounding);
+						value["dkp"] = tonumber(round(dkp, MonDKP_DB.modes.rounding));
 					elseif deductionType == "points" then
 						-- do stuff for flat point deductions
 					end
+				elseif dkp < 0 and MonDKP.ConfigTab2.AddNegative:GetChecked() then
+					if deductionType == "percent" then
+						deducted = dkp * amount
+						dkp = round(deducted - dkp, MonDKP_DB.modes.rounding) * -1
+						value["dkp"] = tonumber(round(dkp, MonDKP_DB.modes.rounding))
+					elseif deductionType == "points" then
+						-- do stuff for flat point deductions
+					end	
 				end
 				playerString = playerString..player..",";
 			end
@@ -337,7 +326,6 @@ function MonDKP:AdjustDKPTab_Create()
 	end)
 
 	MonDKP.ConfigTab2.reasonHeader = MonDKP.ConfigTab2:CreateFontString(nil, "OVERLAY")
-	MonDKP.ConfigTab2.reasonHeader:SetFontObject("GameFontHighlightLeft");
 	MonDKP.ConfigTab2.reasonHeader:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab2.reasonDropDown, "TOPLEFT", 25, 0);
 	MonDKP.ConfigTab2.reasonHeader:SetFontObject("MonDKPSmallLeft")
 	MonDKP.ConfigTab2.reasonHeader:SetText("Reason for Adjustment:")
@@ -347,7 +335,7 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.otherReason:SetPoint("TOPLEFT", MonDKP.ConfigTab2.reasonDropDown, "BOTTOMLEFT", 19, 2)     
 	MonDKP.ConfigTab2.otherReason:SetAutoFocus(false)
 	MonDKP.ConfigTab2.otherReason:SetMultiLine(false)
-	MonDKP.ConfigTab2.otherReason:SetSize(300, 24)
+	MonDKP.ConfigTab2.otherReason:SetSize(225, 24)
 	MonDKP.ConfigTab2.otherReason:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
 		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
@@ -381,7 +369,7 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.BossKilledDropdown = CreateFrame("FRAME", "MonDKPBossKilledDropdown", MonDKP.ConfigTab2, "MonolithDKPUIDropDownMenuTemplate")
 	MonDKP.ConfigTab2.BossKilledDropdown:SetPoint("TOPLEFT", MonDKP.ConfigTab2.reasonDropDown, "BOTTOMLEFT", 0, 2)
 	MonDKP.ConfigTab2.BossKilledDropdown:Hide()
-	UIDropDownMenu_SetWidth(MonDKP.ConfigTab2.BossKilledDropdown, 250)
+	UIDropDownMenu_SetWidth(MonDKP.ConfigTab2.BossKilledDropdown, 210)
 	UIDropDownMenu_SetText(MonDKP.ConfigTab2.BossKilledDropdown, "Select Boss")
 
 	UIDropDownMenu_Initialize(MonDKP.ConfigTab2.BossKilledDropdown, function(self, level, menuList)
@@ -479,19 +467,8 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.RaidOnlyCheck.text:SetScale(1.5);
 	MonDKP.ConfigTab2.RaidOnlyCheck.text:SetFontObject("MonDKPSmallLeft")
 	MonDKP.ConfigTab2.RaidOnlyCheck:SetPoint("LEFT", MonDKP.ConfigTab2.addDKP, "RIGHT", 15, 13);
-	MonDKP.ConfigTab2.RaidOnlyCheck:SetScript("OnClick", function()
-		MonDKP.ConfigTab1.checkBtn[10]:SetChecked(not MonDKP.ConfigTab1.checkBtn[10]:GetChecked());		-- utilizes Filters tab Raid Only filter without rewriting functions or events
-		MonDKPSetFilterChecks(MonDKP.ConfigTab1.checkBtn[10]);
-	end)
-	MonDKP.ConfigTab2.RaidOnlyCheck:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText("Show Raid Only", 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine("Filters DKP table to only show players in your raid party. Use with \"Select All Visible\" below to apply DKP bonuses to only those currently present.", 1.0, 1.0, 1.0, true);
-		GameTooltip:Show();
-	end)
-	MonDKP.ConfigTab2.RaidOnlyCheck:SetScript("OnLeave", function(self)
-		GameTooltip:Hide()
-	end)
+	MonDKP.ConfigTab2.RaidOnlyCheck:Hide()
+	
 
 	-- Select All Checkbox
 	MonDKP.ConfigTab2.selectAll = CreateFrame("CheckButton", nil, MonDKP.ConfigTab2, "UICheckButtonTemplate");
@@ -501,37 +478,15 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.selectAll.text:SetScale(1.5);
 	MonDKP.ConfigTab2.selectAll.text:SetFontObject("MonDKPSmallLeft")
 	MonDKP.ConfigTab2.selectAll:SetPoint("LEFT", MonDKP.ConfigTab2.addDKP, "RIGHT", 15, -13);
-	MonDKP.ConfigTab2.selectAll:SetScript("OnClick", function(self)
-		if (MonDKP.ConfigTab2.selectAll:GetChecked() == true) then
-			core.SelectedRows = core.WorkingTable;
-			core.SelectedData = core.WorkingTable;
-			PlaySound(808)
-			MonDKPSelectionCount_Update()
-		else
-			core.SelectedRows = {}
-			core.SelectedData = {}
-			PlaySound(868)
-			MonDKPSelectionCount_Update()
-		end
-		MonDKP:FilterDKPTable(core.currentSort, "reset");
-	end)
-	MonDKP.ConfigTab2.selectAll:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText("Select All Visible", 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine("Selects all players visible in the current scope of the DKP table. This scope can be limited on the \"Filters\" tab.", 1.0, 1.0, 1.0, true);
-		GameTooltip:AddLine("Filters are automatically applied to selection. Selecting all and then applying filters to the list will limit the scope recursively.", 1.0, 0, 0, true);
-		GameTooltip:Show();
-	end)
-	MonDKP.ConfigTab2.selectAll:SetScript("OnLeave", function(self)
-		GameTooltip:Hide()
-	end)
+	MonDKP.ConfigTab2.selectAll:Hide();
+	
 
 		-- Adjust DKP Button
 	MonDKP.ConfigTab2.adjustButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab2.addDKP, "BOTTOMLEFT", -1, -15, "Adjust DKP");
 	MonDKP.ConfigTab2.adjustButton:SetSize(90,25)
 	MonDKP.ConfigTab2.adjustButton:SetScript("OnClick", function()
 		if #core.SelectedData > 0 and curReason and MonDKP.ConfigTab2.otherReason:GetText() then
-			local selected = "Are you sure you'd like to give "..round(MonDKP.ConfigTab2.addDKP:GetNumber(), 0).." DKP to the following players: \n\n";
+			local selected = "Are you sure you'd like to give "..round(MonDKP.ConfigTab2.addDKP:GetNumber(), MonDKP_DB.modes.rounding).." DKP to the following players: \n\n";
 
 			for i=1, #core.SelectedData do
 				local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[i].player)
@@ -575,7 +530,7 @@ function MonDKP:AdjustDKPTab_Create()
 		GameTooltip:Hide()
 	end)
 
-	-- weekly decay
+	-- weekly decay Editbox
 	MonDKP.ConfigTab2.decayDKP = CreateFrame("EditBox", nil, MonDKP.ConfigTab2)
 	MonDKP.ConfigTab2.decayDKP:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab2, "BOTTOMLEFT", 21, 70)     
 	MonDKP.ConfigTab2.decayDKP:SetAutoFocus(false)
@@ -591,7 +546,7 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.decayDKP:SetTextColor(1, 1, 1, 1)
 	MonDKP.ConfigTab2.decayDKP:SetFontObject("MonDKPNormalRight")
 	MonDKP.ConfigTab2.decayDKP:SetTextInsets(10, 15, 5, 5)
-	MonDKP.ConfigTab2.decayDKP:SetNumber(tonumber(core.settings.DKPBonus.DecayPercentage))
+	MonDKP.ConfigTab2.decayDKP:SetNumber(tonumber(MonDKP_DB.DKPBonus.DecayPercentage))
 	MonDKP.ConfigTab2.decayDKP:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
 		self:ClearFocus()
 	end)
@@ -640,6 +595,29 @@ function MonDKP:AdjustDKPTab_Create()
 		GameTooltip:Hide()
 	end)
 
+	-- add to negative dkp checkbox
+	MonDKP.ConfigTab2.AddNegative = CreateFrame("CheckButton", nil, MonDKP.ConfigTab2, "UICheckButtonTemplate");
+	MonDKP.ConfigTab2.AddNegative:SetChecked(MonDKP_DB.modes.AddToNegative)
+	MonDKP.ConfigTab2.AddNegative:SetScale(0.6);
+	MonDKP.ConfigTab2.AddNegative.text:SetText("  |cff5151deAdd to Negative Values|r");
+	MonDKP.ConfigTab2.AddNegative.text:SetScale(1.5);
+	MonDKP.ConfigTab2.AddNegative.text:SetFontObject("MonDKPSmallLeft")
+	MonDKP.ConfigTab2.AddNegative:SetPoint("TOP", MonDKP.ConfigTab2.SelectedOnlyCheck, "BOTTOM", 0, 0);
+	MonDKP.ConfigTab2.AddNegative:SetScript("OnClick", function(self)
+		MonDKP_DB.modes.AddToNegative = self:GetChecked();
+		PlaySound(808)
+	end)
+	MonDKP.ConfigTab2.AddNegative:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText("Add to Negative Values", 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine("When checked, any player with negative DKP has their debt reduced by the above percentage. All others are reduced by above percentage. Unchecked, players in the negative are unaffected by the decay.", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("This checkbox ONLY effects the behavior of the above decay on negative DKP players.", 1.0, 0, 0, true);
+		GameTooltip:Show();
+	end)
+	MonDKP.ConfigTab2.AddNegative:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+
 	MonDKP.ConfigTab2.decayButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab2.decayDKP, "TOPRIGHT", 20, 0, "Apply Decay");
 	MonDKP.ConfigTab2.decayButton:SetSize(90,25)
 	MonDKP.ConfigTab2.decayButton:SetScript("OnClick", function()
@@ -673,4 +651,345 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.decayButton:SetScript("OnLeave", function(self)
 		GameTooltip:Hide()
 	end)
+
+	-- Raid Timer Container
+	MonDKP.ConfigTab2.RaidTimerContainer = CreateFrame("Frame", nil, MonDKP.ConfigTab2);
+	MonDKP.ConfigTab2.RaidTimerContainer:SetSize(200, 330);
+	MonDKP.ConfigTab2.RaidTimerContainer:SetPoint("RIGHT", MonDKP.ConfigTab2, "RIGHT", -25, -50)
+	MonDKP.ConfigTab2.RaidTimerContainer:SetBackdrop({
+      bgFile   = "Textures\\white.blp", tile = true,
+      edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 1, edgeSize = 2, 
+    });
+	MonDKP.ConfigTab2.RaidTimerContainer:SetBackdropColor(0,0,0,0.9)
+	MonDKP.ConfigTab2.RaidTimerContainer:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
+
+		-- Raid Timer Header
+	    MonDKP.ConfigTab2.RaidTimerContainer.Header = MonDKP.ConfigTab2.RaidTimerContainer:CreateFontString(nil, "OVERLAY")
+	    MonDKP.ConfigTab2.RaidTimerContainer.Header:SetFontObject("MonDKPLargeLeft");
+	    MonDKP.ConfigTab2.RaidTimerContainer.Header:SetScale(0.6)
+	    MonDKP.ConfigTab2.RaidTimerContainer.Header:SetPoint("TOPLEFT", MonDKP.ConfigTab2.RaidTimerContainer, "TOPLEFT", 15, -15);
+	    MonDKP.ConfigTab2.RaidTimerContainer.Header:SetText("Raid Timer")
+
+	    -- Raid Timer Output Header
+	    MonDKP.ConfigTab2.RaidTimerContainer.OutputHeader = MonDKP.ConfigTab2.RaidTimerContainer:CreateFontString(nil, "OVERLAY")
+	    MonDKP.ConfigTab2.RaidTimerContainer.OutputHeader:SetFontObject("MonDKPNormalRight");
+	    MonDKP.ConfigTab2.RaidTimerContainer.OutputHeader:SetPoint("TOP", MonDKP.ConfigTab2.RaidTimerContainer, "TOP", -30, -30);
+	    MonDKP.ConfigTab2.RaidTimerContainer.OutputHeader:SetText("Time Elapsed:")
+	    MonDKP.ConfigTab2.RaidTimerContainer.OutputHeader:Hide();
+
+	    -- Raid Timer Output
+	    MonDKP.ConfigTab2.RaidTimerContainer.Output = MonDKP.ConfigTab2.RaidTimerContainer:CreateFontString(nil, "OVERLAY")
+	    MonDKP.ConfigTab2.RaidTimerContainer.Output:SetFontObject("MonDKPLargeLeft");
+	    MonDKP.ConfigTab2.RaidTimerContainer.Output:SetScale(0.8)
+	    MonDKP.ConfigTab2.RaidTimerContainer.Output:SetPoint("LEFT", MonDKP.ConfigTab2.RaidTimerContainer.OutputHeader, "RIGHT", 5, 0);
+
+	    -- Bonus Awarded Header
+	    MonDKP.ConfigTab2.RaidTimerContainer.BonusHeader = MonDKP.ConfigTab2.RaidTimerContainer:CreateFontString(nil, "OVERLAY")
+	    MonDKP.ConfigTab2.RaidTimerContainer.BonusHeader:SetFontObject("MonDKPNormalRight");
+	    MonDKP.ConfigTab2.RaidTimerContainer.BonusHeader:SetPoint("TOP", MonDKP.ConfigTab2.RaidTimerContainer, "TOP", -25, -50);
+	    MonDKP.ConfigTab2.RaidTimerContainer.BonusHeader:SetText("Bonus Awarded:")
+	    MonDKP.ConfigTab2.RaidTimerContainer.BonusHeader:Hide();
+
+	    -- Bonus Awarded Output
+	    MonDKP.ConfigTab2.RaidTimerContainer.Bonus = MonDKP.ConfigTab2.RaidTimerContainer:CreateFontString(nil, "OVERLAY")
+	    MonDKP.ConfigTab2.RaidTimerContainer.Bonus:SetFontObject("MonDKPLargeLeft");
+	    MonDKP.ConfigTab2.RaidTimerContainer.Bonus:SetScale(0.8)
+	    MonDKP.ConfigTab2.RaidTimerContainer.Bonus:SetPoint("LEFT", MonDKP.ConfigTab2.RaidTimerContainer.BonusHeader, "RIGHT", 5, 0);
+
+	    -- Start Raid Timer Button
+	    MonDKP.ConfigTab2.RaidTimerContainer.StartTimer = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab2.RaidTimerContainer, "BOTTOMLEFT", 10, 115, "Initialize Raid");
+		MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:SetSize(90,25)
+		MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:SetScript("OnClick", function(self)
+			if not core.RaidInProgress then
+				if MonDKP_DB.DKPBonus.GiveRaidStart and self:GetText() ~= "Continue Raid" then
+					StaticPopupDialogs["START_RAID_BONUS"] = {
+						text = "Are you sure you'd like to apply the On Time bonus to this raid?",
+						button1 = "Yes",
+						button2 = "No",
+						OnAccept = function()
+							MonDKP.Sync:SendData("MonDKPRaidTimer", "start,false")
+							if MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:GetText() == "Continue Raid" then
+								MonDKP.Sync:SendData("MonDKPBroadcast", "Raid has been resumed!")
+							else
+								MonDKP.Sync:SendData("MonDKPBroadcast", "Raid timer has started!")
+								MonDKP.ConfigTab2.RaidTimerContainer.Output:SetText("|cff00ff0000|r")
+							end
+							MonDKP:StartRaidTimer(false)
+						end,
+						timeout = 0,
+						whileDead = true,
+						hideOnEscape = true,
+						preferredIndex = 3,
+					}
+					StaticPopup_Show ("START_RAID_BONUS")
+				else
+					MonDKP.Sync:SendData("MonDKPRaidTimer", "start,false")
+					if MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:GetText() == "Continue Raid" then
+						MonDKP.Sync:SendData("MonDKPBroadcast", "Raid has been resumed!")
+					else
+						MonDKP.Sync:SendData("MonDKPBroadcast", "Raid timer has started!")
+						MonDKP.ConfigTab2.RaidTimerContainer.Output:SetText("|cff00ff0000|r")
+					end
+					MonDKP:StartRaidTimer(false)
+				end
+			else
+				StaticPopupDialogs["END_RAID"] = {
+					text = "Are you sure you wish to end the current raid?",
+					button1 = "Yes",
+					button2 = "No",
+					OnAccept = function()
+						MonDKP.Sync:SendData("MonDKPBroadcast", "Raid timer has been concluded after "..MonDKP.ConfigTab2.RaidTimerContainer.Output:GetText().."!")
+						MonDKP.Sync:SendData("MonDKPRaidTimer", "stop")
+						MonDKP:StopRaidTimer()
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopup_Show ("END_RAID")
+			end
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText("Initialize Raid", 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine("Begins the raid timer to award DKP based on the time increment you've given above. This can be initialized by any officer in the raid, but only the raid leader will give the DKP award the checked conditions are met.", 1.0, 1.0, 1.0, true);
+			GameTooltip:AddLine("This is broadcasted to all officers in the raid. Each officer will have a timer but ONLY the raid leader will grant the award. If an event occurs (offline, reload etc) that causes the leader to lose their timer, give raid leader to another officer that still has their timer running to prevent interruption.", 1.0, 0, 0, true);
+			GameTooltip:Show();
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:SetScript("OnLeave", function(self)
+			GameTooltip:Hide()
+		end)
+
+		-- Pause Raid Timer Button
+	    MonDKP.ConfigTab2.RaidTimerContainer.PauseTimer = self:CreateButton("BOTTOMRIGHT", MonDKP.ConfigTab2.RaidTimerContainer, "BOTTOMRIGHT", -10, 115, "Pause Raid");
+		MonDKP.ConfigTab2.RaidTimerContainer.PauseTimer:SetSize(90,25)
+		MonDKP.ConfigTab2.RaidTimerContainer.PauseTimer:Hide();
+		MonDKP.ConfigTab2.RaidTimerContainer.PauseTimer:SetScript("OnClick", function(self)
+			if core.RaidInProgress then
+				MonDKP.Sync:SendData("MonDKPRaidTimer", "start,true")
+				MonDKP.Sync:SendData("MonDKPBroadcast", "Raid has been paused at "..MonDKP.ConfigTab2.RaidTimerContainer.Output:GetText().."!")
+				MonDKP:StartRaidTimer(true)
+			end
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.PauseTimer:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText("Pause Raid", 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine("This pauses a raid timer if the leader decides the timer should be halted for breaks.", 1.0, 1.0, 1.0, true);
+			GameTooltip:AddLine("Can be resumed by clicking \"Continue Raid\".", 1.0, 0, 0, true);
+			GameTooltip:Show();
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.PauseTimer:SetScript("OnLeave", function(self)
+			GameTooltip:Hide()
+		end)
+
+		-- Award Interval Editbox
+		if not MonDKP_DB.modes.increment then MonDKP_DB.modes.increment = 60 end
+		MonDKP.ConfigTab2.RaidTimerContainer.interval = CreateFrame("EditBox", nil, MonDKP.ConfigTab2.RaidTimerContainer)
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab2.RaidTimerContainer, "BOTTOMLEFT", 35, 205)     
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetAutoFocus(false)
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetMultiLine(false)
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetSize(60, 24)
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetBackdrop({
+			bgFile   = "Textures\\white.blp", tile = true,
+			edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\slider-border", tile = true, tileSize = 1, edgeSize = 1, 
+		});
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetBackdropColor(0,0,0,0.9)
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetBackdropBorderColor(1,1,1,0.6)
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetMaxLetters(5)
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetTextColor(1, 1, 1, 1)
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetFontObject("MonDKPSmallRight")
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetTextInsets(10, 15, 5, 5)
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetNumber(tonumber(MonDKP_DB.modes.increment))
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetScript("OnTextChanged", function(self)    -- clears focus on esc
+			if tonumber(self:GetNumber()) then
+				MonDKP_DB.modes.increment = self:GetNumber();
+			else
+				StaticPopupDialogs["ALERT_NUMBER"] = {
+					text = selected,
+					button1 = "Increment is an invalid number.",
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopup_Show ("ALERT_NUMBER")
+			end
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
+			self:HighlightText(0,0)
+			self:ClearFocus()
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetScript("OnEnterPressed", function(self)    -- clears focus on esc
+			self:HighlightText(0,0)
+			self:ClearFocus()
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetScript("OnTabPressed", function(self)    -- clears focus on esc
+			self:HighlightText(0,0)
+			MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetFocus()
+			MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:HighlightText()
+		end)
+
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText("Award Interval", 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine("Time interval (in minutes) you want DKP to be awarded to the entire raid.", 1.0, 1.0, 1.0, true);
+			GameTooltip:AddLine("eg. Entering 60 will award the raid (and standby, if checked below) the DKP amount in the \"Bonus\" field above every hour.", 1.0, 0, 0, true);
+			GameTooltip:Show();
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetScript("OnLeave", function(self)
+			GameTooltip:Hide()
+		end)
+
+		MonDKP.ConfigTab2.RaidTimerContainer.intervalHeader = MonDKP.ConfigTab2.RaidTimerContainer:CreateFontString(nil, "OVERLAY")
+	    MonDKP.ConfigTab2.RaidTimerContainer.intervalHeader:SetFontObject("MonDKPTinyRight");
+	    MonDKP.ConfigTab2.RaidTimerContainer.intervalHeader:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab2.RaidTimerContainer.interval, "TOPLEFT", 0, 2);
+	    MonDKP.ConfigTab2.RaidTimerContainer.intervalHeader:SetText("Interval:")
+
+	    -- Award Value Editbox
+	    if not MonDKP_DB.DKPBonus.IntervalBonus then MonDKP_DB.DKPBonus.IntervalBonus = 15 end
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue = CreateFrame("EditBox", nil, MonDKP.ConfigTab2.RaidTimerContainer)
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetPoint("LEFT", MonDKP.ConfigTab2.RaidTimerContainer.interval, "RIGHT", 10, 0)     
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetAutoFocus(false)
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetMultiLine(false)
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetSize(60, 24)
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetBackdrop({
+			bgFile   = "Textures\\white.blp", tile = true,
+			edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\slider-border", tile = true, tileSize = 1, edgeSize = 1, 
+		});
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetBackdropColor(0,0,0,0.9)
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetBackdropBorderColor(1,1,1,0.6)
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetMaxLetters(5)
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetTextColor(1, 1, 1, 1)
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetFontObject("MonDKPSmallRight")
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetTextInsets(10, 15, 5, 5)
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetNumber(tonumber(MonDKP_DB.DKPBonus.IntervalBonus))
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetScript("OnTextChanged", function(self)    -- clears focus on esc
+			if tonumber(self:GetNumber()) then
+				MonDKP_DB.DKPBonus.IntervalBonus = self:GetNumber();
+			else
+				StaticPopupDialogs["ALERT_NUMBER"] = {
+					text = selected,
+					button1 = "Increment is an invalid number.",
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopup_Show ("ALERT_NUMBER")
+			end
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
+			self:HighlightText(0,0)
+			self:ClearFocus()
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetScript("OnEnterPressed", function(self)    -- clears focus on esc
+			self:HighlightText(0,0)
+			self:ClearFocus()
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetScript("OnTabPressed", function(self)    -- clears focus on esc
+			self:HighlightText(0,0)
+			MonDKP.ConfigTab2.RaidTimerContainer.interval:SetFocus()
+			MonDKP.ConfigTab2.RaidTimerContainer.interval:HighlightText()
+		end)
+
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText("Award Bonus", 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine("Amount of DKP to give to the raid each time the below interval is met.", 1.0, 1.0, 1.0, true);
+			GameTooltip:Show();
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetScript("OnLeave", function(self)
+			GameTooltip:Hide()
+		end)
+
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalueHeader = MonDKP.ConfigTab2.RaidTimerContainer:CreateFontString(nil, "OVERLAY")
+	    MonDKP.ConfigTab2.RaidTimerContainer.bonusvalueHeader:SetFontObject("MonDKPTinyRight");
+	    MonDKP.ConfigTab2.RaidTimerContainer.bonusvalueHeader:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue, "TOPLEFT", 0, 2);
+	    MonDKP.ConfigTab2.RaidTimerContainer.bonusvalueHeader:SetText("Bonus:")
+    	
+    	-- Give On Time Bonus Checkbox
+		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus = CreateFrame("CheckButton", nil, MonDKP.ConfigTab2.RaidTimerContainer, "UICheckButtonTemplate");
+		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:SetChecked(MonDKP_DB.DKPBonus.GiveRaidStart)
+		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:SetScale(0.6);
+		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus.text:SetText("  |cff5151deGive On Time Bonus|r");
+		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus.text:SetScale(1.5);
+		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus.text:SetFontObject("MonDKPSmallLeft")
+		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:SetPoint("TOPLEFT", MonDKP.ConfigTab2.RaidTimerContainer.interval, "BOTTOMLEFT", 0, -10);
+		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:SetScript("OnClick", function(self)
+			if self:GetChecked() then
+				MonDKP_DB.DKPBonus.GiveRaidStart = true;
+				PlaySound(808)
+			else
+				MonDKP_DB.DKPBonus.GiveRaidStart = false;
+			end
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText("Give On Time Bonus", 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine("Selecting this will award everyone in the raid (and standby, if selected below) the \"On Time\" bonus when you Initialize the Raid.", 1.0, 1.0, 1.0, true);
+			GameTooltip:Show();
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:SetScript("OnLeave", function(self)
+			GameTooltip:Hide()
+		end)
+
+		-- Give Raid End Bonus Checkbox
+		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus = CreateFrame("CheckButton", nil, MonDKP.ConfigTab2.RaidTimerContainer, "UICheckButtonTemplate");
+		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:SetChecked(MonDKP_DB.DKPBonus.GiveRaidEnd)
+		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:SetScale(0.6);
+		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus.text:SetText("  |cff5151deGive End Bonus|r");
+		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus.text:SetScale(1.5);
+		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus.text:SetFontObject("MonDKPSmallLeft")
+		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:SetPoint("TOP", MonDKP.ConfigTab2.RaidTimerContainer.StartBonus, "BOTTOM", 0, 2);
+		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:SetScript("OnClick", function(self)
+			if self:GetChecked() then
+				MonDKP_DB.DKPBonus.GiveRaidEnd = true;
+				PlaySound(808)
+			else
+				MonDKP_DB.DKPBonus.GiveRaidEnd = false;
+			end
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText("Give End Bonus", 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine("Selecting this will award everyone in the raid (and standby, if selected below) the \"Raid Completion\" bonus when you end the Raid.", 1.0, 1.0, 1.0, true);
+			GameTooltip:Show();
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:SetScript("OnLeave", function(self)
+			GameTooltip:Hide()
+		end)
+
+		-- Include Standby Checkbox
+		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude = CreateFrame("CheckButton", nil, MonDKP.ConfigTab2.RaidTimerContainer, "UICheckButtonTemplate");
+		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:SetChecked(MonDKP_DB.DKPBonus.IncStandby)
+		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:SetScale(0.6);
+		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude.text:SetText("  |cff5151deInclude Standby|r");
+		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude.text:SetScale(1.5);
+		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude.text:SetFontObject("MonDKPSmallLeft")
+		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:SetPoint("TOP", MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus, "BOTTOM", 0, 2);
+		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:SetScript("OnClick", function(self)
+			if self:GetChecked() then
+				MonDKP_DB.DKPBonus.IncStandby = true;
+				PlaySound(808)
+			else
+				MonDKP_DB.DKPBonus.IncStandby = false;
+			end
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText("Include Standby", 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine("Selecting this will include the Standby list in all automatic DKP distributions. ", 1.0, 1.0, 1.0, true);
+			GameTooltip:AddLine("Create standby list by selecting players on the DKP table that are not in the raid, right clicking > Manage Standby List > Add Selected Players to Standby List.", 1.0, 0, 0, true);
+			GameTooltip:Show();
+		end)
+		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:SetScript("OnLeave", function(self)
+			GameTooltip:Hide()
+		end)
+
+		MonDKP.ConfigTab2.RaidTimerContainer.TimerWarning = MonDKP.ConfigTab2.RaidTimerContainer:CreateFontString(nil, "OVERLAY")
+	    MonDKP.ConfigTab2.RaidTimerContainer.TimerWarning:SetFontObject("MonDKPTinyLeft");
+	    MonDKP.ConfigTab2.RaidTimerContainer.TimerWarning:SetWidth(180)
+	    MonDKP.ConfigTab2.RaidTimerContainer.TimerWarning:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab2.RaidTimerContainer, "BOTTOMLEFT", 10, 10);
+	    MonDKP.ConfigTab2.RaidTimerContainer.TimerWarning:SetText("|CFFFF0000Warning: Please ensure you have your DKP Bonus parameters properly set. These can be set in the above \"Interval\" and \"Bonus\" boxes, as well as all \"Default DKP Award Values\" in the \"Options\" tab below. It is recommended you set these values and broadcast them to all officers via the DKP Modes window (accessible with \"/dkp modes\" or the button in the \"Options\" tab prior to using.|r")
 end

@@ -9,15 +9,6 @@ local _G = _G;
 core.MonDKP = {};       -- UI Frames global
 local MonDKP = core.MonDKP;
 
---[[local race,_,_ = UnitRace("player");
-if race == "Undead" or race == "Tauren" or race == "Orc" or race == "Troll" then
-  core.faction = "Horde";
-elseif race == "Gnome" or race == "Human" or race == "Night Elf" or race == "Dwarf" then
-  core.faction = "Alliance";
-else
-  core.faction = "Horde";
-end--]]
-
 core.faction = UnitFactionGroup("player")
 if core.faction == "Horde" then
   core.CColors = {   -- class colors
@@ -62,9 +53,11 @@ core.settings = {             -- From MonDKP_DB
     NewBossKillBonus = 10,
     UnexcusedAbsence = -25,
     BidTimer = 30,
+    DecayPercentage = 20,
+  },
+  defaults = {
     HistoryLimit = 2500,
     DKPHistoryLimit = 2500,
-    DecayPercentage = 20,
     BidTimerSize = 1.0,
     MonDKPScaleSize = 1.0,
     supressNotifications = false,
@@ -121,19 +114,20 @@ core.BossList = {
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v1.3.1";
+core.MonVersion = "v1.4.0";
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
 core.IsOfficer = "";
 core.UpToDate = false;
-core.SelectedRows = {};       -- tracks rows in DKPTable that are currently selected for SetHighlightTexture
 core.ShowState = false;
 core.currentSort = "class"		-- stores current sort selection
 core.BidInProgress = false;   -- flagged true if bidding in progress. else; false.
+core.RaidInProgress = false;
 core.NumLootItems = 0;        -- updates on LOOT_OPENED event
 core.CurrentRaidZone = ""
 core.LastKilledBoss = ""
+core.CurView = "all"
 
 function MonDKP:GetCColors(class)
   if core.CColors then 
@@ -145,7 +139,7 @@ function MonDKP:GetCColors(class)
 end
 
 function round(number, decimals)
-    return (("%%.%df"):format(decimals)):format(number)
+    return tonumber((("%%.%df"):format(decimals)):format(number))
 end
 
 function MonDKP:ResetPosition()
@@ -274,7 +268,7 @@ function MonDKP:GetMinBidSettings()
 end
 
 function MonDKP:PurgeLootHistory()     -- cleans old loot history beyond history limit to reduce native system load
-  local limit = core.settings["DKPBonus"]["HistoryLimit"]
+  local limit = core.settings["defaults"]["HistoryLimit"]
   MonDKP:SortLootTable()
 
   if #MonDKP_Loot > limit then
@@ -285,7 +279,7 @@ function MonDKP:PurgeLootHistory()     -- cleans old loot history beyond history
 end
 
 function MonDKP:PurgeDKPHistory()     -- cleans old DKP history beyond history limit to reduce native system load
-  local limit = core.settings["DKPBonus"]["DKPHistoryLimit"]
+  local limit = core.settings["defaults"]["DKPHistoryLimit"]
   MonDKP:SortDKPHistoryTable()
 
   if #MonDKP_DKPHistory > limit then
@@ -315,7 +309,7 @@ function MonDKP:FormatTime(time)
 end
 
 function MonDKP:Print(...)        --print function to add "MonolithDKP:" to the beginning of print() outputs.
-    if not MonDKP_DB["DKPBonus"]["supressNotifications"] then
+    if not MonDKP_DB["defaults"]["supressNotifications"] then
       local defaults = MonDKP:GetThemeColor();
       local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "MonolithDKP:", defaults[2].hex:upper());
       local suffix = "|r";
@@ -513,15 +507,15 @@ function MonDKP:DKPTable_Set(tar, field, value, loot)                -- updates 
   for i=1, #result do
     local current = MonDKP_DKPTable[result[i][1]][field];
     if(field == "dkp") then
-      MonDKP_DKPTable[result[i][1]][field] = current + value
+      MonDKP_DKPTable[result[i][1]][field] = tonumber(round(current + value, MonDKP_DB.modes.rounding))
       if value > 0 and loot == false then
-        MonDKP_DKPTable[result[i][1]]["lifetime_gained"] = MonDKP_DKPTable[result[i][1]]["lifetime_gained"] + value
+        MonDKP_DKPTable[result[i][1]]["lifetime_gained"] = tonumber(round(MonDKP_DKPTable[result[i][1]]["lifetime_gained"] + value, MonDKP_DB.modes.rounding))
       elseif value < 0 and loot == true then
-        MonDKP_DKPTable[result[i][1]]["lifetime_spent"] = MonDKP_DKPTable[result[i][1]]["lifetime_spent"] + value
+        MonDKP_DKPTable[result[i][1]]["lifetime_spent"] = tonumber(round(MonDKP_DKPTable[result[i][1]]["lifetime_spent"] + value, MonDKP_DB.modes.rounding))
       end
     else
       MonDKP_DKPTable[result[i][1]][field] = value
     end
   end
-  MonDKP:FilterDKPTable(core.currentSort, "reset")
+  DKPTable_Update()
 end

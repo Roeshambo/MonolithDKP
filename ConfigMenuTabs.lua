@@ -20,7 +20,7 @@ local function ScrollFrame_OnMouseWheel(self, delta)          -- scroll function
   self:SetVerticalScroll(newValue);
 end
 
-local function FilterChecks(self)         -- sets/unsets check boxes in conjunction with "All" button, then runs MonDKP:FilterDKPTable() above
+function MonDKPFilterChecks(self)         -- sets/unsets check boxes in conjunction with "All" button, then runs MonDKP:FilterDKPTable() above
   local verifyCheck = true; -- switches to false if the below loop finds anything unchecked
   if (self:GetChecked() == false and not MonDKP.ConfigTab1.checkBtn[10]) then
     MonDKP.ConfigTab1.checkBtn[9]:SetChecked(false);
@@ -49,7 +49,7 @@ local function FilterChecks(self)         -- sets/unsets check boxes in conjunct
 end
 
 function MonDKPSetFilterChecks(self)    -- used to run FilterChecks as a global
-  FilterChecks(self);
+  MonDKPFilterChecks(self);
 end
 
 local function Tab_OnClick(self)
@@ -179,7 +179,7 @@ function MonDKP:ConfigMenuTabs()
             end
           end
           checkAll = not checkAll;
-          FilterChecks(MonDKP.ConfigTab1.checkBtn[9]);
+          MonDKPFilterChecks(MonDKP.ConfigTab1.checkBtn[9]);
         end)
 
       for k,v in pairs(core.classes) do               -- sets core.classFiltered table with all values
@@ -190,7 +190,7 @@ function MonDKP:ConfigMenuTabs()
         end
       end
     else
-      MonDKP.ConfigTab1.checkBtn[i]:SetScript("OnClick", FilterChecks)
+      MonDKP.ConfigTab1.checkBtn[i]:SetScript("OnClick", MonDKPFilterChecks)
     end
     MonDKP.ConfigTab1.checkBtn[i].text:SetFontObject("MonDKPSmall")
   end

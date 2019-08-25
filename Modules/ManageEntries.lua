@@ -63,14 +63,11 @@ local function Remove_Entries()
 end
 
 function AddRaidToDKPTable()
-	local NumGroup = 0;
 	local GroupType = "none";
 
 	if IsInGroup() then
-		NumGroup = GetNumGroupMembers()
 		GroupType = "party"
 	elseif IsInRaid() then
-		NumGroup = GetNumRaidMembers()
 		GroupType = "raid"
 	end
 
@@ -248,6 +245,7 @@ end
 
 local function UpdateWhitelist()
 	if #core.SelectedData > 0 then
+		table.wipe(MonDKP_Whitelist)
 		for i=1, #core.SelectedData do
 			local validate = MonDKP:ValidateSender(core.SelectedData[i].player)
 
@@ -538,7 +536,6 @@ function MonDKP:ManageEntries()
 			StaticPopup_Show ("ADD_TARGET_DKP")
 		end
 	end);
-
 
 	MonDKP.ConfigTab3.WhitelistContainer = CreateFrame("Frame", nil, MonDKP.ConfigTab3);
 	MonDKP.ConfigTab3.WhitelistContainer:SetSize(475, 200);
