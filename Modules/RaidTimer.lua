@@ -180,11 +180,11 @@ function MonDKP:StartRaidTimer(pause)
 
 		if MinuteCount >= increment then				-- apply bonus once increment value has been met
 			MinuteCount = 0;
-			awards = awards + 1;
 			MonDKP.ConfigTab2.RaidTimerContainer.BonusHeader:Show();
 			MonDKP.ConfigTab2.RaidTimerContainer.Bonus:SetText("|cff00ff00"..(awards*MonDKP_DB.DKPBonus.IntervalBonus)+StartBonus.."|r");
 
 			if IsInRaid() and CheckRaidLeader() then
+				awards = awards + 1;
 				AwardRaid(MonDKP_DB.DKPBonus.IntervalBonus, "Time Interval Bonus")
 			end
 			-- BEGIN award script here make sure IsRaidLeader() leads

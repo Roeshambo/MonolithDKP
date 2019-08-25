@@ -537,7 +537,7 @@ function DKPTable_Update()
       row.DKPInfo[1].rowCounter:SetText(index)
       row.DKPInfo[1]:SetTextColor(c.r, c.g, c.b, 1)
       row.DKPInfo[2]:SetText(core.WorkingTable[index].class)
-      row.DKPInfo[3]:SetText(core.WorkingTable[index].dkp)
+      row.DKPInfo[3]:SetText(round(core.WorkingTable[index].dkp, MonDKP_DB.modes.rounding))
       local CheckAdjusted = core.WorkingTable[index].dkp - core.WorkingTable[index].previous_dkp;
       if(CheckAdjusted > 0) then 
         CheckAdjusted = strjoin("", "+", CheckAdjusted) 
@@ -575,7 +575,7 @@ function DKPTable_Update()
         if minimum > maximum then
           row.DKPInfo[3].rollrange:SetText("(0-0)")
         else
-          row.DKPInfo[3].rollrange:SetText("("..round(minimum,0).."-"..round(maximum,0)..")")
+          row.DKPInfo[3].rollrange:SetText("("..math.floor(minimum).."-"..math.floor(maximum)..")")
         end
       end
 
@@ -589,7 +589,7 @@ function DKPTable_Update()
       end
       if core.WorkingTable[index].player == UnitName("player") and #core.SelectedData == 0 then
         row.DKPInfo[2]:SetText("|cff00ff00"..core.WorkingTable[index].class.."|r")
-        row.DKPInfo[3]:SetText("|cff00ff00"..core.WorkingTable[index].dkp.."|r")
+        row.DKPInfo[3]:SetText("|cff00ff00"..round(core.WorkingTable[index].dkp, MonDKP_DB.modes.rounding).."|r")
         MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
       end
       MonDKP.DKPTable.Rows[i]:SetScript("OnEnter", function(self)

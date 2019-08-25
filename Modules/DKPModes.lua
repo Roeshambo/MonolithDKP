@@ -188,7 +188,7 @@ function MonDKP:DKPModesFrame_Create()
 			f.Inflation:Show()
     		f.Inflation.Header:Show()
 
-			if MonDKP_DB.modes.ZeroSumBidType == "static" then
+			if MonDKP_DB.modes.ZeroSumBidType == "Static" then
 				f.MaxBid:Hide();
 				f.MaxBid.Header:Hide();
 				f.CostSelection:Hide()
@@ -243,9 +243,13 @@ function MonDKP:DKPModesFrame_Create()
 		if newValue == "Static" then
 			f.MaxBid:Hide();
 			f.MaxBid.Header:Hide();
+			f.CostSelection:Hide();
+			f.CostSelectionHeader:Hide();
 		else
 			f.MaxBid:Show();
 			f.MaxBid.Header:Show();
+			f.CostSelection:Show();
+			f.CostSelectionHeader:Show();
 		end
 		UIDropDownMenu_SetText(f.ZeroSumType, newValue)
 		CloseDropDownMenus()

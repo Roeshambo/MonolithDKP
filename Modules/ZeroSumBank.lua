@@ -72,6 +72,11 @@ function MonDKP:ZeroSumBank_Update()
  			core.ZeroSumBank.LootFrame.LootList:SetText(core.ZeroSumBank.LootFrame.LootList:GetText()..MonDKP_DB.modes.ZeroSumBank[i].loot.." for "..MonDKP_DB.modes.ZeroSumBank[i].cost.." DKP\n")
  		end
  	end
+ 	
+ 	if core.ZeroSumBank.LootFrame.LootList:GetHeight() > 180 then
+ 		core.ZeroSumBank.LootFrame:SetHeight(core.ZeroSumBank.LootFrame.LootList:GetHeight() + 18)
+ 		core.ZeroSumBank:SetHeight(350 + core.ZeroSumBank.LootFrame.LootList:GetHeight() - 170)
+ 	end
 end
 
 function MonDKP:ZeroSumBank_Create()
@@ -162,7 +167,7 @@ function MonDKP:ZeroSumBank_Create()
 	f.Balance.Header:SetText("Balance: ")
 
 	f.Distribute = CreateFrame("Button", "MonDKPBiddingDistributeButton", f, "MonolithDKPButtonTemplate")
-	f.Distribute:SetPoint("RIGHT", f, "RIGHT", -15, 68);
+	f.Distribute:SetPoint("TOPRIGHT", f, "TOPRIGHT", -15, -95);
 	f.Distribute:SetSize(90, 25);
 	f.Distribute:SetText("Distribute DKP");
 	f.Distribute:GetFontString():SetTextColor(1, 1, 1, 1)
@@ -190,7 +195,7 @@ function MonDKP:ZeroSumBank_Create()
 	f.Distribute:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 		GameTooltip:SetText("Distribute DKP", 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine("Distribute banked DKP to all raid members evently after looting has completed for the current boss.", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("Distribute banked DKP to all raid members evenly after looting has completed for the current boss.", 1.0, 1.0, 1.0, true);
 		GameTooltip:Show();
 	end)
 	f.Distribute:SetScript("OnLeave", function(self)
@@ -221,9 +226,9 @@ function MonDKP:ZeroSumBank_Create()
 		GameTooltip:Hide()
 	end)
 
-	-- TabMenu ScrollFrame and ScrollBar
+	-- Loot List Frame
 	f.LootFrame = CreateFrame("Frame", "MonDKPZeroSumBankLootListContainer", f, "ShadowOverlaySmallTemplate")
-	f.LootFrame:SetPoint("BOTTOM", f, "BOTTOM", 0, 10)
+	f.LootFrame:SetPoint("TOPRIGHT", f.IncludeStandby, "BOTTOM", 95, -5)
 	f.LootFrame:SetSize(305, 190)
 	f.LootFrame:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,

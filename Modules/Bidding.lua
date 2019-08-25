@@ -301,9 +301,9 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 		 			core.BiddingWindow.CustomMinBid:SetChecked(true)
 		 			core.BiddingWindow.CustomMinBid:SetScript("OnClick", function(self)
 		 				if self:GetChecked() == true then
-		 					core.BiddingWindow.minBid:SetText(minBid)
+		 					core.BiddingWindow.minBid:SetText(round(minBid, MonDKP_DB.modes.rounding))
 		 				else
-		 					core.BiddingWindow.minBid:SetText(GetMinBid(CurrItemForBid))
+		 					core.BiddingWindow.minBid:SetText(round(GetMinBid(CurrItemForBid), MonDKP_DB.modes.rounding))
 		 				end
 		 			end)
 		 		elseif mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
@@ -311,9 +311,9 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 		 			core.BiddingWindow.CustomMinBid:SetChecked(true)
 		 			core.BiddingWindow.CustomMinBid:SetScript("OnClick", function(self)
 		 				if self:GetChecked() == true then
-		 					core.BiddingWindow.cost:SetText(minBid)
+		 					core.BiddingWindow.cost:SetText(round(minBid, MonDKP_DB.modes.rounding))
 		 				else
-		 					core.BiddingWindow.cost:SetText(GetMinBid(CurrItemForBid))
+		 					core.BiddingWindow.cost:SetText(round(GetMinBid(CurrItemForBid), MonDKP_DB.modes.rounding))
 		 				end
 		 			end)
 		 		end
@@ -322,10 +322,10 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 	 			core.BiddingWindow.CustomMinBid:Hide();
 	 		end
 	 		if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
- 				core.BiddingWindow.minBid:SetText(minBid)
+ 				core.BiddingWindow.minBid:SetText(round(minBid, MonDKP_DB.modes.rounding))
  			end
 
-	 		core.BiddingWindow.cost:SetText(minBid)
+	 		core.BiddingWindow.cost:SetText(round(minBid, MonDKP_DB.modes.rounding))
 	 		core.BiddingWindow.itemName:SetText(itemName)
 	 		core.BiddingWindow.bidTimer:SetText(core.settings["DKPBonus"]["BidTimer"])
 	 		core.BiddingWindow.boss:SetText(core.LastKilledBoss.." in "..CurZone)
@@ -339,9 +339,10 @@ end
 
 local function StartBidding()
 	local perc;
+	mode = MonDKP_DB.modes.mode;
 
 	if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
-		core.BiddingWindow.cost:SetNumber(core.BiddingWindow.minBid:GetNumber())
+		core.BiddingWindow.cost:SetNumber(round(core.BiddingWindow.minBid:GetNumber(), MonDKP_DB.modes.rounding))
 		MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), CurrItemIcon)
 
 		local search = MonDKP:Table_Search(MonDKP_MinBids, core.BiddingWindow.itemName:GetText())
@@ -629,7 +630,7 @@ local function AwardItem()
 					 	core.BiddingWindow.CustomMinBid:SetChecked(true);
 					elseif search and core.BiddingWindow.cost:GetText() ~= tonumber(val) and core.BiddingWindow.CustomMinBid:GetChecked() == true then
 						if MonDKP_MinBids[search[1][1]].minbid ~= core.BiddingWindow.cost:GetText() then
-							MonDKP_MinBids[search[1][1]].minbid = core.BiddingWindow.cost:GetNumber();
+							MonDKP_MinBids[search[1][1]].minbid = round(core.BiddingWindow.cost:GetNumber(), MonDKP_DB.modes.rounding);
 							core.BiddingWindow.CustomMinBid:SetShown(true);
 					 		core.BiddingWindow.CustomMinBid:SetChecked(true);
 						end
@@ -984,7 +985,7 @@ function BidScrollFrame_Update()
             	if tonumber(minRoll) < 1 then minRoll = 1 end
 
             	row.Strings[2]:SetText(Bids_Submitted[i].roll..Bids_Submitted[i].range)
-            	row.Strings[3]:SetText(round(minRoll, 0).."-"..round(maxRoll,0))
+            	row.Strings[3]:SetText(math.floor(minRoll).."-"..math.floor(maxRoll))
             elseif mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
             	row.Strings[3]:SetText(Bids_Submitted[i].dkp)
             end
@@ -1099,7 +1100,7 @@ function MonDKP:CreateBidWindow()
 	    });
 	    f.minBid:SetBackdropColor(0,0,0,0.9)
 	    f.minBid:SetBackdropBorderColor(1,1,1,0.4)
-	    f.minBid:SetMaxLetters(4)
+	    f.minBid:SetMaxLetters(8)
 	    f.minBid:SetTextColor(1, 1, 1, 1)
 	    f.minBid:SetFontObject("MonDKPSmallRight")
 	    f.minBid:SetTextInsets(10, 10, 5, 5)
@@ -1350,13 +1351,22 @@ function MonDKP:CreateBidWindow()
     });
     f.cost:SetBackdropColor(0,0,0,0.9)
     f.cost:SetBackdropBorderColor(1,1,1,0.4)
-    f.cost:SetMaxLetters(4)
+    f.cost:SetMaxLetters(8)
     f.cost:SetTextColor(1, 1, 1, 1)
     f.cost:SetFontObject("MonDKPSmallRight")
     f.cost:SetTextInsets(10, 10, 5, 5)
     f.cost:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
       self:ClearFocus()
     end)
+    f.cost:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText("Item Cost", 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine("DKP to charge player for item.", 1.0, 1.0, 1.0, true);
+		GameTooltip:Show();
+	end)
+	f.cost:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
 
 	f.costHeader = f:CreateFontString(nil, "OVERLAY")
 	f.costHeader:SetFontObject("MonDKPLargeRight");
