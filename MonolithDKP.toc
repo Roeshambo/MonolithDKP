@@ -1,7 +1,7 @@
 ## Interface: 11302
 ## Title: M|cffaeaeddonlith|r |cffff0000DKP|r
 ## Author: Roeshambo
-## Version: 1.4.0
+## Version: 1.4.2
 ## DefaultState: enabled
 ## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_DKPHistory, MonDKP_MinBids, MonDKP_Whitelist, MonDKP_Standby
 
