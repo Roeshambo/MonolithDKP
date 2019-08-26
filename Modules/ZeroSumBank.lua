@@ -19,8 +19,9 @@ local function ZeroSumDistribution()
 		for i=1, 40 do
 			local tempName = GetRaidRosterInfo(i)
 			local search = MonDKP:Table_Search(VerifyTable, tempName)
+			local search2 = MonDKP:Table_Search(MonDKP_DKPTable, tempName)
 
-			if not search then
+			if not search and search2 then
 				tinsert(VerifyTable, tempName)
 			end
 		end
@@ -31,10 +32,13 @@ local function ZeroSumDistribution()
 			local name = VerifyTable[i]
 			local search = MonDKP:Table_Search(MonDKP_DKPTable, name)
 
-			MonDKP_DKPTable[search[1][1]].dkp = MonDKP_DKPTable[search[1][1]].dkp + distribution
-			players = players..name..","
+			if search then
+				MonDKP_DKPTable[search[1][1]].dkp = MonDKP_DKPTable[search[1][1]].dkp + distribution
+				players = players..name..","
+			end
 		end
 
+		MonDKP:UpdateSeeds()
 		tinsert(MonDKP_DKPHistory, {players=players, dkp=distribution, reason=reason, date=date})
 		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
 		if MonDKP.ConfigTab6.history then

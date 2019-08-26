@@ -177,10 +177,12 @@ function MonDKP:DKPModesFrame_Create()
 			end
 		elseif newValue == "Zero Sum" then
 			MonDKP_DB.modes.mode = "Zero Sum"
+			MonDKP_DB.modes.costvalue = "Integer"
 			f.ModeDescription:SetText(ZeroSumDescription)
 			f.SubZeroBidding:Hide()
 			f.RollContainer:Hide()
 			f.ItemCostHeader:Hide();
+			UIDropDownMenu_SetText(f.ItemCostDropDown, "Integer")
 			f.ItemCostDropDown:Hide();
 			f.ZeroSumType:Show()
 			f.ZeroSumTypeHeader:Show();

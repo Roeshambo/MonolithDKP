@@ -4,6 +4,7 @@ local MonDKP = core.MonDKP;
 
 local SelectedRow = 0;        -- sets the row that is being clicked
 local menuFrame = CreateFrame("Frame", "MonDKPDKPTableMenuFrame", UIParent, "UIDropDownMenuTemplate")
+local ConvToRaidEvent = CreateFrame("Frame", "MonDKPConvToRaidEventsFrame");
 
 function MonDKPSelectionCount_Update()
   if #core.SelectedData == 0 then
@@ -53,6 +54,15 @@ function DKPTable_OnClick(self)
 
   DKPTable_Update()
   MonDKPSelectionCount_Update()
+end
+
+local function Invite_OnEvent(self, event, arg1, ...)
+  if event == "CHAT_MSG_SYSTEM" then
+    if strfind(arg1, " joins the party.") then
+      ConvertToRaid()
+      ConvToRaidEvent:UnregisterEvent("CHAT_MSG_SYSTEM")
+    end
+  end
 end
 
 local function DisplayUserHistory(self, player)
@@ -259,6 +269,8 @@ local function RightClickMenu(self)
       for i=1, #core.SelectedData do
         InviteUnit(core.SelectedData[i].player)
       end
+      ConvToRaidEvent:RegisterEvent("CHAT_MSG_SYSTEM")
+      ConvToRaidEvent:SetScript("OnEvent", Invite_OnEvent);
     end }, --2
     { text = "Select All", notCheckable = true, func = function()
       core.SelectedData = CopyTable(core.WorkingTable);
