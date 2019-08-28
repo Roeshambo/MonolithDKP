@@ -150,14 +150,6 @@ local function AddGuildToDKPTable(rank)
 		local search = MonDKP:Table_Search(MonDKP_DKPTable, name)
 
 		if not search and rankIndex <= rank then
-			if class == "Death Knight" or class == "Monk" or class == "Demon Hunter" then 	-- remove at launch
-				class = "Druid"
-			end
-			if UnitFactionGroup("player") == "Horde" then
-				if class == "Paladin" then class = "Shaman" end
-			else
-				if class == "Shaman" then class = "Paladin" end
-			end 																			-- to here
 			tinsert(MonDKP_DKPTable, {
 				player=name,
 				class=class,
@@ -194,16 +186,6 @@ local function AddTargetToDKPTable()
 	local search = MonDKP:Table_Search(MonDKP_DKPTable, UnitName("target"))
 
 	if not search then
-
-		if class == "Death Knight" or class == "Monk" or class == "Demon Hunter" then 	-- remove at launch
-			class = "Druid"
-		end
-		if UnitFactionGroup("player") == "Horde" then
-			if class == "Paladin" then class = "Shaman" end
-		else
-			if class == "Shaman" then class = "Paladin" end
-		end 																			-- to here
-
 		tinsert(MonDKP_DKPTable, {
 			player=name,
 			class=class,
