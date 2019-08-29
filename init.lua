@@ -110,7 +110,6 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		return
 	end
 
-
 	if event == "ADDON_LOADED" then
 		MonDKP:OnInitialize(event, arg1)
 		self:UnregisterEvent("ADDON_LOADED")
@@ -118,6 +117,12 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		MonDKP:CheckOfficer()
 		if (core.BidInProgress or string.find(arg1, "!dkp") == 1) and core.IsOfficer == true then
 			MonDKP_CHAT_MSG_WHISPER(arg1, ...)
+		end
+	elseif event == "GUILD_ROSTER_UPDATE" then
+		GuildInfo()
+		if IsInGuild() then
+			MonDKP:CheckOfficer()
+			self:UnregisterEvent("GUILD_ROSTER_UPDATE")
 		end
 	elseif event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" then
 		MonDKP:CheckOfficer()
@@ -264,4 +269,5 @@ events:RegisterEvent("CHAT_MSG_RAID")
 events:RegisterEvent("CHAT_MSG_RAID_LEADER")
 events:RegisterEvent("CHAT_MSG_WHISPER");
 events:RegisterEvent("CHAT_MSG_GUILD")
+events:RegisterEvent("GUILD_ROSTER_UPDATE")
 events:SetScript("OnEvent", MonDKP_OnEvent); -- calls the above MonDKP_OnEvent function to determine what to do with the event

@@ -14,11 +14,8 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
   if core.BiddingWindow then core.BiddingWindow:SetFrameLevel(6) end
   if core.ModesWindow then core.ModesWindow:SetFrameLevel(2) end
     
-  if not C_GuildInfo.GuildRoster() then
+  if core.IsOfficer == "" then
     MonDKP:CheckOfficer()
-  else
-    MonDKP:Print("Failed rank validation. Please try again.")
-    return
   end
   --core.IsOfficer = C_GuildInfo.CanEditOfficerNote()  -- seemingly removed from classic API
   if core.IsOfficer == false then
