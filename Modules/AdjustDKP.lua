@@ -153,16 +153,16 @@ local function DecayDKP(amount, deductionType, GetSelections)
 						if dkp > 0 then
 							if deductionType == "percent" then
 								deducted = dkp * amount
-								dkp = round(dkp - deducted, MonDKP_DB.modes.rounding);
-								value["dkp"] = tonumber(round(dkp, MonDKP_DB.modes.rounding));
+								dkp = MonDKP_round(dkp - deducted, MonDKP_DB.modes.rounding);
+								value["dkp"] = tonumber(MonDKP_round(dkp, MonDKP_DB.modes.rounding));
 							elseif deductionType == "points" then
 								-- do stuff for flat point deductions
 							end
 						elseif dkp < 0 and MonDKP.ConfigTab2.AddNegative:GetChecked() then
 							if deductionType == "percent" then
 								deducted = dkp * amount
-								dkp = round(deducted - dkp, MonDKP_DB.modes.rounding) * -1
-								value["dkp"] = tonumber(round(dkp, MonDKP_DB.modes.rounding))
+								dkp = MonDKP_round(deducted - dkp, MonDKP_DB.modes.rounding) * -1
+								value["dkp"] = tonumber(MonDKP_round(dkp, MonDKP_DB.modes.rounding))
 							elseif deductionType == "points" then
 								-- do stuff for flat point deductions
 							end	
@@ -206,16 +206,16 @@ local function DecayDKP(amount, deductionType, GetSelections)
 				if dkp > 0 then
 					if deductionType == "percent" then
 						deducted = dkp * amount
-						dkp = round(dkp - deducted, MonDKP_DB.modes.rounding);
-						value["dkp"] = tonumber(round(dkp, MonDKP_DB.modes.rounding));
+						dkp = MonDKP_round(dkp - deducted, MonDKP_DB.modes.rounding);
+						value["dkp"] = tonumber(MonDKP_round(dkp, MonDKP_DB.modes.rounding));
 					elseif deductionType == "points" then
 						-- do stuff for flat point deductions
 					end
 				elseif dkp < 0 and MonDKP.ConfigTab2.AddNegative:GetChecked() then
 					if deductionType == "percent" then
 						deducted = dkp * amount
-						dkp = round(deducted - dkp, MonDKP_DB.modes.rounding) * -1
-						value["dkp"] = tonumber(round(dkp, MonDKP_DB.modes.rounding))
+						dkp = MonDKP_round(deducted - dkp, MonDKP_DB.modes.rounding) * -1
+						value["dkp"] = tonumber(MonDKP_round(dkp, MonDKP_DB.modes.rounding))
 					elseif deductionType == "points" then
 						-- do stuff for flat point deductions
 					end	
@@ -486,7 +486,7 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.adjustButton:SetSize(90,25)
 	MonDKP.ConfigTab2.adjustButton:SetScript("OnClick", function()
 		if #core.SelectedData > 0 and curReason and MonDKP.ConfigTab2.otherReason:GetText() then
-			local selected = "Are you sure you'd like to give "..round(MonDKP.ConfigTab2.addDKP:GetNumber(), MonDKP_DB.modes.rounding).." DKP to the following players: \n\n";
+			local selected = "Are you sure you'd like to give "..MonDKP_round(MonDKP.ConfigTab2.addDKP:GetNumber(), MonDKP_DB.modes.rounding).." DKP to the following players: \n\n";
 
 			for i=1, #core.SelectedData do
 				local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[i].player)

@@ -22,7 +22,7 @@ function MonDKP:ClassGraph()
 		local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, v)
 		if classSearch and #classSearch > 0 then
 			tinsert(classCount, #classSearch)
-			local classPerc = round(#classSearch / #MonDKP_DKPTable, 4);
+			local classPerc = MonDKP_round(#classSearch / #MonDKP_DKPTable, 4);
 			tinsert(perc, classPerc * 100)
 			local adjustBar = BarMaxHeight * classPerc;
 			tinsert(perc_height, adjustBar)
@@ -60,7 +60,7 @@ function MonDKP:ClassGraph()
 		graph.icons[i].percentage = graph.icons[i].bar:CreateFontString(nil, "OVERLAY")
 		graph.icons[i].percentage:SetPoint("BOTTOM", graph.icons[i].bar, "TOP", 0, 3)
 		graph.icons[i].percentage:SetFontObject("MonDKPSmallCenter")
-		graph.icons[i].percentage:SetText(round(perc[i] or 0, 1).."%")
+		graph.icons[i].percentage:SetText(MonDKP_round(perc[i] or 0, 1).."%")
 		graph.icons[i].percentage:SetTextColor(1, 1, 1, 1)
 
 		graph.icons[i].count = graph.icons[i].bar:CreateFontString(nil, "OVERLAY")
@@ -124,7 +124,7 @@ function MonDKP:ClassGraph_Update()
 		local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, v)
 		if classSearch and #classSearch > 0 then
 			tinsert(classCount, #classSearch)
-			local classPerc = round(#classSearch / #MonDKP_DKPTable, 4);
+			local classPerc = MonDKP_round(#classSearch / #MonDKP_DKPTable, 4);
 			tinsert(perc, classPerc * 100)
 			local adjustBar = BarMaxHeight * classPerc;
 			tinsert(perc_height, adjustBar)
@@ -139,7 +139,7 @@ function MonDKP:ClassGraph_Update()
 
 	for i=1, 8 do
   		core.ClassGraph.icons[i].bar:SetSize(BarWidth, perc_height[i])
-		core.ClassGraph.icons[i].percentage:SetText(round(perc[i], 1).."%")
+		core.ClassGraph.icons[i].percentage:SetText(MonDKP_round(perc[i], 1).."%")
 		core.ClassGraph.icons[i].count:SetText(classCount[i])
 	end
 end

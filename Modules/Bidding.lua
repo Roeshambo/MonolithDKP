@@ -177,7 +177,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 	        		if maximum < 0 then maximum = 0 end
           			if minimum < 0 then minimum = 0 end
 	        	end
-	        	range = range.." Use /random "..round(minimum, 0).."-"..round(maximum, 0).." to bid"..perc..".";
+	        	range = range.." Use /random "..MonDKP_round(minimum, 0).."-"..MonDKP_round(maximum, 0).." to bid"..perc..".";
 	        end
 
 			if search then
@@ -301,9 +301,9 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 		 			core.BiddingWindow.CustomMinBid:SetChecked(true)
 		 			core.BiddingWindow.CustomMinBid:SetScript("OnClick", function(self)
 		 				if self:GetChecked() == true then
-		 					core.BiddingWindow.minBid:SetText(round(minBid, MonDKP_DB.modes.rounding))
+		 					core.BiddingWindow.minBid:SetText(MonDKP_round(minBid, MonDKP_DB.modes.rounding))
 		 				else
-		 					core.BiddingWindow.minBid:SetText(round(GetMinBid(CurrItemForBid), MonDKP_DB.modes.rounding))
+		 					core.BiddingWindow.minBid:SetText(MonDKP_round(GetMinBid(CurrItemForBid), MonDKP_DB.modes.rounding))
 		 				end
 		 			end)
 		 		elseif mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
@@ -311,9 +311,9 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 		 			core.BiddingWindow.CustomMinBid:SetChecked(true)
 		 			core.BiddingWindow.CustomMinBid:SetScript("OnClick", function(self)
 		 				if self:GetChecked() == true then
-		 					core.BiddingWindow.cost:SetText(round(minBid, MonDKP_DB.modes.rounding))
+		 					core.BiddingWindow.cost:SetText(MonDKP_round(minBid, MonDKP_DB.modes.rounding))
 		 				else
-		 					core.BiddingWindow.cost:SetText(round(GetMinBid(CurrItemForBid), MonDKP_DB.modes.rounding))
+		 					core.BiddingWindow.cost:SetText(MonDKP_round(GetMinBid(CurrItemForBid), MonDKP_DB.modes.rounding))
 		 				end
 		 			end)
 		 		end
@@ -322,10 +322,10 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 	 			core.BiddingWindow.CustomMinBid:Hide();
 	 		end
 	 		if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
- 				core.BiddingWindow.minBid:SetText(round(minBid, MonDKP_DB.modes.rounding))
+ 				core.BiddingWindow.minBid:SetText(MonDKP_round(minBid, MonDKP_DB.modes.rounding))
  			end
 
-	 		core.BiddingWindow.cost:SetText(round(minBid, MonDKP_DB.modes.rounding))
+	 		core.BiddingWindow.cost:SetText(MonDKP_round(minBid, MonDKP_DB.modes.rounding))
 	 		core.BiddingWindow.itemName:SetText(itemName)
 	 		core.BiddingWindow.bidTimer:SetText(core.settings["DKPBonus"]["BidTimer"])
 	 		core.BiddingWindow.boss:SetText(core.LastKilledBoss.." in "..CurZone)
@@ -342,7 +342,7 @@ local function StartBidding()
 	mode = MonDKP_DB.modes.mode;
 
 	if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
-		core.BiddingWindow.cost:SetNumber(round(core.BiddingWindow.minBid:GetNumber(), MonDKP_DB.modes.rounding))
+		core.BiddingWindow.cost:SetNumber(MonDKP_round(core.BiddingWindow.minBid:GetNumber(), MonDKP_DB.modes.rounding))
 		MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), CurrItemIcon)
 
 		local search = MonDKP:Table_Search(MonDKP_MinBids, core.BiddingWindow.itemName:GetText())
@@ -479,17 +479,17 @@ local function AwardItem()
 							local search = MonDKP:Table_Search(MonDKP_DKPTable, winner);
 
 							if search then
-								cost = round(MonDKP_DKPTable[search[1][1]].dkp * (cost / 100), MonDKP_DB.modes.rounding);
+								cost = MonDKP_round(MonDKP_DKPTable[search[1][1]].dkp * (cost / 100), MonDKP_DB.modes.rounding);
 							else
 								print("Error")
 							end
 						else
-							cost = round(SelectedBidder["dkp"] * (cost / 100), MonDKP_DB.modes.rounding);
+							cost = MonDKP_round(SelectedBidder["dkp"] * (cost / 100), MonDKP_DB.modes.rounding);
 						end
-						selected = "Award item to "..SelectedBidder["player"].." for |CFF00ff00"..round(cost, MonDKP_DB.modes.rounding).."|r (|CFFFF0000"..core.BiddingWindow.cost:GetNumber().."%%|r) DKP?";
+						selected = "Award item to "..SelectedBidder["player"].." for |CFF00ff00"..MonDKP_round(cost, MonDKP_DB.modes.rounding).."|r (|CFFFF0000"..core.BiddingWindow.cost:GetNumber().."%%|r) DKP?";
 					else
-						cost = round(cost, MonDKP_DB.modes.rounding)
-						selected = "Award item to "..SelectedBidder["player"].." for |CFF00ff00"..round(core.BiddingWindow.cost:GetNumber(), MonDKP_DB.modes.rounding).."|r DKP?";
+						cost = MonDKP_round(cost, MonDKP_DB.modes.rounding)
+						selected = "Award item to "..SelectedBidder["player"].." for |CFF00ff00"..MonDKP_round(core.BiddingWindow.cost:GetNumber(), MonDKP_DB.modes.rounding).."|r DKP?";
 					end
 
 					StaticPopupDialogs["CONFIRM_AWARD"] = {
@@ -498,7 +498,7 @@ local function AwardItem()
 					  button2 = "No",
 					  OnAccept = function()
 						SendChatMessage("Congrats "..winner.." on "..CurrItemForBid.." @ "..cost.." DKP", "RAID_WARNING")
-						MonDKP:DKPTable_Set(winner, "dkp", round(-cost, MonDKP_DB.modes.rounding), true)
+						MonDKP:DKPTable_Set(winner, "dkp", MonDKP_round(-cost, MonDKP_DB.modes.rounding), true)
 						tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=date, boss=core.LastKilledBoss, cost=cost})
 						local temp_table = {}
 						tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=date, boss=core.LastKilledBoss, cost=cost}})
@@ -578,17 +578,17 @@ local function AwardItem()
 					local search = MonDKP:Table_Search(MonDKP_DKPTable, winner);
 
 					if search then
-						cost = round(MonDKP_DKPTable[search[1][1]].dkp * (cost / 100), MonDKP_DB.modes.rounding);
+						cost = MonDKP_round(MonDKP_DKPTable[search[1][1]].dkp * (cost / 100), MonDKP_DB.modes.rounding);
 					else
 						print("Error")
 					end
 				else
-					cost = round(SelectedBidder["dkp"] * (cost / 100), MonDKP_DB.modes.rounding);
+					cost = MonDKP_round(SelectedBidder["dkp"] * (cost / 100), MonDKP_DB.modes.rounding);
 				end
-				selected = "Award item to "..SelectedBidder["player"].." for |CFF00ff00"..round(cost, MonDKP_DB.modes.rounding).."|r (|CFFFF0000"..core.BiddingWindow.cost:GetNumber().."%%|r) DKP?";
+				selected = "Award item to "..SelectedBidder["player"].." for |CFF00ff00"..MonDKP_round(cost, MonDKP_DB.modes.rounding).."|r (|CFFFF0000"..core.BiddingWindow.cost:GetNumber().."%%|r) DKP?";
 			else
-				cost = round(cost, MonDKP_DB.modes.rounding)
-				selected = "Award item to "..SelectedBidder["player"].." for |CFF00ff00"..round(core.BiddingWindow.cost:GetNumber(), MonDKP_DB.modes.rounding).."|r DKP?";
+				cost = MonDKP_round(cost, MonDKP_DB.modes.rounding)
+				selected = "Award item to "..SelectedBidder["player"].." for |CFF00ff00"..MonDKP_round(core.BiddingWindow.cost:GetNumber(), MonDKP_DB.modes.rounding).."|r DKP?";
 			end
 
 			StaticPopupDialogs["CONFIRM_AWARD"] = {
@@ -597,7 +597,7 @@ local function AwardItem()
 			  button2 = "No",
 			  OnAccept = function()
 				SendChatMessage("Congrats "..winner.." on "..CurrItemForBid.." @ "..cost.." DKP", "RAID_WARNING")
-				MonDKP:DKPTable_Set(winner, "dkp", round(-cost, MonDKP_DB.modes.rounding), true)
+				MonDKP:DKPTable_Set(winner, "dkp", MonDKP_round(-cost, MonDKP_DB.modes.rounding), true)
 				tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=date, boss=core.LastKilledBoss, cost=cost})
 				MonDKP:UpdateSeeds()
 				local temp_table = {}
@@ -630,7 +630,7 @@ local function AwardItem()
 					 	core.BiddingWindow.CustomMinBid:SetChecked(true);
 					elseif search and core.BiddingWindow.cost:GetText() ~= tonumber(val) and core.BiddingWindow.CustomMinBid:GetChecked() == true then
 						if MonDKP_MinBids[search[1][1]].minbid ~= core.BiddingWindow.cost:GetText() then
-							MonDKP_MinBids[search[1][1]].minbid = round(core.BiddingWindow.cost:GetNumber(), MonDKP_DB.modes.rounding);
+							MonDKP_MinBids[search[1][1]].minbid = MonDKP_round(core.BiddingWindow.cost:GetNumber(), MonDKP_DB.modes.rounding);
 							core.BiddingWindow.CustomMinBid:SetShown(true);
 					 		core.BiddingWindow.CustomMinBid:SetChecked(true);
 						end
@@ -717,7 +717,7 @@ function MonDKP:StartBidTimer(seconds, title, itemIcon)
 
 	MonDKP.BidTimer:SetScript("OnUpdate", function(self, elapsed)
 		timer = timer + elapsed
-		timerText = round(duration - timer, 1)
+		timerText = MonDKP_round(duration - timer, 1)
 		if tonumber(timerText) > 60 then
 			timerMinute = math.floor(tonumber(timerText) / 60, 0);
 			modulo = bit.mod(tonumber(timerText), 60);

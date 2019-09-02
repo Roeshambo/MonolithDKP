@@ -549,7 +549,7 @@ function DKPTable_Update()
       row.DKPInfo[1].rowCounter:SetText(index)
       row.DKPInfo[1]:SetTextColor(c.r, c.g, c.b, 1)
       row.DKPInfo[2]:SetText(core.WorkingTable[index].class)
-      row.DKPInfo[3]:SetText(round(core.WorkingTable[index].dkp, MonDKP_DB.modes.rounding))
+      row.DKPInfo[3]:SetText(MonDKP_round(core.WorkingTable[index].dkp, MonDKP_DB.modes.rounding))
       local CheckAdjusted = core.WorkingTable[index].dkp - core.WorkingTable[index].previous_dkp;
       if(CheckAdjusted > 0) then 
         CheckAdjusted = strjoin("", "+", CheckAdjusted) 
@@ -559,7 +559,7 @@ function DKPTable_Update()
       else
         row.DKPInfo[3].adjustedArrow:SetTexture(nil);
       end        
-      row.DKPInfo[3].adjusted:SetText("("..round(CheckAdjusted, MonDKP_DB.modes.rounding)..")");
+      row.DKPInfo[3].adjusted:SetText("("..MonDKP_round(CheckAdjusted, MonDKP_DB.modes.rounding)..")");
 
       if MonDKP_DB.modes.mode == "Roll Based Bidding" then
         local minimum;
@@ -601,7 +601,7 @@ function DKPTable_Update()
       end
       if core.WorkingTable[index].player == UnitName("player") and #core.SelectedData == 0 then
         row.DKPInfo[2]:SetText("|cff00ff00"..core.WorkingTable[index].class.."|r")
-        row.DKPInfo[3]:SetText("|cff00ff00"..round(core.WorkingTable[index].dkp, MonDKP_DB.modes.rounding).."|r")
+        row.DKPInfo[3]:SetText("|cff00ff00"..MonDKP_round(core.WorkingTable[index].dkp, MonDKP_DB.modes.rounding).."|r")
         MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
       end
       MonDKP.DKPTable.Rows[i]:SetScript("OnEnter", function(self)

@@ -26,7 +26,7 @@ local function ZeroSumDistribution()
 			end
 		end
 
-		distribution = round(MonDKP_DB.modes.ZeroSumBank.balance / #VerifyTable, MonDKP_DB.modes.rounding) + MonDKP_DB.modes.Inflation
+		distribution = MonDKP_round(MonDKP_DB.modes.ZeroSumBank.balance / #VerifyTable, MonDKP_DB.modes.rounding) + MonDKP_DB.modes.Inflation
 
 		for i=1, #VerifyTable do
 			local name = VerifyTable[i]

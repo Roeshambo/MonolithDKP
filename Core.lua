@@ -114,7 +114,7 @@ core.BossList = {
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v1.4.3";
+core.MonVersion = "v1.4.4";
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
@@ -138,7 +138,7 @@ function MonDKP:GetCColors(class)
   end
 end
 
-function round(number, decimals)
+function MonDKP_round(number, decimals)
     return tonumber((("%%.%df"):format(decimals)):format(number))
 end
 
@@ -379,7 +379,7 @@ function MonDKP:StartTimer(seconds, ...)
 
   MonDKP.BidTimer:SetScript("OnUpdate", function(self, elapsed)   -- timer loop
     timer = timer + elapsed
-    timerText = round(duration - timer, 1)
+    timerText = MonDKP_round(duration - timer, 1)
     if tonumber(timerText) > 60 then
       timerMinute = math.floor(tonumber(timerText) / 60, 0);
       modulo = bit.mod(tonumber(timerText), 60);
@@ -507,11 +507,11 @@ function MonDKP:DKPTable_Set(tar, field, value, loot)                -- updates 
   for i=1, #result do
     local current = MonDKP_DKPTable[result[i][1]][field];
     if(field == "dkp") then
-      MonDKP_DKPTable[result[i][1]][field] = tonumber(round(current + value, MonDKP_DB.modes.rounding))
+      MonDKP_DKPTable[result[i][1]][field] = tonumber(MonDKP_round(current + value, MonDKP_DB.modes.rounding))
       if value > 0 and loot == false then
-        MonDKP_DKPTable[result[i][1]]["lifetime_gained"] = tonumber(round(MonDKP_DKPTable[result[i][1]]["lifetime_gained"] + value, MonDKP_DB.modes.rounding))
+        MonDKP_DKPTable[result[i][1]]["lifetime_gained"] = tonumber(MonDKP_round(MonDKP_DKPTable[result[i][1]]["lifetime_gained"] + value, MonDKP_DB.modes.rounding))
       elseif value < 0 and loot == true then
-        MonDKP_DKPTable[result[i][1]]["lifetime_spent"] = tonumber(round(MonDKP_DKPTable[result[i][1]]["lifetime_spent"] + value, MonDKP_DB.modes.rounding))
+        MonDKP_DKPTable[result[i][1]]["lifetime_spent"] = tonumber(MonDKP_round(MonDKP_DKPTable[result[i][1]]["lifetime_spent"] + value, MonDKP_DB.modes.rounding))
       end
     else
       MonDKP_DKPTable[result[i][1]][field] = value
