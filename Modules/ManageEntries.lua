@@ -87,7 +87,7 @@ function AddRaidToDKPTable()
 		end
 
 		for i=1, GroupSize do
-			tempName,_,_,_,tempClass = GetRaidRosterInfo(i)
+			tempName,_,_,_,_,tempClass = GetRaidRosterInfo(i)
 			for j=1, guildSize do
 				name = GetGuildRosterInfo(j)
 				name = strsub(name, 1, string.find(name, "-")-1)						-- required to remove server name from player (can remove in classic if this is not an issue)
@@ -145,7 +145,7 @@ local function AddGuildToDKPTable(rank)
 	local numPlayers = 0;
 
 	for i=1, guildSize do
-		name,_,rankIndex,_,class = GetGuildRosterInfo(i)
+		name,_,rankIndex,_,_,_,_,_,_,_,class = GetGuildRosterInfo(i)
 		name = strsub(name, 1, string.find(name, "-")-1)			-- required to remove server name from player (can remove in classic if this is not an issue)
 		local search = MonDKP:Table_Search(MonDKP_DKPTable, name)
 
@@ -180,10 +180,10 @@ end
 
 local function AddTargetToDKPTable()
 	local name = UnitName("target");
-	local class = UnitClass("target");
+	local _,class = UnitClass("target");
 	local c;
 
-	local search = MonDKP:Table_Search(MonDKP_DKPTable, UnitName("target"))
+	local search = MonDKP:Table_Search(MonDKP_DKPTable, name)
 
 	if not search then
 		tinsert(MonDKP_DKPTable, {

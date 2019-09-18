@@ -195,7 +195,7 @@ local function ViewLimited(raid, standby, raiders)
       for k,v in pairs(MonDKP_DKPTable) do
         if type(v) == "table" then
           for i=1, 40 do
-            tempName,_,_,_,tempClass = GetRaidRosterInfo(i)
+            tempName,_,_,_,_,tempClass = GetRaidRosterInfo(i)
             if tempName and tempName == v.player then
               tinsert(tempTable, v)
             end
