@@ -7,7 +7,7 @@ local curReason;
 local function AdjustDKP()
 	local adjustReason = curReason;
 	local c = MonDKP:GetCColors();
-	local date = time()
+	local curTime = time()
 
 	if (curReason == "Other") then adjustReason = "Other - "..MonDKP.ConfigTab2.otherReason:GetText(); end
 	if curReason == "Boss Kill Bonus" then adjustReason = core.CurrentRaidZone..": "..core.LastKilledBoss; end
@@ -33,14 +33,14 @@ local function AdjustDKP()
 								MonDKP:DKPTable_Set(core.SelectedData[i]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber(), false)
 						end
 					end
-					tinsert(MonDKP_DKPHistory, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
+					tinsert(MonDKP_DKPHistory, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=curTime})
 					MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
 					if MonDKP.ConfigTab6.history then
 						MonDKP:DKPHistory_Reset()
 					end
 					MonDKP:DKPHistory_Update()
 					local temp_table = {}
-					tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date}})
+					tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=curTime}})
 					MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
 					table.wipe(temp_table)
 					if (MonDKP.ConfigTab1.checkBtn[10]:GetChecked() and MonDKP.ConfigTab2.selectAll:GetChecked()) then
@@ -71,7 +71,7 @@ local function AdjustDKP()
 						MonDKP:DKPTable_Set(core.SelectedData[i]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber(), false)
 				end
 			end
-			tinsert(MonDKP_DKPHistory, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date})
+			tinsert(MonDKP_DKPHistory, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=curTime})
 			MonDKP:UpdateSeeds()
 			MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
 			if MonDKP.ConfigTab6.history then
@@ -79,7 +79,7 @@ local function AdjustDKP()
 			end
 			MonDKP:DKPHistory_Update()
 			local temp_table = {}
-			tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=date}})
+			tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=curTime}})
 			MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
 			table.wipe(temp_table)
 			if (MonDKP.ConfigTab1.checkBtn[10]:GetChecked() and MonDKP.ConfigTab2.selectAll:GetChecked()) then
@@ -131,6 +131,7 @@ end
 
 local function DecayDKP(amount, deductionType, GetSelections)
 	local playerString = "";
+	local curTime = time()
 
 	MonDKP:SeedVerify_Update()
 	if core.UpToDate == false and core.IsOfficer == true then
@@ -173,14 +174,14 @@ local function DecayDKP(amount, deductionType, GetSelections)
 
 				if tonumber(amount) < 0 then amount = amount * -1 end		-- flips value to positive if officer accidently used a negative number
 
-				tinsert(MonDKP_DKPHistory, {players=playerString, dkp="-"..amount.."%", reason="Weekly Decay", date=time()})
+				tinsert(MonDKP_DKPHistory, {players=playerString, dkp="-"..amount.."%", reason="Weekly Decay", date=curTime})
 				MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
 				if MonDKP.ConfigTab6.history then
 					MonDKP:DKPHistory_Reset()
 				end
 				MonDKP:DKPHistory_Update()
 				local temp_table = {}
-				tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=playerString, dkp="-"..amount.."%", reason="Weekly Decay", date=time()}})
+				tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=playerString, dkp="-"..amount.."%", reason="Weekly Decay", date=curTime}})
 				MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
 				table.wipe(temp_table)
 				DKPTable_Update()
@@ -226,7 +227,7 @@ local function DecayDKP(amount, deductionType, GetSelections)
 
 		if tonumber(amount) < 0 then amount = amount * -1 end		-- flips value to positive if officer accidently used a negative number
 
-		tinsert(MonDKP_DKPHistory, {players=playerString, dkp="-"..amount.."%", reason="Weekly Decay", date=time()})
+		tinsert(MonDKP_DKPHistory, {players=playerString, dkp="-"..amount.."%", reason="Weekly Decay", date=curTime})
 		MonDKP:UpdateSeeds()
 		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
 		if MonDKP.ConfigTab6.history then
@@ -234,7 +235,7 @@ local function DecayDKP(amount, deductionType, GetSelections)
 		end
 		MonDKP:DKPHistory_Update()
 		local temp_table = {}
-		tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=playerString, dkp="-"..amount.."%", reason="Weekly Decay", date=time()}})
+		tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=playerString, dkp="-"..amount.."%", reason="Weekly Decay", date=curTime}})
 		MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
 		table.wipe(temp_table)
 		DKPTable_Update()

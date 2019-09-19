@@ -4,7 +4,7 @@ local MonDKP = core.MonDKP;
 
 local function ZeroSumDistribution()
 	if IsInRaid() then
-		local date = time();
+		local curTime = time();
 		local distribution;
 		local reason = MonDKP_DB.bossargs.CurrentRaidZone..": "..MonDKP_DB.bossargs.LastKilledBoss
 		local players = "";
@@ -39,14 +39,14 @@ local function ZeroSumDistribution()
 		end
 
 		MonDKP:UpdateSeeds()
-		tinsert(MonDKP_DKPHistory, {players=players, dkp=distribution, reason=reason, date=date})
+		tinsert(MonDKP_DKPHistory, {players=players, dkp=distribution, reason=reason, date=curTime})
 		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
 		if MonDKP.ConfigTab6.history then
 			MonDKP:DKPHistory_Reset()
 		end
 		MonDKP:DKPHistory_Update()
 		local temp_table = {}
-		tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=players, dkp=distribution, reason=reason, date=date}})
+		tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=players, dkp=distribution, reason=reason, date=curTime}})
 		MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
 		table.wipe(temp_table)
 		MonDKP.Sync:SendData("MonDKPBroadcast", "Raid DKP Adjusted by "..distribution.." among "..#VerifyTable.." players for reason: "..reason)

@@ -459,7 +459,7 @@ end
 local function AwardItem()
 	local cost;
 	local winner;
-	local date;
+	local curTime;
 	local selected;
 
 	MonDKP:SeedVerify_Update()
@@ -472,7 +472,7 @@ local function AwardItem()
 				if SelectedBidder["player"] then
 					cost = core.BiddingWindow.cost:GetNumber();
 					winner = SelectedBidder["player"];
-					date = time()
+					curTime = time()
 					
 					if MonDKP_DB.modes.costvalue == "Percent" then
 						if MonDKP_DB.modes.mode == "Roll Based Bidding" then
@@ -499,9 +499,9 @@ local function AwardItem()
 					  OnAccept = function()
 						SendChatMessage("Congrats "..winner.." on "..CurrItemForBid.." @ "..cost.." DKP", "RAID_WARNING")
 						MonDKP:DKPTable_Set(winner, "dkp", MonDKP_round(-cost, MonDKP_DB.modes.rounding), true)
-						tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=date, boss=core.LastKilledBoss, cost=cost})
+						tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=curTime, boss=core.LastKilledBoss, cost=cost})
 						local temp_table = {}
-						tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=date, boss=core.LastKilledBoss, cost=cost}})
+						tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=curTime, boss=core.LastKilledBoss, cost=cost}})
 						MonDKP:LootHistory_Reset();
 						MonDKP:LootHistory_Update("No Filter")
 						local leader = MonDKP:GetGuildRankGroup(1)
@@ -571,7 +571,7 @@ local function AwardItem()
 		if SelectedBidder["player"] then
 			cost = core.BiddingWindow.cost:GetNumber();
 			winner = SelectedBidder["player"];
-			date = time()
+			curTime = time()
 			
 			if MonDKP_DB.modes.costvalue == "Percent" then
 				if MonDKP_DB.modes.mode == "Roll Based Bidding" then
@@ -598,10 +598,10 @@ local function AwardItem()
 			  OnAccept = function()
 				SendChatMessage("Congrats "..winner.." on "..CurrItemForBid.." @ "..cost.." DKP", "RAID_WARNING")
 				MonDKP:DKPTable_Set(winner, "dkp", MonDKP_round(-cost, MonDKP_DB.modes.rounding), true)
-				tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=date, boss=core.LastKilledBoss, cost=cost})
+				tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=curTime, boss=core.LastKilledBoss, cost=cost})
 				MonDKP:UpdateSeeds()
 				local temp_table = {}
-				tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=date, boss=core.LastKilledBoss, cost=cost}})
+				tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=curTime, boss=core.LastKilledBoss, cost=cost}})
 				MonDKP:LootHistory_Reset();
 				MonDKP:LootHistory_Update("No Filter")
 				local leader = MonDKP:GetGuildRankGroup(1)
