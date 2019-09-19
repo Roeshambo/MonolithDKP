@@ -665,11 +665,11 @@ function MonDKP:SeedVerify_Update()
   if IsInGuild() then
     local leader = MonDKP:GetGuildRankGroup(1)
     
-    if leader[1].note == "" or not tonumber(leader[1].note) then    -- zeros out note if no note has been created yet
-      leader[1].note = 0
+    if leader[1].seed == "" or not tonumber(leader[1].seed) then    -- zeros out seed if no seed has been created yet
+      leader[1].seed = 0
     end
 
-    if MonDKP_DKPTable.seed >= tonumber(leader[1].note) and MonDKP_Loot.seed >= tonumber(leader[1].note) and MonDKP_DKPHistory.seed >= tonumber(leader[1].note) then         -- tonumber(leader[1].note)      in place of 0
+    if MonDKP_DKPTable.seed >= leader[1].seed and MonDKP_Loot.seed >= leader[1].seed and MonDKP_DKPHistory.seed >= leader[1].seed then
       core.UpToDate = true;
       MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\up-to-date")
       MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)

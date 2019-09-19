@@ -505,7 +505,7 @@ local function AwardItem()
 						MonDKP:LootHistory_Reset();
 						MonDKP:LootHistory_Update("No Filter")
 						local leader = MonDKP:GetGuildRankGroup(1)
-						GuildRosterSetPublicNote(leader[1].index, time())
+						MonDKP:RosterSeedUpdate(leader[1].index)
 						MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
 						MonDKP.Sync:SendData("MonDKPLootAward", temp_table[1])
 
@@ -605,7 +605,7 @@ local function AwardItem()
 				MonDKP:LootHistory_Reset();
 				MonDKP:LootHistory_Update("No Filter")
 				local leader = MonDKP:GetGuildRankGroup(1)
-				GuildRosterSetPublicNote(leader[1].index, time())
+				MonDKP:RosterSeedUpdate(leader[1].index)
 				MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
 				MonDKP.Sync:SendData("MonDKPLootAward", temp_table[1])
 
