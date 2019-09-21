@@ -65,10 +65,10 @@ end
 function AddRaidToDKPTable()
 	local GroupType = "none";
 
-	if IsInGroup() then
-		GroupType = "party"
-	elseif IsInRaid() then
+	if IsInRaid() then
 		GroupType = "raid"
+	elseif IsInGroup() then
+		GroupType = "party"
 	end
 
 	if GroupType ~= "none" then

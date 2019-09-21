@@ -384,6 +384,14 @@ function MonDKP:AdjustDKPTab_Create()
 			UIDropDownMenu_AddButton(boss)
 			boss.text, boss.checked, boss.menuList, boss.hasArrow = "Naxxramas", core.CurrentRaidZone == "Naxxramas", "NAXX", true
 			UIDropDownMenu_AddButton(boss)
+			boss.text, boss.checked, boss.menuList, boss.hasArrow = "Onyxia's Lair", core.CurrentRaidZone == "Onyxia's Lair", "ONYXIA", true
+			UIDropDownMenu_AddButton(boss)
+			boss.text, boss.checked, boss.menuList, boss.hasArrow = "Zul'Gurub", core.CurrentRaidZone == "Zul'Gurub", "ZG", true
+			UIDropDownMenu_AddButton(boss)
+			boss.text, boss.checked, boss.menuList, boss.hasArrow = "Ruins of Ahn'Qiraj", core.CurrentRaidZone == "Ruins of Ahn'Qiraj", "AQ20", true
+			UIDropDownMenu_AddButton(boss)
+			boss.text, boss.checked, boss.menuList, boss.hasArrow = "World Bosses", core.CurrentRaidZone == "World Bosses", "WORLD", true
+			UIDropDownMenu_AddButton(boss)
 		else
 			boss.func = self.SetValue
 			for i=1, #core.BossList[menuList] do
@@ -404,6 +412,14 @@ function MonDKP:AdjustDKPTab_Create()
 			core.CurrentRaidZone = "Temple of Ahn'Qiraj"
 		elseif MonDKP:TableStrFind(core.BossList.NAXX, newValue) then
 			core.CurrentRaidZone = "Naxxramas"
+		elseif MonDKP:TableStrFind(core.BossList.ZG, newValue) then
+			core.CurrentRaidZone = "Zul'Gurub"
+		elseif MonDKP:TableStrFind(core.BossList.AQ20, newValue) then
+			core.CurrentRaidZone = "Ruins of Ahn'Qiraj"
+		elseif MonDKP:TableStrFind(core.BossList.ONYXIA, newValue) then
+			core.CurrentRaidZone = "Onyxia's Lair"
+		elseif MonDKP:TableStrFind(core.BossList.WORLD, newValue) then
+			core.CurrentRaidZone = "World Bosses"
 		end
 
 		if search then
