@@ -92,7 +92,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 				SendChatMessage(response, "WHISPER", nil, name)
 				return
 			end
-			if (tonumber(cmd) and (tonumber(cmd) <= MonDKP_DB.modes.MaximumBid or MonDKP_DB.modes.MaximumBid == 0)) or ((mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static")) and not cmd) then
+			if (tonumber(cmd) and (MonDKP_DB.modes.MaximumBid == nil or tonumber(cmd) <= MonDKP_DB.modes.MaximumBid or MonDKP_DB.modes.MaximumBid == 0)) or ((mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static")) and not cmd) then
 				if dkp then
 					if not MonDKP_DB.modes.SubZeroBidding then MonDKP_DB.modes.SubZeroBidding = false end
 					if (cmd and cmd <= dkp) or (MonDKP_DB.modes.SubZeroBidding == true and dkp >= 0) or (mode == "Static Item Values" and dkp > 0 and (dkp > core.BiddingWindow.cost:GetNumber() or MonDKP_DB.modes.SubZeroBidding == true or MonDKP_DB.modes.costvalue == "Percent")) or ((mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") and not cmd) then
@@ -459,7 +459,7 @@ end
 local function AwardItem()
 	local cost;
 	local winner;
-	local date;
+	local curTime;
 	local selected;
 
 	MonDKP:SeedVerify_Update()
@@ -472,7 +472,7 @@ local function AwardItem()
 				if SelectedBidder["player"] then
 					cost = core.BiddingWindow.cost:GetNumber();
 					winner = SelectedBidder["player"];
-					date = time()
+					curTime = time()
 					
 					if MonDKP_DB.modes.costvalue == "Percent" then
 						if MonDKP_DB.modes.mode == "Roll Based Bidding" then
@@ -499,13 +499,13 @@ local function AwardItem()
 					  OnAccept = function()
 						SendChatMessage("Congrats "..winner.." on "..CurrItemForBid.." @ "..cost.." DKP", "RAID_WARNING")
 						MonDKP:DKPTable_Set(winner, "dkp", MonDKP_round(-cost, MonDKP_DB.modes.rounding), true)
-						tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=date, boss=core.LastKilledBoss, cost=cost})
+						tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=curTime, boss=core.LastKilledBoss, cost=cost})
 						local temp_table = {}
-						tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=date, boss=core.LastKilledBoss, cost=cost}})
+						tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=curTime, boss=core.LastKilledBoss, cost=cost}})
 						MonDKP:LootHistory_Reset();
 						MonDKP:LootHistory_Update("No Filter")
 						local leader = MonDKP:GetGuildRankGroup(1)
-						GuildRosterSetPublicNote(leader[1].index, time())
+						MonDKP:RosterSeedUpdate(leader[1].index)
 						MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
 						MonDKP.Sync:SendData("MonDKPLootAward", temp_table[1])
 
@@ -571,7 +571,7 @@ local function AwardItem()
 		if SelectedBidder["player"] then
 			cost = core.BiddingWindow.cost:GetNumber();
 			winner = SelectedBidder["player"];
-			date = time()
+			curTime = time()
 			
 			if MonDKP_DB.modes.costvalue == "Percent" then
 				if MonDKP_DB.modes.mode == "Roll Based Bidding" then
@@ -598,14 +598,14 @@ local function AwardItem()
 			  OnAccept = function()
 				SendChatMessage("Congrats "..winner.." on "..CurrItemForBid.." @ "..cost.." DKP", "RAID_WARNING")
 				MonDKP:DKPTable_Set(winner, "dkp", MonDKP_round(-cost, MonDKP_DB.modes.rounding), true)
-				tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=date, boss=core.LastKilledBoss, cost=cost})
+				tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=curTime, boss=core.LastKilledBoss, cost=cost})
 				MonDKP:UpdateSeeds()
 				local temp_table = {}
-				tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=date, boss=core.LastKilledBoss, cost=cost}})
+				tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=curTime, boss=core.LastKilledBoss, cost=cost}})
 				MonDKP:LootHistory_Reset();
 				MonDKP:LootHistory_Update("No Filter")
 				local leader = MonDKP:GetGuildRankGroup(1)
-				GuildRosterSetPublicNote(leader[1].index, time())
+				MonDKP:RosterSeedUpdate(leader[1].index)
 				MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
 				MonDKP.Sync:SendData("MonDKPLootAward", temp_table[1])
 

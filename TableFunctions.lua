@@ -195,7 +195,7 @@ local function ViewLimited(raid, standby, raiders)
       for k,v in pairs(MonDKP_DKPTable) do
         if type(v) == "table" then
           for i=1, 40 do
-            tempName,_,_,_,tempClass = GetRaidRosterInfo(i)
+            tempName,_,_,_,_,tempClass = GetRaidRosterInfo(i)
             if tempName and tempName == v.player then
               tinsert(tempTable, v)
             end
@@ -669,7 +669,7 @@ function MonDKP:SeedVerify_Update()
       GuildRosterSetPublicNote(leader[1].index, 0)
     end
 
-    if MonDKP_DKPTable.seed >= tonumber(leader[1].note) and MonDKP_Loot.seed >= tonumber(leader[1].note) and MonDKP_DKPHistory.seed >= tonumber(leader[1].note) then         -- tonumber(leader[1].note)      in place of 0
+    if MonDKP_DKPTable.seed >= leader[1].seed and MonDKP_Loot.seed >= leader[1].seed and MonDKP_DKPHistory.seed >= leader[1].seed then
       core.UpToDate = true;
       MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\up-to-date")
       MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)

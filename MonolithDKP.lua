@@ -48,7 +48,7 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
     if(core.classFiltered[MonDKP_DKPTable[k]["class"]] == true) then
       if MonDKP.ConfigTab1.checkBtn[10]:GetChecked() == true then
         for i=1, 40 do
-          tempName,_,_,_,tempClass = GetRaidRosterInfo(i)
+          tempName,_,_,_,_,tempClass = GetRaidRosterInfo(i)
           if tempName and tempName == v.player then
             tinsert(core.WorkingTable, v)
           end

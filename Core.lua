@@ -9,31 +9,36 @@ local _G = _G;
 core.MonDKP = {};       -- UI Frames global
 local MonDKP = core.MonDKP;
 
+local tc_colors = {
+	["Druid"] = { r = 1, g = 0.49, b = 0.04, hex = "FF7D0A" },
+	["Hunter"] = {  r = 0.67, g = 0.83, b = 0.45, hex = "ABD473" },
+	["Mage"] = { r = 0.25, g = 0.78, b = 0.92, hex = "40C7EB" },
+	["Priest"] = { r = 1, g = 1, b = 1, hex = "FFFFFF" },
+	["Rogue"] = { r = 1, g = 0.96, b = 0.41, hex = "FFF569" },
+	["Shaman"] = { r = 0.96, g = 0.55, b = 0.73, hex = "F58CBA" },
+	["Paladin"] = { r = 0.96, g = 0.55, b = 0.73, hex = "F58CBA" },
+	["Warlock"] = { r = 0.53, g = 0.53, b = 0.93, hex = "8787ED" },
+	["Warrior"] = { r = 0.78, g = 0.61, b = 0.43, hex = "C79C6E" }
+}
+
+local tc_classes = {}
+
 core.faction = UnitFactionGroup("player")
 if core.faction == "Horde" then
-  core.CColors = {   -- class colors
-    ["Druid"] = { r = 1, g = 0.49, b = 0.04, hex = "FF7D0A" },
-    ["Hunter"] = {  r = 0.67, g = 0.83, b = 0.45, hex = "ABD473" },
-    ["Mage"] = { r = 0.25, g = 0.78, b = 0.92, hex = "40C7EB" },
-    ["Priest"] = { r = 1, g = 1, b = 1, hex = "FFFFFF" },
-    ["Rogue"] = { r = 1, g = 0.96, b = 0.41, hex = "FFF569" },
-    ["Shaman"] = { r = 0.96, g = 0.55, b = 0.73, hex = "F58CBA" },
-    ["Warlock"] = { r = 0.53, g = 0.53, b = 0.93, hex = "8787ED" },
-    ["Warrior"] = { r = 0.78, g = 0.61, b = 0.43, hex = "C79C6E" }
-  }
-  core.classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
+  tc_classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
 elseif core.faction == "Alliance" then
-  core.CColors = {   -- class colors
-    ["Druid"] = { r = 1, g = 0.49, b = 0.04, hex = "FF7D0A" },
-    ["Hunter"] = {  r = 0.67, g = 0.83, b = 0.45, hex = "ABD473" },
-    ["Mage"] = { r = 0.25, g = 0.78, b = 0.92, hex = "40C7EB" },
-    ["Paladin"] = { r = 0.96, g = 0.55, b = 0.73, hex = "F58CBA" },
-    ["Priest"] = { r = 1, g = 1, b = 1, hex = "FFFFFF" },
-    ["Rogue"] = { r = 1, g = 0.96, b = 0.41, hex = "FFF569" },
-    ["Warlock"] = { r = 0.53, g = 0.53, b = 0.93, hex = "8787ED" },
-    ["Warrior"] = { r = 0.78, g = 0.61, b = 0.43, hex = "C79C6E" }
-  }
-  core.classes = { "Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Warlock", "Warrior" }
+  tc_classes = { "Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Warlock", "Warrior" }
+end
+
+core.CColors = {
+	["UNKNOWN"] = { r = 0.627, g = 0.627, b = 0.627, hex = "A0A0A0" }
+}
+core.classes = {}
+for i = 1, #tc_classes do
+	local cname = tc_classes[i]
+	local lname = string.upper(cname)
+	core.CColors[lname] = tc_colors[cname]
+	table.insert(core.classes, lname)
 end
 
 --------------------------------------
@@ -147,7 +152,12 @@ core.CurView = "all"
 
 function MonDKP:GetCColors(class)
   if core.CColors then 
-    local c = core.CColors[class] or core.CColors;
+	local c
+    if class then
+		c = core.CColors[class] or core.CColors["UNKNOWN"];
+	else
+		c = core.CColors
+	end
     return c;
   else
     return false;
@@ -232,17 +242,18 @@ function MonDKP:CheckOfficer()      -- checks if user is an officer IF core.IsOf
 end
 
 function MonDKP:GetGuildRankGroup(index)                -- returns all members within a specific rank index as well as their index in the guild list (for use with GuildRosterSetPublicNote(index, "msg") and GuildRosterSetOfficerNote)
-  local name, rank, note;                               -- local temp = MonDKP:GetGuildRankGroup(1)
+  local name, rank, seed;                               -- local temp = MonDKP:GetGuildRankGroup(1)
   local group = {}                                      -- print(temp[1]["name"])
   local guildSize,_,_ = GetNumGuildMembers();
 
   if IsInGuild() then
     for i=1, tonumber(guildSize) do
-      name,_,rank,_,_,_,note = GetGuildRosterInfo(i)
+      name,_,rank = GetGuildRosterInfo(i)
+	  seed = MonDKP:RosterSeedExtract(i)
       rank = rank+1;
       name = strsub(name, 1, string.find(name, "-")-1)  -- required to remove server name from player (can remove in classic if this is not an issue)
       if rank == index then
-        tinsert(group, { name = name, index = i, note = note })
+        tinsert(group, { name = name, index = i, seed = seed })
       end
     end
     return group;
@@ -254,19 +265,45 @@ function MonDKP:GetThemeColor()
   return c;
 end
 
-function MonDKP:UpdateSeeds()		-- updates seeds on leaders note as well as all 3 tables
-	local curTime = time()
+function MonDKP:GenerateSeed()
+	local seed = tonumber(date("!%y%m%d%H%M%S")) -- using utc times instead of time()
+	return seed
+end
 
+function MonDKP:RosterSeedUpdate(index)
+	local oldseed, note = MonDKP:RosterSeedExtract(index)
+	local newseed = MonDKP:GenerateSeed()
+	local textseed = "{MonDKP=" .. tostring(newseed) .. "}"
+	if oldseed > 0 then
+	    note = string.gsub(note, "{MonDKP=(%d+)}", textseed)
+	else
+	    note = note .. " " .. textseed
+	end
+	GuildRosterSetPublicNote(index, note)
+	return newseed
+end
+
+function MonDKP:RosterSeedExtract(index)
+	local seed, note
+	_,_,_,_,_,_,note = GetGuildRosterInfo(index)
+	seed = string.match(note, "{MonDKP=(%d+)}")
+	if not seed then
+	    seed = 0
+    end
+	return tonumber(seed), note
+end
+
+function MonDKP:UpdateSeeds()		-- updates seeds on leaders note as well as all 3 tables
 	local leader = MonDKP:GetGuildRankGroup(1)
-	GuildRosterSetPublicNote(leader[1].index, curTime)
-	MonDKP_DKPTable.seed = curTime
-	MonDKP_DKPHistory.seed = curTime
-	MonDKP_Loot.seed = curTime
+	local seed = MonDKP:RosterSeedUpdate(leader[1].index)
+	
+	MonDKP_DKPTable.seed = seed
+	MonDKP_DKPHistory.seed = seed
+	MonDKP_Loot.seed = seed
 end
 
 function MonDKP:GetPlayerDKP(player)
   local search = MonDKP:Table_Search(MonDKP_DKPTable, player)
-  local dkp;
 
   if search then
     return MonDKP_DKPTable[search[1][1]].dkp
