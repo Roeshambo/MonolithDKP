@@ -548,7 +548,7 @@ function DKPTable_Update()
       row.DKPInfo[1]:SetText(core.WorkingTable[index].player.." |cff444444("..rank..")|r")
       row.DKPInfo[1].rowCounter:SetText(index)
       row.DKPInfo[1]:SetTextColor(c.r, c.g, c.b, 1)
-      row.DKPInfo[2]:SetText(core.WorkingTable[index].class)
+      row.DKPInfo[2]:SetText(string.gsub(string.lower(core.WorkingTable[index].class), "^%l", string.upper))
       row.DKPInfo[3]:SetText(MonDKP_round(core.WorkingTable[index].dkp, MonDKP_DB.modes.rounding))
       local CheckAdjusted = core.WorkingTable[index].dkp - core.WorkingTable[index].previous_dkp;
       if(CheckAdjusted > 0) then 
@@ -600,7 +600,7 @@ function DKPTable_Update()
         MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
       end
       if core.WorkingTable[index].player == UnitName("player") and #core.SelectedData == 0 then
-        row.DKPInfo[2]:SetText("|cff00ff00"..core.WorkingTable[index].class.."|r")
+        row.DKPInfo[2]:SetText("|cff00ff00"..string.gsub(string.lower(core.WorkingTable[index].class), "^%l", string.upper).."|r")
         row.DKPInfo[3]:SetText("|cff00ff00"..MonDKP_round(core.WorkingTable[index].dkp, MonDKP_DB.modes.rounding).."|r")
         MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
       end
