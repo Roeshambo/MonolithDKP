@@ -9,31 +9,35 @@ local _G = _G;
 core.MonDKP = {};       -- UI Frames global
 local MonDKP = core.MonDKP;
 
-core.faction = UnitFactionGroup("player")
+core.faction,_ = UnitFactionGroup("player")
+
+local ClassLocal = {}
+FillLocalizedClassList(ClassLocal)    -- Creates localized translations of class names (IE: ClassLocal["DRUID"] = "Druide" on German Locale)
+
 if core.faction == "Horde" then
   core.CColors = {   -- class colors
-    ["Druid"] = { r = 1, g = 0.49, b = 0.04, hex = "FF7D0A" },
-    ["Hunter"] = {  r = 0.67, g = 0.83, b = 0.45, hex = "ABD473" },
-    ["Mage"] = { r = 0.25, g = 0.78, b = 0.92, hex = "40C7EB" },
-    ["Priest"] = { r = 1, g = 1, b = 1, hex = "FFFFFF" },
-    ["Rogue"] = { r = 1, g = 0.96, b = 0.41, hex = "FFF569" },
-    ["Shaman"] = { r = 0.96, g = 0.55, b = 0.73, hex = "F58CBA" },
-    ["Warlock"] = { r = 0.53, g = 0.53, b = 0.93, hex = "8787ED" },
-    ["Warrior"] = { r = 0.78, g = 0.61, b = 0.43, hex = "C79C6E" }
+    [ClassLocal["DRUID"]] = { r = 1, g = 0.49, b = 0.04, hex = "FF7D0A" },
+    [ClassLocal["HUNTER"]] = {  r = 0.67, g = 0.83, b = 0.45, hex = "ABD473" },
+    [ClassLocal["MAGE"]] = { r = 0.25, g = 0.78, b = 0.92, hex = "40C7EB" },
+    [ClassLocal["PRIEST"]] = { r = 1, g = 1, b = 1, hex = "FFFFFF" },
+    [ClassLocal["ROGUE"]] = { r = 1, g = 0.96, b = 0.41, hex = "FFF569" },
+    [ClassLocal["SHAMAN"]] = { r = 0.96, g = 0.55, b = 0.73, hex = "F58CBA" },
+    [ClassLocal["WARLOCK"]] = { r = 0.53, g = 0.53, b = 0.93, hex = "8787ED" },
+    [ClassLocal["WARRIOR"]] = { r = 0.78, g = 0.61, b = 0.43, hex = "C79C6E" }
   }
-  core.classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
+  core.classes = { ClassLocal["DRUID"], ClassLocal["HUNTER"], ClassLocal["MAGE"], ClassLocal["PRIEST"], ClassLocal["ROGUE"], ClassLocal["SHAMAN"], ClassLocal["WARLOCK"], ClassLocal["WARRIOR"] }
 elseif core.faction == "Alliance" then
   core.CColors = {   -- class colors
-    ["Druid"] = { r = 1, g = 0.49, b = 0.04, hex = "FF7D0A" },
-    ["Hunter"] = {  r = 0.67, g = 0.83, b = 0.45, hex = "ABD473" },
-    ["Mage"] = { r = 0.25, g = 0.78, b = 0.92, hex = "40C7EB" },
-    ["Paladin"] = { r = 0.96, g = 0.55, b = 0.73, hex = "F58CBA" },
-    ["Priest"] = { r = 1, g = 1, b = 1, hex = "FFFFFF" },
-    ["Rogue"] = { r = 1, g = 0.96, b = 0.41, hex = "FFF569" },
-    ["Warlock"] = { r = 0.53, g = 0.53, b = 0.93, hex = "8787ED" },
-    ["Warrior"] = { r = 0.78, g = 0.61, b = 0.43, hex = "C79C6E" }
+    [ClassLocal["DRUID"]] = { r = 1, g = 0.49, b = 0.04, hex = "FF7D0A" },
+    [ClassLocal["HUNTER"]] = {  r = 0.67, g = 0.83, b = 0.45, hex = "ABD473" },
+    [ClassLocal["MAGE"]] = { r = 0.25, g = 0.78, b = 0.92, hex = "40C7EB" },
+    [ClassLocal["PALADIN"]] = { r = 0.96, g = 0.55, b = 0.73, hex = "F58CBA" },
+    [ClassLocal["PRIEST"]] = { r = 1, g = 1, b = 1, hex = "FFFFFF" },
+    [ClassLocal["ROGUE"]] = { r = 1, g = 0.96, b = 0.41, hex = "FFF569" },
+    [ClassLocal["WARLOCK"]] = { r = 0.53, g = 0.53, b = 0.93, hex = "8787ED" },
+    [ClassLocal["WARRIOR"]] = { r = 0.78, g = 0.61, b = 0.43, hex = "C79C6E" }
   }
-  core.classes = { "Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Warlock", "Warrior" }
+  core.classes = { ClassLocal["DRUID"], ClassLocal["HUNTER"], ClassLocal["MAGE"], ClassLocal["PALADIN"], ClassLocal["PRIEST"], ClassLocal["ROGUE"], ClassLocal["WARLOCK"], ClassLocal["WARRIOR"] }
 end
 
 --------------------------------------
@@ -130,7 +134,7 @@ core.BossList = {
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v1.4.5";
+core.MonVersion = "v1.4.6";
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
