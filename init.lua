@@ -251,7 +251,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		MonDKP:Print("Use /dkp ? for help and submit any bugs @ https://github.com/Roeshambo/MonolithDKP/issues");
 
 		for i=1, #MonDKP_DKPTable do
-			MonDKP_DKPTable[i].class = string.upper(MonDKP_DKPTable[i].class)
+			MonDKP_DKPTable[i].class = string.upper(MonDKP_DKPTable[i].class)		-- hotfix for migrating previous class listings to localization neutral classes
 		end
 		
 		core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();		-- creates main menu
