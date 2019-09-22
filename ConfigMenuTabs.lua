@@ -166,7 +166,7 @@ function MonDKP:ConfigMenuTabs()
     if i <= 9 then MonDKP.ConfigTab1.checkBtn[i]:SetChecked(true) else MonDKP.ConfigTab1.checkBtn[i]:SetChecked(false) end;
     MonDKP.ConfigTab1.checkBtn[i]:SetID(i)
     if i <= 8 then
-      MonDKP.ConfigTab1.checkBtn[i].text:SetText("|cff5151de"..core.classes[i].."|r");
+      MonDKP.ConfigTab1.checkBtn[i].text:SetText("|cff5151de"..string.gsub(string.lower(core.classes[i]), "^%l", string.upper).."|r");
     end
     if i==9 then
       MonDKP.ConfigTab1.checkBtn[i]:SetScript("OnClick",

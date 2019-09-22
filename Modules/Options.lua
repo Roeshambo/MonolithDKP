@@ -497,14 +497,14 @@ function MonDKP:Options()
     -- Bid Timer Slider
     MonDKP.ConfigTab4.bidTimerSlider = CreateFrame("SLIDER", "$parentBidTimerSlider", MonDKP.ConfigTab4, "MonDKPOptionsSliderTemplate");
     MonDKP.ConfigTab4.bidTimerSlider:SetPoint("TOPLEFT", MonDKP.ConfigTab4.DefaultMinBids, "BOTTOMLEFT", 54, -40);
-    MonDKP.ConfigTab4.bidTimerSlider:SetMinMaxValues(10, 45);
+    MonDKP.ConfigTab4.bidTimerSlider:SetMinMaxValues(10, 90);
     MonDKP.ConfigTab4.bidTimerSlider:SetValue(DKPSettings["BidTimer"]);
     MonDKP.ConfigTab4.bidTimerSlider:SetValueStep(1);
     MonDKP.ConfigTab4.bidTimerSlider.tooltipText = 'Bid Timer'
     MonDKP.ConfigTab4.bidTimerSlider.tooltipRequirement = "Default time used for bid timer in seconds."
     MonDKP.ConfigTab4.bidTimerSlider:SetObeyStepOnDrag(true);
     getglobal(MonDKP.ConfigTab4.bidTimerSlider:GetName().."Low"):SetText("10")
-    getglobal(MonDKP.ConfigTab4.bidTimerSlider:GetName().."High"):SetText("45")
+    getglobal(MonDKP.ConfigTab4.bidTimerSlider:GetName().."High"):SetText("90")
     MonDKP.ConfigTab4.bidTimerSlider:SetScript("OnValueChanged", function(self)    -- clears focus on esc
       MonDKP.ConfigTab4.bidTimer:SetText(MonDKP.ConfigTab4.bidTimerSlider:GetValue())
     end)

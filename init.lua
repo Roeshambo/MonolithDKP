@@ -249,6 +249,10 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		MonDKP:Print("Version "..core.MonVersion..", created and maintained by Roeshambo@Stalagg-PvP");
 		MonDKP:Print("Loaded "..#MonDKP_DKPTable.." player records, "..#MonDKP_Loot.." loot history records and "..#MonDKP_DKPHistory.." dkp history records.");
 		MonDKP:Print("Use /dkp ? for help and submit any bugs @ https://github.com/Roeshambo/MonolithDKP/issues");
+
+		for i=1, #MonDKP_DKPTable do
+			MonDKP_DKPTable[i].class = string.upper(MonDKP_DKPTable[i].class)
+		end
 		
 		core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();		-- creates main menu
 		MonDKP:StartBidTimer(seconds, nil)							-- initiates timer frame for use

@@ -59,7 +59,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 	local name = ...;
 	local cmd;
 	local dkp;
-	local response = "Error processing command";
+	local response;
 	mode = MonDKP_DB.modes.mode;
 
 	if string.find(text, "!bid") == 1 and core.IsOfficer == true then
@@ -182,8 +182,6 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 
 			if search then
 				response = "MonolithDKP: You currently have "..MonDKP_DKPTable[search[1][1]].dkp.." DKP."..range;
-			else
-				response = "MonolithDKP: That player was not found."
 			end
 		end
 
