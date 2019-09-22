@@ -11,16 +11,16 @@
 			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="10"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="15" outline="NORMAL"/>
+			<Font font="Fonts\2002.TTF" height="10" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_C.ttf" height="14" outline="NORMAL"/>
+			<Font font="Fonts\ARKai_C.ttf" height="10" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\bHEI01B.TTF" height="14" outline="NORMAL"/>
+			<Font font="Fonts\bHEI01B.TTF" height="10" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\ARIALN.TTF" height="16" outline="NORMAL"/>
+			<Font font="Fonts\ARIALN.TTF" height="10" outline="NORMAL"/>
 		</Member>
 	</FontFamily>
 	<FontFamily  name="MonDKPTinyOutline" virtual="true">
@@ -28,16 +28,16 @@
 			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="10" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="15" outline="NORMAL"/>
+			<Font font="Fonts\2002.TTF" height="10" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_C.ttf" height="14" outline="NORMAL"/>
+			<Font font="Fonts\ARKai_C.ttf" height="10" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\bHEI01B.TTF" height="14" outline="NORMAL"/>
+			<Font font="Fonts\bHEI01B.TTF" height="10" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\ARIALN.TTF" height="16" outline="NORMAL"/>
+			<Font font="Fonts\ARIALN.TTF" height="10" outline="NORMAL"/>
 		</Member>
 	</FontFamily>
 	<FontFamily  name="MonDKPSmall" virtual="true">
@@ -45,16 +45,16 @@
 			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="12"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="15" outline="NORMAL"/>
+			<Font font="Fonts\2002.TTF" height="12" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_C.ttf" height="14" outline="NORMAL"/>
+			<Font font="Fonts\ARKai_C.ttf" height="12" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\bHEI01B.TTF" height="14" outline="NORMAL"/>
+			<Font font="Fonts\bHEI01B.TTF" height="12" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\ARIALN.TTF" height="16" outline="NORMAL"/>
+			<Font font="Fonts\ARIALN.TTF" height="12" outline="NORMAL"/>
 		</Member>
 	</FontFamily>
 	<FontFamily  name="MonDKPSmallOutline" virtual="true">
@@ -62,16 +62,16 @@
 			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="12" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="15" outline="NORMAL"/>
+			<Font font="Fonts\2002.TTF" height="12" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_C.ttf" height="14" outline="NORMAL"/>
+			<Font font="Fonts\ARKai_C.ttf" height="12" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\bHEI01B.TTF" height="14" outline="NORMAL"/>
+			<Font font="Fonts\bHEI01B.TTF" height="12" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\ARIALN.TTF" height="16" outline="NORMAL"/>
+			<Font font="Fonts\ARIALN.TTF" height="12" outline="NORMAL"/>
 		</Member>
 	</FontFamily>
 	<FontFamily  name="MonDKPNormal" virtual="true">
@@ -79,16 +79,16 @@
 			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="13"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="15" outline="NORMAL"/>
+			<Font font="Fonts\2002.TTF" height="13" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_C.ttf" height="14" outline="NORMAL"/>
+			<Font font="Fonts\ARKai_C.ttf" height="13" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\bHEI01B.TTF" height="14" outline="NORMAL"/>
+			<Font font="Fonts\bHEI01B.TTF" height="13" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\ARIALN.TTF" height="16" outline="NORMAL"/>
+			<Font font="Fonts\ARIALN.TTF" height="13" outline="NORMAL"/>
 		</Member>
 	</FontFamily>
 	<FontFamily  name="MonDKPNormalOutline" virtual="true">
@@ -96,16 +96,16 @@
 			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="13" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="15" outline="NORMAL"/>
+			<Font font="Fonts\2002.TTF" height="13" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_C.ttf" height="14" outline="NORMAL"/>
+			<Font font="Fonts\ARKai_C.ttf" height="13" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\bHEI01B.TTF" height="14" outline="NORMAL"/>
+			<Font font="Fonts\bHEI01B.TTF" height="13" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\ARIALN.TTF" height="16" outline="NORMAL"/>
+			<Font font="Fonts\ARIALN.TTF" height="13" outline="NORMAL"/>
 		</Member>
 	</FontFamily>
 	<FontFamily  name="MonDKPLarge" virtual="true">
@@ -113,16 +113,16 @@
 			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\uf_font.ttf" height="24"/>
 		</Member>
 		<Member alphabet="korean">
-			<Font font="Fonts\2002.TTF" height="15" outline="NORMAL"/>
+			<Font font="Fonts\2002.TTF" height="24" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="simplifiedchinese">
-			<Font font="Fonts\ARKai_C.ttf" height="14" outline="NORMAL"/>
+			<Font font="Fonts\ARKai_C.ttf" height="24" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="traditionalchinese">
-			<Font font="Fonts\bHEI01B.TTF" height="14" outline="NORMAL"/>
+			<Font font="Fonts\bHEI01B.TTF" height="24" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="russian">
-			<Font font="Fonts\ARIALN.TTF" height="16" outline="NORMAL"/>
+			<Font font="Fonts\ARIALN.TTF" height="24" outline="NORMAL"/>
 		</Member>
 	</FontFamily>
 	<Font name="MonDKPLarge" virtual="true">

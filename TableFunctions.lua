@@ -476,27 +476,25 @@ local function CreateRow(parent, id) -- Create 3 buttons for each row in the lis
     f:SetScript("OnClick", DKPTable_OnClick)
     for i=1, 3 do
       f.DKPInfo[i] = f:CreateFontString(nil, "OVERLAY");
-      f.DKPInfo[i]:SetFontObject("GameFontHighlight");
-      f.DKPInfo[i]:SetFontObject("MonDKPSmallLeft")
+      f.DKPInfo[i]:SetFontObject("MonDKPSmallOutlineLeft")
       f.DKPInfo[i]:SetTextColor(1, 1, 1, 1);
       if (i==1) then
         f.DKPInfo[i].rowCounter = f:CreateFontString(nil, "OVERLAY");
-        f.DKPInfo[i].rowCounter:SetFontObject("GameFontWhiteTiny");
-        f.DKPInfo[i].rowCounter:SetFontObject("MonDKPSmallLeft")
+        f.DKPInfo[i].rowCounter:SetFontObject("MonDKPSmallOutlineLeft")
         f.DKPInfo[i].rowCounter:SetTextColor(1, 1, 1, 0.3);
         f.DKPInfo[i].rowCounter:SetPoint("LEFT", f, "LEFT", 3, -1);
       end
       if (i==3) then
         f.DKPInfo[i]:SetFontObject("MonDKPSmallLeft")
         f.DKPInfo[i].adjusted = f:CreateFontString(nil, "OVERLAY");
-        f.DKPInfo[i].adjusted:SetFontObject("MonDKPSmallLeft")
+        f.DKPInfo[i].adjusted:SetFontObject("MonDKPSmallOutlineLeft")
         f.DKPInfo[i].adjusted:SetScale("0.8")
         f.DKPInfo[i].adjusted:SetTextColor(1, 1, 1, 0.6);
         f.DKPInfo[i].adjusted:SetPoint("LEFT", f.DKPInfo[3], "RIGHT", 3, -1);
 
         if MonDKP_DB.modes.mode == "Roll Based Bidding" then
           f.DKPInfo[i].rollrange = f:CreateFontString(nil, "OVERLAY");
-          f.DKPInfo[i].rollrange:SetFontObject("MonDKPSmallLeft")
+          f.DKPInfo[i].rollrange:SetFontObject("MonDKPSmallOutlineLeft")
           f.DKPInfo[i].rollrange:SetScale("0.8")
           f.DKPInfo[i].rollrange:SetTextColor(1, 1, 1, 0.6);
           f.DKPInfo[i].rollrange:SetPoint("CENTER", 115, -1);
@@ -548,7 +546,7 @@ function DKPTable_Update()
       row.DKPInfo[1]:SetText(core.WorkingTable[index].player.." |cff444444("..rank..")|r")
       row.DKPInfo[1].rowCounter:SetText(index)
       row.DKPInfo[1]:SetTextColor(c.r, c.g, c.b, 1)
-      row.DKPInfo[2]:SetText(string.gsub(string.lower(core.WorkingTable[index].class), "^%l", string.upper))
+      row.DKPInfo[2]:SetText(core.LocalClass[core.WorkingTable[index].class])
       row.DKPInfo[3]:SetText(MonDKP_round(core.WorkingTable[index].dkp, MonDKP_DB.modes.rounding))
       local CheckAdjusted = core.WorkingTable[index].dkp - core.WorkingTable[index].previous_dkp;
       if(CheckAdjusted > 0) then 
@@ -600,7 +598,7 @@ function DKPTable_Update()
         MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
       end
       if core.WorkingTable[index].player == UnitName("player") and #core.SelectedData == 0 then
-        row.DKPInfo[2]:SetText("|cff00ff00"..string.gsub(string.lower(core.WorkingTable[index].class), "^%l", string.upper).."|r")
+        row.DKPInfo[2]:SetText("|cff00ff00"..core.LocalClass[core.WorkingTable[index].class].."|r")
         row.DKPInfo[3]:SetText("|cff00ff00"..MonDKP_round(core.WorkingTable[index].dkp, MonDKP_DB.modes.rounding).."|r")
         MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
       end
