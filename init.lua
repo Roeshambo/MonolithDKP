@@ -164,6 +164,8 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 						MonDKP.ConfigTab2.BossKilledDropdown:SetValue("Bug Family")
 					elseif arg2 == "Highlord Mograine" or arg2 == "Thane Korth'azz" or arg2 == "Sir Zeliek" or arg2 == "Lady Blaumeux" then
 						MonDKP.ConfigTab2.BossKilledDropdown:SetValue("The Four Horsemen")
+					elseif arg2 == "Gri'lek" or arg2 == "Hazza'rah" or arg2 == "Renataki" or arg2 == "Wushoolay" then
+						MonDKP.ConfigTab2.BossKilledDropdown:SetValue("Edge of Madness")
 					end
 				end
 			end

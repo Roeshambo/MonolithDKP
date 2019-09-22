@@ -99,27 +99,43 @@ core.settings = {             -- From MonDKP_DB
 -- Can alternatively use tContains(core.BossList.MC, "Lucifron") for a true/false return if path isn't required
 ----------------------------------------------------
 core.BossList = {
-  MC = {"Lucifron", "Magmadar", "Gehennas",
-          "Garr", "Baron Geddon", "Shazzrah", "Sulfuron Harbinger", 
-          "Golemagg the Incinerator", "Majordomo Executus", "Ragnaros"},
-
-  BWL = {"Razorgore the Untamed", "Vaelastrasz the Corrupt", "Broodlord Lashlayer",
-          "Firemaw", "Ebonroc", "Flamegor", "Chromaggus", 
-          "Nefarian"},
-
-  AQ = {"The Prophet Skeram", "Battleguard Sartura", "Fankriss the Unyielding",
-          "Princess Huhuran", "Twin Emperors", "C'Thun", 
-          "Bug Family", "Viscidus", "Ouro"},
-
-  NAXX = {"Anub'Rekhan", "Grand Widow Faerlina", "Maexxna",
-          "Noth the Plaguebringer", "Heigan the Unclean", "Loatheb", 
-          "Instructor Razuvious", "Gothik the Harvester", "The Four Horsemen",
-          "Patchwerk", "Grobbulus", "Gluth", "Thaddius",
-        "Sapphiron", "Kel'Thuzad"}
+  MC = {
+    "Lucifron", "Magmadar", "Gehennas",
+    "Garr", "Baron Geddon", "Shazzrah", "Sulfuron Harbinger", 
+    "Golemagg the Incinerator", "Majordomo Executus", "Ragnaros"
+  },
+  BWL = {
+    "Razorgore the Untamed", "Vaelastrasz the Corrupt", "Broodlord Lashlayer",
+    "Firemaw", "Ebonroc", "Flamegor", "Chromaggus", 
+    "Nefarian"
+  },
+  AQ = {
+    "The Prophet Skeram", "Battleguard Sartura", "Fankriss the Unyielding",
+    "Princess Huhuran", "Twin Emperors", "C'Thun", 
+    "Bug Family", "Viscidus", "Ouro"
+  },
+  NAXX = {
+    "Anub'Rekhan", "Grand Widow Faerlina", "Maexxna",
+    "Noth the Plaguebringer", "Heigan the Unclean", "Loatheb", 
+    "Instructor Razuvious", "Gothik the Harvester", "The Four Horsemen",
+    "Patchwerk", "Grobbulus", "Gluth", "Thaddius",
+    "Sapphiron", "Kel'Thuzad"
+  },
+  ZG = {
+    "Bloodlord Mandokir", "Gahz'ranka", "Hakkar", "High Priest Thekal", "High Priest Venoxis", "High Priestess Arlokk",
+    "High Priestess Jeklik", "Jin'do the Hexxer", "High Priestess Mar'li", "Edge of Madness"
+  },
+  AQ20 = {
+    "Ayamiss the Hunter", "Buru the Gorger", "General Rajaxx", "Kurinnaxx", "Moam", "Ossirian the Unscarred"
+  },
+  ONYXIA = {"Onyxia"},
+  WORLD = {
+    "Azuregos", "Lord Kazzak", "Emeriss", "Lethon", "Ysondre", "Taerar"
+  }
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v1.4.4";
+core.MonVersion = "v1.4.5";
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes

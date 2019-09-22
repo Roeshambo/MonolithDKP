@@ -65,10 +65,10 @@ end
 function AddRaidToDKPTable()
 	local GroupType = "none";
 
-	if IsInGroup() then
-		GroupType = "party"
-	elseif IsInRaid() then
+	if IsInRaid() then
 		GroupType = "raid"
+	elseif IsInGroup() then
+		GroupType = "party"
 	end
 
 	if GroupType ~= "none" then
@@ -97,14 +97,6 @@ function AddRaidToDKPTable()
 			end
 			if tempName and InGuild then
 				if not MonDKP:Table_Search(MonDKP_DKPTable, tempName) then
-					if tempClass == "Death Knight" or tempClass == "Monk" or tempClass == "Demon Hunter" then 		-- remove at launch
-						tempClass = "Druid"
-					end
-					if UnitFactionGroup("player") == "Horde" then
-						if tempClass == "Paladin" then tempClass = "Shaman" end
-					else
-						if tempClass == "Shaman" then tempClass = "Paladin" end
-					end 																							-- to here
 					tinsert(MonDKP_DKPTable, {
 						player=tempName,
 						class=tempClass,
