@@ -662,10 +662,6 @@ end
 function MonDKP:SeedVerify_Update()
   if IsInGuild() then
     local leader = MonDKP:GetGuildRankGroup(1)
-    
-    if leader[1].note == "" or not tonumber(leader[1].note) then    -- zeros out note if no note has been created yet
-      GuildRosterSetPublicNote(leader[1].index, 0)
-    end
 
     if MonDKP_DKPTable.seed >= leader[1].seed and MonDKP_Loot.seed >= leader[1].seed and MonDKP_DKPHistory.seed >= leader[1].seed then
       core.UpToDate = true;
