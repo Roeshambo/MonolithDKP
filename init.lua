@@ -25,6 +25,52 @@ MonDKP.Commands = {
 			MonDKP:Print("You do not have permission to access that feature.")
 		end
 	end,
+	["award"] = function (name, cost, ...)
+		if core.IsOfficer then
+			local item = strjoin(" ", ...)
+			local validation = MonDKP:Table_Search(MonDKP_DKPTable, name)
+
+			if not validation then 			-- validate command name, cost and itemlink
+				MonDKP:Print("Can not award item. Invalid Target Player")
+				return;
+			elseif not tonumber(cost) then
+				MonDKP:Print("Can not award item. Invalid Item Cost")
+				return;
+			elseif not strfind(item, "|Hitem:") then
+				MonDKP:Print("Can not award item. Invalid item link")
+				return;
+			end
+
+			StaticPopupDialogs["AWARD_CONFIRM"] = {
+				text = "Are you sure you'd like to award "..item.." to "..MonDKP_DKPTable[validation[1][1]].player.." for "..cost.." DKP?",
+				button1 = "Yes",
+				button2 = "No",
+				OnAccept = function()
+					local leader = MonDKP:GetGuildRankGroup(1)
+					local curTime = time();
+					local temp_table = {}
+
+					MonDKP:DKPTable_Set(name, "dkp", MonDKP_round(-cost, MonDKP_DB.modes.rounding), true)
+					table.insert(MonDKP_Loot, {player=MonDKP_DKPTable[validation[1][1]].player, loot=item, zone=MonDKP_DB.bossargs.CurrentRaidZone, date=curTime, cost=cost, boss=MonDKP_DB.bossargs.LastKilledBoss})
+					MonDKP:UpdateSeeds()
+					tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=MonDKP_DKPTable[validation[1][1]].player, loot=item, zone=MonDKP_DB.bossargs.CurrentRaidZone, date=curTime, boss=MonDKP_DB.bossargs.LastKilledBoss, cost=cost}})
+					MonDKP:LootHistory_Reset();
+					MonDKP:LootHistory_Update("No Filter")
+					MonDKP:RosterSeedUpdate(leader[1].index)
+					MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
+					MonDKP.Sync:SendData("MonDKPLootAward", temp_table[1])
+					table.wipe(temp_table)
+				end,
+				timeout = 0,
+				whileDead = true,
+				hideOnEscape = true,
+				preferredIndex = 3,
+			}
+			StaticPopup_Show ("AWARD_CONFIRM")
+		else
+			MonDKP:Print("You do not have permission to access that feature.")
+		end
+	end,
 	["timer"] = function(time, ...)
 		if time == nil then
 			MonDKP:BroadcastTimer(1, "...")
@@ -51,6 +97,7 @@ MonDKP.Commands = {
 		MonDKP:Print("|cff00cc66/dkp reset|r - Resets DKP Window Position/Size");
 		MonDKP:Print("|cff00cc66/dkp timer|r - Creates Raid Timer (Officers Only) (eg. /dkp timer 120 Pizza Break!)");
 		MonDKP:Print("|cff00cc66/dkp bid|r - Opens Bid Window (Officers Only) (eg. /dkp bid [item link])");
+		MonDKP:Print("|cff00cc66/dkp award player cost [item_link]|r - Manually Award Item (Officers Only) (eg. /dkp award roeshambo 100 [item link])");
 		MonDKP:Print("|cff00cc66/dkp modes|r - Opens DKP Modes Window (Officers Only)");
 		MonDKP:Print("|cff00cc66/dkp export|r - Opens window to export all DKP information to HTML, CSV or XML. (More export implementations to come)");
 		print(" ");
@@ -226,7 +273,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
     		}
     	end
 		if not MonDKP_DB.bossargs then MonDKP_DB.bossargs = { CurrentRaidZone = "Molten Core", LastKilledBoss = "Lucifron" } end
-		if not MonDKP_DB.modes or not MonDKP_DB.modes.mode then MonDKP_DB.modes = { mode = "Minimum Bid Values", SubZeroBidding = false, rounding = 0, AddToNegative = false, increment = 60, ZeroSumBidType = "Static" } end;
+		if not MonDKP_DB.modes or not MonDKP_DB.modes.mode then MonDKP_DB.modes = { mode = "Minimum Bid Values", SubZeroBidding = false, rounding = 0, AddToNegative = false, increment = 60, ZeroSumBidType = "Static", AllowNegativeBidders = false } end;
 		if not MonDKP_DB.modes.ZeroSumBank then MonDKP_DB.modes.ZeroSumBank = { balance = 0 } end
 		if not MonDKP_DB.modes.channels then MonDKP_DB.modes.channels = { raid = true, whisper = true, guild = true } end
 		if not MonDKP_DB.modes.costvalue then MonDKP_DB.modes.costvalue = "Integer" end
