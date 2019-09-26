@@ -68,7 +68,7 @@ local function DeleteLootHistoryEntry(target)
 		MonDKP:LootHistory_Reset()
 
 		MonDKP_DKPTable[search_player[1][1]].dkp = MonDKP_DKPTable[search_player[1][1]].dkp + target.cost 							-- refund previous looter
-		MonDKP_DKPTable[search_player[1][1]].lifetime_spent = MonDKP_DKPTable[search_player[1][1]].lifetime_spent - target.cost 	-- remove from lifetime_spent
+		MonDKP_DKPTable[search_player[1][1]].lifetime_spent = MonDKP_DKPTable[search_player[1][1]].lifetime_spent + target.cost 	-- remove from lifetime_spent
 
 		if search then
 			table.remove(MonDKP_Loot, search[1][1])

@@ -343,7 +343,7 @@ function MonDKP:PurgeDKPHistory()     -- cleans old DKP history beyond history l
 end
 
 function MonDKP:FormatTime(time)
-  local TZ = date("%Z") -- Time Zone
+  --local TZ = date("%Z") -- Time Zone
   local str;
 
   --[[if strfind(TZ, "Eastern") then

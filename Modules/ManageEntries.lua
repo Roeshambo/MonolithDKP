@@ -239,6 +239,13 @@ local function UpdateWhitelist()
 		for i=1, #core.SelectedData do
 			table.insert(MonDKP_Whitelist, core.SelectedData[i].player)
 		end
+
+		local verifyLeadAdded = MonDKP:Table_Search(MonDKP_Whitelist, UnitName("player"))
+
+		if not verifyLeadAdded then
+			local pname = UnitName("player");
+			table.insert(MonDKP_Whitelist, pname)		-- verifies leader is included in white list. Adds if they aren't
+		end
 	else
 		table.wipe(MonDKP_Whitelist)
 	end
@@ -520,7 +527,7 @@ function MonDKP:ManageEntries()
 		MonDKP.ConfigTab3.WhitelistContainer.WhitelistHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab3.WhitelistContainer, "TOPLEFT", -10, 0);
 		MonDKP.ConfigTab3.WhitelistContainer.WhitelistHeader:SetWidth(400)
 		MonDKP.ConfigTab3.WhitelistContainer.WhitelistHeader:SetFontObject("MonDKPNormalLeft")
-		MonDKP.ConfigTab3.WhitelistContainer.WhitelistHeader:SetText("Whitelist Settings |CFF444444(Leader Only)|r\n\nIt is strongly advised you only use this whitelist setting if you wish to restrict what officers require permissions. If you want all officers to have permissions, ignore this settings feature entirely."); 
+		MonDKP.ConfigTab3.WhitelistContainer.WhitelistHeader:SetText("Whitelist Settings |CFF444444(Leader Only) (Alpha)|r\n\nIt is strongly advised you only use this whitelist setting if you wish to restrict what officers require permissions. If you want all officers to have permissions, ignore this settings feature entirely. Use with caution. (If applying these settings causes problems, open your \\WTF\\Accounts\\ACCOUNT_NAME\\SavedVariables\\MonolithDKP.lua file with a text editor and delete the MonDKP_Whitelist table near the bottom.)"); 
 
 		MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab3.WhitelistContainer, "BOTTOMLEFT", 15, 15, "Set Whitelist");
 		MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:ClearAllPoints()

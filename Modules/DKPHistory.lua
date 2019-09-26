@@ -84,6 +84,7 @@ local function MonDKPDeleteDKPEntry(item)
 						MonDKP_DKPTable[i].dkp = tonumber(MonDKP_round(MonDKP_DKPTable[i].dkp * (100 / (100 + dkp_value)), MonDKP_DB.modes.rounding))
 					elseif ModType == "whole" then
 						MonDKP_DKPTable[i].dkp = MonDKP_DKPTable[i].dkp - dkp_value;
+						MonDKP_DKPTable[i].lifetime_gained = MonDKP_DKPTable[i].lifetime_gained - dkp_value;
 					end
 				end
 			end

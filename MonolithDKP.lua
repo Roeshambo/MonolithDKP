@@ -31,6 +31,11 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
     core.MonDKPOptions = core.MonDKPOptions or MonDKP:Options()
     OptionsLoaded = true;
   end
+
+  if #MonDKP_Whitelist > 0 then
+    MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP_Whitelist)   -- broadcasts whitelist any time the window is opened if one exists (help ensure everyone has the information even if they were offline when it was created)
+  end
+
   core.MonDKPUI:SetScale(MonDKP_DB.defaults.MonDKPScaleSize)
   MonDKP:LootHistory_Update("No Filter");
   MonDKP:SeedVerify_Update()
