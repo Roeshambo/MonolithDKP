@@ -130,6 +130,11 @@ function MonDKP:DKPModesFrame_Create()
 			MonDKP_DB.modes.costvalue = "Integer";
 			UIDropDownMenu_SetText(f.ItemCostDropDown, "Integer")
 			f.SubZeroBidding:Show();
+			f.SubZeroBidding:SetChecked(MonDKP_DB.modes.SubZeroBidding)
+			if MonDKP_DB.modes.SubZeroBidding == true then
+				f.AllowNegativeBidders:Show()
+				f.AllowNegativeBidders:SetChecked(MonDKP_DB.modes.AllowNegativeBidders)
+			end
 			f.RollContainer:Hide();
 			f.ZeroSumType:Hide();
 			f.ZeroSumTypeHeader:Hide();
@@ -154,6 +159,11 @@ function MonDKP:DKPModesFrame_Create()
 
 			if MonDKP_DB.modes.costvalue == "Integer" then
 				f.SubZeroBidding:Show()
+				f.SubZeroBidding:SetChecked(MonDKP_DB.modes.SubZeroBidding)
+				if MonDKP_DB.modes.SubZeroBidding == true then
+					f.AllowNegativeBidders:Show()
+					f.AllowNegativeBidders:SetChecked(MonDKP_DB.modes.AllowNegativeBidders)
+				end
 				UIDropDownMenu_SetText(f.ItemCostDropDown, "Integer")
 			end
 		elseif newValue == "Roll Based Bidding" then
@@ -173,6 +183,11 @@ function MonDKP:DKPModesFrame_Create()
 
 			if MonDKP_DB.modes.costvalue == "Integer" then
 				f.SubZeroBidding:Show()
+				f.SubZeroBidding:SetChecked(MonDKP_DB.modes.SubZeroBidding)
+				if MonDKP_DB.modes.SubZeroBidding == true then
+					f.AllowNegativeBidders:Show()
+					f.AllowNegativeBidders:SetChecked(MonDKP_DB.modes.AllowNegativeBidders)
+				end
 				UIDropDownMenu_SetText(f.ItemCostDropDown, "Integer")
 			end
 		elseif newValue == "Zero Sum" then
@@ -180,6 +195,7 @@ function MonDKP:DKPModesFrame_Create()
 			MonDKP_DB.modes.costvalue = "Integer"
 			f.ModeDescription:SetText(ZeroSumDescription)
 			f.SubZeroBidding:Hide()
+			f.AllowNegativeBidders:Hide()
 			f.RollContainer:Hide()
 			f.ItemCostHeader:Hide();
 			UIDropDownMenu_SetText(f.ItemCostDropDown, "Integer")
@@ -479,7 +495,7 @@ function MonDKP:DKPModesFrame_Create()
 
 	-- Item Cost Value DROPDOWN box 
 	f.ItemCostDropDown = CreateFrame("FRAME", "MonDKPModeSelectDropDown", f, "MonolithDKPUIDropDownMenuTemplate")
-	f.ItemCostDropDown:SetPoint("TOPLEFT", f.ModesDropDown, "BOTTOMLEFT", 0, -40)
+	f.ItemCostDropDown:SetPoint("TOPLEFT", f.ModesDropDown, "BOTTOMLEFT", 0, -50)
 	UIDropDownMenu_SetWidth(f.ItemCostDropDown, 150)
 	UIDropDownMenu_SetText(f.ItemCostDropDown, MonDKP_DB.modes.costvalue)
 
@@ -499,9 +515,15 @@ function MonDKP:DKPModesFrame_Create()
 		if arg1 == "Integer" then
 			MonDKP_DB.modes.costvalue = "Integer"
 			f.SubZeroBidding:Show()
+			f.SubZeroBidding:SetChecked(MonDKP_DB.modes.SubZeroBidding)
+			if MonDKP_DB.modes.SubZeroBidding == true then
+				f.AllowNegativeBidders:Show()
+				f.AllowNegativeBidders:SetChecked(MonDKP_DB.modes.AllowNegativeBidders)
+			end
 		elseif arg1 == "Percent" then
 			MonDKP_DB.modes.costvalue = "Percent"
 			f.SubZeroBidding:Hide()
+			f.AllowNegativeBidders:Hide()
 			MonDKP_DB.modes.SubZeroBidding = false;
 			f.SubZeroBidding:SetChecked(false)
 		end
@@ -602,9 +624,13 @@ function MonDKP:DKPModesFrame_Create()
 		if self:GetChecked() == true then
 			MonDKP_DB.modes.SubZeroBidding = true;
 			MonDKP:Print("Sub Zero Bidding |cff00ff00Enabled|r")
+			f.AllowNegativeBidders:Show()
+			f.AllowNegativeBidders:SetChecked(MonDKP_DB.modes.AllowNegativeBidders)
 		else
 			MonDKP_DB.modes.SubZeroBidding = false;
 			MonDKP:Print("Sub Zero Bidding |cffff0000Disabled|r")
+			MonDKP_DB.modes.AllowNegativeBidders = false
+			f.AllowNegativeBidders:Hide()
 		end
 		PlaySound(808);
 	end)
@@ -621,7 +647,37 @@ function MonDKP:DKPModesFrame_Create()
 		f.SubZeroBidding:Hide()
 	end
 	
-
+	-- Allow Bids below zero Checkbox
+	f.AllowNegativeBidders = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
+	f.AllowNegativeBidders:SetChecked(MonDKP_DB.modes.AllowNegativeBidders)
+	f.AllowNegativeBidders:SetScale(0.6);
+	f.AllowNegativeBidders.text:SetText("  |cff5151deAllow Negative Bidders|r");
+	f.AllowNegativeBidders.text:SetScale(1.5);
+	f.AllowNegativeBidders.text:SetFontObject("MonDKPSmallLeft")
+	f.AllowNegativeBidders:SetPoint("TOPLEFT", f.SubZeroBidding, "BOTTOMLEFT", 0, 0);
+	f.AllowNegativeBidders:SetScript("OnClick", function(self)
+		if not MonDKP_DB.modes.AllowNegativeBidders then MonDKP_DB.modes.AllowNegativeBidders = false end
+		if self:GetChecked() == true then
+			MonDKP_DB.modes.AllowNegativeBidders = true;
+			MonDKP:Print("Allow Negative Bidders |cff00ff00Enabled|r")
+		else
+			MonDKP_DB.modes.AllowNegativeBidders = false;
+			MonDKP:Print("Allow Negative Bidders |cffff0000Disabled|r")
+		end
+		PlaySound(808);
+	end)
+	f.AllowNegativeBidders:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText("Allow Negative Bidders", 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine("Allows a player to bid if their DKP is currently in the negative.", 1.0, 1.0, 1.0, true);
+		GameTooltip:Show();
+	end)
+	f.AllowNegativeBidders:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+	if (MonDKP_DB.modes.costvalue == "Percent" or MonDKP_DB.modes.mode == "Zero Sum") or MonDKP_DB.modes.SubZeroBidding == false then
+		f.AllowNegativeBidders:Hide()
+	end
 
 
 	-- Roll Container
