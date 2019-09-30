@@ -188,20 +188,6 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		local raidString, reset, newreset, days, hours, mins, maxPlayers, numEncounter, curLength;
 
 		if not MonDKP_DB.Lockouts then MonDKP_DB.Lockouts = {Three = 0, Five = 1570032000, Seven = 1569945600} end
-		
-		--[[
-		name,_,reset,_,_,_,_,_,maxPlayers,_,numEncounter = GetSavedInstanceInfo(1)
-		if maxPlayers == 40 and numEncounters > 1 then
-			raid is a 7 day
-		elseif maxPlayers == 40 and numEncounters == 1 then
-			raid is 5 day
-		elseif maxPlayers == 20
-			raid is 3 day
-		end
-
-		1569945600 = 7 day reset
-		1570032000 = 5 day reset
-		--]]
 
 		for i=1, num do 		-- corrects reset timestamp for any raids where an active lockout exists
 			_,_,reset,_,_,_,_,_,maxPlayers,_,numEncounter = GetSavedInstanceInfo(i)
@@ -230,19 +216,21 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			days = math.floor(reset / 86400)
 			hours = math.floor(math.floor(reset % 86400) / 3600)
 			mins = math.ceil((reset % 3600) / 60)
-			if days > 1 then days = days.." days" else days = days.." day" end
-			if hours > 1 then hours = hours.." hours" else hours = hours.." hour." end
-			if mins > 1 then mins = mins.." minutes." else mins = mins.." minute." end
+			
+			if days > 1 then days = " "..days.." days" elseif days == 0 then days = "" else days = " "..days.." day" end
+			if hours > 1 then hours = " "..hours.." hours" elseif hours == 0 then hours = "" else hours = " "..hours.." hour." end
+			if mins > 1 then mins = " "..mins.." minutes." elseif mins == 0 then mins = "" else mins = " "..mins.." minute." end
+
 			if k == "Three" then raidString = "ZG, AQ20"
 			elseif k == "Five" then raidString = "Onyxia"
 			elseif k == "Seven" then raidString = "MC, BWL, AQ40"
 			end
 
 			if k ~= "Three" then 	-- remove when three day raid lockouts are added
-				MonDKP:Print(raidString.." resets in "..days.." "..hours.." "..mins.." ("..date("%A @ %H:%M:%S%p", v)..")")
+				MonDKP:Print(raidString.." resets in"..days..hours..mins.." ("..date("%A @ %H:%M:%S%p", v)..")")
 			end
 		end
-		
+
 		self:UnregisterEvent("UPDATE_INSTANCE_INFO");
 	elseif event == "CHAT_MSG_GUILD" then
 		MonDKP:CheckOfficer()
