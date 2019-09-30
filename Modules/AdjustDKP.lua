@@ -717,6 +717,18 @@ function MonDKP:AdjustDKPTab_Create()
 	    MonDKP.ConfigTab2.RaidTimerContainer.StartTimer = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab2.RaidTimerContainer, "BOTTOMLEFT", 10, 115, "Initialize Raid");
 		MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:SetSize(90,25)
 		MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:SetScript("OnClick", function(self)
+			if not IsInRaid() then
+				StaticPopupDialogs["NO_RAID_TIMER"] = {
+					text = "You are not in a raid.",
+					button1 = "Ok",
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopup_Show ("NO_RAID_TIMER")
+				return;
+			end
 			if not core.RaidInProgress then
 				if MonDKP_DB.DKPBonus.GiveRaidStart and self:GetText() ~= "Continue Raid" then
 					StaticPopupDialogs["START_RAID_BONUS"] = {
