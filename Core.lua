@@ -279,6 +279,22 @@ function MonDKP:RosterSeedUpdate(index)
 	else
 	    note = note .. " " .. textseed
 	end
+
+  if strlen(note) > 31 then   -- validates note length. If it's too long for the public note, truncates it to fit the seed.
+    note = strsub(note, 1, 9)
+    note = note .. " " .. textseed
+
+    StaticPopupDialogs["SEED_VALIDATE"] = {
+      text = "Guild Leaders public note was too long. Truncated note to fit DKP Table timestamp. (31 character max)",
+      button1 = "Ok",
+      timeout = 0,
+      whileDead = true,
+      hideOnEscape = true,
+      preferredIndex = 3,
+    }
+    StaticPopup_Show ("SEED_VALIDATE")
+  end
+
 	GuildRosterSetPublicNote(index, note)
 	return newseed
 end

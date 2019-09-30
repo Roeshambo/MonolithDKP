@@ -363,7 +363,7 @@ local function RightClickMenu(self)
   end
 
   for i=1, #core.classes do       -- create Filter selections in context menu
-    menu[7].menuList[i] = { text = core.classes[i], isNotRadio = true, keepShownOnClick = true, checked = MonDKP.ConfigTab1.checkBtn[i]:GetChecked(), func = function()
+    menu[7].menuList[i] = { text = core.LocalClass[core.classes[i]], isNotRadio = true, keepShownOnClick = true, checked = MonDKP.ConfigTab1.checkBtn[i]:GetChecked(), func = function()
       MonDKP.ConfigTab1.checkBtn[i]:SetChecked(not MonDKP.ConfigTab1.checkBtn[i]:GetChecked())
       MonDKPFilterChecks(MonDKP.ConfigTab1.checkBtn[9])
       for j=1, #core.classes+1 do

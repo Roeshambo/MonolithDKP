@@ -466,7 +466,7 @@ local function AwardItem()
 
 	MonDKP:SeedVerify_Update()
 	if core.UpToDate == false and core.IsOfficer == true then
-		StaticPopupDialogs["CONFIRM_AWARD"] = {
+		StaticPopupDialogs["CONFIRM_PUSH"] = {
 			text = "|CFFFF0000WARNING|r: You are attempting to modify an outdated DKP table. This may inadvertently corrupt data for the officers that have the most recent tables.\n\n Are you sure you would like to do this?",
 			button1 = "Yes",
 			button2 = "No",
@@ -502,6 +502,7 @@ local function AwardItem()
 						SendChatMessage("Congrats "..winner.." on "..CurrItemForBid.." @ "..cost.." DKP", "RAID_WARNING")
 						MonDKP:DKPTable_Set(winner, "dkp", MonDKP_round(-cost, MonDKP_DB.modes.rounding), true)
 						tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=curTime, boss=core.LastKilledBoss, cost=cost})
+						MonDKP:UpdateSeeds()
 						local temp_table = {}
 						tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=curTime, boss=core.LastKilledBoss, cost=cost}})
 						MonDKP:LootHistory_Reset();
@@ -532,7 +533,7 @@ local function AwardItem()
 							 	core.BiddingWindow.CustomMinBid:SetChecked(true);
 							elseif search and core.BiddingWindow.cost:GetText() ~= tonumber(val) and core.BiddingWindow.CustomMinBid:GetChecked() == true then
 								if MonDKP_MinBids[search[1][1]].minbid ~= core.BiddingWindow.cost:GetText() then
-									MonDKP_MinBids[search[1][1]].minbid = core.BiddingWindow.cost:GetNumber();
+									MonDKP_MinBids[search[1][1]].minbid = MonDKP_round(core.BiddingWindow.cost:GetNumber(), MonDKP_DB.modes.rounding);
 									core.BiddingWindow.CustomMinBid:SetShown(true);
 							 		core.BiddingWindow.CustomMinBid:SetChecked(true);
 								end
@@ -548,12 +549,12 @@ local function AwardItem()
 							MonDKP_DB.modes.ZeroSumBank.balance = MonDKP_DB.modes.ZeroSumBank.balance + tonumber(cost)
 							table.insert(MonDKP_DB.modes.ZeroSumBank, { loot = CurrItemForBid, cost = tonumber(cost) })
 							MonDKP:ZeroSumBank_Update()
+							MonDKP.Sync:SendData("MonDKPZeroSum", MonDKP_DB.modes.ZeroSumBank)
 						end
 
 						core.BiddingWindow:Hide()
 						table.wipe(temp_table)
 						ClearBidWindow()
-						MonDKP.Sync:SendData("MonDKPZeroSum", MonDKP_DB.modes.ZeroSumBank)
 					  end,
 					  timeout = 0,
 					  whileDead = true,
@@ -568,7 +569,7 @@ local function AwardItem()
 			hideOnEscape = true,
 			preferredIndex = 3,
 		}
-		StaticPopup_Show ("CONFIRM_AWARD")
+		StaticPopup_Show ("CONFIRM_PUSH")
 	else
 		if SelectedBidder["player"] then
 			cost = core.BiddingWindow.cost:GetNumber();

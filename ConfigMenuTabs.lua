@@ -166,7 +166,7 @@ function MonDKP:ConfigMenuTabs()
     if i <= 9 then MonDKP.ConfigTab1.checkBtn[i]:SetChecked(true) else MonDKP.ConfigTab1.checkBtn[i]:SetChecked(false) end;
     MonDKP.ConfigTab1.checkBtn[i]:SetID(i)
     if i <= 8 then
-      MonDKP.ConfigTab1.checkBtn[i].text:SetText("|cff5151de"..string.gsub(string.lower(core.classes[i]), "^%l", string.upper).."|r");
+      MonDKP.ConfigTab1.checkBtn[i].text:SetText("|cff5151de"..core.LocalClass[core.classes[i]].."|r");
     end
     if i==9 then
       MonDKP.ConfigTab1.checkBtn[i]:SetScript("OnClick",
@@ -196,7 +196,7 @@ function MonDKP:ConfigMenuTabs()
   end
 
   -- Class Check Buttons:
-  MonDKP.ConfigTab1.checkBtn[1]:SetPoint("TOPLEFT", MonDKP.ConfigTab1, "TOPLEFT", 60, -100);
+  MonDKP.ConfigTab1.checkBtn[1]:SetPoint("TOPLEFT", MonDKP.ConfigTab1, "TOPLEFT", 85, -70);
   MonDKP.ConfigTab1.checkBtn[2]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[1], "TOPRIGHT", 50, 0);
   MonDKP.ConfigTab1.checkBtn[3]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[2], "TOPRIGHT", 50, 0);
   MonDKP.ConfigTab1.checkBtn[4]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[3], "TOPRIGHT", 50, 0);
@@ -209,6 +209,13 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab1.checkBtn[9].text:SetText("|cff5151deAll|r");
   MonDKP.ConfigTab1.checkBtn[10]:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab1.checkBtn[2], "TOPLEFT", 25, 0);
   MonDKP.ConfigTab1.checkBtn[10].text:SetText("|cff5151deIn Party/Raid|r");         -- executed in filterDKPTable (MonolithDKP.lua)
+
+  ------ ADD LOCKOUT TIMERS HERE
+  --RequestRaidInfo();
+  --Listen for UPDATE_INSTANCE_INFO event, then continue below
+  --local _,_,reset = GetSavedInstanceInfo(1)
+  --local newreset = time() + reset
+  --print(date("%m/%d/%y %H:%M:%S", newreset));
 
   core.ClassGraph = MonDKP:ClassGraph()  -- draws class graph on tab1
   
