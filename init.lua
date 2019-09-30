@@ -2,6 +2,8 @@ local _, core = ...;
 local _G = _G;
 local MonDKP = core.MonDKP;
 
+local lockouts = CreateFrame("Frame", "LockoutsFrame");
+
 --------------------------------------
 -- Slash Command
 --------------------------------------
@@ -70,6 +72,11 @@ MonDKP.Commands = {
 		else
 			MonDKP:Print("You do not have permission to access that feature.")
 		end
+	end,
+	["lockouts"] = function()
+		lockouts:RegisterEvent("UPDATE_INSTANCE_INFO");
+		lockouts:SetScript("OnEvent", MonDKP_OnEvent);
+		RequestRaidInfo()
 	end,
 	["timer"] = function(time, ...)
 		if time == nil then
@@ -176,6 +183,67 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		if (core.BidInProgress or string.find(arg1, "!dkp") == 1) and core.IsOfficer == true then
 			MonDKP_CHAT_MSG_WHISPER(arg1, ...)
 		end
+	elseif event == "UPDATE_INSTANCE_INFO" then
+		local num = GetNumSavedInstances()
+		local raidString, reset, newreset, days, hours, mins, maxPlayers, numEncounter, curLength;
+
+		if not MonDKP_DB.Lockouts then MonDKP_DB.Lockouts = {Three = 0, Five = 1570032000, Seven = 1569945600} end
+		
+		--[[
+		name,_,reset,_,_,_,_,_,maxPlayers,_,numEncounter = GetSavedInstanceInfo(1)
+		if maxPlayers == 40 and numEncounters > 1 then
+			raid is a 7 day
+		elseif maxPlayers == 40 and numEncounters == 1 then
+			raid is 5 day
+		elseif maxPlayers == 20
+			raid is 3 day
+		end
+
+		1569945600 = 7 day reset
+		1570032000 = 5 day reset
+		--]]
+
+		for i=1, num do 		-- corrects reset timestamp for any raids where an active lockout exists
+			_,_,reset,_,_,_,_,_,maxPlayers,_,numEncounter = GetSavedInstanceInfo(i)
+			newreset = time() + reset + 2 	-- returned time is 2 seconds off
+
+			if maxPlayers == 40 and numEncounter > 1 then
+				curLength = "Seven"
+			elseif maxPlayers == 40 and numEncounter == 1 then
+				curLength = "Five"
+			elseif maxPlayers == 20 then
+				curLength = "Three"
+			end
+
+			if MonDKP_DB.Lockouts[curLength] < newreset then
+				MonDKP_DB.Lockouts[curLength] = newreset
+			end
+		end
+
+		-- Updates lockout timer if no lockouts were found to do so.
+		while MonDKP_DB.Lockouts.Three < time() do MonDKP_DB.Lockouts.Three = MonDKP_DB.Lockouts.Three + 259200 end
+		while MonDKP_DB.Lockouts.Five < time() do MonDKP_DB.Lockouts.Five = MonDKP_DB.Lockouts.Five + 432000 end
+		while MonDKP_DB.Lockouts.Seven < time() do MonDKP_DB.Lockouts.Seven = MonDKP_DB.Lockouts.Seven + 604800 end
+
+		for k,v in pairs(MonDKP_DB.Lockouts) do
+			reset = v - time();
+			days = math.floor(reset / 86400)
+			hours = math.floor(math.floor(reset % 86400) / 3600)
+			mins = math.ceil((reset % 3600) / 60)
+			if days > 1 then days = days.." days" else days = days.." day" end
+			if hours > 1 then hours = hours.." hours" else hours = hours.." hour." end
+			if mins > 1 then mins = mins.." minutes." else mins = mins.." minute." end
+			if k == "Three" then raidString = "ZG, AQ20"
+			elseif k == "Five" then raidString = "Onyxia"
+			elseif k == "Seven" then raidString = "MC, BWL, AQ40"
+			end
+
+			if k ~= "Three" then 	-- remove when three day raid lockouts are added
+				MonDKP:Print(raidString.." resets in "..days.." "..hours.." "..mins.." ("..date("%A @ %H:%M:%S%p", v)..")")
+			end
+		end
+		
+		self:UnregisterEvent("UPDATE_INSTANCE_INFO");
 	elseif event == "CHAT_MSG_GUILD" then
 		MonDKP:CheckOfficer()
 		if (core.BidInProgress or string.find(arg1, "!dkp") == 1) and core.IsOfficer == true then
@@ -190,13 +258,6 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				AddRaidToDKPTable()
 			end
 		end--]]
-	elseif event == "GUILD_ROSTER_UPDATE" then 		-- checks if player is an officer on load
-		if IsInGuild() then
-			MonDKP:CheckOfficer()
-			if core.IsOfficer ~= "" then
-				self:UnregisterEvent("GUILD_ROSTER_UPDATE")
-			end
-		end
 	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
 		if IsInRaid() then 					-- only processes combat log events if in raid
 			local _,arg1,_,_,_,_,_,_,arg2 = CombatLogGetCurrentEventInfo();			-- run operation when boss is killed
@@ -317,7 +378,6 @@ events:RegisterEvent("ADDON_LOADED");
 events:RegisterEvent("GROUP_ROSTER_UPDATE");
 events:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
 events:RegisterEvent("LOOT_OPENED")
-events:RegisterEvent("GUILD_ROSTER_UPDATE")
 events:RegisterEvent("CHAT_MSG_RAID")
 events:RegisterEvent("CHAT_MSG_RAID_LEADER")
 events:RegisterEvent("CHAT_MSG_WHISPER");
