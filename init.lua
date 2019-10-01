@@ -102,6 +102,7 @@ MonDKP.Commands = {
 		MonDKP:Print("|cff00cc66/dkp|r - Launches DKP Window");
 		MonDKP:Print("|cff00cc66/dkp ?|r - Shows Help Info");
 		MonDKP:Print("|cff00cc66/dkp reset|r - Resets DKP Window Position/Size");
+		MonDKP:Print("|cff00cc66/dkp lockouts|r - Displays the next reset for each raid size (3 day, 5 day and 7 day lockouts)");
 		MonDKP:Print("|cff00cc66/dkp timer|r - Creates Raid Timer (Officers Only) (eg. /dkp timer 120 Pizza Break!)");
 		MonDKP:Print("|cff00cc66/dkp bid|r - Opens Bid Window (Officers Only) (eg. /dkp bid [item link])");
 		MonDKP:Print("|cff00cc66/dkp award player cost [item_link]|r - Manually Award Item (Officers Only) (eg. /dkp award roeshambo 100 [item link])");
