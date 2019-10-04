@@ -210,13 +210,6 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab1.checkBtn[10]:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab1.checkBtn[2], "TOPLEFT", 25, 0);
   MonDKP.ConfigTab1.checkBtn[10].text:SetText("|cff5151deIn Party/Raid|r");         -- executed in filterDKPTable (MonolithDKP.lua)
 
-  ------ ADD LOCKOUT TIMERS HERE
-  --RequestRaidInfo();
-  --Listen for UPDATE_INSTANCE_INFO event, then continue below
-  --local _,_,reset = GetSavedInstanceInfo(1)
-  --local newreset = time() + reset
-  --print(date("%m/%d/%y %H:%M:%S", newreset));
-
   core.ClassGraph = MonDKP:ClassGraph()  -- draws class graph on tab1
   
 

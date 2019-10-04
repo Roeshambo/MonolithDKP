@@ -679,15 +679,32 @@ function MonDKP:BroadcastStopBidTimer()
 end
 
 function MonDKP_Register_ShiftClickLootWindowHook()			-- hook function into LootFrame window (BREAKS if more than 4 loot slots... trying to fix)
-	for i = 1, 4 do 
-		getglobal("LootButton"..i):HookScript("OnClick", function()
-	        if ( IsShiftKeyDown() and IsAltKeyDown() ) then
-	        	MonDKP:CheckOfficer();
-        		lootIcon, itemName, _, _, _ = GetLootSlotInfo(i)
-        		itemLink = GetLootSlotLink(i)
-	            MonDKP:ToggleBidWindow(itemLink, lootIcon, itemName)
-	        end
-		end)
+	local num = GetNumLootItems();
+	
+	if getglobal("ElvLootSlot1") then 			-- fixes hook for ElvUI loot frame
+		for i = 1, num do 
+			getglobal("ElvLootSlot"..i):HookScript("OnClick", function()
+		        if ( IsShiftKeyDown() and IsAltKeyDown() ) then
+		        	MonDKP:CheckOfficer();
+	        		lootIcon, itemName, _, _, _ = GetLootSlotInfo(i)
+	        		itemLink = GetLootSlotLink(i)
+		            MonDKP:ToggleBidWindow(itemLink, lootIcon, itemName)
+		        end
+			end)
+		end
+	else
+		if num > 4 then num = 4 end
+
+		for i = 1, num do 
+			getglobal("LootButton"..i):HookScript("OnClick", function()
+		        if ( IsShiftKeyDown() and IsAltKeyDown() ) then
+		        	MonDKP:CheckOfficer();
+	        		lootIcon, itemName, _, _, _ = GetLootSlotInfo(i)
+	        		itemLink = GetLootSlotLink(i)
+		            MonDKP:ToggleBidWindow(itemLink, lootIcon, itemName)
+		        end
+			end)
+		end
 	end
 end
 
