@@ -70,7 +70,7 @@ local function DisplayUserHistory(self, player)
   local c, PlayerSearch, PlayerSearch2, LifetimeSearch, RowCount, curDate;
 
   PlayerSearch = MonDKP:TableStrFind(MonDKP_DKPHistory, player)
-  PlayerSearch2 = MonDKP:TableStrFind(MonDKP_Loot, player)
+  PlayerSearch2 = MonDKP:Table_Search(MonDKP_Loot, player)
   LifetimeSearch = MonDKP:Table_Search(MonDKP_DKPTable, player)
 
   c = MonDKP:GetCColors(MonDKP_DKPTable[LifetimeSearch[1][1]].class)

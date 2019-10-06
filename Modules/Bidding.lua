@@ -791,7 +791,7 @@ function MonDKP:StartBidTimer(seconds, title, itemIcon)
 		end
 		self:SetValue(timer)
 		if timer >= duration then
-			if CurrItemForBid then
+			if CurrItemForBid and core.BidInProgress then
 				SendChatMessage("Bidding Closed!", "RAID_WARNING")
 				events:UnregisterEvent("CHAT_MSG_SYSTEM")
 			end

@@ -8,6 +8,7 @@ local SecondTracker = 0;
 local MinuteCount = 0;
 local SecondCount = 0;
 local StartAwarded = false;
+local StartBonus = 0;
 
 function SecondsToClock(seconds)
   local seconds = tonumber(seconds)
@@ -115,6 +116,7 @@ function MonDKP:StopRaidTimer()
 	MinuteCount = 0;
 	SecondCount = 0;
 	SecondTracker = 0;
+	StartBonus = 0;
 
 	if IsInRaid() and CheckRaidLeader() and core.IsOfficer then
 		if MonDKP_DB.DKPBonus.GiveRaidEnd then -- Award Raid Completion Bonus
@@ -126,7 +128,6 @@ end
 
 function MonDKP:StartRaidTimer(pause)
 	local increment;
-	local StartBonus;
 	
 	MonDKP.RaidTimer = MonDKP.RaidTimer or CreateFrame("StatusBar", nil, UIParent)
 
@@ -180,16 +181,13 @@ function MonDKP:StartRaidTimer(pause)
 
 		if MinuteCount >= increment then				-- apply bonus once increment value has been met
 			MinuteCount = 0;
+			awards = awards + 1;
 			MonDKP.ConfigTab2.RaidTimerContainer.BonusHeader:Show();
 			MonDKP.ConfigTab2.RaidTimerContainer.Bonus:SetText("|cff00ff00"..(awards*MonDKP_DB.DKPBonus.IntervalBonus)+StartBonus.."|r");
 
 			if IsInRaid() and CheckRaidLeader() then
-				awards = awards + 1;
 				AwardRaid(MonDKP_DB.DKPBonus.IntervalBonus, "Time Interval Bonus")
 			end
-			-- BEGIN award script here make sure IsRaidLeader() leads
-
-
 		end
 	end)
 end
