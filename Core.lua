@@ -98,40 +98,40 @@ core.settings = {             -- From MonDKP_DB
 --
 -- Can alternatively use tContains(core.BossList.MC, "Lucifron") for a true/false return if path isn't required
 ----------------------------------------------------
-core.BossList = {
+core.EncounterList = {
   MC = {
-    "Lucifron", "Magmadar", "Gehennas",
-    "Garr", "Baron Geddon", "Shazzrah", "Sulfuron Harbinger", 
-    "Golemagg the Incinerator", "Majordomo Executus", "Ragnaros"
+    663, 664, 665,
+    666, 668, 667, 669, 
+    670, 671, 672
   },
   BWL = {
-    "Razorgore the Untamed", "Vaelastrasz the Corrupt", "Broodlord Lashlayer",
-    "Firemaw", "Ebonroc", "Flamegor", "Chromaggus", 
-    "Nefarian"
+    610, 611, 612,
+    613, 614, 615, 616, 
+    617
   },
   AQ = {
-    "The Prophet Skeram", "Battleguard Sartura", "Fankriss the Unyielding",
-    "Princess Huhuran", "Twin Emperors", "C'Thun", 
-    "Bug Family", "Viscidus", "Ouro"
+    709, 711, 712,
+    714, 715, 717, 
+    710, 713, 716
   },
   NAXX = {
-    "Anub'Rekhan", "Grand Widow Faerlina", "Maexxna",
-    "Noth the Plaguebringer", "Heigan the Unclean", "Loatheb", 
-    "Instructor Razuvious", "Gothik the Harvester", "The Four Horsemen",
-    "Patchwerk", "Grobbulus", "Gluth", "Thaddius",
-    "Sapphiron", "Kel'Thuzad"
+    1107, 1110, 1116,
+    1117, 1112, 1115, 
+    1113, 1109, 1121,
+    1118, 1111, 1108, 1120,
+    1119, 1114
   },
   ZG = {
-    "Bloodlord Mandokir", "Gahz'ranka", "Hakkar", "High Priest Thekal", "High Priest Venoxis", "High Priestess Arlokk",
-    "High Priestess Jeklik", "Jin'do the Hexxer", "High Priestess Mar'li", "Edge of Madness"
+    787, 790, 793, 789, 784, 791,
+    785, 792, 786, 788
   },
   AQ20 = {
-    "Ayamiss the Hunter", "Buru the Gorger", "General Rajaxx", "Kurinnaxx", "Moam", "Ossirian the Unscarred"
+    722, 721, 719, 718, 720, 723
   },
-  ONYXIA = {"Onyxia"},
-  WORLD = {
-    "Azuregos", "Lord Kazzak", "Emeriss", "Lethon", "Ysondre", "Taerar"
-  }
+  ONYXIA = {1184},
+  --WORLD = {     -- No encounter IDs have been identified for these world bosses yet
+    --"Azuregos", "Lord Kazzak", "Emeriss", "Lethon", "Ysondre", "Taerar"
+  --}
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
@@ -149,6 +149,7 @@ core.NumLootItems = 0;        -- updates on LOOT_OPENED event
 core.CurrentRaidZone = ""
 core.LastKilledBoss = ""
 core.CurView = "all"
+core.CurSubView = "all"
 
 function MonDKP:GetCColors(class)
   if core.CColors then 

@@ -178,7 +178,7 @@ local function EditStandbyList(row, arg1)
   end
 end
 
-local function ViewLimited(raid, standby, raiders)
+function MonDKP:ViewLimited(raid, standby, raiders)
   if #MonDKP_Standby == 0 and standby and not raid and not raiders then
     MonDKP:Print("There are no players in the standby group.")
     core.CurView = "all"
@@ -282,23 +282,28 @@ local function RightClickMenu(self)
     { text = "Table Views", notCheckable = true, hasArrow = true,
         menuList = { 
           { text = "View Raid", notCheckable = true, keepShownOnClick = false; func = function()
-            ViewLimited(true)
+            MonDKP:ViewLimited(true)
+            core.CurSubView = "raid"
             ToggleDropDownMenu(nil, nil, menuFrame)
           end },
           { text = "View Standby List", notCheckable = true, func = function()
-            ViewLimited(false, true)
+            MonDKP:ViewLimited(false, true)
+            core.CurSubView = "standby"
             ToggleDropDownMenu(nil, nil, menuFrame)
           end },
           { text = "View Raid and Standby", notCheckable = true, func = function()
-            ViewLimited(true, true)
+            MonDKP:ViewLimited(true, true)
+            core.CurSubView = "raid and standby"
             ToggleDropDownMenu(nil, nil, menuFrame)
           end },
           { text = "View Core Raiders", notCheckable = true, func = function()
-            ViewLimited(false, false, true)
+            MonDKP:ViewLimited(false, false, true)
+            core.CurSubView = "core"
             ToggleDropDownMenu(nil, nil, menuFrame)
           end },
           { text = "View All", notCheckable = true, func = function()
-            ViewLimited()
+            MonDKP:ViewLimited()
+            core.CurSubView = "all"
             ToggleDropDownMenu(nil, nil, menuFrame, nil, nil, nil, nil, nil)
           end },
       }

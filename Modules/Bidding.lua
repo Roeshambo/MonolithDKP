@@ -330,7 +330,7 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 	 		core.BiddingWindow.cost:SetText(MonDKP_round(minBid, MonDKP_DB.modes.rounding))
 	 		core.BiddingWindow.itemName:SetText(itemName)
 	 		core.BiddingWindow.bidTimer:SetText(core.settings["DKPBonus"]["BidTimer"])
-	 		core.BiddingWindow.boss:SetText(core.LastKilledBoss.." in "..CurZone)
+	 		core.BiddingWindow.boss:SetText(core.LastKilledBoss)
 	 	end
 	 	UpdateBidWindow()
 	 	BidScrollFrame_Update()
@@ -463,6 +463,7 @@ local function AwardItem()
 	local winner;
 	local curTime;
 	local selected;
+	local curZone = GetRealZoneText();
 
 	MonDKP:SeedVerify_Update()
 	if core.UpToDate == false and core.IsOfficer == true then
@@ -501,10 +502,10 @@ local function AwardItem()
 					  OnAccept = function()
 						SendChatMessage("Congrats "..winner.." on "..CurrItemForBid.." @ "..cost.." DKP", "RAID_WARNING")
 						MonDKP:DKPTable_Set(winner, "dkp", MonDKP_round(-cost, MonDKP_DB.modes.rounding), true)
-						tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=curTime, boss=core.LastKilledBoss, cost=cost})
+						tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=curZone, date=curTime, boss=core.BiddingWindow.boss:GetText(), cost=cost})
 						MonDKP:UpdateSeeds()
 						local temp_table = {}
-						tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=curTime, boss=core.LastKilledBoss, cost=cost}})
+						tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=CurrItemForBid, zone=curZone, date=curTime, boss=core.BiddingWindow.boss:GetText(), cost=cost}})
 						MonDKP:LootHistory_Reset();
 						MonDKP:LootHistory_Update("No Filter")
 						local leader = MonDKP:GetGuildRankGroup(1)
@@ -601,10 +602,10 @@ local function AwardItem()
 			  OnAccept = function()
 				SendChatMessage("Congrats "..winner.." on "..CurrItemForBid.." @ "..cost.." DKP", "RAID_WARNING")
 				MonDKP:DKPTable_Set(winner, "dkp", MonDKP_round(-cost, MonDKP_DB.modes.rounding), true)
-				tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=curTime, boss=core.LastKilledBoss, cost=cost})
+				tinsert(MonDKP_Loot, {player=winner, loot=CurrItemForBid, zone=curZone, date=curTime, boss=core.BiddingWindow.boss:GetText(), cost=cost})
 				MonDKP:UpdateSeeds()
 				local temp_table = {}
-				tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=CurrItemForBid, zone=core.CurrentRaidZone, date=curTime, boss=core.LastKilledBoss, cost=cost}})
+				tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=CurrItemForBid, zone=curZone, date=curTime, boss=core.BiddingWindow.boss:GetText(), cost=cost}})
 				MonDKP:LootHistory_Reset();
 				MonDKP:LootHistory_Update("No Filter")
 				local leader = MonDKP:GetGuildRankGroup(1)
@@ -1076,11 +1077,31 @@ function MonDKP:CreateBidWindow()
 	f.bossHeader:SetPoint("TOPLEFT", f, "TOPLEFT", 85, -25);
 	f.bossHeader:SetText("Boss:")
 
-	f.boss = f:CreateFontString(nil, "OVERLAY")
+	f.boss = CreateFrame("EditBox", nil, f)
 	f.boss:SetFontObject("MonDKPNormalLeft");
+	f.boss:SetAutoFocus(false)
+	f.boss:SetMultiLine(false)
+	f.boss:SetTextInsets(10, 15, 5, 5)
+	f.boss:SetBackdrop({
+		bgFile   = "Textures\\white.blp", tile = true,
+		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\slider-border", tile = true, tileSize = 1, edgeSize = 2, 
+	});
 	f.boss:SetPoint("LEFT", f.bossHeader, "RIGHT", 5, 0);
-	f.boss:SetSize(300, 28)
-
+	f.boss:SetBackdropColor(0,0,0,0.9)
+	f.boss:SetBackdropBorderColor(1,1,1,0.6)
+	f.boss:SetSize(200, 28)
+	f.boss:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
+		self:HighlightText(0,0)
+		self:ClearFocus()
+	end)
+	f.boss:SetScript("OnEnterPressed", function(self)    -- clears focus on esc
+		self:HighlightText(0,0)
+		self:ClearFocus()
+	end)
+	f.boss:SetScript("OnTabPressed", function(self)    -- clears focus on esc
+		self:HighlightText(0,0)
+		self:ClearFocus()
+	end)
 
 	f.itemHeader = f:CreateFontString(nil, "OVERLAY")
 	f.itemHeader:SetFontObject("MonDKPLargeRight");
@@ -1119,7 +1140,7 @@ function MonDKP:CreateBidWindow()
 	      edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\slider-border", tile = true, tileSize = 1, edgeSize = 2, 
 	    });
 	    f.minBid:SetBackdropColor(0,0,0,0.9)
-	    f.minBid:SetBackdropBorderColor(1,1,1,0.4)
+	    f.minBid:SetBackdropBorderColor(1,1,1,0.6)
 	    f.minBid:SetMaxLetters(8)
 	    f.minBid:SetTextColor(1, 1, 1, 1)
 	    f.minBid:SetFontObject("MonDKPSmallRight")
@@ -1229,7 +1250,7 @@ function MonDKP:CreateBidWindow()
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 		GameTooltip:SetText("Start Bidding", 0.25, 0.75, 0.90, 1, true);
 		GameTooltip:AddLine("Begins bidding for current item. Bids will only be accepted while this is running.", 1.0, 1.0, 1.0, true);
-		GameTooltip:AddLine("Bidding duration can be set in \"Bid Timer\" box.", 1.0, 0, 0, true);
+		GameTooltip:AddLine("Bidding duration can be set in \"Bid Timer\" box. Starting a second bid session for an item will not clear previous bids (for use if someone snipes a bid last second).", 1.0, 0, 0, true);
 		GameTooltip:Show();
 	end)
 	f.StartBidding:SetScript("OnLeave", function(self)
@@ -1427,6 +1448,20 @@ function MonDKP:CreateBidWindow()
 			StaticPopup_Show ("CONFIRM_AWARD")
 		end
 	end);
+
+	f:SetScript("OnMouseUp", function(self)    -- clears focus on esc
+		local item,_,link = GetCursorInfo();
+
+		if item == "item" then
+
+			local itemName,_,_,_,_,_,_,_,_,itemIcon = GetItemInfo(link)
+
+			CurrItemForBid = link
+			CurrItemIcon = itemIcon
+			MonDKP:ToggleBidWindow(CurrItemForBid, CurrItemIcon, itemName)
+			ClearCursor()
+		end
+    end)
 
 	return f;
 end

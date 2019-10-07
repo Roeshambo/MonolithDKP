@@ -36,6 +36,18 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
     MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP_Whitelist)   -- broadcasts whitelist any time the window is opened if one exists (help ensure everyone has the information even if they were offline when it was created)
   end
 
+  if core.CurSubView == "raid" then
+    MonDKP:ViewLimited(true)
+  elseif core.CurSubView == "standby" then
+    MonDKP:ViewLimited(false, true)
+  elseif core.CurSubView == "raid and standby" then
+    MonDKP:ViewLimited(true, true)
+  elseif core.CurSubView == "core" then
+    MonDKP:ViewLimited(false, false, true)
+  elseif core.CurSubView == "all" then
+    MonDKP:ViewLimited()
+  end
+
   core.MonDKPUI:SetScale(MonDKP_DB.defaults.MonDKPScaleSize)
   MonDKP:LootHistory_Update("No Filter");
   MonDKP:SeedVerify_Update()

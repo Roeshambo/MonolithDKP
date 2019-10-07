@@ -168,6 +168,15 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 	if event == "ADDON_LOADED" then
 		MonDKP:OnInitialize(event, arg1)
 		self:UnregisterEvent("ADDON_LOADED")
+	elseif event == "BOSS_KILL" then
+		MonDKP:CheckOfficer()
+		if core.IsOfficer then
+			if MonDKP:Table_Search(core.EncounterList, arg1) then
+				MonDKP.ConfigTab2.BossKilledDropdown:SetValue(arg1)
+			end
+		end
+
+		MonDKP:Print("EventID: "..arg1.." - > ".. ... .." Killed")
 	elseif event == "CHAT_MSG_WHISPER" then
 		MonDKP:CheckOfficer()
 		if (core.BidInProgress or string.find(arg1, "!dkp") == 1) and core.IsOfficer == true then
@@ -240,14 +249,15 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		end
 	--elseif event == "CHAT_MSG_SYSTEM" then
 		--MonoDKP_CHAT_MSG_SYSTEM(arg1)
-	--[[elseif event == "GROUP_ROSTER_UPDATE" then 			-- functionality unneccessary
-		if not C_GuildInfo.GuildRoster() then
-			MonDKP:CheckOfficer()
-			if core.IsOfficer == true then
-				AddRaidToDKPTable()
+	elseif event == "GROUP_ROSTER_UPDATE" then 			--updates raid listing if window is open
+		if core.MonDKPUI:IsShown() then
+			if core.CurSubView == "raid" then
+				MonDKP:ViewLimited(true)
+			elseif core.CurSubView == "raid and standby" then
+				MonDKP:ViewLimited(true, true)
 			end
-		end--]]
-	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then
+		end
+	--[[elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then 					-- replaced with above BOSS_KILL event handler
 		if IsInRaid() then 					-- only processes combat log events if in raid
 			local _,arg1,_,_,_,_,_,_,arg2 = CombatLogGetCurrentEventInfo();			-- run operation when boss is killed
 			if arg1 == "UNIT_DIED" then
@@ -255,6 +265,8 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				if core.IsOfficer == true then
 					if MonDKP:TableStrFind(core.BossList, arg2) then
 						MonDKP.ConfigTab2.BossKilledDropdown:SetValue(arg2)
+					elseif arg2 == "Flamewalker Elite" or arg2 == "Flamewalker Healer" then
+						MonDKP.ConfigTab2.BossKilledDropdown:SetValue("Majordomo Executus")
 					elseif arg2 == "Emperor Vek'lor" or arg2 == "Emperor Vek'nilash" then
 						MonDKP.ConfigTab2.BossKilledDropdown:SetValue("Twin Emperors")
 					elseif arg2 == "Princess Yauj" or arg2 == "Vem" or arg2 == "Lord Kri" then
@@ -266,7 +278,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 					end
 				end
 			end
-		end
+		end--]]
 	elseif event == "LOOT_OPENED" then
 		if IsInRaid() then
 			MonDKP_Register_ShiftClickLootWindowHook()
@@ -374,4 +386,5 @@ events:RegisterEvent("CHAT_MSG_RAID_LEADER")
 events:RegisterEvent("CHAT_MSG_WHISPER");
 events:RegisterEvent("CHAT_MSG_GUILD")
 events:RegisterEvent("GUILD_ROSTER_UPDATE")
+events:RegisterEvent("BOSS_KILL")
 events:SetScript("OnEvent", MonDKP_OnEvent); -- calls the above MonDKP_OnEvent function to determine what to do with the event

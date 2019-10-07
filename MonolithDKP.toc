@@ -11,7 +11,7 @@ Modules\comm.lua
 Modules\Bidding.lua
 MonolithDKP.lua
 init.lua
-Localization.lua
+Localization\Localization.lua
 Modules\LootHistory.lua
 Modules\DKPHistory.lua
 ConfigMenuTabs.lua
@@ -26,3 +26,11 @@ Modules\DKPModes.lua
 Modules\exportDKP.lua
 Modules\RaidTimer.lua
 Modules\ZeroSumBank.lua
+Localization\Localization.cn.lua
+Localization\Localization.de.lua
+Localization\Localization.es.lua
+Localization\Localization.fr.lua
+Localization\Localization.kr.lua
+Localization\Localization.ru.lua
+Localization\Localization.tw.lua
+Localization\Localization.en.lua
