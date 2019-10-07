@@ -170,13 +170,17 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		self:UnregisterEvent("ADDON_LOADED")
 	elseif event == "BOSS_KILL" then
 		MonDKP:CheckOfficer()
-		if core.IsOfficer then
+		if core.IsOfficer and IsInRaid() then
+			local boss_name = ...;
+
 			if MonDKP:Table_Search(core.EncounterList, arg1) then
 				MonDKP.ConfigTab2.BossKilledDropdown:SetValue(arg1)
 			end
-		end
 
-		MonDKP:Print("EventID: "..arg1.." - > ".. ... .." Killed")
+			if boss_name == "Azuregos" or boss_name == "Lord Kazzak" or boss_name == "Emeriss" or boss_name == "Lethon" or boss_name == "Ysondre" or boss_name == "Taerar" then 		-- requests IDs to be reported when discovered
+				MonDKP:Print("EventID: "..arg1.." - > "..boss_name.." Killed. Please report this Event ID at https://www.curseforge.com/wow/addons/monolith-dkp to update raid event handlers.")
+			end
+		end
 	elseif event == "CHAT_MSG_WHISPER" then
 		MonDKP:CheckOfficer()
 		if (core.BidInProgress or string.find(arg1, "!dkp") == 1) and core.IsOfficer == true then

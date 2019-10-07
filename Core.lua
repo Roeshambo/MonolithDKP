@@ -91,14 +91,14 @@ core.settings = {             -- From MonDKP_DB
 }
 
 ----------------------------------------------------
--- Boss List
+-- Boss/Encounter List
 -- search = MonDKP:Table_Search(core.BossList, "Lucifron") returns search[1] { 1 = MC, 2 = 1} (lucifron is at 1st spot in MC table)
 -- [1][1] will return "MC" and [1][2] will return "1" indicating the position of "Lucifron" in the MC table.
 -- core.BossList[search[1][1]][search[1][2]] would be core.BossList["MC"][1] = Lucifron
 --
 -- Can alternatively use tContains(core.BossList.MC, "Lucifron") for a true/false return if path isn't required
 ----------------------------------------------------
-core.EncounterList = {
+core.EncounterList = {      -- Event IDs must be in the exact same order as core.BossList declared in localization files
   MC = {
     663, 664, 665,
     666, 668, 667, 669, 
