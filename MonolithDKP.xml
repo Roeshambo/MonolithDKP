@@ -412,7 +412,7 @@
 			</OnLoad>
 			<OnEvent>
 				if (self:IsVisible()) then
-					PanelTemplates_TabResize(self, 0, nil, 36, self:GetParent().maxTabWidth or 88);
+					PanelTemplates_TabResize(self, 0, nil, 36, 54); <!--54 was self:GetParent().maxTabWidth or 88 -->
 				end
 			</OnEvent>
 			<OnClick>
@@ -420,7 +420,7 @@
 				CharacterFrameTab_OnClick(self, button);
 			</OnClick>
 			<OnShow>
-				PanelTemplates_TabResize(self, 0, nil, 36, self:GetParent().maxTabWidth or 88);
+				PanelTemplates_TabResize(self, 0, nil, 36, 54); <!--self:GetParent().maxTabWidth or 88 -->
 				CharacterFrame_TabBoundsCheck(self);
 			</OnShow>
 			<OnEnter>
