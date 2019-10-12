@@ -5,6 +5,7 @@
 local _, core = ...;
 local _G = _G;
 local MonDKP = core.MonDKP;
+local L = core.L;
 
 MonDKP.Sync = LibStub("AceAddon-3.0"):NewAddon("MonDKP", "AceComm-3.0")
 
@@ -102,14 +103,14 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						if (prefix == "MonDKPLogSync") then
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_HIST_BCAST1"] = {
-									text = "|CFFFF0000WARNING|r: "..sender.." has broadcast an out of date Loot History Table. This can cause irreversable damage to your Loot History table. Would you like to accept?",
-									button1 = "Yes",
-									button2 = "No",
+									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODLogSync"],
+									button1 = L["YES"],
+									button2 = L["NO"],
 									OnAccept = function()
 										MonDKP_Loot = deserialized;
 										MonDKP:LootHistory_Reset()
 										MonDKP:LootHistory_Update("No Filter")
-										MonDKP:Print("Loot history update complete.")
+										MonDKP:Print(L["LootHistoryUpdateComp"])
 									end,
 									timeout = 5,
 									whileDead = true,
@@ -123,14 +124,14 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								MonDKP_DKPTable.seed = deserialized.seed
 								MonDKP:LootHistory_Reset()
 								MonDKP:LootHistory_Update("No Filter")
-								MonDKP:Print("Loot history update complete.")
+								MonDKP:Print(L["LootHistoryUpdateComp"])
 							end
 						elseif prefix == "MonDKPLootAward" then
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_LOOT_AWARD_BCAST"] = {
-									text = "|CFFFF0000WARNING|r: "..sender.." has broadcast an entry from out of date DKP History Table. This can cause irreversable damage to your DKP History table. Would you like to accept?",
-									button1 = "Yes",
-									button2 = "No",
+									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODDKPHistoryEntry"],
+									button1 = L["YES"],
+									button2 = L["NO"],
 									OnAccept = function()
 										tinsert(MonDKP_Loot, deserialized[1])
 										MonDKP:LootHistory_Reset()
@@ -153,9 +154,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						elseif prefix == "MonDKPDKPAward" then
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_DKP_AWARD_BCAST"] = {
-									text = "|CFFFF0000WARNING|r: "..sender.." has broadcast an entry from out of date DKP History Table. This can cause irreversable damage to your DKP History table. Would you like to accept?",
-									button1 = "Yes",
-									button2 = "No",
+									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODDKPHistoryEntry"],
+									button1 = L["YES"],
+									button2 = L["NO"],
 									OnAccept = function()
 										tinsert(MonDKP_DKPHistory, deserialized[1])
 										if MonDKP.ConfigTab6.history then
@@ -182,16 +183,16 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						elseif prefix == "MonDKPDKPLogSync" then
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_HIST_BCAST2"] = {
-									text = "|CFFFF0000WARNING|r: "..sender.." has broadcast an out of date DKP History Table. This can cause irreversable damage to your DKP History table. Would you like to accept?",
-									button1 = "Yes",
-									button2 = "No",
+									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODDKPHistoryTable"],
+									button1 = L["YES"],
+									button2 = L["NO"],
 									OnAccept = function()
 										MonDKP_DKPHistory = deserialized
 										if MonDKP.ConfigTab6.history then
 											MonDKP:DKPHistory_Reset()
 										end
 				      					MonDKP:DKPHistory_Update()
-										MonDKP:Print("DKP history update complete.")
+										MonDKP:Print(L["DKPHistoryUpdateComp"])
 									end,
 									timeout = 5,
 									whileDead = true,
@@ -207,14 +208,14 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 									MonDKP:DKPHistory_Reset()
 								end
 		      					MonDKP:DKPHistory_Update()
-								MonDKP:Print("DKP history update complete.")
+								MonDKP:Print(L["DKPHistoryUpdateComp"])
 							end
 						elseif prefix == "MonDKPDeleteLoot" then
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_LOOT_BCAST1"] = {
-									text = "|CFFFF0000WARNING|r: "..sender.." has deleted an item from an outdated Loot History table. This could cause the wrong item in your table to be deleted. Would you like to accept?",
-									button1 = "Yes",
-									button2 = "No",
+									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODLootHistoryDelete"],
+									button1 = L["YES"],
+									button2 = L["NO"],
 									OnAccept = function()
 										MonDKP:SortLootTable()
 										table.remove(MonDKP_Loot, deserialized[1])
@@ -240,9 +241,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						elseif prefix == "MonDKPEditLoot" then
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_LOOT_ADJUST_BCAST"] = {
-									text = "|CFFFF0000WARNING|r: "..sender.." has attempted to update an item from an out of date Loot Table. This can cause irreversable damage to your DKP table. Would you like to accept?",
-									button1 = "Yes",
-									button2 = "No",
+									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODLootTableItem"],
+									button1 = L["YES"],
+									button2 = L["NO"],
 									OnAccept = function()
 										local search = MonDKP:Table_Search(MonDKP_Loot, deserialized[1].entry)
 										if search then
@@ -274,9 +275,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						elseif prefix == "MonDKPDKPDelSync" then
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_DKP_DELETE_BCAST"] = {
-									text = "|CFFFF0000WARNING|r: "..sender.." has attempted to delete an item from an out of date DKP history Table. This can cause irreversable damage to your DKP table. Would you like to accept?",
-									button1 = "Yes",
-									button2 = "No",
+									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODDKPHistoryDelete"],
+									button1 = L["YES"],
+									button2 = L["NO"],
 									OnAccept = function()
 										table.remove(MonDKP_DKPHistory, deserialized[1])
 										if MonDKP.ConfigTab6.history then
@@ -314,7 +315,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 										table.insert(MonDKP_MinBids, deserialized[2][i])
 									end
 								end
-								MonDKP:Print("Minimum Bid Values Received from "..sender)
+								MonDKP:Print(L["MinBidValuesReceived"].." "..sender)
 							end
 						elseif prefix == "MonDKPWhitelist" then
 							MonDKP_Whitelist = deserialized;
@@ -332,9 +333,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 							MonDKP_DB.DKPBonus = deserialized[2]
 							MonDKP_DB.raiders = deserialized[3]
 							StaticPopupDialogs["SEND_MODES"] = {
-								text = sender.." has updated the DKP definitions. Do you wish to reload your UI to reflect these changes?",
-								button1 = "Yes",
-								button2 = "No",
+								text = sender.." "..L["ReloadUIForSettings"],
+								button1 = L["YES"],
+								button2 = L["NO"],
 								OnAccept = function()
 									ReloadUI();
 								end,
@@ -347,14 +348,14 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						else
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_DKP_BROADCAST"] = {
-									text = "|CFFFF0000WARNING|r: "..sender.." has broadcast an out of date DKP Table. This can cause irreversable damage to your DKP table. Would you like to accept?",
-									button1 = "Yes",
-									button2 = "No",
+									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODDKPTableBroadcast"],
+									button1 = L["YES"],
+									button2 = L["NO"],
 									OnAccept = function()
 										MonDKP_DKPTable = deserialized;			-- commits to SavedVariables
 										MonDKP:FilterDKPTable(core.currentSort, "reset")
 										MonDKP:SeedVerify_Update()
-										MonDKP:Print("DKP database updated by "..sender.."...")
+										MonDKP:Print(L["DKPDataUpdatedBy"].." "..sender.."...")
 									end,
 									timeout = 5,
 									whileDead = true,
@@ -368,7 +369,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								MonDKP_DKPHistory.seed = deserialized.seed
 								MonDKP:FilterDKPTable(core.currentSort, "reset")
 								MonDKP:SeedVerify_Update()
-								MonDKP:Print("DKP database updated by "..sender.."...")
+								MonDKP:Print(L["DKPDataUpdatedBy"].." "..sender.."...")
 							end
 						end
 					else
@@ -377,10 +378,10 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				end
 			end
 			if (sender == UnitName("player") and prefix == "MonDKPLogSync") then
-				MonDKP:Print("Loot History Broadcast Complete")
+				MonDKP:Print(L["LootHistCastComp"])
 			end
 			if (sender == UnitName("player") and prefix == "MonDKPDKPLogSync") then
-				MonDKP:Print("DKP History Broadcast Complete")
+				MonDKP:Print(L["DKPHistCastComp"])
 			end
 		else
 			MonDKP:CheckOfficer()
@@ -388,14 +389,14 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				local msg;
 
 				if #MonDKP_Whitelist > 0 then
-					msg = sender..", has attempted to broadcast modified tables. He is not a part of your whitelisted officers.";
+					msg = sender..", "..L["UnauthUpdate1"];
 				else
-					msg = sender..", has attempted to broadcast modified tables. He is not a designated officer in your guild.";
+					msg = sender..", "..L["UnauthUpdate2"];
 				end
 				MonDKP:Print(msg)
 				StaticPopupDialogs["MODIFY_WARNING"] = {
 				text = msg,
-				button1 = "Ok",
+				button1 = L["OK"],
 				timeout = 0,
 				whileDead = true,
 				hideOnEscape = true,
@@ -479,11 +480,11 @@ function MonDKP.Sync:SendData(prefix, data)
 
 		-- Verify Send
 		if (prefix == "MonDKPDataSync") then
-			MonDKP:Print("DKP Database Broadcasted")
+			MonDKP:Print(L["DKPBroadcasted"])
 		elseif (prefix == "MonDKPLogSync") then
-			MonDKP:Print("Broadcasting Loot History...")
+			MonDKP:Print(L["BCastLootHist"].."...")
 		elseif (prefix == "MonDKPDKPLogSync") then
-			MonDKP:Print("Broadcasting DKP History...")
+			MonDKP:Print(L["BCastDKPHist"].."...")
 		end
 	end
 end

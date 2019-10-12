@@ -5,6 +5,7 @@
 
 local _, core = ...;
 local _G = _G;
+local L = core.L;
 
 core.MonDKP = {};       -- UI Frames global
 local MonDKP = core.MonDKP;
@@ -128,14 +129,14 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
   AQ20 = {
     722, 721, 719, 718, 720, 723
   },
-  ONYXIA = {1184},
+  ONYXIA = {1084},
   --WORLD = {     -- No encounter IDs have been identified for these world bosses yet
     --"Azuregos", "Lord Kazzak", "Emeriss", "Lethon", "Ysondre", "Taerar"
   --}
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v1.4.14";
+core.MonVersion = "v1.5.0";
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
@@ -178,7 +179,7 @@ function MonDKP:ResetPosition()
   core.ShowState = false;
   MonDKP.BidTimer:ClearAllPoints()
   MonDKP.BidTimer:SetPoint("CENTER", UIParent)
-  MonDKP:Print("Window Position Reset")
+  MonDKP:Print(L["PositionReset"])
 end
 
 function MonDKP:GetGuildRank(player)
@@ -194,9 +195,9 @@ function MonDKP:GetGuildRank(player)
         return rank;
       end
     end
-    return "Not in Guild";
+    return L["NotInGuild"];
   end
-  return "No Guild"
+  return L["NoGuild"]
 end
 
 function MonDKP:GetGuildRankIndex(player)
@@ -250,7 +251,7 @@ function MonDKP:GetGuildRankGroup(index)                -- returns all members w
   if IsInGuild() then
     for i=1, tonumber(guildSize) do
       name,_,rank = GetGuildRosterInfo(i)
-	  seed = MonDKP:RosterSeedExtract(i)
+	    seed = MonDKP:RosterSeedExtract(i)
       rank = rank+1;
       name = strsub(name, 1, string.find(name, "-")-1)  -- required to remove server name from player (can remove in classic if this is not an issue)
       if rank == index then
@@ -286,7 +287,7 @@ function MonDKP:RosterSeedUpdate(index)
     note = note .. " " .. textseed
 
     StaticPopupDialogs["SEED_VALIDATE"] = {
-      text = "Guild Leaders public note was too long. Truncated note to fit DKP Table timestamp. (31 character max)",
+      text = L["NoteTooLong"],
       button1 = "Ok",
       timeout = 0,
       whileDead = true,
@@ -406,7 +407,7 @@ function MonDKP:BroadcastTimer(seconds, ...)       -- broadcasts timer and start
   if IsInRaid() and core.IsOfficer == true then
     local title = ...;
     if not tonumber(seconds) then       -- cancels the function if the command was entered improperly (eg. no number for time)
-      MonDKP:Print("Invalid Timer");
+      MonDKP:Print(L["InvalidTimer"]);
       return;
     end
     MonDKP:StartTimer(seconds, ...)
@@ -419,7 +420,7 @@ function MonDKP:StartTimer(seconds, ...)
   local alpha = 1;
 
   if not tonumber(seconds) then       -- cancels the function if the command was entered improperly (eg. no number for time)
-    MonDKP:Print("Invalid Timer");
+    MonDKP:Print(L["InvalidTimer"]);
     return;
   end
 
@@ -577,11 +578,11 @@ function MonDKP:DKPTable_Set(tar, field, value, loot)                -- updates 
   for i=1, #result do
     local current = MonDKP_DKPTable[result[i][1]][field];
     if(field == "dkp") then
-      MonDKP_DKPTable[result[i][1]][field] = tonumber(MonDKP_round(current + value, MonDKP_DB.modes.rounding))
+      MonDKP_DKPTable[result[i][1]][field] = MonDKP_round(tonumber(current + value), MonDKP_DB.modes.rounding)
       if value > 0 and loot == false then
-        MonDKP_DKPTable[result[i][1]]["lifetime_gained"] = tonumber(MonDKP_round(MonDKP_DKPTable[result[i][1]]["lifetime_gained"] + value, MonDKP_DB.modes.rounding))
+        MonDKP_DKPTable[result[i][1]]["lifetime_gained"] = MonDKP_round(tonumber(MonDKP_DKPTable[result[i][1]]["lifetime_gained"] + value), MonDKP_DB.modes.rounding)
       elseif value < 0 and loot == true then
-        MonDKP_DKPTable[result[i][1]]["lifetime_spent"] = tonumber(MonDKP_round(MonDKP_DKPTable[result[i][1]]["lifetime_spent"] + value, MonDKP_DB.modes.rounding))
+        MonDKP_DKPTable[result[i][1]]["lifetime_spent"] = MonDKP_round(tonumber(MonDKP_DKPTable[result[i][1]]["lifetime_spent"] + value), MonDKP_DB.modes.rounding)
       end
     else
       MonDKP_DKPTable[result[i][1]][field] = value

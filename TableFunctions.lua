@@ -1,6 +1,7 @@
 local _, core = ...;
 local _G = _G;
 local MonDKP = core.MonDKP;
+local L = core.L;
 
 local SelectedRow = 0;        -- sets the row that is being clicked
 local menuFrame = CreateFrame("Frame", "MonDKPDKPTableMenuFrame", UIParent, "UIDropDownMenuTemplate")
@@ -11,9 +12,9 @@ function MonDKPSelectionCount_Update()
     MonDKP.DKPTable.counter.s:SetText("");    -- updates "Entries Shown" at bottom of DKPTable
   else
     if #core.SelectedData == 1 then
-      MonDKP.DKPTable.counter.s:SetText("("..#core.SelectedData.." Entry Selected)");
+      MonDKP.DKPTable.counter.s:SetText("("..#core.SelectedData.." "..L["EntrySelected"]..")");
     else
-      MonDKP.DKPTable.counter.s:SetText("("..#core.SelectedData.." Entries Selected)");
+      MonDKP.DKPTable.counter.s:SetText("("..#core.SelectedData.." "..L["EntriesSelected"]..")");
     end
   end
 end
@@ -76,7 +77,7 @@ local function DisplayUserHistory(self, player)
   c = MonDKP:GetCColors(MonDKP_DKPTable[LifetimeSearch[1][1]].class)
 
   GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
-  GameTooltip:SetText("Recent History for |cff"..c.hex..player.."|r\n", 0.25, 0.75, 0.90, 1, true);
+  GameTooltip:SetText(L["RecentHistoryFor"].." |cff"..c.hex..player.."|r\n", 0.25, 0.75, 0.90, 1, true);
 
   if PlayerSearch then
     for i=1, #PlayerSearch do
@@ -117,8 +118,8 @@ local function DisplayUserHistory(self, player)
       end
     end
     GameTooltip:AddDoubleLine(" ", " ", 1.0, 1.0, 1.0);
-    GameTooltip:AddLine("  |cff00ff00Lifetime Earned: "..MonDKP_DKPTable[LifetimeSearch[1][1]].lifetime_gained.."|r", 1.0, 1.0, 1.0, true);
-    GameTooltip:AddLine("  |cffff0000Lifetime Spent: "..MonDKP_DKPTable[LifetimeSearch[1][1]].lifetime_spent.."|r", 1.0, 1.0, 1.0, true);
+    GameTooltip:AddLine("  |cff00ff00"..L["LifetimeEarned"]..": "..MonDKP_DKPTable[LifetimeSearch[1][1]].lifetime_gained.."|r", 1.0, 1.0, 1.0, true);
+    GameTooltip:AddLine("  |cffff0000"..L["LifetimeSpent"]..": "..MonDKP_DKPTable[LifetimeSearch[1][1]].lifetime_spent.."|r", 1.0, 1.0, 1.0, true);
   else
     GameTooltip:AddLine("No DKP Entries", 1.0, 1.0, 1.0, true);
   end
@@ -180,14 +181,14 @@ end
 
 function MonDKP:ViewLimited(raid, standby, raiders)
   if #MonDKP_Standby == 0 and standby and not raid and not raiders then
-    MonDKP:Print("There are no players in the standby group.")
+    MonDKP:Print(L["NoPlayerInStandby"])
     core.CurView = "all"
   elseif raid or standby or raiders then
     local tempTable = {}
     local GroupType = "none"
     
     if (not IsInGroup() and not IsInRaid()) and raid then
-      MonDKP:Print("You are not in a party or raid.")
+      MonDKP:Print(L["NoPartyOrRaid"])
       return;
     end
 
@@ -235,7 +236,7 @@ function MonDKP:ViewLimited(raid, standby, raiders)
         end
       end
       if #tempTable == 0 then
-        MonDKP:Print("There are no players in your core raid team.")
+        MonDKP:Print(L["NoCoreRaidTeam"])
         return;
       end
     end
@@ -264,79 +265,80 @@ local function RightClickMenu(self)
   if #MonDKP_Standby < 1 then disabled = true else disabled = false end
 
   menu = {
-    { text = "Multiple Selections", isTitle = true, notCheckable = true}, --1
-    { text = "Invite Selected to Raid", notCheckable = true, func = function()
+    { text = L["MultipleSelect"], isTitle = true, notCheckable = true}, --1
+    { text = L["InviteSelected"], notCheckable = true, func = function()
       for i=1, #core.SelectedData do
         InviteUnit(core.SelectedData[i].player)
       end
       ConvToRaidEvent:RegisterEvent("CHAT_MSG_SYSTEM")
       ConvToRaidEvent:SetScript("OnEvent", Invite_OnEvent);
     end }, --2
-    { text = "Select All", notCheckable = true, func = function()
+    { text = L["SelectAll"], notCheckable = true, func = function()
       core.SelectedData = CopyTable(core.WorkingTable);
       MonDKPSelectionCount_Update()
       DKPTable_Update()
     end }, --3
     { text = " ", notCheckable = true, disabled = true}, --4
-    { text = "Views", isTitle = true, notCheckable = true}, --5
-    { text = "Table Views", notCheckable = true, hasArrow = true,
+    { text = L["Views"], isTitle = true, notCheckable = true}, --5
+    { text = L["TableViews"], notCheckable = true, hasArrow = true,
         menuList = { 
-          { text = "View Raid", notCheckable = true, keepShownOnClick = false; func = function()
+          { text = L["ViewRaid"], notCheckable = true, keepShownOnClick = false; func = function()
             MonDKP:ViewLimited(true)
             core.CurSubView = "raid"
             ToggleDropDownMenu(nil, nil, menuFrame)
           end },
-          { text = "View Standby List", notCheckable = true, func = function()
+          { text = L["ViewStandby"], notCheckable = true, func = function()
             MonDKP:ViewLimited(false, true)
             core.CurSubView = "standby"
             ToggleDropDownMenu(nil, nil, menuFrame)
           end },
-          { text = "View Raid and Standby", notCheckable = true, func = function()
+          { text = L["ViewRaidStandby"], notCheckable = true, func = function()
             MonDKP:ViewLimited(true, true)
             core.CurSubView = "raid and standby"
             ToggleDropDownMenu(nil, nil, menuFrame)
           end },
-          { text = "View Core Raiders", notCheckable = true, func = function()
+          { text = L["ViewCoreRaid"], notCheckable = true, func = function()
             MonDKP:ViewLimited(false, false, true)
+            MonDKP:SortDKPTable("class", "Reset")
             core.CurSubView = "core"
             ToggleDropDownMenu(nil, nil, menuFrame)
           end },
-          { text = "View All", notCheckable = true, func = function()
+          { text = L["ViewAll"], notCheckable = true, func = function()
             MonDKP:ViewLimited()
             core.CurSubView = "all"
             ToggleDropDownMenu(nil, nil, menuFrame, nil, nil, nil, nil, nil)
           end },
       }
     }, --6
-    { text = "Class Filters", notCheckable = true, hasArrow = true,
+    { text = L["ClassFilter"], notCheckable = true, hasArrow = true,
         menuList = {}
     }, --7
     { text = " ", notCheckable = true, disabled = true}, --8
-    { text = "Manage Lists", isTitle = true, notCheckable = true}, --9
-    { text = "Manage Standby List", notCheckable = true, hasArrow = true,
+    { text = L["ManageLists"], isTitle = true, notCheckable = true}, --9
+    { text = L["ManageStandby"], notCheckable = true, hasArrow = true,
         menuList = {
-          { text = "Add Selected Players to Standby List", notCheckable = true, func = function()
+          { text = L["AddToStandby"], notCheckable = true, func = function()
             EditStandbyList(self.index, "add")
             ToggleDropDownMenu(nil, nil, menuFrame)
           end },
-          { text = "Remove Selected Players from Standby List", notCheckable = true, func = function()
+          { text = L["RemoveFromStandby"], notCheckable = true, func = function()
             EditStandbyList(self.index, "remove")
             ToggleDropDownMenu(nil, nil, menuFrame)
           end },
-          { text = "Clear Standby List", notCheckable = true, disabled = disabled, func = function()
+          { text = L["ClearStandby"], notCheckable = true, disabled = disabled, func = function()
             EditStandbyList(self.index, "clear")
             ToggleDropDownMenu(nil, nil, menuFrame)
           end },
         }
     }, --10
-    { text = "Manage Core Raider List", notCheckable = true, hasArrow = true,
+    { text = L["ManageCoreList"], notCheckable = true, hasArrow = true,
         menuList = {}
     }, --11
   }
 
   if #core.SelectedData < 2 then
     menu[1].text = core.WorkingTable[self.index].player;
-    menu[2] = { text = "Invite "..core.WorkingTable[self.index].player.." to Raid", notCheckable = true, func = function()
+    menu[2] = { text = L["Invite"].." "..core.WorkingTable[self.index].player.." "..L["ToRaid"], notCheckable = true, func = function()
       InviteUnit(core.WorkingTable[self.index].player)
     end }
 
@@ -344,22 +346,22 @@ local function RightClickMenu(self)
     
     if StandbySearch then
       menu[10].menuList = {
-        { text = "Remove "..core.WorkingTable[self.index].player.." from Standby List", notCheckable = true, func = function()
+        { text = L["Remove"].." "..core.WorkingTable[self.index].player.." "..L["FromStandbyList"], notCheckable = true, func = function()
           EditStandbyList(self.index, "remove")
           ToggleDropDownMenu(nil, nil, menuFrame)
         end },
-        { text = "Clear Standby List", notCheckable = true, disabled = disabled, func = function()
+        { text = L["ClearStandby"], notCheckable = true, disabled = disabled, func = function()
           EditStandbyList(self.index, "clear")
           ToggleDropDownMenu(nil, nil, menuFrame)
         end },
       }
     else
       menu[10].menuList = {
-        { text = "Add "..core.WorkingTable[self.index].player.." to Standby List", notCheckable = true, func = function()
+        { text = L["Add"].." "..core.WorkingTable[self.index].player.." "..L["ToStandbyList"], notCheckable = true, func = function()
           EditStandbyList(self.index, "add")
           ToggleDropDownMenu(nil, nil, menuFrame)
         end },
-        { text = "Clear Standby List", notCheckable = true, disabled = disabled, func = function()
+        { text = L["ClearStandby"], notCheckable = true, disabled = disabled, func = function()
           EditStandbyList(self.index, "clear")
           ToggleDropDownMenu(nil, nil, menuFrame)
         end },
@@ -377,7 +379,7 @@ local function RightClickMenu(self)
     end }
   end
 
-  menu[7].menuList[#core.classes+1] = { text = "All", isNotRadio = true, keepShownOnClick = false, notCheckable = true, func = function()
+  menu[7].menuList[#core.classes+1] = { text = L["AllClasses"], isNotRadio = true, keepShownOnClick = false, notCheckable = true, func = function()
     MonDKP.ConfigTab1.checkBtn[9]:SetChecked(true)
     
     for i=1, #core.classes do
@@ -391,14 +393,42 @@ local function RightClickMenu(self)
     end
   end }
 
+  menu[7].menuList[#core.classes+2] = { text = L["OnlyPartyRaid"], isNotRadio = true, keepShownOnClick = false, disabled = not IsInRaid(), checked = MonDKP.ConfigTab1.checkBtn[10]:GetChecked(), func = function()
+    MonDKP.ConfigTab1.checkBtn[10]:SetChecked(not MonDKP.ConfigTab1.checkBtn[10]:GetChecked())
+    MonDKP.ConfigTab1.checkBtn[12]:SetChecked(false)
+    menu[7].menuList[#core.classes+4].checked = false
+
+    MonDKPFilterChecks(MonDKP.ConfigTab1.checkBtn[10])
+    if UIDROPDOWNMENU_OPEN_MENU then
+      ToggleDropDownMenu(nil, nil, menuFrame)
+    end
+  end }
+
+  menu[7].menuList[#core.classes+3] = { text = L["Online"], isNotRadio = true, keepShownOnClick = true, checked = MonDKP.ConfigTab1.checkBtn[11]:GetChecked(), func = function()
+    MonDKP.ConfigTab1.checkBtn[11]:SetChecked(not MonDKP.ConfigTab1.checkBtn[11]:GetChecked())
+
+    MonDKPFilterChecks(MonDKP.ConfigTab1.checkBtn[11])
+  end }
+
+  menu[7].menuList[#core.classes+4] = { text = L["NotInRaidFilter"], isNotRadio = true, keepShownOnClick = false, disabled = not IsInRaid(), checked = MonDKP.ConfigTab1.checkBtn[12]:GetChecked(), func = function()
+    MonDKP.ConfigTab1.checkBtn[12]:SetChecked(not MonDKP.ConfigTab1.checkBtn[12]:GetChecked())
+    MonDKP.ConfigTab1.checkBtn[10]:SetChecked(false)
+    menu[7].menuList[#core.classes+2].checked = false
+
+    MonDKPFilterChecks(MonDKP.ConfigTab1.checkBtn[12])
+    if UIDROPDOWNMENU_OPEN_MENU then
+      ToggleDropDownMenu(nil, nil, menuFrame)
+    end
+  end }
+
   if #MonDKP_Standby == 0 then
-    menu[6].menuList[2] = { text = "View Standby List", notCheckable = true, disabled = true, }
-    menu[6].menuList[3] = { text = "View Raid and Standby", notCheckable = true, disabled = true}
+    menu[6].menuList[2] = { text = L["ViewStandby"], notCheckable = true, disabled = true, }
+    menu[6].menuList[3] = { text = L["ViewRaidStandby"], notCheckable = true, disabled = true}
   end
 
   if not IsInGroup() and not IsInRaid() then
-    menu[6].menuList[1] = { text = "View Raid", notCheckable = true, disabled = true }
-    menu[6].menuList[3] = { text = "View Raid and Standby", notCheckable = true, disabled = true}
+    menu[6].menuList[1] = { text = L["ViewRaid"], notCheckable = true, disabled = true }
+    menu[6].menuList[3] = { text = L["ViewRaidStandby"], notCheckable = true, disabled = true}
   end
 
   local rankList = GetGuildRankList()
@@ -429,7 +459,7 @@ local function RightClickMenu(self)
 
   menu[11].menuList[#menu[11].menuList + 1] = { text = " ", notCheckable = true, disabled = true }
 
-  menu[11].menuList[#menu[11].menuList + 1] = { text = "Close", notCheckable = true, func = function()
+  menu[11].menuList[#menu[11].menuList + 1] = { text = L["Close"], notCheckable = true, func = function()
     ToggleDropDownMenu(nil, nil, menuFrame)
   end }
 
@@ -526,6 +556,10 @@ local function CreateRow(parent, id) -- Create 3 buttons for each row in the lis
 end
 
 function DKPTable_Update()
+  if not MonDKP.UIConfig:IsShown() then     -- does not update list if DKP window is closed. Gets done when /dkp is used anyway.
+    return;
+  end
+
   local numOptions = #core.WorkingTable
   local index, row, c
   local offset = FauxScrollFrame_GetOffset(MonDKP.DKPTable) or 0
@@ -617,7 +651,7 @@ function DKPTable_Update()
       row:Hide()
     end
   end
-  MonDKP.DKPTable.counter.t:SetText(#core.WorkingTable.." Entries Shown");    -- updates "Entries Shown" at bottom of DKPTable
+  MonDKP.DKPTable.counter.t:SetText(#core.WorkingTable.." "..L["EntriesShown"]);    -- updates "Entries Shown" at bottom of DKPTable
   MonDKP.DKPTable.counter.t:SetFontObject("MonDKPSmallLeft")
 
   FauxScrollFrame_Update(MonDKP.DKPTable, numOptions, core.TableNumRows, core.TableRowHeight, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding
@@ -673,8 +707,8 @@ function MonDKP:SeedVerify_Update()
       MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\up-to-date")
       MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
-        GameTooltip:SetText("DKP Status", 0.25, 0.75, 0.90, 1, true);
-        GameTooltip:AddLine("All of your tables are currently |cff00ff00up-to-date|r.", 1.0, 1.0, 1.0, false);
+        GameTooltip:SetText(L["DKPStatus"], 0.25, 0.75, 0.90, 1, true);
+        GameTooltip:AddLine(L["AllTables"].." |cff00ff00"..L["UpToDate"].."|r.", 1.0, 1.0, 1.0, false);
         GameTooltip:Show()
       end)
     else
@@ -682,17 +716,17 @@ function MonDKP:SeedVerify_Update()
       MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\out-of-date")
       MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
-        GameTooltip:SetText("DKP Status", 0.25, 0.75, 0.90, 1, true);
-        GameTooltip:AddLine("One or more of your tables are currently |cffff0000out-of-date|r.", 1.0, 1.0, 1.0, false);
-        GameTooltip:AddLine("Request updated tables from an officer.", 1.0, 1.0, 1.0, false);
+        GameTooltip:SetText(L["DKPStatus"], 0.25, 0.75, 0.90, 1, true);
+        GameTooltip:AddLine(L["OneTableOOD"].." |cffff0000"..L["OutOfDate"].."|r.", 1.0, 1.0, 1.0, false);
+        GameTooltip:AddLine(L["RequestTablesOfficer"], 1.0, 1.0, 1.0, false);
         GameTooltip:Show()
       end)
     end
   else
     MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
-        GameTooltip:SetText("DKP Status", 0.25, 0.75, 0.90, 1, true);
-        GameTooltip:AddLine("You are not currently in a guild. DKP status can not be queried.", 1.0, 1.0, 1.0, true);
+        GameTooltip:SetText(L["DKPStatus"], 0.25, 0.75, 0.90, 1, true);
+        GameTooltip:AddLine(L["CurrNotInGuild"], 1.0, 1.0, 1.0, true);
         GameTooltip:Show()
       end)
   end

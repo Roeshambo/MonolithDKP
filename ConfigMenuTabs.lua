@@ -1,6 +1,7 @@
 local _, core = ...;
 local _G = _G;
 local MonDKP = core.MonDKP;
+local L = core.L;
 
 --
 --  When clicking a box off, unchecks "All" as well and flags checkAll to false
@@ -46,10 +47,6 @@ function MonDKPFilterChecks(self)         -- sets/unsets check boxes in conjunct
   end
   PlaySound(808)
   MonDKP:FilterDKPTable(core.currentSort, "reset");
-end
-
-function MonDKPSetFilterChecks(self)    -- used to run FilterChecks as a global
-  MonDKPFilterChecks(self);
 end
 
 local function Tab_OnClick(self)
@@ -144,7 +141,7 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", MonDKP.UIConfig.TabMenu.ScrollFrame, "TOPRIGHT", -20, -12);
   MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", MonDKP.UIConfig.TabMenu.ScrollFrame, "BOTTOMRIGHT", -2, 15);
 
-  MonDKP.ConfigTab1, MonDKP.ConfigTab2, MonDKP.ConfigTab3, MonDKP.ConfigTab4, MonDKP.ConfigTab5, MonDKP.ConfigTab6 = SetTabs(MonDKP.UIConfig.TabMenu, 6, "Filters", "Adjust DKP", "Manage", "Options", "Loot History", "DKP History");
+  MonDKP.ConfigTab1, MonDKP.ConfigTab2, MonDKP.ConfigTab3, MonDKP.ConfigTab4, MonDKP.ConfigTab5, MonDKP.ConfigTab6 = SetTabs(MonDKP.UIConfig.TabMenu, 6, L["Filters"], L["AdjustDKP"], L["Manage"], L["Options"], L["LootHistory"], L["DKPHistory"]);
 
   ---------------------------------------
   -- MENU TAB 1
@@ -154,7 +151,7 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab1.text:ClearAllPoints();
   MonDKP.ConfigTab1.text:SetFontObject("MonDKPLargeCenter")
   MonDKP.ConfigTab1.text:SetPoint("TOPLEFT", MonDKP.ConfigTab1, "TOPLEFT", 15, -10);
-  MonDKP.ConfigTab1.text:SetText("Filters");
+  MonDKP.ConfigTab1.text:SetText(L["Filters"]);
   MonDKP.ConfigTab1.text:SetScale(1.2)
 
   local checkBtn = {}
@@ -189,6 +186,11 @@ function MonDKP:ConfigMenuTabs()
           core.classFiltered[v] = false;
         end
       end
+    elseif i==10 then
+      MonDKP.ConfigTab1.checkBtn[i]:SetScript("OnClick", function(self)
+        MonDKP.ConfigTab1.checkBtn[12]:SetChecked(false);
+        MonDKPFilterChecks(self)
+      end)
     else
       MonDKP.ConfigTab1.checkBtn[i]:SetScript("OnClick", MonDKPFilterChecks)
     end
@@ -205,10 +207,25 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab1.checkBtn[7]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[3], "BOTTOMLEFT", 0, -10);
   MonDKP.ConfigTab1.checkBtn[8]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[4], "BOTTOMLEFT", 0, -10);
 
-  MonDKP.ConfigTab1.checkBtn[9]:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab1.checkBtn[3], "TOPLEFT", 50, 0);
-  MonDKP.ConfigTab1.checkBtn[9].text:SetText("|cff5151deAll|r");
-  MonDKP.ConfigTab1.checkBtn[10]:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab1.checkBtn[2], "TOPLEFT", 25, 0);
-  MonDKP.ConfigTab1.checkBtn[10].text:SetText("|cff5151deIn Party/Raid|r");         -- executed in filterDKPTable (MonolithDKP.lua)
+  MonDKP.ConfigTab1.checkBtn[9]:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab1.checkBtn[2], "TOPLEFT", 50, 0);
+  MonDKP.ConfigTab1.checkBtn[9].text:SetText("|cff5151de"..L["AllClasses"].."|r");
+  MonDKP.ConfigTab1.checkBtn[10]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[5], "BOTTOMLEFT", 0, 0);
+  MonDKP.ConfigTab1.checkBtn[10].text:SetText("|cff5151de"..L["InPartyRaid"].."|r");         -- executed in filterDKPTable (MonolithDKP.lua)
+
+  MonDKP.ConfigTab1.checkBtn[11] = CreateFrame("CheckButton", nil, MonDKP.ConfigTab1, "UICheckButtonTemplate");
+  MonDKP.ConfigTab1.checkBtn[11]:SetID(11)
+  MonDKP.ConfigTab1.checkBtn[11].text:SetText("|cff5151de"..L["Online"].."|r");
+  MonDKP.ConfigTab1.checkBtn[11]:SetScript("OnClick", MonDKPFilterChecks)
+  MonDKP.ConfigTab1.checkBtn[11]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[10], "TOPRIGHT", 100, 0);
+
+  MonDKP.ConfigTab1.checkBtn[12] = CreateFrame("CheckButton", nil, MonDKP.ConfigTab1, "UICheckButtonTemplate");
+  MonDKP.ConfigTab1.checkBtn[12]:SetID(12)
+  MonDKP.ConfigTab1.checkBtn[12].text:SetText("|cff5151de"..L["NotInRaidFilter"].."|r");
+  MonDKP.ConfigTab1.checkBtn[12]:SetScript("OnClick", function(self)
+    MonDKP.ConfigTab1.checkBtn[10]:SetChecked(false);
+    MonDKPFilterChecks(self)
+  end)
+  MonDKP.ConfigTab1.checkBtn[12]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[11], "TOPRIGHT", 65, 0);
 
   core.ClassGraph = MonDKP:ClassGraph()  -- draws class graph on tab1
   
@@ -227,7 +244,7 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab3.header:ClearAllPoints();
   MonDKP.ConfigTab3.header:SetFontObject("MonDKPLargeCenter");
   MonDKP.ConfigTab3.header:SetPoint("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 15, -10);
-  MonDKP.ConfigTab3.header:SetText("Manage DKP Listings"); 
+  MonDKP.ConfigTab3.header:SetText(L["ManageDKP"]); 
   MonDKP.ConfigTab3.header:SetScale(1.2)
 
   -- Populate Manage Tab
@@ -241,15 +258,15 @@ function MonDKP:ConfigMenuTabs()
 	MonDKP.ConfigTab5.text:ClearAllPoints();
 	MonDKP.ConfigTab5.text:SetFontObject("MonDKPLargeLeft");
 	MonDKP.ConfigTab5.text:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 15, -10);
-	MonDKP.ConfigTab5.text:SetText("Loot History");
+	MonDKP.ConfigTab5.text:SetText(L["LootHistory"]);
   MonDKP.ConfigTab5.text:SetScale(1.2)
 
 	MonDKP.ConfigTab5.inst = MonDKP.ConfigTab5:CreateFontString(nil, "OVERLAY")
 	MonDKP.ConfigTab5.inst:ClearAllPoints();
 	MonDKP.ConfigTab5.inst:SetFontObject("MonDKPSmallRight");
 	MonDKP.ConfigTab5.inst:SetTextColor(0.3, 0.3, 0.3, 0.7)
-	MonDKP.ConfigTab5.inst:SetPoint("TOPRIGHT", MonDKP.ConfigTab5, "TOPRIGHT", -40, -13);
-	MonDKP.ConfigTab5.inst:SetText("Shift+Click to link item\nAlt+Click to link line");
+	MonDKP.ConfigTab5.inst:SetPoint("TOPRIGHT", MonDKP.ConfigTab5, "TOPRIGHT", -40, -43);
+	MonDKP.ConfigTab5.inst:SetText(L["LootHistInst1"]);
 
 	-- Populate Loot History (LootHistory.lua)
 	local looter = {}
@@ -273,14 +290,14 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.ConfigTab6.text:ClearAllPoints();
   MonDKP.ConfigTab6.text:SetFontObject("MonDKPLargeLeft");
   MonDKP.ConfigTab6.text:SetPoint("TOPLEFT", MonDKP.ConfigTab6, "TOPLEFT", 15, -10);
-  MonDKP.ConfigTab6.text:SetText("DKP History");
+  MonDKP.ConfigTab6.text:SetText(L["DKPHistory"]);
   MonDKP.ConfigTab6.text:SetScale(1.2)
 
   MonDKP.ConfigTab6.inst = MonDKP.ConfigTab6:CreateFontString(nil, "OVERLAY")
   MonDKP.ConfigTab6.inst:ClearAllPoints();
   MonDKP.ConfigTab6.inst:SetFontObject("MonDKPSmallRight");
   MonDKP.ConfigTab6.inst:SetTextColor(0.3, 0.3, 0.3, 0.7)
-  MonDKP.ConfigTab6.inst:SetPoint("TOPRIGHT", MonDKP.ConfigTab6, "TOPRIGHT", -40, -13);
+  MonDKP.ConfigTab6.inst:SetPoint("TOPRIGHT", MonDKP.ConfigTab6, "TOPRIGHT", -40, -43);
   
   if #MonDKP_DKPHistory > 0 then
     MonDKP:DKPHistory_Update()

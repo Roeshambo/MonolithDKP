@@ -1,6 +1,7 @@
 local _, core = ...;
 local _G = _G;
 local MonDKP = core.MonDKP;
+local L = core.L;
 
 -- DBs required: MonDKP_DB (log app settings), MonDKP_Loot(log kills/dkp distributed), MonDKP_DKPTable(Member/class/dkp list), MonDKP_Tables, MonDKP_Loot(loot and who got it)
 -- DBs are initiallized at the bottom of init.lua
@@ -11,6 +12,7 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
   core.MonDKPUI = core.MonDKPUI or MonDKP:CreateMenu();
   core.MonDKPUI:SetShown(not core.MonDKPUI:IsShown())
   MonDKP.UIConfig:SetFrameLevel(10)
+  MonDKP.UIConfig:SetClampedToScreen(true)
   if core.BiddingWindow then core.BiddingWindow:SetFrameLevel(6) end
   if core.ModesWindow then core.ModesWindow:SetFrameLevel(2) end
     
@@ -62,18 +64,48 @@ local SortButtons = {}
 function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTable based on classes in classFiltered table. core.currentSort should be used in most cases
   core.WorkingTable = {}
   for k,v in ipairs(MonDKP_DKPTable) do        -- sort and reset are used to pass along to MonDKP:SortDKPTable()
+    local IsOnline = false;
+    local name;
+    local InRaid = false;
+    
+    if MonDKP.ConfigTab1.checkBtn[11]:GetChecked() then
+      local guildSize,_,_ = GetNumGuildMembers();
+      for i=1, guildSize do
+        local name,_,_,_,_,_,_,_,online = GetGuildRosterInfo(i)
+        name = strsub(name, 1, string.find(name, "-")-1)
+        
+        if name == v.player then
+          IsOnline = online;
+          break;
+        end
+      end
+    end
     if(core.classFiltered[MonDKP_DKPTable[k]["class"]] == true) then
-      if MonDKP.ConfigTab1.checkBtn[10]:GetChecked() == true then
+      if MonDKP.ConfigTab1.checkBtn[10]:GetChecked() or MonDKP.ConfigTab1.checkBtn[12]:GetChecked() then
         for i=1, 40 do
           tempName,_,_,_,_,tempClass = GetRaidRosterInfo(i)
-          if tempName and tempName == v.player then
+          if tempName and tempName == v.player and MonDKP.ConfigTab1.checkBtn[10]:GetChecked() then
             tinsert(core.WorkingTable, v)
+          elseif tempName and tempName == v.player and MonDKP.ConfigTab1.checkBtn[12]:GetChecked() then
+            InRaid = true;
           end
         end
       else
-        tinsert(core.WorkingTable, v)
+        if ((MonDKP.ConfigTab1.checkBtn[11]:GetChecked() and IsOnline) or not MonDKP.ConfigTab1.checkBtn[11]:GetChecked()) then
+          tinsert(core.WorkingTable, v)
+        end
+      end
+      if MonDKP.ConfigTab1.checkBtn[12]:GetChecked() and InRaid == false then
+        if MonDKP.ConfigTab1.checkBtn[11]:GetChecked() then
+          if IsOnline then
+            tinsert(core.WorkingTable, v)
+          end
+        else
+          tinsert(core.WorkingTable, v)
+        end
       end
     end
+    InRaid = false;
   end
   MonDKP:SortDKPTable(sort, reset);
 end
@@ -190,20 +222,20 @@ function MonDKP:CreateMenu()
   SortButtons.player.t:SetFontObject("MonDKPNormal")
   SortButtons.player.t:SetTextColor(1, 1, 1, 1);
   SortButtons.player.t:SetPoint("LEFT", SortButtons.player, "LEFT", 50, 0);
-  SortButtons.player.t:SetText("Player"); 
+  SortButtons.player.t:SetText(L["Player"]); 
 
   SortButtons.class.t = SortButtons.class:CreateFontString(nil, "OVERLAY")
   SortButtons.class.t:SetFontObject("MonDKPNormal");
   SortButtons.class.t:SetTextColor(1, 1, 1, 1);
   SortButtons.class.t:SetPoint("CENTER", SortButtons.class, "CENTER", 0, 0);
-  SortButtons.class.t:SetText("Class"); 
+  SortButtons.class.t:SetText(L["Class"]); 
 
   SortButtons.dkp.t = SortButtons.dkp:CreateFontString(nil, "OVERLAY")
   SortButtons.dkp.t:SetFontObject("MonDKPNormal")
   SortButtons.dkp.t:SetTextColor(1, 1, 1, 1);
   if MonDKP_DB.modes.mode == "Roll Based Bidding" then
     SortButtons.dkp.t:SetPoint("RIGHT", SortButtons.dkp, "RIGHT", -50, 0);
-    SortButtons.dkp.t:SetText("Total DKP");
+    SortButtons.dkp.t:SetText(L["TotalDKP"]);
 
     SortButtons.dkp.roll = SortButtons.dkp:CreateFontString(nil, "OVERLAY");
     SortButtons.dkp.roll:SetFontObject("MonDKPNormal")
@@ -213,7 +245,7 @@ function MonDKP:CreateMenu()
     SortButtons.dkp.roll:SetText("Roll Range")
   else
     SortButtons.dkp.t:SetPoint("CENTER", SortButtons.dkp, "CENTER", 20, 0);
-    SortButtons.dkp.t:SetText("Total DKP");
+    SortButtons.dkp.t:SetText(L["TotalDKP"]);
   end
 
   ----- Counter below DKP Table

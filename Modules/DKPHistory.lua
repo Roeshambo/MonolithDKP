@@ -1,6 +1,7 @@
 local _, core = ...;
 local _G = _G;
 local MonDKP = core.MonDKP;
+local L = core.L;
 
 local players;
 local reason;
@@ -34,7 +35,7 @@ function MonDKP:DKPHistory_Reset()
 	curDate = nil;
 	btnText = 50;
 	if MonDKP.ConfigTab6.loadMoreBtn then
-		MonDKP.ConfigTab6.loadMoreBtn:SetText("Load "..btnText.." more...")
+		MonDKP.ConfigTab6.loadMoreBtn:SetText(L["Load"].." "..btnText.." "..L["More"].."...")
 	end
 
 	for i=1, #MonDKP.ConfigTab6.history do
@@ -58,13 +59,13 @@ local function MonDKPDeleteDKPEntry(item)
 	if strfind(reason_header, "%%") then
 		reason_header = gsub(reason_header, "%%", "%%%%")
 	end
-	local confirm_string = "Are you sure you'd like to delete the entry:\n\n"..reason_header.."\n\n|CFFFF0000Warning|r: Any DKP impacted by this entry will be refunded/removed from each player listed.";
+	local confirm_string = L["ConfirmDeleteEntry1"]..":\n\n"..reason_header.."\n\n|CFFFF0000"..L["WARNING"].."|r: "..L["DeleteEntryRefundConf"];
 
 	StaticPopupDialogs["CONFIRM_DELETE"] = {
 
 		text = confirm_string,
-		button1 = "Yes",
-		button2 = "No",
+		button1 = L["YES"],
+		button2 = L["NO"],
 		OnAccept = function()
 			local dkp_value;
 			local ModType;
@@ -81,7 +82,7 @@ local function MonDKPDeleteDKPEntry(item)
 				
 				if search then
 					if ModType == "perc" then
-						MonDKP_DKPTable[i].dkp = tonumber(MonDKP_round(MonDKP_DKPTable[i].dkp * (100 / (100 + dkp_value)), MonDKP_DB.modes.rounding))
+						MonDKP_DKPTable[i].dkp = MonDKP_round(tonumber(MonDKP_DKPTable[i].dkp * (100 / (100 + dkp_value))), MonDKP_DB.modes.rounding)
 					elseif ModType == "whole" then
 						MonDKP_DKPTable[i].dkp = MonDKP_DKPTable[i].dkp - dkp_value;
 						MonDKP_DKPTable[i].lifetime_gained = MonDKP_DKPTable[i].lifetime_gained - dkp_value;
@@ -113,8 +114,8 @@ end
 
 local function RightClickDKPMenu(self, item)
 	menu = {
-	{ text = MonDKP_DKPHistory[item]["dkp"].." DKP - "..MonDKP_DKPHistory[item]["reason"].." @ "..formdate("%m/%d/%y %H:%M:%S", MonDKP_DKPHistory[item]["date"]), isTitle = true},
-	{ text = "Delete DKP Entry", func = function()
+	{ text = MonDKP_DKPHistory[item]["dkp"].." "..L["DKP"].." - "..MonDKP_DKPHistory[item]["reason"].." @ "..formdate("%m/%d/%y %H:%M:%S", MonDKP_DKPHistory[item]["date"]), isTitle = true},
+	{ text = L["DeleteDKPEntry"], func = function()
 		MonDKPDeleteDKPEntry(item)
 	end },
 	}
@@ -199,9 +200,9 @@ function MonDKP:DKPHistory_Update()
 		end
 		
 		if not strfind(dkp, "-") then
-			MonDKP.ConfigTab6.history[i].d:SetText("|cff00ff00"..dkp.." DKP|r - "..reason.." @ "..time);
+			MonDKP.ConfigTab6.history[i].d:SetText("|cff00ff00"..dkp.." "..L["DKP"].."|r - "..reason.." @ "..time);
 		else
-			MonDKP.ConfigTab6.history[i].d:SetText("|cffff0000"..dkp.." DKP|r - "..reason.." @ "..time);
+			MonDKP.ConfigTab6.history[i].d:SetText("|cffff0000"..dkp.." "..L["DKP"].."|r - "..reason.." @ "..time);
 		end
 
 		MonDKP.ConfigTab6.history[i].d:Show()
@@ -224,7 +225,7 @@ function MonDKP:DKPHistory_Update()
 	if not MonDKP.ConfigTab6.loadMoreBtn then
 		MonDKP.ConfigTab6.loadMoreBtn = CreateFrame("Button", nil, MonDKP.ConfigTab6, "MonolithDKPButtonTemplate")
 		MonDKP.ConfigTab6.loadMoreBtn:SetSize(100, 30);
-		MonDKP.ConfigTab6.loadMoreBtn:SetText("Load "..btnText.." more...");
+		MonDKP.ConfigTab6.loadMoreBtn:SetText(L["Load"].." "..btnText.." "..L["More"].."...");
 		MonDKP.ConfigTab6.loadMoreBtn:GetFontString():SetTextColor(1, 1, 1, 1)
 		MonDKP.ConfigTab6.loadMoreBtn:SetNormalFontObject("MonDKPSmallCenter");
 		MonDKP.ConfigTab6.loadMoreBtn:SetHighlightFontObject("MonDKPSmallCenter");
@@ -241,7 +242,7 @@ function MonDKP:DKPHistory_Update()
 		MonDKP.ConfigTab6.loadMoreBtn:Hide();
 	elseif MonDKP.ConfigTab6.loadMoreBtn and currentRow < #MonDKP_DKPHistory then
 		MonDKP.ConfigTab6.loadMoreBtn:Show();
-		MonDKP.ConfigTab6.loadMoreBtn:SetText("Load "..btnText.." more...")
+		MonDKP.ConfigTab6.loadMoreBtn:SetText(L["Load"].." "..btnText.." "..L["More"].."...")
 		MonDKP.ConfigTab6.loadMoreBtn:SetPoint("TOP", MonDKP.ConfigTab6.history[currentRow], "BOTTOM", 0, -10);
 	end
 end

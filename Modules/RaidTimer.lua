@@ -1,6 +1,7 @@
 local _, core = ...;
 local _G = _G;
 local MonDKP = core.MonDKP;
+local L = core.L;
 
 local awards = 0;  		-- counts the number of hourly DKP awards given
 local timer = 0;
@@ -42,6 +43,11 @@ local function AwardPlayer(name, amount)
 end
 
 local function AwardRaid(amount, reason)
+	if UnitAffectingCombat("player") then
+		C_Timer.After(30, function() AwardRaid(amount, reason) end)
+		return;
+	end
+
 	local tempName
 	local tempList = "";
 	local curTime = time();
@@ -85,7 +91,7 @@ local function AwardRaid(amount, reason)
 		MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
 		table.wipe(temp_table)
 
-		MonDKP.Sync:SendData("MonDKPBroadcast", "Raid DKP Adjusted by "..amount.." for reason: "..reason)
+		MonDKP.Sync:SendData("MonDKPBroadcast", L["RaidDKPAdjustBy"].." "..amount.." "..L["ForReason"]..": "..reason)
 	end
 end
 
@@ -105,11 +111,11 @@ end
 function MonDKP:StopRaidTimer()
 	MonDKP.RaidTimer:SetScript("OnUpdate", nil)
 	core.RaidInProgress = false
-	MonDKP.ConfigTab2.RaidTimerContainer.OutputHeader:SetText("Raid Ended:")
-	MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:SetText("Initialize Raid")
+	MonDKP.ConfigTab2.RaidTimerContainer.OutputHeader:SetText(L["RaidEnded"]..":")
+	MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:SetText(L["InitRaid"])
 	MonDKP.ConfigTab2.RaidTimerContainer.Output:SetText("|cff00ff00"..strsub(MonDKP.ConfigTab2.RaidTimerContainer.Output:GetText(), 11, -3).."|r")
 	MonDKP.ConfigTab2.RaidTimerContainer.PauseTimer:Hide();
-	MonDKP.ConfigTab2.RaidTimerContainer.BonusHeader:SetText("Total DKP Awarded:")
+	MonDKP.ConfigTab2.RaidTimerContainer.BonusHeader:SetText(L["TotalDKPAward"]..":")
 	timer = 0;
 	awards = 0;
 	StartAwarded = false;
@@ -120,7 +126,7 @@ function MonDKP:StopRaidTimer()
 
 	if IsInRaid() and CheckRaidLeader() and core.IsOfficer then
 		if MonDKP_DB.DKPBonus.GiveRaidEnd then -- Award Raid Completion Bonus
-			AwardRaid(MonDKP_DB.DKPBonus.CompletionBonus, "Raid Completion Bonus")
+			AwardRaid(MonDKP_DB.DKPBonus.CompletionBonus, L["RaidCompletionBonus"])
 			MonDKP.ConfigTab2.RaidTimerContainer.Bonus:SetText("|cff00ff00"..tonumber(strsub(MonDKP.ConfigTab2.RaidTimerContainer.Bonus:GetText(), 11, -3)) +  MonDKP_DB.DKPBonus.CompletionBonus.."|r")
 		end
 	end
@@ -132,23 +138,23 @@ function MonDKP:StartRaidTimer(pause)
 	MonDKP.RaidTimer = MonDKP.RaidTimer or CreateFrame("StatusBar", nil, UIParent)
 
 	if not pause then
-		MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:SetText("End Raid")
-		MonDKP.ConfigTab2.RaidTimerContainer.OutputHeader:SetText("Time Elapsed:")
+		MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:SetText(L["EndRaid"])
+		MonDKP.ConfigTab2.RaidTimerContainer.OutputHeader:SetText(L["TimeElapsed"]..":")
 		MonDKP.ConfigTab2.RaidTimerContainer.OutputHeader:Show();
 		if MonDKP_DB.DKPBonus.GiveRaidStart then
 			MonDKP.ConfigTab2.RaidTimerContainer.Bonus:SetText("|cff00ff00"..MonDKP_DB.DKPBonus.OnTimeBonus.."|r")
 		else
 			MonDKP.ConfigTab2.RaidTimerContainer.Bonus:SetText("|cffff00000|r")
 		end
-		MonDKP.ConfigTab2.RaidTimerContainer.BonusHeader:SetText("Bonus Awarded:")
+		MonDKP.ConfigTab2.RaidTimerContainer.BonusHeader:SetText(L["BonusAwarded"]..":")
 		MonDKP.ConfigTab2.RaidTimerContainer.BonusHeader:Show()
 		MonDKP.ConfigTab2.RaidTimerContainer.PauseTimer:Show();
 		increment = MonDKP_DB.modes.increment;
 		core.RaidInProgress = true
 	else
 		MonDKP.RaidTimer:SetScript("OnUpdate", nil)
-		MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:SetText("Continue Raid")
-		MonDKP.ConfigTab2.RaidTimerContainer.OutputHeader:SetText("Raid Paused:")
+		MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:SetText(L["ContinueRaid"])
+		MonDKP.ConfigTab2.RaidTimerContainer.OutputHeader:SetText(L["RaidPaused"]..":")
 		MonDKP.ConfigTab2.RaidTimerContainer.PauseTimer:Hide();
 		MonDKP.ConfigTab2.RaidTimerContainer.Output:SetText("|cffff0000"..strsub(MonDKP.ConfigTab2.RaidTimerContainer.Output:GetText(), 11, -3).."|r")
 		core.RaidInProgress = false
@@ -157,7 +163,7 @@ function MonDKP:StartRaidTimer(pause)
 
 	if IsInRaid() and CheckRaidLeader() and not pause and core.IsOfficer then
 		if not StartAwarded and MonDKP_DB.DKPBonus.GiveRaidStart then -- Award On Time Bonus
-			AwardRaid(MonDKP_DB.DKPBonus.OnTimeBonus, "On Time Bonus")
+			AwardRaid(MonDKP_DB.DKPBonus.OnTimeBonus, L["OnTimeBonus"])
 			StartBonus = MonDKP_DB.DKPBonus.OnTimeBonus;
 			StartAwarded = true;
 		end
@@ -186,7 +192,7 @@ function MonDKP:StartRaidTimer(pause)
 			MonDKP.ConfigTab2.RaidTimerContainer.Bonus:SetText("|cff00ff00"..(awards*MonDKP_DB.DKPBonus.IntervalBonus)+StartBonus.."|r");
 
 			if IsInRaid() and CheckRaidLeader() then
-				AwardRaid(MonDKP_DB.DKPBonus.IntervalBonus, "Time Interval Bonus")
+				AwardRaid(MonDKP_DB.DKPBonus.IntervalBonus, L["TimeIntervalBonus"])
 			end
 		end
 	end)

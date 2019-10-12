@@ -1,6 +1,7 @@
 local _, core = ...;
 local _G = _G;
 local MonDKP = core.MonDKP;
+local L = core.L;
 
 local lockouts = CreateFrame("Frame", "LockoutsFrame");
 
@@ -33,20 +34,20 @@ MonDKP.Commands = {
 			local validation = MonDKP:Table_Search(MonDKP_DKPTable, name)
 
 			if not validation then 			-- validate command name, cost and itemlink
-				MonDKP:Print("Can not award item. Invalid Target Player")
+				MonDKP:Print(L["InvalidTargetPlayer"])
 				return;
 			elseif not tonumber(cost) then
-				MonDKP:Print("Can not award item. Invalid Item Cost")
+				MonDKP:Print(L["InvalidItemCost"])
 				return;
 			elseif not strfind(item, "|Hitem:") then
-				MonDKP:Print("Can not award item. Invalid item link")
+				MonDKP:Print(L["InvalidItemLink"])
 				return;
 			end
 
 			StaticPopupDialogs["AWARD_CONFIRM"] = {
-				text = "Are you sure you'd like to award "..item.." to "..MonDKP_DKPTable[validation[1][1]].player.." for "..cost.." DKP?",
-				button1 = "Yes",
-				button2 = "No",
+				text = L["ConfirmAward"].." "..item.." "..L["To"].." "..MonDKP_DKPTable[validation[1][1]].player.." "..L["For"].." "..cost.." "..L["DKP"].."?",
+				button1 = L["YES"],
+				button2 = L["NO"],
 				OnAccept = function()
 					local leader = MonDKP:GetGuildRankGroup(1)
 					local curTime = time();
@@ -70,7 +71,7 @@ MonDKP.Commands = {
 			}
 			StaticPopup_Show ("AWARD_CONFIRM")
 		else
-			MonDKP:Print("You do not have permission to access that feature.")
+			MonDKP:Print(L["NoPermission"])
 		end
 	end,
 	["lockouts"] = function()
@@ -90,28 +91,29 @@ MonDKP.Commands = {
 		MonDKP:ToggleExportWindow()
 	end,
 	["modes"] = function()
+		MonDKP:CheckOfficer()
 		if core.IsOfficer then
 			MonDKP:ToggleDKPModesWindow()
 		else
-			MonDKP:Print("You do not have permission tok access that feature.")
+			MonDKP:Print(L["NoPermission"])
 		end
 	end,
 	["help"] = function()
 		print(" ");
-		MonDKP:Print("List of slash commands:")
-		MonDKP:Print("|cff00cc66/dkp|r - Launches DKP Window");
-		MonDKP:Print("|cff00cc66/dkp ?|r - Shows Help Info");
-		MonDKP:Print("|cff00cc66/dkp reset|r - Resets DKP Window Position/Size");
-		MonDKP:Print("|cff00cc66/dkp lockouts|r - Displays the next reset for each raid size (3 day, 5 day and 7 day lockouts)");
-		MonDKP:Print("|cff00cc66/dkp timer|r - Creates Raid Timer (Officers Only) (eg. /dkp timer 120 Pizza Break!)");
-		MonDKP:Print("|cff00cc66/dkp bid|r - Opens Bid Window (Officers Only) (eg. /dkp bid [item link])");
-		MonDKP:Print("|cff00cc66/dkp award player cost [item_link]|r - Manually Award Item (Officers Only) (eg. /dkp award roeshambo 100 [item link])");
-		MonDKP:Print("|cff00cc66/dkp modes|r - Opens DKP Modes Window (Officers Only)");
-		MonDKP:Print("|cff00cc66/dkp export|r - Opens window to export all DKP information to HTML, CSV or XML. (More export implementations to come)");
+		MonDKP:Print(L["SlashCommandList"]..":")
+		MonDKP:Print("|cff00cc66/dkp|r - "..L["DKPLaunch"]);
+		MonDKP:Print("|cff00cc66/dkp ?|r - "..L["HelpInfo"]);
+		MonDKP:Print("|cff00cc66/dkp reset|r - "..L["DKPResetPos"]);
+		MonDKP:Print("|cff00cc66/dkp lockouts|r - "..L["DKPLockout"]);
+		MonDKP:Print("|cff00cc66/dkp timer|r - "..L["CreateRaidTimer"]);
+		MonDKP:Print("|cff00cc66/dkp bid|r - "..L["OpenBidWindowHelp"]);
+		MonDKP:Print("|cff00cc66/dkp award "..L["PlayerCost"].."|r - "..L["DKPAwardHelp"]);
+		MonDKP:Print("|cff00cc66/dkp modes|r - "..L["DKPModesHelp"]);
+		MonDKP:Print("|cff00cc66/dkp export|r - "..L["DKPExportHelp"]);
 		print(" ");
-		MonDKP:Print("Whisper Commands (To Designated Officers)");
-		MonDKP:Print("|cff00cc66!bid (or !bid <value>)|r - Bid on current item when bidding is opened.");
-		MonDKP:Print("|cff00cc66!dkp (or !dkp <player_name>)|r - Returns your current DKP (Or DKP of <player_name>)");
+		MonDKP:Print(L["WhisperCmdsHelp"]);
+		MonDKP:Print("|cff00cc66!bid (or !bid <"..L["Value"]..">)|r - "..L["BidHelp"]);
+		MonDKP:Print("|cff00cc66!dkp (or !dkp <"..L["PlayerName"]..">)|r - "..L["DKPCmdHelp"]);
 	end,
 };
 
@@ -177,8 +179,8 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				MonDKP.ConfigTab2.BossKilledDropdown:SetValue(arg1)
 			end
 
-			if boss_name == "Azuregos" or boss_name == "Lord Kazzak" or boss_name == "Emeriss" or boss_name == "Lethon" or boss_name == "Ysondre" or boss_name == "Taerar" then 		-- requests IDs to be reported when discovered
-				MonDKP:Print("EventID: "..arg1.." - > "..boss_name.." Killed. Please report this Event ID at https://www.curseforge.com/wow/addons/monolith-dkp to update raid event handlers.")
+			if boss_name == core.BossList["WORLD"][1] or boss_name == core.BossList["WORLD"][2] or boss_name == core.BossList["WORLD"][3] or boss_name == core.BossList["WORLD"][4] or boss_name == core.BossList["WORLD"][5] or boss_name == core.BossList["WORLD"][6] then 		-- requests IDs to be reported when discovered
+				MonDKP:Print("Event ID: "..arg1.." - > "..boss_name.." Killed. Please report this Event ID at https://www.curseforge.com/wow/addons/monolith-dkp to update raid event handlers.")
 			end
 		end
 	elseif event == "CHAT_MSG_WHISPER" then
@@ -187,10 +189,15 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			MonDKP_CHAT_MSG_WHISPER(arg1, ...)
 		end
 	elseif event == "GUILD_ROSTER_UPDATE" then
-		GuildInfo()
+		GuildRoster()
 		if IsInGuild() then
 			MonDKP:CheckOfficer()
 			self:UnregisterEvent("GUILD_ROSTER_UPDATE")
+
+			-- Prints info after all addons have loaded. Circumvents addons that load saved chat messages pushing info out of view.
+			MonDKP:Print(L["Version"].." "..core.MonVersion..", "..L["CreatedMaintain"].." Roeshambo@Stalagg-PvP");
+			MonDKP:Print(L["Loaded"].." "..#MonDKP_DKPTable.." "..L["PlayerRecords"]..", "..#MonDKP_Loot.." "..L["LootHistRecords"].." "..#MonDKP_DKPHistory.." "..L["DKPHistRecords"]..".");
+			MonDKP:Print(L["Use"].." /dkp ? "..L["SubmitBugs"].." @ https://github.com/Roeshambo/MonolithDKP/issues");
 		end
 	elseif event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" then
 		MonDKP:CheckOfficer()
@@ -231,9 +238,9 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			hours = math.floor(math.floor(reset % 86400) / 3600)
 			mins = math.ceil((reset % 3600) / 60)
 			
-			if days > 1 then days = " "..days.." days" elseif days == 0 then days = "" else days = " "..days.." day" end
-			if hours > 1 then hours = " "..hours.." hours" elseif hours == 0 then hours = "" else hours = " "..hours.." hour." end
-			if mins > 1 then mins = " "..mins.." minutes." elseif mins == 0 then mins = "" else mins = " "..mins.." minute." end
+			if days > 1 then days = " "..days.." "..L["Days"] elseif days == 0 then days = "" else days = " "..days.." "..L["Day"] end
+			if hours > 1 then hours = " "..hours.." "..L["Hours"] elseif hours == 0 then hours = "" else hours = " "..hours.." "..L["Hour"].."." end
+			if mins > 1 then mins = " "..mins.." "..L["Minutes"].."." elseif mins == 0 then mins = "" else mins = " "..mins.." "..L["Minute"].."." end
 
 			if k == "Three" then raidString = "ZG, AQ20"
 			elseif k == "Five" then raidString = "Onyxia"
@@ -241,7 +248,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			end
 
 			if k ~= "Three" then 	-- remove when three day raid lockouts are added
-				MonDKP:Print(raidString.." resets in"..days..hours..mins.." ("..date("%A @ %H:%M:%S%p", v)..")")
+				MonDKP:Print(raidString.." "..L["ResetsIn"]..days..hours..mins.." ("..date("%A @ %H:%M:%S%p", v)..")")
 			end
 		end
 
@@ -361,10 +368,6 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 			return a["player"] < b["player"]
 		end)
 
-		MonDKP:Print("Version "..core.MonVersion..", created and maintained by Roeshambo@Stalagg-PvP");
-		MonDKP:Print("Loaded "..#MonDKP_DKPTable.." player records, "..#MonDKP_Loot.." loot history records and "..#MonDKP_DKPHistory.." dkp history records.");
-		MonDKP:Print("Use /dkp ? for help and submit any bugs @ https://github.com/Roeshambo/MonolithDKP/issues");
-
 		for i=1, #MonDKP_DKPTable do
 			MonDKP_DKPTable[i].class = string.upper(MonDKP_DKPTable[i].class)		-- hotfix for migrating previous class listings to localization neutral classes
 		end
@@ -383,7 +386,7 @@ end
 local events = CreateFrame("Frame", "EventsFrame");
 events:RegisterEvent("ADDON_LOADED");
 events:RegisterEvent("GROUP_ROSTER_UPDATE");
-events:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED")
+--events:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED") replaced by BOSS_KILL
 events:RegisterEvent("LOOT_OPENED")
 events:RegisterEvent("CHAT_MSG_RAID")
 events:RegisterEvent("CHAT_MSG_RAID_LEADER")
