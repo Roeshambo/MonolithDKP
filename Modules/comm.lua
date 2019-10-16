@@ -56,10 +56,47 @@ function MonDKP.Sync:OnEnable()
 	MonDKP.Sync:RegisterComm("MonDKPStandby", MonDKP.Sync:OnCommReceived())			-- broadcasts standby list
 	MonDKP.Sync:RegisterComm("MonDKPRaidTimer", MonDKP.Sync:OnCommReceived())		-- broadcasts Raid Timer Commands
 	MonDKP.Sync:RegisterComm("MonDKPZeroSum", MonDKP.Sync:OnCommReceived())			-- broadcasts ZeroSum Bank
+	MonDKP.Sync:RegisterComm("MonDKPTableCheck", MonDKP.Sync:OnCommReceived())		-- broadcasts Check for updated tables
+	MonDKP.Sync:RegisterComm("MonDKPBuildCheck", MonDKP.Sync:OnCommReceived())		-- broadcasts Addon build number to inform others an update is available.
 end
 
 function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 	if (prefix) then
+		if prefix == "MonDKPTableCheck" then
+			if message == "DKPTableUpdateCheck" and core.IsOfficer then
+				local tableCheck = MonDKP:SeedVerify_Update()
+				MonDKP.Sync:SendData("MonDKPTableCheck", sender..","..tostring(tableCheck))
+			elseif message == "DKPTableUpdateCheck" and core.IsOfficer == false then
+				local tableCheck = MonDKP:SeedVerify_Update()
+
+				if tableCheck == false then
+					MonDKP.Sync:SendData("MonDKPTableCheck", sender..","..tostring(tableCheck).." nonofficer")
+				end
+			else
+				if message == "true" then
+					table.insert(core.UpdateCheck.updated, sender)
+				elseif message == "false" then
+					table.insert(core.UpdateCheck.OOD, sender)
+				elseif message == "false nonofficer" then
+					table.insert(core.UpdateCheck.nonofficer, sender)
+				end
+			end	
+			return;
+		elseif prefix == "MonDKPBuildCheck" and sender ~= UnitName("player") then
+			local LastVerCheck = time() - core.LastVerCheck;
+
+			if LastVerCheck > 1800 then   					-- limits the Out of Date message from firing more than every 30 minutes 
+				core.LastVerCheck = time();
+				if tonumber(message) > core.BuildNumber then
+					MonDKP:Print(L["OutOfDateAnnounce"])
+				end
+			end
+
+			if tonumber(message) < core.BuildNumber then
+				MonDKP.Sync:SendData("MonDKPBuildCheck", tostring(core.BuildNumber))
+			end
+			return;
+		end
 		if MonDKP:ValidateSender(sender) then		-- validates sender as an officer. fail-safe to prevent addon alterations to manipulate DKP table
 			if (prefix == "MonDKPBroadcast") and sender ~= UnitName("player") then
 				MonDKP:Print(message)
@@ -409,21 +446,31 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 end
 
 function MonDKP.Sync:SendData(prefix, data)
-	if IsInGuild() and core.IsOfficer == true then
+	if IsInGuild() then
+		if (prefix == "MonDKPTableCheck" and data == "DKPTableUpdateCheck") or prefix == "MonDKPBuildCheck" then
+			MonDKP.Sync:SendCommMessage(prefix, data, "GUILD")
+			return;
+		elseif prefix == "MonDKPTableCheck" and data ~= "DKPTableUpdateCheck" then
+			local sender, response = strsplit(",", data, 2)
+			MonDKP.Sync:SendCommMessage(prefix, response, "WHISPER", sender)
+			return;
+		end
+	end
+	if IsInGuild() and core.IsOfficer then
 		local serialized = nil;
 		local packet = nil;
 		local verInteg1 = false;
 		local verInteg2 = false;
 
-		if (prefix == "MonDKPNotify" or prefix == "MonDKPRaidTimer") then
+		if prefix == "MonDKPNotify" or prefix == "MonDKPRaidTimer" then
 			MonDKP.Sync:SendCommMessage(prefix, data, "RAID")
 			return;
 		end
 
-		if (prefix == "MonDKPBroadcast") then
+		if prefix == "MonDKPBroadcast" then
 			MonDKP.Sync:SendCommMessage(prefix, data, "GUILD")
 			return;
-		end
+		end	
 
 		if data then
 			serialized = LibAceSerializer:Serialize(data);	-- serializes tables to a string

@@ -242,7 +242,7 @@ function MonDKP:CreateMenu()
     SortButtons.dkp.roll:SetScale("0.8")
     SortButtons.dkp.roll:SetTextColor(1, 1, 1, 1);
     SortButtons.dkp.roll:SetPoint("LEFT", SortButtons.dkp, "LEFT", 20, -1);
-    SortButtons.dkp.roll:SetText("Roll Range")
+    SortButtons.dkp.roll:SetText(L["RollRange"])
   else
     SortButtons.dkp.t:SetPoint("CENTER", SortButtons.dkp, "CENTER", 20, 0);
     SortButtons.dkp.t:SetText(L["TotalDKP"]);

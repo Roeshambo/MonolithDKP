@@ -232,7 +232,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 	end)
 end
 
-local function GetMinBid(itemLink)
+function MonDKP:GetMinBid(itemLink)
 	local _,_,_,_,_,_,_,_,loc = GetItemInfo(itemLink);
 
 	if loc == "INVTYPE_HEAD" then
@@ -274,6 +274,7 @@ end
 
 function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 	local minBid;
+	mode = MonDKP_DB.modes.mode;
 
 	if core.IsOfficer == true then
 		core.BiddingWindow = core.BiddingWindow or MonDKP:CreateBidWindow();
@@ -308,7 +309,7 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 		 				if self:GetChecked() == true then
 		 					core.BiddingWindow.minBid:SetText(MonDKP_round(minBid, MonDKP_DB.modes.rounding))
 		 				else
-		 					core.BiddingWindow.minBid:SetText(MonDKP_round(GetMinBid(CurrItemForBid), MonDKP_DB.modes.rounding))
+		 					core.BiddingWindow.minBid:SetText(MonDKP:GetMinBid(CurrItemForBid))
 		 				end
 		 			end)
 		 		elseif mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
@@ -318,12 +319,12 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 		 				if self:GetChecked() == true then
 		 					core.BiddingWindow.cost:SetText(MonDKP_round(minBid, MonDKP_DB.modes.rounding))
 		 				else
-		 					core.BiddingWindow.cost:SetText(MonDKP_round(GetMinBid(CurrItemForBid), MonDKP_DB.modes.rounding))
+		 					core.BiddingWindow.cost:SetText(MonDKP:GetMinBid(CurrItemForBid))
 		 				end
 		 			end)
 		 		end
 	 		else
-	 			minBid = GetMinBid(CurrItemForBid)
+	 			minBid = MonDKP:GetMinBid(CurrItemForBid)
 	 			core.BiddingWindow.CustomMinBid:Hide();
 	 		end
 	 		if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
@@ -351,7 +352,7 @@ local function StartBidding()
 		MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), CurrItemIcon)
 
 		local search = MonDKP:Table_Search(MonDKP_MinBids, core.BiddingWindow.itemName:GetText())
-		local val = GetMinBid(CurrItemForBid);
+		local val = MonDKP:GetMinBid(CurrItemForBid);
 		
 		if not search and core.BiddingWindow.minBid:GetNumber() ~= tonumber(val) then
 			tinsert(MonDKP_MinBids, {item=core.BiddingWindow.itemName:GetText(), minbid=core.BiddingWindow.minBid:GetNumber()})
@@ -431,13 +432,13 @@ local function ToggleTimerBtn(self)
 		timerToggle = 0;
 		core.BidInProgress = false;
 		self:SetText(L["StartBidding"])
-		SendChatMessage("Bidding Closed!", "RAID_WARNING")
+		SendChatMessage(L["BiddingClosed"], "RAID_WARNING")
 		events:UnregisterEvent("CHAT_MSG_SYSTEM")
 		MonDKP:BroadcastStopBidTimer()
 	end
 end
 
-local function ClearBidWindow()
+function ClearBidWindow()
 	CurrItemForBid = "";
 	CurrItemIcon = "";
 	Bids_Submitted = {}
@@ -541,7 +542,7 @@ local function AwardItem()
 
 						if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
 							local search = MonDKP:Table_Search(MonDKP_MinBids, core.BiddingWindow.itemName:GetText())
-							local val = GetMinBid(CurrItemForBid);
+							local val = MonDKP:GetMinBid(CurrItemForBid);
 							
 							if not search and core.BiddingWindow.cost:GetText() ~= tonumber(val) then
 								tinsert(MonDKP_MinBids, {item=core.BiddingWindow.itemName:GetText(), minbid=core.BiddingWindow.cost:GetNumber()})
@@ -654,7 +655,7 @@ local function AwardItem()
 
 				if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
 					local search = MonDKP:Table_Search(MonDKP_MinBids, core.BiddingWindow.itemName:GetText())
-					local val = GetMinBid(CurrItemForBid);
+					local val = MonDKP:GetMinBid(CurrItemForBid);
 					
 					if not search and core.BiddingWindow.cost:GetText() ~= tonumber(val) then
 						tinsert(MonDKP_MinBids, {item=core.BiddingWindow.itemName:GetText(), minbid=core.BiddingWindow.cost:GetNumber()})
@@ -1095,7 +1096,7 @@ function MonDKP:CreateBidWindow()
 	f.closeContainer:SetPoint("CENTER", f, "TOPRIGHT", -4, 0)
 	f.closeContainer:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
-		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
+		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
 	});
 	f.closeContainer:SetBackdropColor(0,0,0,0.9)
 	f.closeContainer:SetBackdropBorderColor(1,1,1,0.2)
@@ -1109,7 +1110,7 @@ function MonDKP:CreateBidWindow()
 	f.bossHeader:SetFontObject("MonDKPLargeRight");
 	f.bossHeader:SetScale(0.7)
 	f.bossHeader:SetPoint("TOPLEFT", f, "TOPLEFT", 85, -25);
-	f.bossHeader:SetText("Boss:")
+	f.bossHeader:SetText(L["Boss"]..":")
 
 	f.boss = CreateFrame("EditBox", nil, f)
 	f.boss:SetFontObject("MonDKPNormalLeft");
@@ -1117,12 +1118,12 @@ function MonDKP:CreateBidWindow()
 	f.boss:SetMultiLine(false)
 	f.boss:SetTextInsets(10, 15, 5, 5)
 	f.boss:SetBackdrop({
-		bgFile   = "Textures\\white.blp", tile = true,
-		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\slider-border", tile = true, tileSize = 1, edgeSize = 2, 
+    	bgFile   = "Textures\\white.blp", tile = true,
+		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile", tile = true, tileSize = 32, edgeSize = 2, 
 	});
-	f.boss:SetPoint("LEFT", f.bossHeader, "RIGHT", 5, 0);
-	f.boss:SetBackdropColor(0,0,0,0.9)
+	f.boss:SetBackdropColor(0,0,0,0.6)
 	f.boss:SetBackdropBorderColor(1,1,1,0.6)
+	f.boss:SetPoint("LEFT", f.bossHeader, "RIGHT", 9, 0);
 	f.boss:SetSize(200, 28)
 	f.boss:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
 		self:HighlightText(0,0)
@@ -1170,10 +1171,10 @@ function MonDKP:CreateBidWindow()
 	    f.minBid:SetMultiLine(false)
 	    f.minBid:SetSize(70, 28)
 	    f.minBid:SetBackdrop({
-	      bgFile   = "Textures\\white.blp", tile = true,
-	      edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\slider-border", tile = true, tileSize = 1, edgeSize = 2, 
+      	  bgFile   = "Textures\\white.blp", tile = true,
+	      edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile", tile = true, tileSize = 32, edgeSize = 2,
 	    });
-	    f.minBid:SetBackdropColor(0,0,0,0.9)
+	    f.minBid:SetBackdropColor(0,0,0,0.6)
 	    f.minBid:SetBackdropBorderColor(1,1,1,0.6)
 	    f.minBid:SetMaxLetters(8)
 	    f.minBid:SetTextColor(1, 1, 1, 1)
@@ -1230,10 +1231,10 @@ function MonDKP:CreateBidWindow()
     f.bidTimer:SetSize(70, 28)
     f.bidTimer:SetBackdrop({
       bgFile   = "Textures\\white.blp", tile = true,
-      edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\slider-border", tile = true, tileSize = 1, edgeSize = 2, 
+      edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile", tile = true, tileSize = 32, edgeSize = 2,
     });
-    f.bidTimer:SetBackdropColor(0,0,0,0.9)
-    f.bidTimer:SetBackdropBorderColor(1,1,1,0.4)
+    f.bidTimer:SetBackdropColor(0,0,0,0.6)
+    f.bidTimer:SetBackdropBorderColor(1,1,1,0.6)
     f.bidTimer:SetMaxLetters(4)
     f.bidTimer:SetTextColor(1, 1, 1, 1)
     f.bidTimer:SetFontObject("MonDKPSmallRight")
@@ -1291,7 +1292,7 @@ function MonDKP:CreateBidWindow()
 		GameTooltip:Hide()
 	end)
 
-	f.ClearBidWindow = MonDKP:CreateButton("TOP", f.StartBidding, "BOTTOM", 0, -10, "Clear Window");
+	f.ClearBidWindow = MonDKP:CreateButton("TOP", f.StartBidding, "BOTTOM", 0, -10, L["ClearBidWindow"]);
 	f.ClearBidWindow:SetSize(90,25)
 	f.ClearBidWindow:SetScript("OnClick", ClearBidWindow)
 	f.ClearBidWindow:SetScript("OnEnter", function(self)
@@ -1416,20 +1417,20 @@ function MonDKP:CreateBidWindow()
     ------------------------------------
 
     f.cost = CreateFrame("EditBox", nil, f)
-	f.cost:SetPoint("TOPLEFT", f.bidTable, "BOTTOMLEFT", 70, -15)   
+	f.cost:SetPoint("TOPLEFT", f.bidTable, "BOTTOMLEFT", 71, -15)   
     f.cost:SetAutoFocus(false)
     f.cost:SetMultiLine(false)
     f.cost:SetSize(70, 28)
+    f.cost:SetTextInsets(10, 10, 5, 5)
     f.cost:SetBackdrop({
       bgFile   = "Textures\\white.blp", tile = true,
-      edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\slider-border", tile = true, tileSize = 1, edgeSize = 2, 
+      edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile", tile = true, tileSize = 32, edgeSize = 2,
     });
-    f.cost:SetBackdropColor(0,0,0,0.9)
-    f.cost:SetBackdropBorderColor(1,1,1,0.4)
+    f.cost:SetBackdropColor(0,0,0,0.6)
+    f.cost:SetBackdropBorderColor(1,1,1,0.6)
     f.cost:SetMaxLetters(8)
     f.cost:SetTextColor(1, 1, 1, 1)
     f.cost:SetFontObject("MonDKPSmallRight")
-    f.cost:SetTextInsets(10, 10, 5, 5)
     f.cost:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
       self:ClearFocus()
     end)
@@ -1463,11 +1464,41 @@ function MonDKP:CreateBidWindow()
 		f.CustomMinBid:SetPoint("LEFT", f.cost, "RIGHT", 10, 0);
 	end
 
-	f.StartBidding = MonDKP:CreateButton("LEFT", f.cost, "RIGHT", 80, 0, "Award Item");
+	f.StartBidding = MonDKP:CreateButton("LEFT", f.cost, "RIGHT", 80, 0, L["AwardItem"]);
 	f.StartBidding:SetSize(90,25)
 	f.StartBidding:SetScript("OnClick", function ()	-- confirmation dialog to remove user(s)
 		if SelectedBidder["player"] then
-			AwardItem()
+			if strlen(strtrim(core.BiddingWindow.boss:GetText(), " ")) < 1 then 			-- verifies there is a boss name
+				StaticPopupDialogs["VALIDATE_BOSS"] = {
+					text = L["InvalidBossName"],
+					button1 = L["OK"],
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopup_Show ("VALIDATE_BOSS")
+				return;
+			end
+			if core.UpToDate == false and core.IsOfficer == true then
+			    StaticPopupDialogs["CONFIRM_PUSH"] = {
+					text = "|CFFFF0000"..L["WARNING"].."|r: "..L["OutdateModifyWarn"],
+					button1 = L["YES"],
+					button2 = L["NO"],
+					OnAccept = function()
+						MonDKP:AwardConfirm(SelectedBidder["player"], f.cost:GetNumber(), f.boss:GetText(), GetRealZoneText(), CurrItemForBid)
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopup_Show ("CONFIRM_PUSH")
+			else
+				MonDKP:AwardConfirm(SelectedBidder["player"], f.cost:GetNumber(), f.boss:GetText(), GetRealZoneText(), CurrItemForBid)
+			end
+
+			
 		else
 			local selected = L["PlayerValidate"];
 

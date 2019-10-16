@@ -6,6 +6,7 @@ local L = core.L;
 local SelectedRow = 0;        -- sets the row that is being clicked
 local menuFrame = CreateFrame("Frame", "MonDKPDKPTableMenuFrame", UIParent, "UIDropDownMenuTemplate")
 local ConvToRaidEvent = CreateFrame("Frame", "MonDKPConvToRaidEventsFrame");
+local InvCount;
 
 function MonDKPSelectionCount_Update()
   if #core.SelectedData == 0 then
@@ -62,6 +63,9 @@ local function Invite_OnEvent(self, event, arg1, ...)
     if strfind(arg1, " joins the party.") then
       ConvertToRaid()
       ConvToRaidEvent:UnregisterEvent("CHAT_MSG_SYSTEM")
+      for i=InvCount+1, #core.SelectedData do
+        InviteUnit(core.SelectedData[i].player)
+      end
     end
   end
 end
@@ -267,11 +271,15 @@ local function RightClickMenu(self)
   menu = {
     { text = L["MultipleSelect"], isTitle = true, notCheckable = true}, --1
     { text = L["InviteSelected"], notCheckable = true, func = function()
-      for i=1, #core.SelectedData do
+      InvCount = 4 - GetNumSubgroupMembers()
+      
+      for i=1, InvCount do
         InviteUnit(core.SelectedData[i].player)
       end
-      ConvToRaidEvent:RegisterEvent("CHAT_MSG_SYSTEM")
-      ConvToRaidEvent:SetScript("OnEvent", Invite_OnEvent);
+      if #core.SelectedData >= 5 then
+        ConvToRaidEvent:RegisterEvent("CHAT_MSG_SYSTEM")
+        ConvToRaidEvent:SetScript("OnEvent", Invite_OnEvent);
+      end
     end }, --2
     { text = L["SelectAll"], notCheckable = true, func = function()
       core.SelectedData = CopyTable(core.WorkingTable);
@@ -690,44 +698,11 @@ function MonDKP:DKPTable_Create()
   MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function(self)
     GameTooltip:Hide()
   end)
+  MonDKP.DKPTable.SeedVerify:SetScript("OnMouseDown", function() MonDKP:UpdateQuery() end)
 
   MonDKP.DKPTable.SeedVerifyIcon = MonDKP.DKPTable:CreateTexture(nil, "OVERLAY", nil)             -- seed verify (bottom left) indicator
   MonDKP.DKPTable.SeedVerifyIcon:SetPoint("TOPLEFT", MonDKP.DKPTable.SeedVerify, "TOPLEFT", 0, 0);
   MonDKP.DKPTable.SeedVerifyIcon:SetColorTexture(0, 0, 0, 1)
   MonDKP.DKPTable.SeedVerifyIcon:SetSize(18, 18);
   MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\out-of-date")
-end
-
-function MonDKP:SeedVerify_Update()
-  if IsInGuild() then
-    local leader = MonDKP:GetGuildRankGroup(1)
-
-    if MonDKP_DKPTable.seed >= leader[1].seed and MonDKP_Loot.seed >= leader[1].seed and MonDKP_DKPHistory.seed >= leader[1].seed then
-      core.UpToDate = true;
-      MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\up-to-date")
-      MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
-        GameTooltip:SetText(L["DKPStatus"], 0.25, 0.75, 0.90, 1, true);
-        GameTooltip:AddLine(L["AllTables"].." |cff00ff00"..L["UpToDate"].."|r.", 1.0, 1.0, 1.0, false);
-        GameTooltip:Show()
-      end)
-    else
-      core.UpToDate = false;
-      MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\out-of-date")
-      MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
-        GameTooltip:SetText(L["DKPStatus"], 0.25, 0.75, 0.90, 1, true);
-        GameTooltip:AddLine(L["OneTableOOD"].." |cffff0000"..L["OutOfDate"].."|r.", 1.0, 1.0, 1.0, false);
-        GameTooltip:AddLine(L["RequestTablesOfficer"], 1.0, 1.0, 1.0, false);
-        GameTooltip:Show()
-      end)
-    end
-  else
-    MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
-        GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
-        GameTooltip:SetText(L["DKPStatus"], 0.25, 0.75, 0.90, 1, true);
-        GameTooltip:AddLine(L["CurrNotInGuild"], 1.0, 1.0, 1.0, true);
-        GameTooltip:Show()
-      end)
-  end
 end

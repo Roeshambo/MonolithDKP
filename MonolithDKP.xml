@@ -475,7 +475,7 @@
 		<Backdrop bgFile="Interface\Buttons\UI-SliderBar-Background" edgeFile="Interface\ChatFrame\ChatFrameBackground" tile="true">
 			<BorderColor r="0.12" g="0.12" b="0.34" a="1" /> 
 			<EdgeSize>
-				<AbsValue val="1"/>
+				<AbsValue val="2"/>
 			</EdgeSize>
 		</Backdrop>
 		<ThumbTexture parentKey="Thumb" name="$parentThumb" file="Interface\AddOns\MonolithDKP\Media\Textures\slider-pin">

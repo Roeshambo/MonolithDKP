@@ -4,7 +4,7 @@ local MonDKP = core.MonDKP;
 local L = core.L;
 
 local function ZeroSumDistribution()
-	if IsInRaid() then
+	--if IsInRaid() then
 		local curTime = time();
 		local distribution;
 		local reason = MonDKP_DB.bossargs.CurrentRaidZone..": "..MonDKP_DB.bossargs.LastKilledBoss
@@ -61,9 +61,9 @@ local function ZeroSumDistribution()
 		MonDKP.Sync:SendData("MonDKPZeroSum", MonDKP_DB.modes.ZeroSumBank)
 		MonDKP:ZeroSumBank_Update()
 		core.ZeroSumBank:Hide();
-	else
+	--[[else
 		MonDKP:Print(L["NotInRaidParty"])
-	end
+	end--]]
 end
 
 function MonDKP:ZeroSumBank_Update()

@@ -130,13 +130,14 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
     722, 721, 719, 718, 720, 723
   },
   ONYXIA = {1084},
-  --WORLD = {     -- No encounter IDs have been identified for these world bosses yet
-    --"Azuregos", "Lord Kazzak", "Emeriss", "Lethon", "Ysondre", "Taerar"
-  --}
+  WORLD = {     -- No encounter IDs have been identified for these world bosses yet
+    "Azuregos", "Lord Kazzak", "Emeriss", "Lethon", "Ysondre", "Taerar"
+  }
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v1.5.0";
+core.MonVersion = "v1.5.1";
+core.BuildNumber = 10501;
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
@@ -151,6 +152,12 @@ core.CurrentRaidZone = ""
 core.LastKilledBoss = ""
 core.CurView = "all"
 core.CurSubView = "all"
+core.LastVerCheck = 0
+core.UpdateCheck = {
+  updated = {},
+  OOD = {},
+  nonofficer = {}
+};        -- stores list of officers that have updated tables temporarily
 
 function MonDKP:GetCColors(class)
   if core.CColors then 
@@ -361,18 +368,7 @@ function MonDKP:PurgeDKPHistory()     -- cleans old DKP history beyond history l
 end
 
 function MonDKP:FormatTime(time)
-  --local TZ = date("%Z") -- Time Zone
   local str;
-
-  --[[if strfind(TZ, "Eastern") then
-    TZ = "Eastern"
-  elseif strfind(TZ, "Central") then
-    TZ = "Central"
-  elseif strfind(TZ, "Mountain") then
-    TZ = "Mountain"
-  elseif strfind(TZ, "Pacific") then
-    TZ = "Pacific"
-  end--]]
 
   str = date("%y/%m/%d %H:%M:%S", time)
 
@@ -381,13 +377,16 @@ end
 
 function MonDKP:Print(...)        --print function to add "MonolithDKP:" to the beginning of print() outputs.
     if not MonDKP_DB["defaults"]["supressNotifications"] then
+      local curFrame = {ChatFrame1, ChatFrame2, ChatFrame3, ChatFrame4, ChatFrame5, ChatFrame6, ChatFrame7, ChatFrame8, ChatFrame9}
       local defaults = MonDKP:GetThemeColor();
       local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "MonolithDKP:", defaults[2].hex:upper());
       local suffix = "|r";
-      if postColor then
-        DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, ..., suffix, postColor));
-      else
-        DEFAULT_CHAT_FRAME:AddMessage(string.join(" ", prefix, ..., suffix));
+      for i=1, FCF_GetNumActiveChatFrames() do
+        if postColor then
+          curFrame[i]:AddMessage(string.join(" ", prefix, ..., suffix, postColor));
+        else
+          curFrame[i]:AddMessage(string.join(" ", prefix, ..., suffix));
+        end
       end
     end
 end
@@ -486,6 +485,113 @@ function MonDKP:StartTimer(seconds, ...)
       MonDKP.BidTimer:SetScript("OnUpdate", nil)
       MonDKP.BidTimer:Hide();
     end
+  end)
+end
+
+function MonDKP:SeedVerify_Update()
+  if IsInGuild() then
+    local leader = MonDKP:GetGuildRankGroup(1)
+
+    if MonDKP_DKPTable.seed >= leader[1].seed and MonDKP_Loot.seed >= leader[1].seed and MonDKP_DKPHistory.seed >= leader[1].seed then
+      core.UpToDate = true;
+      MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\up-to-date")
+      MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
+        GameTooltip:SetText(L["DKPStatus"], 0.25, 0.75, 0.90, 1, true);
+        GameTooltip:AddLine(L["AllTables"].." |cff00ff00"..L["UpToDate"].."|r.", 1.0, 1.0, 1.0, false);
+        GameTooltip:AddLine("|cffff0000"..L["ClickQueryGuild"].."|r.", 1.0, 1.0, 1.0, false);
+        GameTooltip:Show()
+      end)
+
+      return true;
+    else
+      core.UpToDate = false;
+      MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\out-of-date")
+      MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
+        GameTooltip:SetText(L["DKPStatus"], 0.25, 0.75, 0.90, 1, true);
+        GameTooltip:AddLine(L["OneTableOOD"].." |cffff0000"..L["OutOfDate"].."|r.", 1.0, 1.0, 1.0, false);
+        GameTooltip:AddLine(L["RequestTablesOfficer"], 1.0, 1.0, 1.0, false);
+        GameTooltip:AddLine("|cffff0000"..L["ClickQueryGuild"].."|r.", 1.0, 1.0, 1.0, false);
+        GameTooltip:Show()
+      end)
+
+      return false;
+    end
+  else
+    MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
+        GameTooltip:SetText(L["DKPStatus"], 0.25, 0.75, 0.90, 1, true);
+        GameTooltip:AddLine(L["CurrNotInGuild"], 1.0, 1.0, 1.0, true);
+        GameTooltip:Show()
+      end)
+
+    return false;
+  end
+end
+
+function MonDKP:UpdateQuery()
+  MonDKP.Sync:SendData("MonDKPTableCheck", "DKPTableUpdateCheck")
+  MonDKP:Print(L["TableQuerySent"].."...")
+  local tableCheck = MonDKP:SeedVerify_Update()
+  C_Timer.After(2, function()
+    local updated, OOD, nonofficer;
+
+    MonDKP:Print("|cff10b2e3"..L["TableQueryHeader"].."|r")
+    MonDKP:Print("|cff10b2e3-------------------------------------------|r")
+    MonDKP:Print(L["TableQueryOfficer"]..":")
+    if #core.UpdateCheck.updated > 0 then
+      for i=1, #core.UpdateCheck.updated do
+        if i==1 then
+          updated = core.UpdateCheck.updated[i];
+        else
+          updated = updated..", "..core.UpdateCheck.updated[i]
+        end
+      end
+      MonDKP:Print("|cff00ff00"..L["TableQueryUTD"].."|r: "..updated)
+    else
+      MonDKP:Print("|cff00ff00"..L["TableQueryUTD"].."|r: "..L["None"])
+    end
+    if #core.UpdateCheck.OOD > 0 then
+      for i=1, #core.UpdateCheck.OOD do
+        if i==1 then
+          OOD = core.UpdateCheck.OOD[i];
+        else
+          OOD = OOD..", "..core.UpdateCheck.OOD[i]
+        end
+      end
+      MonDKP:Print("|cffff0000"..L["TableQueryOOD"].."|r: "..OOD)
+    else
+      MonDKP:Print("|cffff0000"..L["TableQueryOOD"].."|r: "..L["None"])
+    end
+    MonDKP:Print("|cff10b2e3-------------------------------------------|r")
+    if core.IsOfficer then
+      MonDKP:Print(L["TableQueryNonOfficer"]..":")
+      if #core.UpdateCheck.nonofficer > 0 then
+        for i=1, #core.UpdateCheck.nonofficer do
+          if i==1 then
+            nonofficer = core.UpdateCheck.nonofficer[i];
+          else
+            nonofficer = nonofficer..", "..core.UpdateCheck.nonofficer[i]
+          end
+        end
+        MonDKP:Print("|cffff0000"..L["TableQueryOOD"].."|r: "..nonofficer)
+      else
+        MonDKP:Print("|cffff0000"..L["TableQueryOOD"].."|r: "..L["None"])
+      end
+      MonDKP:Print("|cff10b2e3-------------------------------------------|r")
+    end
+    local UpToDate = MonDKP:SeedVerify_Update()
+    if UpToDate then
+      MonDKP:Print(L["YourTablesAreCurr"]..": |cff00ff00"..L["TableQueryUTD"].."|r")
+    else
+      MonDKP:Print(L["YourTablesAreCurr"]..": |cffff0000"..L["TableQueryOOD"].."|r")
+      MonDKP:Print(L["ContactOfficer"])
+    end
+    MonDKP:Print("|cff10b2e3-------------------------------------------|r")
+    table.wipe(core.UpdateCheck.OOD)
+    table.wipe(core.UpdateCheck.updated)
+    table.wipe(core.UpdateCheck.nonofficer)
   end)
 end
 

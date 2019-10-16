@@ -30,6 +30,7 @@ MonDKP.Commands = {
 	end,
 	["award"] = function (name, cost, ...)
 		if core.IsOfficer then
+			MonDKP:SeedVerify_Update()
 			local item = strjoin(" ", ...)
 			local validation = MonDKP:Table_Search(MonDKP_DKPTable, name)
 
@@ -44,32 +45,23 @@ MonDKP.Commands = {
 				return;
 			end
 
-			StaticPopupDialogs["AWARD_CONFIRM"] = {
-				text = L["ConfirmAward"].." "..item.." "..L["To"].." "..MonDKP_DKPTable[validation[1][1]].player.." "..L["For"].." "..cost.." "..L["DKP"].."?",
-				button1 = L["YES"],
-				button2 = L["NO"],
-				OnAccept = function()
-					local leader = MonDKP:GetGuildRankGroup(1)
-					local curTime = time();
-					local temp_table = {}
-
-					MonDKP:DKPTable_Set(name, "dkp", MonDKP_round(-cost, MonDKP_DB.modes.rounding), true)
-					table.insert(MonDKP_Loot, {player=MonDKP_DKPTable[validation[1][1]].player, loot=item, zone=MonDKP_DB.bossargs.CurrentRaidZone, date=curTime, cost=cost, boss=MonDKP_DB.bossargs.LastKilledBoss})
-					MonDKP:UpdateSeeds()
-					tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=MonDKP_DKPTable[validation[1][1]].player, loot=item, zone=MonDKP_DB.bossargs.CurrentRaidZone, date=curTime, boss=MonDKP_DB.bossargs.LastKilledBoss, cost=cost}})
-					MonDKP:LootHistory_Reset();
-					MonDKP:LootHistory_Update("No Filter")
-					MonDKP:RosterSeedUpdate(leader[1].index)
-					MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
-					MonDKP.Sync:SendData("MonDKPLootAward", temp_table[1])
-					table.wipe(temp_table)
-				end,
-				timeout = 0,
-				whileDead = true,
-				hideOnEscape = true,
-				preferredIndex = 3,
-			}
-			StaticPopup_Show ("AWARD_CONFIRM")
+			if core.UpToDate == false and core.IsOfficer == true then
+			    StaticPopupDialogs["CONFIRM_PUSH"] = {
+					text = "|CFFFF0000"..L["WARNING"].."|r: "..L["OutdateModifyWarn"],
+					button1 = L["YES"],
+					button2 = L["NO"],
+					OnAccept = function()
+						MonDKP:AwardConfirm(MonDKP_DKPTable[validation[1][1]].player, cost, MonDKP_DB.bossargs.LastKilledBoss, MonDKP_DB.bossargs.CurrentRaidZone, item)
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopup_Show ("CONFIRM_PUSH")
+			else
+				MonDKP:AwardConfirm(MonDKP_DKPTable[validation[1][1]].player, cost, MonDKP_DB.bossargs.LastKilledBoss, MonDKP_DB.bossargs.CurrentRaidZone, item)
+			end
 		else
 			MonDKP:Print(L["NoPermission"])
 		end
@@ -170,6 +162,10 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 	if event == "ADDON_LOADED" then
 		MonDKP:OnInitialize(event, arg1)
 		self:UnregisterEvent("ADDON_LOADED")
+	--[[elseif event == "ENCOUNTER_START" then  				-- tentatively used for whisper standby. Announce to guild when a boss dies etc.
+		--local otherStuff = ...;
+	elseif event == "ENCOUNTER_END" then
+		--local otherStuff = ...;--]]
 	elseif event == "BOSS_KILL" then
 		MonDKP:CheckOfficer()
 		if core.IsOfficer and IsInRaid() then
@@ -183,6 +179,20 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				MonDKP:Print("Event ID: "..arg1.." - > "..boss_name.." Killed. Please report this Event ID at https://www.curseforge.com/wow/addons/monolith-dkp to update raid event handlers.")
 			end
 		end
+	elseif event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then   		-- logs 15 recent zones entered while in a raid party
+		if IsInRaid() then 					-- only processes combat log events if in raid
+			MonDKP:CheckOfficer()
+			if core.IsOfficer then
+				if not MonDKP:Table_Search(MonDKP_DB.bossargs.RecentZones, GetRealZoneText()) then 	-- only adds it if it doesn't already exist in the table
+					table.insert(MonDKP_DB.bossargs.RecentZones, 1, GetRealZoneText())
+					if #MonDKP_DB.bossargs.RecentZones > 15 then
+						for i=16, #MonDKP_DB.bossargs.RecentZones do  		-- trims the tail end of the stack
+							table.remove(MonDKP_DB.bossargs.RecentZones, i)
+						end
+					end
+				end
+			end
+		end
 	elseif event == "CHAT_MSG_WHISPER" then
 		MonDKP:CheckOfficer()
 		if (core.BidInProgress or string.find(arg1, "!dkp") == 1) and core.IsOfficer == true then
@@ -191,13 +201,16 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 	elseif event == "GUILD_ROSTER_UPDATE" then
 		GuildRoster()
 		if IsInGuild() then
-			MonDKP:CheckOfficer()
 			self:UnregisterEvent("GUILD_ROSTER_UPDATE")
 
 			-- Prints info after all addons have loaded. Circumvents addons that load saved chat messages pushing info out of view.
-			MonDKP:Print(L["Version"].." "..core.MonVersion..", "..L["CreatedMaintain"].." Roeshambo@Stalagg-PvP");
-			MonDKP:Print(L["Loaded"].." "..#MonDKP_DKPTable.." "..L["PlayerRecords"]..", "..#MonDKP_Loot.." "..L["LootHistRecords"].." "..#MonDKP_DKPHistory.." "..L["DKPHistRecords"]..".");
-			MonDKP:Print(L["Use"].." /dkp ? "..L["SubmitBugs"].." @ https://github.com/Roeshambo/MonolithDKP/issues");
+			C_Timer.After(3, function ()
+				MonDKP:CheckOfficer()
+				MonDKP:Print(L["Version"].." "..core.MonVersion..", "..L["CreatedMaintain"].." Roeshambo@Stalagg-PvP");
+				MonDKP:Print(L["Loaded"].." "..#MonDKP_DKPTable.." "..L["PlayerRecords"]..", "..#MonDKP_Loot.." "..L["LootHistRecords"].." "..#MonDKP_DKPHistory.." "..L["DKPHistRecords"]..".");
+				MonDKP:Print(L["Use"].." /dkp ? "..L["SubmitBugs"].." @ https://github.com/Roeshambo/MonolithDKP/issues");
+				MonDKP.Sync:SendData("MonDKPBuildCheck", tostring(core.BuildNumber)) -- broadcasts build number to guild to check if a newer version is available
+			end)
 		end
 	elseif event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" then
 		MonDKP:CheckOfficer()
@@ -266,6 +279,23 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				MonDKP:ViewLimited(true)
 			elseif core.CurSubView == "raid and standby" then
 				MonDKP:ViewLimited(true, true)
+			end
+		end
+	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then 		-- logs last 15 NPCs killed while in raid
+		if IsInRaid() then 					-- only processes combat log events if in raid
+			local _,arg1,_,_,_,_,_,arg2,arg3 = CombatLogGetCurrentEventInfo();
+			if arg1 == "UNIT_DIED" and (not strfind(arg2, "Player") or not strfind(arg2, "Pet-")) then
+				MonDKP:CheckOfficer()
+				if core.IsOfficer then
+					if not MonDKP:Table_Search(MonDKP_DB.bossargs.LastKilledNPC, arg3) then 	-- only adds it if it doesn't already exist in the table
+						table.insert(MonDKP_DB.bossargs.LastKilledNPC, 1, arg3)
+						if #MonDKP_DB.bossargs.LastKilledNPC > 15 then
+							for i=16, #MonDKP_DB.bossargs.LastKilledNPC do  		-- trims the tail end of the stack
+								table.remove(MonDKP_DB.bossargs.LastKilledNPC, i)
+							end
+						end
+					end
+				end
 			end
 		end
 	--[[elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then 					-- replaced with above BOSS_KILL event handler
@@ -353,6 +383,8 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_DB.modes.channels then MonDKP_DB.modes.channels = { raid = true, whisper = true, guild = true } end
 		if not MonDKP_DB.modes.costvalue then MonDKP_DB.modes.costvalue = "Integer" end
 		if not MonDKP_DB.modes.rolls or not MonDKP_DB.modes.rolls.min then MonDKP_DB.modes.rolls = { min = 1, max = 100, UsePerc = false, AddToMax = 0 } end
+		if not MonDKP_DB.bossargs.LastKilledNPC then MonDKP_DB.bossargs.LastKilledNPC = {} end
+		if not MonDKP_DB.bossargs.RecentZones then MonDKP_DB.bossargs.RecentZones = {} end
 
 	    ------------------------------------
 	    --	Import SavedVariables
@@ -363,6 +395,8 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	    core.WorkingTable = MonDKP_DKPTable;						--imports full DKP table to WorkingTable for list manipulation without altering the SavedVariable
 	    core.CurrentRaidZone = MonDKP_DB.bossargs.CurrentRaidZone;	-- stores raid zone as a redundency
 		core.LastKilledBoss = MonDKP_DB.bossargs.LastKilledBoss;	-- stores last boss killed as a redundency
+		core.LastKilledNPC	= MonDKP_DB.bossargs.LastKilledNPC 		-- Stores last 30 mobs killed in raid.
+		core.RecentZones	= MonDKP_DB.bossargs.RecentZones 		-- Stores last 30 zones entered within a raid party.
 
 		table.sort(MonDKP_DKPTable, function(a, b)
 			return a["player"] < b["player"]
@@ -386,12 +420,16 @@ end
 local events = CreateFrame("Frame", "EventsFrame");
 events:RegisterEvent("ADDON_LOADED");
 events:RegisterEvent("GROUP_ROSTER_UPDATE");
---events:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED") replaced by BOSS_KILL
+events:RegisterEvent("ENCOUNTER_START");  		-- FOR TESTING PURPOSES.
+events:RegisterEvent("ENCOUNTER_END");  		-- FOR TESTING PURPOSES.
+events:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED") -- NPC kill event
 events:RegisterEvent("LOOT_OPENED")
 events:RegisterEvent("CHAT_MSG_RAID")
 events:RegisterEvent("CHAT_MSG_RAID_LEADER")
 events:RegisterEvent("CHAT_MSG_WHISPER");
 events:RegisterEvent("CHAT_MSG_GUILD")
 events:RegisterEvent("GUILD_ROSTER_UPDATE")
+events:RegisterEvent("PLAYER_ENTERING_WORLD")
+events:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 events:RegisterEvent("BOSS_KILL")
 events:SetScript("OnEvent", MonDKP_OnEvent); -- calls the above MonDKP_OnEvent function to determine what to do with the event

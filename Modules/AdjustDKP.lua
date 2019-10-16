@@ -448,7 +448,7 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.addDKP:SetSize(100, 24)
 	MonDKP.ConfigTab2.addDKP:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
-		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\slider-border", tile = true, tileSize = 1, edgeSize = 1, 
+		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile", tile = true, tileSize = 32, edgeSize = 2,
 	});
 	MonDKP.ConfigTab2.addDKP:SetBackdropColor(0,0,0,0.9)
 	MonDKP.ConfigTab2.addDKP:SetBackdropBorderColor(1,1,1,0.6)
@@ -556,7 +556,7 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.decayDKP:SetSize(100, 24)
 	MonDKP.ConfigTab2.decayDKP:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
-		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\slider-border", tile = true, tileSize = 1, edgeSize = 1, 
+		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile", tile = true, tileSize = 32, edgeSize = 2,
 	});
 	MonDKP.ConfigTab2.decayDKP:SetBackdropColor(0,0,0,0.9)
 	MonDKP.ConfigTab2.decayDKP:SetBackdropBorderColor(1,1,1,0.6)
@@ -676,7 +676,7 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.RaidTimerContainer:SetPoint("RIGHT", MonDKP.ConfigTab2, "RIGHT", -25, -60)
 	MonDKP.ConfigTab2.RaidTimerContainer:SetBackdrop({
       bgFile   = "Textures\\white.blp", tile = true,
-      edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 1, edgeSize = 2, 
+      edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile", tile = true, tileSize = 32, edgeSize = 2, 
     });
 	MonDKP.ConfigTab2.RaidTimerContainer:SetBackdropColor(0,0,0,0.9)
 	MonDKP.ConfigTab2.RaidTimerContainer:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
@@ -822,7 +822,7 @@ function MonDKP:AdjustDKPTab_Create()
 		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetSize(60, 24)
 		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetBackdrop({
 			bgFile   = "Textures\\white.blp", tile = true,
-			edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\slider-border", tile = true, tileSize = 1, edgeSize = 1, 
+			edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile", tile = true, tileSize = 32, edgeSize = 2,
 		});
 		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetBackdropColor(0,0,0,0.9)
 		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetBackdropBorderColor(1,1,1,0.6)
@@ -885,7 +885,7 @@ function MonDKP:AdjustDKPTab_Create()
 		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetSize(60, 24)
 		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetBackdrop({
 			bgFile   = "Textures\\white.blp", tile = true,
-			edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\slider-border", tile = true, tileSize = 1, edgeSize = 1, 
+			edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile", tile = true, tileSize = 32, edgeSize = 2,
 		});
 		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetBackdropColor(0,0,0,0.9)
 		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetBackdropBorderColor(1,1,1,0.6)

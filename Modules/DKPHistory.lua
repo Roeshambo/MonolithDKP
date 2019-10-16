@@ -233,7 +233,7 @@ function MonDKP:DKPHistory_Update()
 		MonDKP.ConfigTab6.loadMoreBtn:SetScript("OnClick", function()
 			currentLength = currentLength + 50;
 			MonDKP:DKPHistory_Update();
-			MonDKP.ConfigTab6.loadMoreBtn:SetText("Load "..btnText.." more...")
+			MonDKP.ConfigTab6.loadMoreBtn:SetText(L["Load"].." "..btnText.." "..L["More"].."...")
 			MonDKP.ConfigTab6.loadMoreBtn:SetPoint("TOP", MonDKP.ConfigTab6.history[currentRow], "BOTTOM", 0, -10)
 		end)
 	end

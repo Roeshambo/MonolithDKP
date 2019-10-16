@@ -873,7 +873,7 @@ function MonDKP:DKPModesFrame_Create()
 		f.RollContainer.UsePerc = CreateFrame("CheckButton", nil, f.RollContainer, "UICheckButtonTemplate");
 		f.RollContainer.UsePerc:SetChecked(MonDKP_DB.modes.rolls.UsePerc)
 		f.RollContainer.UsePerc:SetScale(0.6);
-		f.RollContainer.UsePerc.text:SetText("  |cff5151deUse Percentage|r");
+		f.RollContainer.UsePerc.text:SetText("  |cff5151de"..L["UsePercentage"].."|r");
 		f.RollContainer.UsePerc.text:SetScale(1.5);
 		f.RollContainer.UsePerc.text:SetFontObject("MonDKPSmallLeft")
 		f.RollContainer.UsePerc:SetPoint("TOP", f.RollContainer.rollMin, "BOTTOMLEFT", 0, -10);
@@ -950,7 +950,7 @@ function MonDKP:DKPModesFrame_Create()
 	    f.RollContainer.AddMax.Header:SetText(L["AddToMaxRoll"]..": ")
 
 	-- Broadcast DKP Modes Button
-	f.BroadcastSettings = self:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -30, 30, "Broadcast Settings");
+	f.BroadcastSettings = self:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -30, 30, L["BroadcastSettings"]);
 	f.BroadcastSettings:SetSize(110,25)
 	f.BroadcastSettings:SetScript("OnClick", function()
 		MonDKP_DB.modes.rolls.min = f.RollContainer.rollMin:GetNumber()
