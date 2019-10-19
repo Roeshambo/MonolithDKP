@@ -52,7 +52,19 @@ function MonDKP:DKPHistory_Reset()
 	end
 end
 
-local function MonDKPDeleteDKPEntry(item)
+local function MonDKPDeleteDKPEntry(item, timestamp)
+	if core.CurrentlySyncing then
+		StaticPopupDialogs["CURRENTLY_SYNC"] = {
+			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CurrentlySyncing"],
+			button1 = L["OK"],
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = true,
+			preferredIndex = 3,
+		}
+		StaticPopup_Show ("CURRENTLY_SYNC")
+		return;
+	end
 	-- pop confirmation. If yes, cycles through MonDKP_DKPHistory.players and every name it finds, it refunds them (or strips them of) dkp.
 	-- if deleted is the weekly decay,     curdkp * (100 / (100 - decayvalue))
 	local reason_header = MonDKP.ConfigTab6.history[item].d:GetText();
@@ -99,9 +111,12 @@ local function MonDKPDeleteDKPEntry(item)
 			end
 			MonDKP:DKPHistory_Update()
 			DKPTable_Update()
-			MonDKP:UpdateSeeds()
+			MonDKP:SeedVerify_Update()
+			if core.UpToDate and core.IsOfficer then -- updates seeds only if table is currently up to date.
+				MonDKP:UpdateSeeds()
+			end
 			MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
-			MonDKP.Sync:SendData("MonDKPDKPDelSync", { seed = MonDKP_DKPHistory.seed, item })
+			MonDKP.Sync:SendData("MonDKPDKPDelSync", { seed = MonDKP_DKPHistory.seed, item, timestamp })
 		end,
 		timeout = 0,
 		whileDead = true,
@@ -112,11 +127,11 @@ local function MonDKPDeleteDKPEntry(item)
 
 end
 
-local function RightClickDKPMenu(self, item)
+local function RightClickDKPMenu(self, item, timestamp)
 	menu = {
 	{ text = MonDKP_DKPHistory[item]["dkp"].." "..L["DKP"].." - "..MonDKP_DKPHistory[item]["reason"].." @ "..formdate("%m/%d/%y %H:%M:%S", MonDKP_DKPHistory[item]["date"]), isTitle = true},
 	{ text = L["DeleteDKPEntry"], func = function()
-		MonDKPDeleteDKPEntry(item)
+		MonDKPDeleteDKPEntry(item, timestamp)
 	end },
 	}
 	EasyMenu(menu, menuFrame, "cursor", 0 , 0, "MENU", 2);
@@ -158,7 +173,7 @@ function MonDKP:DKPHistory_Update()
 			MonDKP.ConfigTab6.history[i]:SetScript("OnMouseDown", function(self, button)
 		    	if button == "RightButton" then
 	   				if core.IsOfficer == true then
-	   					RightClickDKPMenu(self, i)
+	   					RightClickDKPMenu(self, i, MonDKP_DKPHistory[i].date)
 	   				end
 	   			end
 		    end)

@@ -111,7 +111,17 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
 end
 
 function MonDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable based on id passed. Avail IDs are "class", "player" and "dkp"
-  local button = SortButtons[id]        -- passing "reset" forces it to do initial sort (A to Z repeatedly instead of A to Z then Z to A toggled)
+  local button;                                 -- passing "reset" forces it to do initial sort (A to Z repeatedly instead of A to Z then Z to A toggled)
+
+  if id == "class" or id == "rank" then
+    button = SortButtons.class
+  elseif id == "spec" then                -- doesn't allow "spec" to be sorted.
+    DKPTable_Update()
+    return;
+  else
+    button = SortButtons[id]
+  end
+
   if reset and reset ~= "Clear" then                         -- reset is useful for check boxes when you don't want it repeatedly reversing the sort
     button.Ascend = true
   else
@@ -211,7 +221,11 @@ function MonDKP:CreateMenu()
     v.Id = k
     v:SetHighlightTexture("Interface\\BUTTONS\\BlueGrad64_faded.blp");
     v:SetSize((core.TableWidth/3)-1, core.TableRowHeight)
-    v:SetScript("OnClick", function(self) MonDKP:SortDKPTable(self.Id, "Clear") end)
+    if v.Id == "class" then
+      v:SetScript("OnClick", function(self) MonDKP:SortDKPTable(core.CenterSort, "Clear") end)
+    else
+      v:SetScript("OnClick", function(self) MonDKP:SortDKPTable(self.Id, "Clear") end)
+    end
   end
 
   SortButtons.player:SetSize((core.TableWidth*0.4)-1, core.TableRowHeight)
@@ -224,11 +238,41 @@ function MonDKP:CreateMenu()
   SortButtons.player.t:SetPoint("LEFT", SortButtons.player, "LEFT", 50, 0);
   SortButtons.player.t:SetText(L["Player"]); 
 
-  SortButtons.class.t = SortButtons.class:CreateFontString(nil, "OVERLAY")
+  --[[SortButtons.class.t = SortButtons.class:CreateFontString(nil, "OVERLAY")
   SortButtons.class.t:SetFontObject("MonDKPNormal");
   SortButtons.class.t:SetTextColor(1, 1, 1, 1);
   SortButtons.class.t:SetPoint("CENTER", SortButtons.class, "CENTER", 0, 0);
-  SortButtons.class.t:SetText(L["Class"]); 
+  SortButtons.class.t:SetText(L["Class"]); --]]
+
+  -- center column dropdown (class, rank, spec etc..)
+  SortButtons.class.t = CreateFrame("FRAME", "MonDKPSortColDropdown", SortButtons.class, "MonolithDKPTableHeaderDropDownMenuTemplate")
+  SortButtons.class.t:SetPoint("CENTER", SortButtons.class, "CENTER", 4, -3)
+  UIDropDownMenu_JustifyText(SortButtons.class.t, "CENTER")
+  UIDropDownMenu_SetWidth(SortButtons.class.t, 80)
+  UIDropDownMenu_SetText(SortButtons.class.t, L["Class"])
+
+  UIDropDownMenu_Initialize(SortButtons.class.t, function(self, level, menuList)
+  local reason = UIDropDownMenu_CreateInfo()
+    reason.func = self.SetValue
+    reason.fontObject = "MonDKPSmallCenter"
+    reason.text, reason.arg1, reason.arg2, reason.checked, reason.isNotRadio = L["Class"], "class", L["Class"], "class" == core.CenterSort, true
+    UIDropDownMenu_AddButton(reason)
+    reason.text, reason.arg1, reason.arg2, reason.checked, reason.isNotRadio = L["Spec"], "spec", L["Spec"], "spec" == core.CenterSort, true
+    UIDropDownMenu_AddButton(reason)
+    reason.text, reason.arg1, reason.arg2, reason.checked, reason.isNotRadio = L["Rank"], "rank", L["Rank"], "rank" == core.CenterSort, true
+    UIDropDownMenu_AddButton(reason)
+  end)
+
+  -- Dropdown Menu Function
+  function SortButtons.class.t:SetValue(newValue, arg2)
+    
+    core.CenterSort = newValue
+    SortButtons.class.Id = newValue;
+    UIDropDownMenu_SetText(SortButtons.class.t, arg2)
+    MonDKP:SortDKPTable(newValue, "reset")
+    core.currentSort = newValue;
+    CloseDropDownMenus()
+  end
 
   SortButtons.dkp.t = SortButtons.dkp:CreateFontString(nil, "OVERLAY")
   SortButtons.dkp.t:SetFontObject("MonDKPNormal")
@@ -314,6 +358,88 @@ function MonDKP:CreateMenu()
   MonDKP.UIConfig.Title:SetPoint("CENTER", MonDKP.UIConfig.TitleBar, "CENTER");
   MonDKP.UIConfig.Title:SetSize(160, 48);
   MonDKP.UIConfig.Title:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\mondkp-title-t.tga");
+
+  ---------------------------------------
+  -- CHANGE LOG WINDOW
+  ---------------------------------------
+   if MonDKP_DB.defaults.HideChangeLogs < core.BuildNumber then
+    MonDKP.ChangeLogDisplay = CreateFrame("Frame", "MonDKP_ChangeLogDisplay", UIParent, "ShadowOverlaySmallTemplate");
+
+    MonDKP.ChangeLogDisplay:SetPoint("TOP", UIParent, "TOP", 0, -200);
+    MonDKP.ChangeLogDisplay:SetSize(800, 600);
+    MonDKP.ChangeLogDisplay:SetBackdrop( {
+      bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
+      edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3,  
+      insets = { left = 0, right = 0, top = 0, bottom = 0 }
+    });
+    MonDKP.ChangeLogDisplay:SetBackdropColor(0,0,0,0.9);
+    MonDKP.ChangeLogDisplay:SetBackdropBorderColor(1,1,1,1)
+    MonDKP.ChangeLogDisplay:SetFrameStrata("DIALOG")
+    MonDKP.ChangeLogDisplay:SetFrameLevel(15)
+
+    MonDKP.ChangeLogDisplay.ChangeLogHeader = MonDKP.ChangeLogDisplay:CreateFontString(nil, "OVERLAY")   -- Filters header
+    MonDKP.ChangeLogDisplay.ChangeLogHeader:ClearAllPoints();
+    MonDKP.ChangeLogDisplay.ChangeLogHeader:SetWidth(780)
+    MonDKP.ChangeLogDisplay.ChangeLogHeader:SetFontObject("MonDKPLargeLeft")
+    MonDKP.ChangeLogDisplay.ChangeLogHeader:SetPoint("TOPLEFT", MonDKP.ChangeLogDisplay, "TOPLEFT", 10, -10);
+    MonDKP.ChangeLogDisplay.ChangeLogHeader:SetText("Monolith DKP Change Log");
+
+    MonDKP.ChangeLogDisplay.Notes = MonDKP.ChangeLogDisplay:CreateFontString(nil, "OVERLAY")   -- Filters header
+    MonDKP.ChangeLogDisplay.Notes:ClearAllPoints();
+    MonDKP.ChangeLogDisplay.Notes:SetWidth(780)
+    MonDKP.ChangeLogDisplay.Notes:SetFontObject("MonDKPNormalLeft")
+    MonDKP.ChangeLogDisplay.Notes:SetPoint("TOPLEFT", MonDKP.ChangeLogDisplay.ChangeLogHeader, "BOTTOMLEFT", 0, -10);
+
+    MonDKP.ChangeLogDisplay.VerNumber = MonDKP.ChangeLogDisplay:CreateFontString(nil, "OVERLAY")   -- Filters header
+    MonDKP.ChangeLogDisplay.VerNumber:ClearAllPoints();
+    MonDKP.ChangeLogDisplay.VerNumber:SetWidth(780)
+    MonDKP.ChangeLogDisplay.VerNumber:SetScale(0.8)
+    MonDKP.ChangeLogDisplay.VerNumber:SetFontObject("MonDKPLargeLeft")
+    MonDKP.ChangeLogDisplay.VerNumber:SetPoint("TOPLEFT", MonDKP.ChangeLogDisplay.Notes, "BOTTOMLEFT", 35, -10);
+
+    MonDKP.ChangeLogDisplay.ChangeLogText = MonDKP.ChangeLogDisplay:CreateFontString(nil, "OVERLAY")   -- Filters header
+    MonDKP.ChangeLogDisplay.ChangeLogText:ClearAllPoints();
+    MonDKP.ChangeLogDisplay.ChangeLogText:SetWidth(780)
+    MonDKP.ChangeLogDisplay.ChangeLogText:SetFontObject("MonDKPNormalLeft")
+    MonDKP.ChangeLogDisplay.ChangeLogText:SetPoint("TOPLEFT", MonDKP.ChangeLogDisplay.VerNumber, "BOTTOMLEFT", -15, -0);
+
+    -- Change Log Close Button
+    MonDKP.ChangeLogDisplay.closeContainer = CreateFrame("Frame", "MonDKPChangeLogClose", MonDKP.ChangeLogDisplay)
+    MonDKP.ChangeLogDisplay.closeContainer:SetPoint("CENTER", MonDKP.ChangeLogDisplay, "TOPRIGHT", -4, 0)
+    MonDKP.ChangeLogDisplay.closeContainer:SetBackdrop({
+      bgFile   = "Textures\\white.blp", tile = true,
+      edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
+    });
+    MonDKP.ChangeLogDisplay.closeContainer:SetBackdropColor(0,0,0,0.9)
+    MonDKP.ChangeLogDisplay.closeContainer:SetBackdropBorderColor(1,1,1,0.2)
+    MonDKP.ChangeLogDisplay.closeContainer:SetSize(28, 28)
+
+    MonDKP.ChangeLogDisplay.closeBtn = CreateFrame("Button", nil, MonDKP.ChangeLogDisplay, "UIPanelCloseButton")
+    MonDKP.ChangeLogDisplay.closeBtn:SetPoint("CENTER", MonDKP.ChangeLogDisplay.closeContainer, "TOPRIGHT", -14, -14)
+
+    MonDKP.ChangeLogDisplay.DontShowCheck = CreateFrame("CheckButton", nil, MonDKP.ChangeLogDisplay, "UICheckButtonTemplate");
+    MonDKP.ChangeLogDisplay.DontShowCheck:SetChecked(false)
+    MonDKP.ChangeLogDisplay.DontShowCheck:SetScale(0.6);
+    MonDKP.ChangeLogDisplay.DontShowCheck.text:SetText("  |cff5151de"..L["DontShow"].."|r");
+    MonDKP.ChangeLogDisplay.DontShowCheck.text:SetScale(1.5);
+    MonDKP.ChangeLogDisplay.DontShowCheck.text:SetFontObject("MonDKPSmallLeft")
+    MonDKP.ChangeLogDisplay.DontShowCheck:SetPoint("BOTTOMLEFT", MonDKP.ChangeLogDisplay, "BOTTOMLEFT", 10, 10);
+    MonDKP.ChangeLogDisplay.DontShowCheck:SetScript("OnClick", function(self)
+      if self:GetChecked() then
+        MonDKP_DB.defaults.HideChangeLogs = core.BuildNumber
+      else
+        MonDKP_DB.defaults.HideChangeLogs = 0
+      end
+    end)
+
+    MonDKP.ChangeLogDisplay.Notes:SetText("|CFFAEAEDD"..L["BestPractices"].."|r")
+    MonDKP.ChangeLogDisplay.VerNumber:SetText(core.MonVersion)
+
+    --------------------------------------
+    -- ChangeLog variable calls (bottom of localization files)
+    --------------------------------------
+    MonDKP.ChangeLogDisplay.ChangeLogText:SetText(L["ChangeLog1"].."\n\n"..L["ChangeLog2"].."\n\n"..L["ChangeLog3"].."\n\n"..L["ChangeLog4"].."\n\n"..L["ChangeLog5"].."\n\n"..L["ChangeLog6"].."\n\n"..L["ChangeLog7"].."\n\n"..L["ChangeLog8"].."\n\n"..L["ChangeLog9"].."\n\n"..L["ChangeLog10"]);
+  end
 
   ---------------------------------------
   -- VERSION IDENTIFIER

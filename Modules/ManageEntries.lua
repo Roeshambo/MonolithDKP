@@ -81,7 +81,7 @@ function AddRaidToDKPTable()
 		local addedUsers, c
 		local numPlayers = 0;
 		local guildSize = GetNumGuildMembers();
-		local name;
+		local name, rank, rankIndex;
 		local InGuild = false; -- Only adds player to list if the player is found in the guild roster.
 		local GroupSize;
 
@@ -94,7 +94,7 @@ function AddRaidToDKPTable()
 		for i=1, GroupSize do
 			tempName,_,_,_,_,tempClass = GetRaidRosterInfo(i)
 			for j=1, guildSize do
-				name = GetGuildRosterInfo(j)
+				name, rank, rankIndex = GetGuildRosterInfo(j)
 				name = strsub(name, 1, string.find(name, "-")-1)						-- required to remove server name from player (can remove in classic if this is not an issue)
 				if name == tempName then
 					InGuild = true;
@@ -109,6 +109,8 @@ function AddRaidToDKPTable()
 						previous_dkp=0,
 						lifetime_gained = 0,
 						lifetime_spent = 0,
+						rank = rankIndex,
+						rankName = rank,
 					});
 					numPlayers = numPlayers + 1;
 					c = MonDKP:GetCColors(tempClass)
@@ -138,11 +140,11 @@ end
 
 local function AddGuildToDKPTable(rank)
 	local guildSize = GetNumGuildMembers();
-	local class, addedUsers, c, name, rankIndex;
+	local class, addedUsers, c, name, rankName, rankIndex;
 	local numPlayers = 0;
 
 	for i=1, guildSize do
-		name,_,rankIndex,_,_,_,_,_,_,_,class = GetGuildRosterInfo(i)
+		name,rankName,rankIndex,_,_,_,_,_,_,_,class = GetGuildRosterInfo(i)
 		name = strsub(name, 1, string.find(name, "-")-1)			-- required to remove server name from player (can remove in classic if this is not an issue)
 		local search = MonDKP:Table_Search(MonDKP_DKPTable, name)
 
@@ -154,6 +156,8 @@ local function AddGuildToDKPTable(rank)
 				previous_dkp=0,
 				lifetime_gained = 0,
 				lifetime_spent = 0,
+				rank=rank,
+				rankName=rankName,
 			});
 			numPlayers = numPlayers + 1;
 			c = MonDKP:GetCColors(class)
@@ -190,6 +194,8 @@ local function AddTargetToDKPTable()
 			previous_dkp=0,
 			lifetime_gained = 0,
 			lifetime_spent = 0,
+			rank=20,
+			rankName="None",
 		});
 
 		MonDKP:FilterDKPTable(core.currentSort, "reset")
@@ -635,7 +641,19 @@ function MonDKP:ManageEntries()
 		MonDKP.ConfigTab3.WhitelistContainer:Hide()
 	end
 
+	local function SendDKPHistoryTable()
+		MonDKP.Sync:SendData("MonDKPBroadcast", L["DKPHistUPdateProg"].."...")
+		MonDKP.Sync:SendData("MonDKPDKPLogSync", MonDKP_DKPHistory)
+	end
 
+	local function SendLootHistoryTable()
+		MonDKP.Sync:SendData("MonDKPBroadcast", L["LootHistUpdateProg"].."...")
+		MonDKP.Sync:SendData("MonDKPLogSync", MonDKP_Loot)
+
+		C_Timer.After(3, function ()
+			SendDKPHistoryTable()
+		end)
+	end
 
 	-- Broadcast DKP Button
 	MonDKP.ConfigTab3.broadcastButton = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab3, "BOTTOMLEFT", 15, 15, L["BCastDKPTableBtn"]);
@@ -646,7 +664,25 @@ function MonDKP:ManageEntries()
 			button1 = L["YES"],
 			button2 = L["NO"],
 			OnAccept = function()
-			    MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
+				MonDKP:SeedVerify_Update()
+				if core.UpToDate and core.IsOfficer then
+				    MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
+				    core.CurrentlySyncing = true;
+
+				    C_Timer.After(3, function ()
+						SendLootHistoryTable()
+					end)
+				else
+					StaticPopupDialogs["BLOCK_BCAST"] = {
+						text = L["BlockOODBroadcast"],
+						button1 = L["OK"],
+						timeout = 0,
+						whileDead = true,
+						hideOnEscape = true,
+						preferredIndex = 3,
+					}
+					StaticPopup_Show ("BLOCK_BCAST")
+				end
 			end,
 			timeout = 0,
 			whileDead = true,
@@ -654,46 +690,6 @@ function MonDKP:ManageEntries()
 			preferredIndex = 3,
 		}
 		StaticPopup_Show ("BROADCAST_DKP")
-	end)
-
-	-- Broadcast Loot History Button
-	MonDKP.ConfigTab3.broadcastLootButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3.broadcastButton, "TOPRIGHT", 10, 0, L["BcastLootHistBtn"]);
-	MonDKP.ConfigTab3.broadcastLootButton:SetSize(140,25)
-	MonDKP.ConfigTab3.broadcastLootButton:SetScript("OnClick", function()
-		StaticPopupDialogs["BROADCAST_LOOT"] = {
-			text = L["BcastLootTableConf"],
-			button1 = L["YES"],
-			button2 = L["NO"],
-			OnAccept = function()
-			    MonDKP.Sync:SendData("MonDKPBroadcast", L["LootHistUpdateProg"].."...")
-				MonDKP.Sync:SendData("MonDKPLogSync", MonDKP_Loot)
-			end,
-			timeout = 0,
-			whileDead = true,
-			hideOnEscape = true,
-			preferredIndex = 3,
-		}
-		StaticPopup_Show ("BROADCAST_LOOT")
-	end)
-
-	-- Broadcast DKP History Button
-	MonDKP.ConfigTab3.broadcastDKPButton = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3.broadcastLootButton, "TOPRIGHT", 10, 0, L["BcastDKPHistBtn"]);
-	MonDKP.ConfigTab3.broadcastDKPButton:SetSize(140,25)
-	MonDKP.ConfigTab3.broadcastDKPButton:SetScript("OnClick", function()
-		StaticPopupDialogs["BROADCAST_DKPHIST"] = {
-			text = L["BcastDKPHistConf"],
-			button1 = "Yes",
-			button2 = "No",
-			OnAccept = function()
-			    MonDKP.Sync:SendData("MonDKPBroadcast", L["DKPHistUPdateProg"].."...")
-				MonDKP.Sync:SendData("MonDKPDKPLogSync", MonDKP_DKPHistory)
-			end,
-			timeout = 0,
-			whileDead = true,
-			hideOnEscape = true,
-			preferredIndex = 3,
-		}
-		StaticPopup_Show ("BROADCAST_DKPHIST")
 	end)
 
 	MonDKP.ConfigTab3.BroadcastHeader = MonDKP.ConfigTab3:CreateFontString(nil, "OVERLAY")   -- Filters header

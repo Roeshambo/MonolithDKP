@@ -78,7 +78,10 @@ local function AwardRaid(amount, reason)
 	if tempList ~= "" then
 		tinsert(MonDKP_DKPHistory, {players=tempList, dkp=amount, reason=reason, date=curTime})
 
-		MonDKP:UpdateSeeds()
+		MonDKP:SeedVerify_Update()
+		if core.UpToDate and core.IsOfficer then -- updates seeds only if table is currently up to date.
+			MonDKP:UpdateSeeds()
+		end
 		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
 		if MonDKP.ConfigTab6.history then
 			MonDKP:DKPHistory_Reset()

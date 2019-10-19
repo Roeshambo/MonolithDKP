@@ -23,6 +23,7 @@ end
 local function Roll_OnEvent(self, event, arg1, ...)
 	if event == "CHAT_MSG_SYSTEM" and core.BidInProgress then
 
+		if GetLocale() == 'deDE' then RANDOM_ROLL_RESULT = "%s w\195\188rfelt. Ergebnis: %d (%d-%d)" end
 		local pattern = string.gsub(RANDOM_ROLL_RESULT, "[%(%)-]", "%%%1")
 		pattern = string.gsub(pattern, "%%s", "(.+)")
 		pattern = string.gsub(pattern, "%%d", "%(%%d+%)")
@@ -30,16 +31,20 @@ local function Roll_OnEvent(self, event, arg1, ...)
 		for name, roll, low, high in string.gmatch(arg1, pattern) do
 			local search = MonDKP:Table_Search(MonDKP_DKPTable, name)
 
-			if mode == "Roll Based Bidding" and core.BiddingWindow.cost:GetNumber() > MonDKP_DKPTable[search[1][1]].dkp and not MonDKP_DB.modes.SubZeroBidding and MonDKP_DB.modes.costvalue ~= "Percent" then
+			if search and mode == "Roll Based Bidding" and core.BiddingWindow.cost:GetNumber() > MonDKP_DKPTable[search[1][1]].dkp and not MonDKP_DB.modes.SubZeroBidding and MonDKP_DB.modes.costvalue ~= "Percent" then
         		SendChatMessage(L["RollNotAccepted"].." "..MonDKP_DKPTable[search[1][1]].dkp.." "..L["DKP"]..".", "WHISPER", nil, name)
 
         		return;
             end
 
-			if not MonDKP:Table_Search(Bids_Submitted, name) then
+			if not MonDKP:Table_Search(Bids_Submitted, name) and search then
 				table.insert(Bids_Submitted, {player=name, roll=roll, range=" ("..low.."-"..high..")"})
 			else
-				SendChatMessage(L["OnlyOneRollWarn"], "WHISPER", nil, name)
+				if not search then
+					SendChatMessage(L["NameNotFound"], "WHISPER", nil, name)
+				else
+					SendChatMessage(L["OnlyOneRollWarn"], "WHISPER", nil, name)
+				end
 			end
 			BidScrollFrame_Update()
 		end
@@ -462,7 +467,7 @@ function ClearBidWindow()
 	end
 end
 
-local function AwardItem()
+--[[local function AwardItem()   			-- function no longer in use.
 	local cost;
 	local winner;
 	local curTime;
@@ -499,7 +504,7 @@ local function AwardItem()
 							local search = MonDKP:Table_Search(MonDKP_DKPTable, winner);
 
 							if search then
-								cost = MonDKP_round(MonDKP_DKPTable[search[1][1]].dkp * (cost / 100), MonDKP_DB.modes.rounding);
+								cost = MonDKP_round(MonDKP_DKPTable[search[1][1]]--[[.dkp * (cost / 100), MonDKP_DB.modes.rounding);
 							else
 								print(L["Error"])
 							end
@@ -549,8 +554,8 @@ local function AwardItem()
 								core.BiddingWindow.CustomMinBid:SetShown(true);
 							 	core.BiddingWindow.CustomMinBid:SetChecked(true);
 							elseif search and core.BiddingWindow.cost:GetText() ~= tonumber(val) and core.BiddingWindow.CustomMinBid:GetChecked() == true then
-								if MonDKP_MinBids[search[1][1]].minbid ~= core.BiddingWindow.cost:GetText() then
-									MonDKP_MinBids[search[1][1]].minbid = MonDKP_round(core.BiddingWindow.cost:GetNumber(), MonDKP_DB.modes.rounding);
+								if MonDKP_MinBids[search[1][1]]--[[.minbid ~= core.BiddingWindow.cost:GetText() then
+									MonDKP_MinBids[search[1][1]]--[[.minbid = MonDKP_round(core.BiddingWindow.cost:GetNumber(), MonDKP_DB.modes.rounding);
 									core.BiddingWindow.CustomMinBid:SetShown(true);
 							 		core.BiddingWindow.CustomMinBid:SetChecked(true);
 								end
@@ -611,7 +616,7 @@ local function AwardItem()
 					local search = MonDKP:Table_Search(MonDKP_DKPTable, winner);
 
 					if search then
-						cost = MonDKP_round(MonDKP_DKPTable[search[1][1]].dkp * (cost / 100), MonDKP_DB.modes.rounding);
+						cost = MonDKP_round(MonDKP_DKPTable[search[1][1]]--[[.dkp * (cost / 100), MonDKP_DB.modes.rounding);
 					else
 						print(L["Error"])
 					end
@@ -662,8 +667,8 @@ local function AwardItem()
 						core.BiddingWindow.CustomMinBid:SetShown(true);
 					 	core.BiddingWindow.CustomMinBid:SetChecked(true);
 					elseif search and core.BiddingWindow.cost:GetText() ~= tonumber(val) and core.BiddingWindow.CustomMinBid:GetChecked() == true then
-						if MonDKP_MinBids[search[1][1]].minbid ~= core.BiddingWindow.cost:GetText() then
-							MonDKP_MinBids[search[1][1]].minbid = MonDKP_round(core.BiddingWindow.cost:GetNumber(), MonDKP_DB.modes.rounding);
+						if MonDKP_MinBids[search[1][1]]--[[.minbid ~= core.BiddingWindow.cost:GetText() then
+							MonDKP_MinBids[search[1][1]]--[[.minbid = MonDKP_round(core.BiddingWindow.cost:GetNumber(), MonDKP_DB.modes.rounding);
 							core.BiddingWindow.CustomMinBid:SetShown(true);
 					 		core.BiddingWindow.CustomMinBid:SetChecked(true);
 						end
@@ -694,7 +699,7 @@ local function AwardItem()
 			StaticPopup_Show ("CONFIRM_AWARD")
 		end
 	end
-end
+end--]]
 
 function MonDKP:BroadcastBidTimer(seconds, title, itemIcon)       -- broadcasts timer and starts it natively
 	local title = title;

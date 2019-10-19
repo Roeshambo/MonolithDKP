@@ -58,18 +58,20 @@ function MonDKP.Sync:OnEnable()
 	MonDKP.Sync:RegisterComm("MonDKPZeroSum", MonDKP.Sync:OnCommReceived())			-- broadcasts ZeroSum Bank
 	MonDKP.Sync:RegisterComm("MonDKPTableCheck", MonDKP.Sync:OnCommReceived())		-- broadcasts Check for updated tables
 	MonDKP.Sync:RegisterComm("MonDKPBuildCheck", MonDKP.Sync:OnCommReceived())		-- broadcasts Addon build number to inform others an update is available.
+	MonDKP.Sync:RegisterComm("MonDKPTalCheck", MonDKP.Sync:OnCommReceived())		-- broadcasts Addon build number to inform others an update is available.
 end
 
 function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 	if (prefix) then
 		if prefix == "MonDKPTableCheck" then
+			MonDKP:CheckOfficer()
 			if message == "DKPTableUpdateCheck" and core.IsOfficer then
 				local tableCheck = MonDKP:SeedVerify_Update()
 				MonDKP.Sync:SendData("MonDKPTableCheck", sender..","..tostring(tableCheck))
 			elseif message == "DKPTableUpdateCheck" and core.IsOfficer == false then
 				local tableCheck = MonDKP:SeedVerify_Update()
 
-				if tableCheck == false then
+				if tableCheck then
 					MonDKP.Sync:SendData("MonDKPTableCheck", sender..","..tostring(tableCheck).." nonofficer")
 				end
 			else
@@ -79,9 +81,27 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 					table.insert(core.UpdateCheck.OOD, sender)
 				elseif message == "false nonofficer" then
 					table.insert(core.UpdateCheck.nonofficer, sender)
+				elseif message == "true nonofficer" then
+					table.insert(core.UpdateCheck.nonofficer_updated, sender)
 				end
-			end	
+			end
+			-- talents check
+			local TalTrees={}; table.insert(TalTrees, {GetTalentTabInfo(1)}); table.insert(TalTrees, {GetTalentTabInfo(2)}); table.insert(TalTrees, {GetTalentTabInfo(3)}); 
+			local talBuild = "("..TalTrees[1][3].."/"..TalTrees[2][3].."/"..TalTrees[3][3]..")"
+			table.sort(TalTrees, function(a, b)
+				return a[3] > b[3]
+			end)
+			talBuild = TalTrees[1][1].." "..talBuild;
+			
+			MonDKP.Sync:SendData("MonDKPTalCheck", talBuild)
+			table.wipe(TalTrees);
 			return;
+		elseif prefix == "MonDKPTalCheck" then
+			local search = MonDKP:Table_Search(MonDKP_DKPTable, sender)
+
+			if search then
+				MonDKP_DKPTable[search[1][1]].spec = message;
+			end
 		elseif prefix == "MonDKPBuildCheck" and sender ~= UnitName("player") then
 			local LastVerCheck = time() - core.LastVerCheck;
 
@@ -268,7 +288,17 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								StaticPopup_Show ("CONFIRM_LOOT_BCAST1")
 							else
 								MonDKP:SortLootTable()
-								table.remove(MonDKP_Loot, deserialized[1])
+
+								if MonDKP_Loot[deserialized[1]] and MonDKP_Loot[deserialized[1]].date == deserialized[2] then	
+									table.remove(MonDKP_Loot, deserialized[1])
+								else
+									for i=1, #MonDKP_Loot do
+										if MonDKP_Loot[i].date == deserialized[2] then
+											table.remove(MonDKP_Loot, i)
+											break;
+										end
+									end
+								end
 								MonDKP_Loot.seed = deserialized.seed
 								MonDKP_DKPHistory.seed = deserialized.seed
 								MonDKP_DKPTable.seed = deserialized.seed
@@ -316,6 +346,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 									button1 = L["YES"],
 									button2 = L["NO"],
 									OnAccept = function()
+										MonDKP:SortDKPHistoryTable()
 										table.remove(MonDKP_DKPHistory, deserialized[1])
 										if MonDKP.ConfigTab6.history then
 											MonDKP:DKPHistory_Reset()
@@ -330,7 +361,17 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								}
 								StaticPopup_Show ("CONFIRM_DKP_DELETE_BCAST")
 							else
-								table.remove(MonDKP_DKPHistory, deserialized[1])
+								MonDKP:SortDKPHistoryTable()
+								if MonDKP_DKPHistory[deserialized[1]].date == deserialized[2] then	
+									table.remove(MonDKP_DKPHistory, deserialized[1])
+								else
+									for i=1, #MonDKP_DKPHistory do
+										if MonDKP_DKPHistory[i].date == deserialized[2] then
+											table.remove(MonDKP_DKPHistory, i)
+											break;
+										end
+									end
+								end
 								MonDKP_Loot.seed = deserialized.seed
 								MonDKP_DKPHistory.seed = deserialized.seed
 								MonDKP_DKPTable.seed = deserialized.seed
@@ -419,6 +460,18 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 			end
 			if (sender == UnitName("player") and prefix == "MonDKPDKPLogSync") then
 				MonDKP:Print(L["DKPHistCastComp"])
+				StaticPopupDialogs["BCAST_COMP"] = {
+					text = L["BcastCompleted"],
+					button1 = L["OK"],
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopup_Show ("BCAST_COMP")
+				if core.CurrentlySyncing then
+					core.CurrentlySyncing = false;
+				end
 			end
 		else
 			MonDKP:CheckOfficer()
@@ -432,14 +485,14 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				end
 				MonDKP:Print(msg)
 				StaticPopupDialogs["MODIFY_WARNING"] = {
-				text = msg,
-				button1 = L["OK"],
-				timeout = 0,
-				whileDead = true,
-				hideOnEscape = true,
-				preferredIndex = 3,
-			}
-			StaticPopup_Show ("MODIFY_WARNING")
+					text = msg,
+					button1 = L["OK"],
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopup_Show ("MODIFY_WARNING")
 			end
 		end
 	end
@@ -453,6 +506,9 @@ function MonDKP.Sync:SendData(prefix, data)
 		elseif prefix == "MonDKPTableCheck" and data ~= "DKPTableUpdateCheck" then
 			local sender, response = strsplit(",", data, 2)
 			MonDKP.Sync:SendCommMessage(prefix, response, "WHISPER", sender)
+			return;
+		elseif prefix == "MonDKPTalCheck" then
+			MonDKP.Sync:SendCommMessage(prefix, data, "GUILD")
 			return;
 		end
 	end

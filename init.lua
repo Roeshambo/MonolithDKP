@@ -284,7 +284,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 	elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then 		-- logs last 15 NPCs killed while in raid
 		if IsInRaid() then 					-- only processes combat log events if in raid
 			local _,arg1,_,_,_,_,_,arg2,arg3 = CombatLogGetCurrentEventInfo();
-			if arg1 == "UNIT_DIED" and (not strfind(arg2, "Player") or not strfind(arg2, "Pet-")) then
+			if arg1 == "UNIT_DIED" and not strfind(arg2, "Player") and not strfind(arg2, "Pet-") then
 				MonDKP:CheckOfficer()
 				if core.IsOfficer then
 					if not MonDKP:Table_Search(MonDKP_DB.bossargs.LastKilledNPC, arg3) then 	-- only adds it if it doesn't already exist in the table
@@ -385,6 +385,14 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_DB.modes.rolls or not MonDKP_DB.modes.rolls.min then MonDKP_DB.modes.rolls = { min = 1, max = 100, UsePerc = false, AddToMax = 0 } end
 		if not MonDKP_DB.bossargs.LastKilledNPC then MonDKP_DB.bossargs.LastKilledNPC = {} end
 		if not MonDKP_DB.bossargs.RecentZones then MonDKP_DB.bossargs.RecentZones = {} end
+		if not MonDKP_DB.defaults.HideChangeLogs then MonDKP_DB.defaults.HideChangeLogs = 0 end
+
+		for i=1, #MonDKP_DKPTable do
+			if not MonDKP_DKPTable[i].rank or not MonDKP_DKPTable[i].rankName or MonDKP_DKPTable[i].rank == "None" then
+				MonDKP_DKPTable[i].rank = 20
+				MonDKP_DKPTable[i].rankName = "None"
+			end
+		end
 
 	    ------------------------------------
 	    --	Import SavedVariables

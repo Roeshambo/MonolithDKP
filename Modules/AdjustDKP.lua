@@ -6,6 +6,18 @@ local L = core.L;
 local curReason;
 
 local function AdjustDKP()
+	if core.CurrentlySyncing then
+		StaticPopupDialogs["CURRENTLY_SYNC"] = {
+			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CurrentlySyncing"],
+			button1 = L["OK"],
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = true,
+			preferredIndex = 3,
+		}
+		StaticPopup_Show ("CURRENTLY_SYNC")
+		return;
+	end
 	local adjustReason = curReason;
 	local c = MonDKP:GetCColors();
 	local curTime = time()

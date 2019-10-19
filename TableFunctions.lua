@@ -255,6 +255,7 @@ function MonDKP:ViewLimited(raid, standby, raiders)
   elseif core.CurView == "limited" then
     core.WorkingTable = CopyTable(MonDKP_DKPTable)
     core.CurView = "all"
+    core.CurSubView = "all"
     for i=1, 9 do
       MonDKP.ConfigTab1.checkBtn[i]:SetChecked(true)
     end
@@ -293,6 +294,7 @@ local function RightClickMenu(self)
           { text = L["ViewRaid"], notCheckable = true, keepShownOnClick = false; func = function()
             MonDKP:ViewLimited(true)
             core.CurSubView = "raid"
+            MonDKP.ConfigTab1.checkBtn[10]:SetChecked(true);
             ToggleDropDownMenu(nil, nil, menuFrame)
           end },
           { text = L["ViewStandby"], notCheckable = true, func = function()
@@ -312,8 +314,10 @@ local function RightClickMenu(self)
             ToggleDropDownMenu(nil, nil, menuFrame)
           end },
           { text = L["ViewAll"], notCheckable = true, func = function()
+            MonDKP.ConfigTab1.checkBtn[10]:SetChecked(false);
+            MonDKP.ConfigTab1.checkBtn[11]:SetChecked(false);
+            MonDKP.ConfigTab1.checkBtn[12]:SetChecked(false);
             MonDKP:ViewLimited()
-            core.CurSubView = "all"
             ToggleDropDownMenu(nil, nil, menuFrame, nil, nil, nil, nil, nil)
           end },
       }
@@ -571,7 +575,7 @@ function DKPTable_Update()
   local numOptions = #core.WorkingTable
   local index, row, c
   local offset = FauxScrollFrame_GetOffset(MonDKP.DKPTable) or 0
-  local rank;
+  local rank, rankIndex;
 
   for i=1, core.TableNumRows do     -- hide all rows before displaying them 1 by 1 as they show values
     row = MonDKP.DKPTable.Rows[i];
@@ -585,15 +589,34 @@ function DKPTable_Update()
     index = offset + i
     if core.WorkingTable[index] then
       --if (tonumber(core.WorkingTable[index].dkp) < 0) then core.WorkingTable[index].dkp = 0 end           -- shows 0 if negative DKP
+
       c = MonDKP:GetCColors(core.WorkingTable[index].class);
       row:Show()
       row.index = index
       local CurPlayer = core.WorkingTable[index].player;
-      rank = MonDKP:GetGuildRank(core.WorkingTable[index].player) or "None"
-      row.DKPInfo[1]:SetText(core.WorkingTable[index].player.." |cff444444("..rank..")|r")
+      
+      if core.CenterSort == "rank" then
+        local SetRank = MonDKP:Table_Search(MonDKP_DKPTable, core.WorkingTable[index].player)
+        rank, rankIndex = MonDKP:GetGuildRank(core.WorkingTable[index].player)
+        MonDKP_DKPTable[SetRank[1][1]].rank = rankIndex or 20;
+        MonDKP_DKPTable[SetRank[1][1]].rankName = rank or "None";
+      end
+      row.DKPInfo[1]:SetText(core.WorkingTable[index].player)
       row.DKPInfo[1].rowCounter:SetText(index)
       row.DKPInfo[1]:SetTextColor(c.r, c.g, c.b, 1)
-      row.DKPInfo[2]:SetText(core.LocalClass[core.WorkingTable[index].class])
+      
+      if core.CenterSort == "class" then
+        row.DKPInfo[2]:SetText(core.LocalClass[core.WorkingTable[index].class])
+      elseif core.CenterSort == "rank" then
+        row.DKPInfo[2]:SetText(rank)
+      elseif core.CenterSort == "spec" then
+        if core.WorkingTable[index].spec then
+          row.DKPInfo[2]:SetText(core.WorkingTable[index].spec)
+        else
+          row.DKPInfo[2]:SetText("No Spec Reported")
+        end
+      end
+      
       row.DKPInfo[3]:SetText(MonDKP_round(core.WorkingTable[index].dkp, MonDKP_DB.modes.rounding))
       local CheckAdjusted = core.WorkingTable[index].dkp - core.WorkingTable[index].previous_dkp;
       if(CheckAdjusted > 0) then 
@@ -645,7 +668,7 @@ function DKPTable_Update()
         MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
       end
       if core.WorkingTable[index].player == UnitName("player") and #core.SelectedData == 0 then
-        row.DKPInfo[2]:SetText("|cff00ff00"..core.LocalClass[core.WorkingTable[index].class].."|r")
+        row.DKPInfo[2]:SetText("|cff00ff00"..row.DKPInfo[2]:GetText().."|r")
         row.DKPInfo[3]:SetText("|cff00ff00"..MonDKP_round(core.WorkingTable[index].dkp, MonDKP_DB.modes.rounding).."|r")
         MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
       end

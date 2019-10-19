@@ -6,5 +6,3 @@ local L = core.L;
 core.LocalClass = {}
 
 FillLocalizedClassList(core.LocalClass)
-
--- more to be added for tooltips and descriptions

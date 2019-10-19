@@ -35,8 +35,21 @@ local function GetSortOptions()
 end
 
 local function DeleteLootHistoryEntry(target)
+	if core.CurrentlySyncing then
+		StaticPopupDialogs["CURRENTLY_SYNC"] = {
+			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CurrentlySyncing"],
+			button1 = L["OK"],
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = true,
+			preferredIndex = 3,
+		}
+		StaticPopup_Show ("CURRENTLY_SYNC")
+		return;
+	end
 	local search = MonDKP:Table_Search(MonDKP_Loot, target["date"]);
 	local search_player = MonDKP:Table_Search(MonDKP_DKPTable, target["player"]);
+	local itemDate = target["date"];
 	
 	MonDKP:SeedVerify_Update()
 	if core.UpToDate == false and core.IsOfficer == true then
@@ -75,8 +88,10 @@ local function DeleteLootHistoryEntry(target)
 			table.remove(MonDKP_Loot, search[1][1])
 		end
 
-		MonDKP:UpdateSeeds()
-		MonDKP.Sync:SendData("MonDKPDeleteLoot", {seed = MonDKP_Loot.seed, search[1][1]})
+		if core.UpToDate and core.IsOfficer then -- updates seeds only if table is currently up to date.
+			MonDKP:UpdateSeeds()
+		end
+		MonDKP.Sync:SendData("MonDKPDeleteLoot", {seed = MonDKP_Loot.seed, search[1][1], itemDate})
 		MonDKP:SortLootTable()
 		DKPTable_Update()
 		MonDKP:LootHistory_Update("No Filter");
@@ -85,6 +100,18 @@ local function DeleteLootHistoryEntry(target)
 end
 
 local function ReassignLootEntry(entry)
+	if core.CurrentlySyncing then
+		StaticPopupDialogs["CURRENTLY_SYNC"] = {
+			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CurrentlySyncing"],
+			button1 = L["OK"],
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = true,
+			preferredIndex = 3,
+		}
+		StaticPopup_Show ("CURRENTLY_SYNC")
+		return;
+	end
 	if entry.player ~= core.SelectedData[1].player then
 		MonDKP:SeedVerify_Update()
 		if core.UpToDate == false and core.IsOfficer == true then
@@ -167,6 +194,18 @@ local function ReassignLootEntry(entry)
 end
 
 local function ReassignLootEntryConfirmation(entry)
+	if core.CurrentlySyncing then
+		StaticPopupDialogs["CURRENTLY_SYNC"] = {
+			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CurrentlySyncing"],
+			button1 = L["OK"],
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = true,
+			preferredIndex = 3,
+		}
+		StaticPopup_Show ("CURRENTLY_SYNC")
+		return;
+	end
 	local cl
 	local c = MonDKP:GetCColors(core.SelectedData[1].class);
 	local search = MonDKP:Table_Search(MonDKP_DKPTable, MonDKP_Loot[entry]["player"])

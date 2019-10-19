@@ -183,6 +183,18 @@ local function AwardConfirm_Create()
 end
 
 function MonDKP:AwardConfirm(player, cost, boss, zone, loot)
+  if core.CurrentlySyncing then
+    StaticPopupDialogs["CURRENTLY_SYNC"] = {
+      text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CurrentlySyncing"],
+      button1 = L["OK"],
+      timeout = 0,
+      whileDead = true,
+      hideOnEscape = true,
+      preferredIndex = 3,
+    }
+    StaticPopup_Show ("CURRENTLY_SYNC")
+    return;
+  end
   local _,_,_,_,_,_,_,_,_,itemIcon = GetItemInfo(loot)
   local curBoss, curZone = boss, zone
   local class;

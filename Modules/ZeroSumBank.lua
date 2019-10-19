@@ -4,7 +4,19 @@ local MonDKP = core.MonDKP;
 local L = core.L;
 
 local function ZeroSumDistribution()
-	--if IsInRaid() then
+	if core.CurrentlySyncing then
+		StaticPopupDialogs["CURRENTLY_SYNC"] = {
+			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CurrentlySyncing"],
+			button1 = L["OK"],
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = true,
+			preferredIndex = 3,
+		}
+		StaticPopup_Show ("CURRENTLY_SYNC")
+		return;
+	end
+	if IsInRaid() then
 		local curTime = time();
 		local distribution;
 		local reason = MonDKP_DB.bossargs.CurrentRaidZone..": "..MonDKP_DB.bossargs.LastKilledBoss
@@ -38,8 +50,11 @@ local function ZeroSumDistribution()
 				players = players..name..","
 			end
 		end
-
-		MonDKP:UpdateSeeds()
+		
+		MonDKP:SeedVerify_Update()
+		if core.UpToDate and core.IsOfficer then -- updates seeds only if table is currently up to date.
+			MonDKP:UpdateSeeds()
+		end
 		tinsert(MonDKP_DKPHistory, {players=players, dkp=distribution, reason=reason, date=curTime})
 		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
 		if MonDKP.ConfigTab6.history then
@@ -61,9 +76,9 @@ local function ZeroSumDistribution()
 		MonDKP.Sync:SendData("MonDKPZeroSum", MonDKP_DB.modes.ZeroSumBank)
 		MonDKP:ZeroSumBank_Update()
 		core.ZeroSumBank:Hide();
-	--[[else
+	else
 		MonDKP:Print(L["NotInRaidParty"])
-	end--]]
+	end
 end
 
 function MonDKP:ZeroSumBank_Update()
