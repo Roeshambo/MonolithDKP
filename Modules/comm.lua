@@ -69,10 +69,10 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				MonDKP:CheckOfficer()
 				if core.IsOfficer then
 					local tableCheck = MonDKP:SeedVerify_Update()
-					MonDKP.Sync:SendData("MonDKPTableCheck", sender..","..tostring(tableCheck))
-				elseif core.IsOfficer == false then
+					MonDKP.Sync:SendData("MonDKPTableCheck", sender..","..tostring(core.UpToDate))
+				else
 					local tableCheck = MonDKP:SeedVerify_Update()
-					MonDKP.Sync:SendData("MonDKPTableCheck", sender..","..tostring(tableCheck).." nonofficer")
+					MonDKP.Sync:SendData("MonDKPTableCheck", sender..","..tostring(core.UpToDate).." nonofficer")
 				end
 				-- talents check
 				local TalTrees={}; table.insert(TalTrees, {GetTalentTabInfo(1)}); table.insert(TalTrees, {GetTalentTabInfo(2)}); table.insert(TalTrees, {GetTalentTabInfo(3)}); 
@@ -102,6 +102,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 					table.insert(core.UpdateCheck.nonofficer_updated, sender)
 				end
 			end
+			return
 		elseif prefix == "MonDKPTalCheck" then
 			local search = MonDKP:Table_Search(MonDKP_DKPTable, sender)
 
@@ -109,6 +110,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				local curSelection = MonDKP_DKPTable[search[1][1]]
 				curSelection.spec = message;
 			end
+			return
 		elseif prefix == "MonDKPRoleCheck" then
 			local search = MonDKP:Table_Search(MonDKP_DKPTable, sender)
 			local curClass = "None";
@@ -165,6 +167,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 					curSelection.role = L["NoRoleDetected"]
 				end
 			end
+			return;
 		elseif prefix == "MonDKPBuildCheck" and sender ~= UnitName("player") then
 			local LastVerCheck = time() - core.LastVerCheck;
 
@@ -567,7 +570,7 @@ function MonDKP.Sync:SendData(prefix, data)
 			MonDKP.Sync:SendCommMessage(prefix, data, "GUILD")
 			return;
 		elseif prefix == "MonDKPTableCheck" and data ~= "DKPTableUpdateCheck" then
-			local sender, response = strsplit(",", data, 2)
+			local sender, response = strsplit(",", data)
 			MonDKP.Sync:SendCommMessage(prefix, response, "WHISPER", sender)
 			return;
 		elseif prefix == "MonDKPTalCheck" or prefix == "MonDKPRoleCheck" then
