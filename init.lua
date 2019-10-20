@@ -392,6 +392,12 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 				MonDKP_DKPTable[i].rank = 20
 				MonDKP_DKPTable[i].rankName = "None"
 			end
+			if not MonDKP_DKPTable[i].spec then
+				MonDKP_DKPTable[i].spec = L["NoSpecReported"]
+			end
+			if not MonDKP_DKPTable[i].role then
+				MonDKP_DKPTable[i].role = L["NoRoleDetected"]
+			end
 		end
 
 	    ------------------------------------

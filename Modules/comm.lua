@@ -58,22 +58,39 @@ function MonDKP.Sync:OnEnable()
 	MonDKP.Sync:RegisterComm("MonDKPZeroSum", MonDKP.Sync:OnCommReceived())			-- broadcasts ZeroSum Bank
 	MonDKP.Sync:RegisterComm("MonDKPTableCheck", MonDKP.Sync:OnCommReceived())		-- broadcasts Check for updated tables
 	MonDKP.Sync:RegisterComm("MonDKPBuildCheck", MonDKP.Sync:OnCommReceived())		-- broadcasts Addon build number to inform others an update is available.
-	MonDKP.Sync:RegisterComm("MonDKPTalCheck", MonDKP.Sync:OnCommReceived())		-- broadcasts Addon build number to inform others an update is available.
+	MonDKP.Sync:RegisterComm("MonDKPTalCheck", MonDKP.Sync:OnCommReceived())		-- broadcasts current spec
+	MonDKP.Sync:RegisterComm("MonDKPRoleCheck", MonDKP.Sync:OnCommReceived())		-- broadcasts current role info
 end
 
 function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 	if (prefix) then
 		if prefix == "MonDKPTableCheck" then
-			MonDKP:CheckOfficer()
-			if message == "DKPTableUpdateCheck" and core.IsOfficer then
-				local tableCheck = MonDKP:SeedVerify_Update()
-				MonDKP.Sync:SendData("MonDKPTableCheck", sender..","..tostring(tableCheck))
-			elseif message == "DKPTableUpdateCheck" and core.IsOfficer == false then
-				local tableCheck = MonDKP:SeedVerify_Update()
-
-				if tableCheck then
+			if message == "DKPTableUpdateCheck" then
+				MonDKP:CheckOfficer()
+				if core.IsOfficer then
+					local tableCheck = MonDKP:SeedVerify_Update()
+					MonDKP.Sync:SendData("MonDKPTableCheck", sender..","..tostring(tableCheck))
+				elseif core.IsOfficer == false then
+					local tableCheck = MonDKP:SeedVerify_Update()
 					MonDKP.Sync:SendData("MonDKPTableCheck", sender..","..tostring(tableCheck).." nonofficer")
 				end
+				-- talents check
+				local TalTrees={}; table.insert(TalTrees, {GetTalentTabInfo(1)}); table.insert(TalTrees, {GetTalentTabInfo(2)}); table.insert(TalTrees, {GetTalentTabInfo(3)}); 
+				local talBuild = "("..TalTrees[1][3].."/"..TalTrees[2][3].."/"..TalTrees[3][3]..")"
+				local talRole;
+
+				table.sort(TalTrees, function(a, b)
+					return a[3] > b[3]
+				end)
+				
+				talBuild = TalTrees[1][1].." "..talBuild;
+				talRole = TalTrees[1][4];
+				
+				MonDKP.Sync:SendData("MonDKPTalCheck", talBuild)
+				MonDKP.Sync:SendData("MonDKPRoleCheck", talRole)
+
+				table.wipe(TalTrees);
+				return;
 			else
 				if message == "true" then
 					table.insert(core.UpdateCheck.updated, sender)
@@ -85,22 +102,68 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 					table.insert(core.UpdateCheck.nonofficer_updated, sender)
 				end
 			end
-			-- talents check
-			local TalTrees={}; table.insert(TalTrees, {GetTalentTabInfo(1)}); table.insert(TalTrees, {GetTalentTabInfo(2)}); table.insert(TalTrees, {GetTalentTabInfo(3)}); 
-			local talBuild = "("..TalTrees[1][3].."/"..TalTrees[2][3].."/"..TalTrees[3][3]..")"
-			table.sort(TalTrees, function(a, b)
-				return a[3] > b[3]
-			end)
-			talBuild = TalTrees[1][1].." "..talBuild;
-			
-			MonDKP.Sync:SendData("MonDKPTalCheck", talBuild)
-			table.wipe(TalTrees);
-			return;
 		elseif prefix == "MonDKPTalCheck" then
 			local search = MonDKP:Table_Search(MonDKP_DKPTable, sender)
 
 			if search then
-				MonDKP_DKPTable[search[1][1]].spec = message;
+				local curSelection = MonDKP_DKPTable[search[1][1]]
+				curSelection.spec = message;
+			end
+		elseif prefix == "MonDKPRoleCheck" then
+			local search = MonDKP:Table_Search(MonDKP_DKPTable, sender)
+			local curClass = "None";
+
+			if search then
+				local curSelection = MonDKP_DKPTable[search[1][1]]
+				curClass = MonDKP_DKPTable[search[1][1]].class
+			
+				if curClass == "WARRIOR" then
+					if strfind(message, "Protection") then
+						curSelection.role = L["Tank"]
+					else
+						curSelection.role = L["MeleeDPS"]
+					end
+				elseif curClass == "PALADIN" then
+					if strfind(message, "Protection") then
+						curSelection.role = L["Tank"]
+					elseif strfind(message, "Holy") then
+						curSelection.role = L["Healer"]
+					else
+						curSelection.role = L["MeleeDPS"]
+					end
+				elseif curClass == "HUNTER" then
+					curSelection.role = L["RangeDPS"]
+				elseif curClass == "ROGUE" then
+					curSelection.role = L["MeleeDPS"]
+				elseif curClass == "PRIEST" then
+					if strfind(message, "Shadow") then
+						curSelection.role = L["CasterDPS"]
+					else
+						curSelection.role = L["Healer"]
+					end
+				elseif curClass == "SHAMAN" then
+					if strfind(message, "Restoration") then
+						curSelection.role = L["Healer"]
+					elseif strfind(message, "Elemental") then
+						curSelection.role = L["CasterDPS"]
+					else
+						curSelection.role = L["MeleeDPS"]
+					end
+				elseif curClass == "MAGE" then
+					curSelection.role = L["CasterDPS"]
+				elseif curClass == "WARLOCK" then
+					curSelection.role = L["CasterDPS"]
+				elseif curClass == "DRUID" then
+					if strfind(message, "Feral") then
+						curSelection.role = L["Tank"]
+					elseif strfind(message, "Balance") then
+						curSelection.role = L["CasterDPS"]
+					else
+						curSelection.role = L["Healer"]
+					end
+				else
+					curSelection.role = L["NoRoleDetected"]
+				end
 			end
 		elseif prefix == "MonDKPBuildCheck" and sender ~= UnitName("player") then
 			local LastVerCheck = time() - core.LastVerCheck;
@@ -507,7 +570,7 @@ function MonDKP.Sync:SendData(prefix, data)
 			local sender, response = strsplit(",", data, 2)
 			MonDKP.Sync:SendCommMessage(prefix, response, "WHISPER", sender)
 			return;
-		elseif prefix == "MonDKPTalCheck" then
+		elseif prefix == "MonDKPTalCheck" or prefix == "MonDKPRoleCheck" then
 			MonDKP.Sync:SendCommMessage(prefix, data, "GUILD")
 			return;
 		end

@@ -615,6 +615,8 @@ function DKPTable_Update()
         else
           row.DKPInfo[2]:SetText("No Spec Reported")
         end
+      elseif core.CenterSort == "role" then
+        row.DKPInfo[2]:SetText(core.WorkingTable[index].role)
       end
       
       row.DKPInfo[3]:SetText(MonDKP_round(core.WorkingTable[index].dkp, MonDKP_DB.modes.rounding))

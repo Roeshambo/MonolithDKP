@@ -113,7 +113,7 @@ end
 function MonDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable based on id passed. Avail IDs are "class", "player" and "dkp"
   local button;                                 -- passing "reset" forces it to do initial sort (A to Z repeatedly instead of A to Z then Z to A toggled)
 
-  if id == "class" or id == "rank" then
+  if id == "class" or id == "rank" or id == "role" then
     button = SortButtons.class
   elseif id == "spec" then                -- doesn't allow "spec" to be sorted.
     DKPTable_Update()
@@ -261,6 +261,8 @@ function MonDKP:CreateMenu()
     UIDropDownMenu_AddButton(reason)
     reason.text, reason.arg1, reason.arg2, reason.checked, reason.isNotRadio = L["Rank"], "rank", L["Rank"], "rank" == core.CenterSort, true
     UIDropDownMenu_AddButton(reason)
+    reason.text, reason.arg1, reason.arg2, reason.checked, reason.isNotRadio = L["Role"], "role", L["Role"], "role" == core.CenterSort, true
+    UIDropDownMenu_AddButton(reason)
   end)
 
   -- Dropdown Menu Function
@@ -376,10 +378,14 @@ function MonDKP:CreateMenu()
     MonDKP.ChangeLogDisplay:SetBackdropBorderColor(1,1,1,1)
     MonDKP.ChangeLogDisplay:SetFrameStrata("DIALOG")
     MonDKP.ChangeLogDisplay:SetFrameLevel(15)
+    MonDKP.ChangeLogDisplay:SetMovable(true);
+    MonDKP.ChangeLogDisplay:EnableMouse(true);
+    MonDKP.ChangeLogDisplay:RegisterForDrag("LeftButton");
+    MonDKP.ChangeLogDisplay:SetScript("OnDragStart", MonDKP.ChangeLogDisplay.StartMoving);
+    MonDKP.ChangeLogDisplay:SetScript("OnDragStop", MonDKP.ChangeLogDisplay.StopMovingOrSizing);
 
     MonDKP.ChangeLogDisplay.ChangeLogHeader = MonDKP.ChangeLogDisplay:CreateFontString(nil, "OVERLAY")   -- Filters header
     MonDKP.ChangeLogDisplay.ChangeLogHeader:ClearAllPoints();
-    MonDKP.ChangeLogDisplay.ChangeLogHeader:SetWidth(780)
     MonDKP.ChangeLogDisplay.ChangeLogHeader:SetFontObject("MonDKPLargeLeft")
     MonDKP.ChangeLogDisplay.ChangeLogHeader:SetPoint("TOPLEFT", MonDKP.ChangeLogDisplay, "TOPLEFT", 10, -10);
     MonDKP.ChangeLogDisplay.ChangeLogHeader:SetText("Monolith DKP Change Log");
@@ -423,7 +429,7 @@ function MonDKP:CreateMenu()
     MonDKP.ChangeLogDisplay.DontShowCheck.text:SetText("  |cff5151de"..L["DontShow"].."|r");
     MonDKP.ChangeLogDisplay.DontShowCheck.text:SetScale(1.5);
     MonDKP.ChangeLogDisplay.DontShowCheck.text:SetFontObject("MonDKPSmallLeft")
-    MonDKP.ChangeLogDisplay.DontShowCheck:SetPoint("BOTTOMLEFT", MonDKP.ChangeLogDisplay, "BOTTOMLEFT", 10, 10);
+    MonDKP.ChangeLogDisplay.DontShowCheck:SetPoint("LEFT", MonDKP.ChangeLogDisplay.ChangeLogHeader, "RIGHT", 10, 0);
     MonDKP.ChangeLogDisplay.DontShowCheck:SetScript("OnClick", function(self)
       if self:GetChecked() then
         MonDKP_DB.defaults.HideChangeLogs = core.BuildNumber

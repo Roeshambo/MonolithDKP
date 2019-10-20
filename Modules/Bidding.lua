@@ -23,7 +23,7 @@ end
 local function Roll_OnEvent(self, event, arg1, ...)
 	if event == "CHAT_MSG_SYSTEM" and core.BidInProgress then
 
-		if GetLocale() == 'deDE' then RANDOM_ROLL_RESULT = "%s w\195\188rfelt. Ergebnis: %d (%d-%d)" end
+		if GetLocale() == 'deDE' then RANDOM_ROLL_RESULT = "%s w\195\188rfelt. Ergebnis: %d (%d-%d)" end  -- corrects roll pattern for german clients
 		local pattern = string.gsub(RANDOM_ROLL_RESULT, "[%(%)-]", "%%%1")
 		pattern = string.gsub(pattern, "%%s", "(.+)")
 		pattern = string.gsub(pattern, "%%d", "%(%%d+%)")
