@@ -70,9 +70,7 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
     local searchFilter = true
 
     if MonDKP.UIConfig.search:GetText() ~= "Search" and MonDKP.UIConfig.search:GetText() ~= "" then
-      if strfind(string.upper(v.player), string.upper(MonDKP.UIConfig.search:GetText())) then
-        searchFilter = true;
-      else
+      if not strfind(string.upper(v.player), string.upper(MonDKP.UIConfig.search:GetText())) then
         searchFilter = false;
       end
     end
