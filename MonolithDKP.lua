@@ -69,8 +69,8 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
     local InRaid = false;
     local searchFilter = true
 
-    if MonDKP.UIConfig.search:GetText() ~= "Search" and MonDKP.UIConfig.search:GetText() ~= "" then
-      if not strfind(string.upper(v.player), string.upper(MonDKP.UIConfig.search:GetText())) then
+    if MonDKP.UIConfig.search:GetText() ~= L["Search"] and MonDKP.UIConfig.search:GetText() ~= "" then
+      if not strfind(string.upper(v.player), string.upper(MonDKP.UIConfig.search:GetText())) and not strfind(string.upper(v.class), string.upper(MonDKP.UIConfig.search:GetText())) and not strfind(string.upper(v.role), string.upper(MonDKP.UIConfig.search:GetText()))then
         searchFilter = false;
       end
     end
@@ -336,12 +336,15 @@ function MonDKP:CreateMenu()
   MonDKP.UIConfig.search:SetTextColor(0.4, 0.4, 0.4, 1)
   MonDKP.UIConfig.search:SetFontObject("MonDKPNormalLeft")
   MonDKP.UIConfig.search:SetTextInsets(10, 10, 5, 5)
-  MonDKP.UIConfig.search:SetText("Search")
+  MonDKP.UIConfig.search:SetText( L["Search"])
   MonDKP.UIConfig.search:SetScript("OnKeyUp", function(self)    -- clears text and focus on esc
     MonDKP:FilterDKPTable(core.currentSort, "reset")
   end)
   MonDKP.UIConfig.search:SetScript("OnEscapePressed", function(self)    -- clears text and focus on esc
+    self:SetText(L["Search"])
+    self:SetTextColor(0.3, 0.3, 0.3, 1)
     self:ClearFocus()
+    MonDKP:FilterDKPTable(core.currentSort, "reset")
   end)
   MonDKP.UIConfig.search:SetScript("OnEnterPressed", function(self)    -- clears text and focus on enter
     self:ClearFocus()
@@ -350,7 +353,7 @@ function MonDKP:CreateMenu()
     self:ClearFocus()
   end)
   MonDKP.UIConfig.search:SetScript("OnEditFocusGained", function(self)
-    if (self:GetText() == "Search") then
+    if (self:GetText() ==  L["Search"]) then
       self:SetText("");
       self:SetTextColor(1, 1, 1, 1)
     else
@@ -359,9 +362,15 @@ function MonDKP:CreateMenu()
   end)
   MonDKP.UIConfig.search:SetScript("OnEditFocusLost", function(self)
     if (self:GetText() == "") then
-      self:SetText("Search")
+      self:SetText(L["Search"])
       self:SetTextColor(0.3, 0.3, 0.3, 1)
     end
+  end)
+  MonDKP.UIConfig.search:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+    GameTooltip:SetText(L["Search"], 0.25, 0.75, 0.90, 1, true);
+    GameTooltip:AddLine(L["SearchDesc"], 1.0, 1.0, 1.0, true);
+    GameTooltip:Show();
   end)
 
   ---------------------------------------

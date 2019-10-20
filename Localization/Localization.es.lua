@@ -622,6 +622,8 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     RangeDPS              = "Rango DPS",
     CasterDPS             = "Caster DPS",
     Healer                = "Curador",
+    Search                = "Buscar",
+    SearchDesc            = "Filtra la lista DKP. Búsquedas por nombre, clase o rol.",
 
     ChangeLog1            = "- Los resultados de la consulta de estado de la tabla ahora se mostrarán dentro de la información sobre herramientas al pasar el cursor sobre el indicador de estado en lugar del chat.",
     ChangeLog2            = "- Se agregó un menú desplegable a la columna central de la tabla DKP con las opciones para mostrar rango, clase o especificación. Esta columna todavía se puede ordenar por los datos seleccionados (solo clase y rango)",

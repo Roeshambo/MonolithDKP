@@ -620,6 +620,8 @@ if GetLocale() == "deDE" then
     RangeDPS              = "Bereich DPS",
     CasterDPS             = "Caster DPS",
     Healer                = "Heiler",
+    Search                = "Suche",
+    SearchDesc            = "Filtert die DKP-Liste. Sucht nach Name, Klasse oder Rolle.",
 
     ChangeLog1            = "- Die Ergebnisse der Tabellenstatusabfrage werden jetzt in der QuickInfo angezeigt, wenn Sie den Mauszeiger über den Status bewegen und nicht mehr im Chat.",
     ChangeLog2            = "- Dropdown zur mittleren Spalte der DKP-Tabelle mit den Optionen zum Anzeigen von Rang, Klasse oder Spezifikation hinzugefügt. Diese Spalte kann weiterhin nach den ausgewählten Daten sortiert werden (nur Klasse und Rang).",

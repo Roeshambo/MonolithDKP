@@ -619,6 +619,8 @@ core.L = {
   RangeDPS              = "Range DPS",
   CasterDPS             = "Caster DPS",
   Healer                = "Healer",
+  Search                = "Search",
+  SearchDesc            = "Filters DKP list. Searches against Name, Class or Role.",
 
 
   ChangeLog1            = "- Table status query results will now display within the tooltip when hovering the Status indicator rather than in chat.",

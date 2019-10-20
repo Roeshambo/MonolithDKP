@@ -622,6 +622,8 @@ if GetLocale() == "zhTW" then
     RangeDPS              = "射程DPS",
     CasterDPS             = "腳輪DPS",
     Healer                = "治癒者",
+    Search                = "搜索",
+    SearchDesc            = "過濾DKP列表。搜索名稱，類或角色。",
 
     ChangeLog1            = "- 現在，將鼠標懸停在狀態指示器上而不是在聊天中時，表狀態查詢結果將顯示在工具提示中。",
     ChangeLog2            = "- 將下拉菜單添加到DKP表的中心列，並帶有顯示等級，類別或規格的選項。該列仍可按所選數據排序（僅類別和等級）",
