@@ -622,7 +622,7 @@ if GetLocale() == "koKR" then
     RangeDPS              = "레인지 DPS",
     CasterDPS             = "캐스터 DPS",
     Healer                = "치료자",
-    Search                = "검색",
+    Search                = "검색   ",
     SearchDesc            = "DKP 목록을 필터링합니다. 이름, 클래스 또는 역할을 검색합니다.",
 
     ChangeLog1            = "- 채팅이 아닌 상태 표시기를 가리키면 툴팁에 테이블 상태 쿼리 결과가 표시됩니다.",

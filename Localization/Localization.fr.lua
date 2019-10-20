@@ -622,7 +622,7 @@ if GetLocale() == "frFR" then
     RangeDPS              = "Gamme DPS",
     CasterDPS             = "Roulette DPS",
     Healer                = "Guérisseur",
-    Search                = "Recherche",
+    Search                = "Recherche   ",
     SearchDesc            = "Filtres liste DKP. Recherches par nom, classe ou rôle.",
 
     ChangeLog1            = "- Les résultats de la requête d'état de la table s'afficheront désormais dans l'info-bulle lors du survol de l'indicateur d'état plutôt que dans le chat.",

@@ -106,12 +106,9 @@ local function MonDKPDeleteDKPEntry(item, timestamp)
 			if MonDKP.ConfigTab6.history then
 				MonDKP:DKPHistory_Reset()
 			end
-			if MonDKP.ConfigTab6.history and #MonDKP_DKPHistory == 0 then
-				MonDKP:DKPHistory_Reset()
-			end
 			MonDKP:DKPHistory_Update()
-			DKPTable_Update()
 			MonDKP:SeedVerify_Update()
+			DKPTable_Update()
 			if core.UpToDate and core.IsOfficer then -- updates seeds only if table is currently up to date.
 				MonDKP:UpdateSeeds()
 			end
@@ -124,7 +121,6 @@ local function MonDKPDeleteDKPEntry(item, timestamp)
 		preferredIndex = 3,
 	}
 	StaticPopup_Show ("CONFIRM_DELETE")
-
 end
 
 local function RightClickDKPMenu(self, item, timestamp)

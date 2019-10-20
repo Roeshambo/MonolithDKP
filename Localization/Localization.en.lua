@@ -619,7 +619,7 @@ core.L = {
   RangeDPS              = "Range DPS",
   CasterDPS             = "Caster DPS",
   Healer                = "Healer",
-  Search                = "Search",
+  Search                = "Search   ",
   SearchDesc            = "Filters DKP list. Searches against Name, Class or Role.",
 
 

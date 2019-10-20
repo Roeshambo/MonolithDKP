@@ -24,6 +24,7 @@ end
 function MonDKPFilterChecks(self)         -- sets/unsets check boxes in conjunction with "All" button, then runs MonDKP:FilterDKPTable() above
   local verifyCheck = true; -- switches to false if the below loop finds anything unchecked
   if (self:GetChecked() == false and not MonDKP.ConfigTab1.checkBtn[10]) then
+    core.CurView = "limited"
     core.CurSubView = "raid"
     MonDKP.ConfigTab1.checkBtn[9]:SetChecked(false);
     checkAll = false;

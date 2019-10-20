@@ -620,7 +620,7 @@ if GetLocale() == "deDE" then
     RangeDPS              = "Bereich DPS",
     CasterDPS             = "Caster DPS",
     Healer                = "Heiler",
-    Search                = "Suche",
+    Search                = "Suche   ",
     SearchDesc            = "Filtert die DKP-Liste. Sucht nach Name, Klasse oder Rolle.",
 
     ChangeLog1            = "- Die Ergebnisse der Tabellenstatusabfrage werden jetzt in der QuickInfo angezeigt, wenn Sie den Mauszeiger über den Status bewegen und nicht mehr im Chat.",

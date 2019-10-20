@@ -622,7 +622,7 @@ if GetLocale() == "zhTW" then
     RangeDPS              = "射程DPS",
     CasterDPS             = "腳輪DPS",
     Healer                = "治癒者",
-    Search                = "搜索",
+    Search                = "搜索   ",
     SearchDesc            = "過濾DKP列表。搜索名稱，類或角色。",
 
     ChangeLog1            = "- 現在，將鼠標懸停在狀態指示器上而不是在聊天中時，表狀態查詢結果將顯示在工具提示中。",

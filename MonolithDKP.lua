@@ -99,7 +99,6 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
         end
       else
         if ((MonDKP.ConfigTab1.checkBtn[11]:GetChecked() and IsOnline) or not MonDKP.ConfigTab1.checkBtn[11]:GetChecked()) then
-          core.CurView = "limited"
           tinsert(core.WorkingTable, v)
         end
       end
