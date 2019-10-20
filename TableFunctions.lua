@@ -7,6 +7,7 @@ local SelectedRow = 0;        -- sets the row that is being clicked
 local menuFrame = CreateFrame("Frame", "MonDKPDKPTableMenuFrame", UIParent, "UIDropDownMenuTemplate")
 local ConvToRaidEvent = CreateFrame("Frame", "MonDKPConvToRaidEventsFrame");
 local InvCount;
+local LastSelection = 0;
 
 function MonDKPSelectionCount_Update()
   if #core.SelectedData == 0 then
@@ -24,10 +25,45 @@ function DKPTable_OnClick(self)
   local offset = FauxScrollFrame_GetOffset(MonDKP.DKPTable) or 0
   local index, TempSearch;
   SelectedRow = self.index
+
   if UIDROPDOWNMENU_OPEN_MENU then
     ToggleDropDownMenu(nil, nil, menuFrame)
   end
-  if(not IsShiftKeyDown()) then
+
+  if IsShiftKeyDown() then
+    if LastSelection+1 < SelectedRow then
+      for i=LastSelection+1, SelectedRow do
+        TempSearch = MonDKP:Table_Search(core.SelectedData, core.WorkingTable[i].player);
+        
+        if not TempSearch then
+          tinsert(core.SelectedData, core.WorkingTable[i])
+        end
+      end
+    else
+      for i=SelectedRow, LastSelection-1 do
+        TempSearch = MonDKP:Table_Search(core.SelectedData, core.WorkingTable[i].player);
+        
+        if not TempSearch then
+          tinsert(core.SelectedData, core.WorkingTable[i])
+        end
+      end
+    end
+
+    if MonDKP.ConfigTab2.selectAll:GetChecked() then
+      MonDKP.ConfigTab2.selectAll:SetChecked(false)
+    end
+  elseif IsControlKeyDown() then
+    LastSelection = SelectedRow;
+    TempSearch = MonDKP:Table_Search(core.SelectedData, core.WorkingTable[SelectedRow].player);
+    if TempSearch == false then
+      tinsert(core.SelectedData, core.WorkingTable[SelectedRow]);
+      PlaySound(808)
+    else
+      tremove(core.SelectedData, TempSearch[1][1])
+      PlaySound(868)
+    end
+  else
+    LastSelection = SelectedRow;
     for i=1, core.TableNumRows do
       TempSearch = MonDKP:Table_Search(core.SelectedData, core.WorkingTable[SelectedRow].player);
       if MonDKP.ConfigTab2.selectAll:GetChecked() then
@@ -39,18 +75,6 @@ function DKPTable_OnClick(self)
       else
         core.SelectedData = {}
       end
-    end
-  else
-    TempSearch = MonDKP:Table_Search(core.SelectedData, core.WorkingTable[SelectedRow].player);
-    if TempSearch == false then
-      tinsert(core.SelectedData, core.WorkingTable[SelectedRow]);
-      PlaySound(808)
-    else
-      tremove(core.SelectedData, TempSearch[1][1])
-      PlaySound(868)
-    end
-    if MonDKP.ConfigTab2.selectAll:GetChecked() then
-      MonDKP.ConfigTab2.selectAll:SetChecked(false)
     end
   end
 
@@ -418,6 +442,7 @@ local function RightClickMenu(self)
 
   menu[7].menuList[#core.classes+3] = { text = L["Online"], isNotRadio = true, keepShownOnClick = true, checked = MonDKP.ConfigTab1.checkBtn[11]:GetChecked(), func = function()
     MonDKP.ConfigTab1.checkBtn[11]:SetChecked(not MonDKP.ConfigTab1.checkBtn[11]:GetChecked())
+    core.CurView = "limited"
 
     MonDKPFilterChecks(MonDKP.ConfigTab1.checkBtn[11])
   end }
