@@ -67,6 +67,15 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
     local IsOnline = false;
     local name;
     local InRaid = false;
+    local searchFilter = true
+
+    if MonDKP.UIConfig.search:GetText() ~= "Search" and MonDKP.UIConfig.search:GetText() ~= "" then
+      if strfind(string.upper(v.player), string.upper(MonDKP.UIConfig.search:GetText())) then
+        searchFilter = true;
+      else
+        searchFilter = false;
+      end
+    end
     
     if MonDKP.ConfigTab1.checkBtn[11]:GetChecked() then
       local guildSize,_,_ = GetNumGuildMembers();
@@ -80,7 +89,7 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
         end
       end
     end
-    if(core.classFiltered[MonDKP_DKPTable[k]["class"]] == true) then
+    if(core.classFiltered[MonDKP_DKPTable[k]["class"]] == true) and searchFilter == true then
       if MonDKP.ConfigTab1.checkBtn[10]:GetChecked() or MonDKP.ConfigTab1.checkBtn[12]:GetChecked() then
         for i=1, 40 do
           tempName,_,_,_,_,tempClass = GetRaidRosterInfo(i)
@@ -92,6 +101,7 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
         end
       else
         if ((MonDKP.ConfigTab1.checkBtn[11]:GetChecked() and IsOnline) or not MonDKP.ConfigTab1.checkBtn[11]:GetChecked()) then
+          core.CurView = "limited"
           tinsert(core.WorkingTable, v)
         end
       end
@@ -308,6 +318,53 @@ function MonDKP:CreateMenu()
   MonDKP.DKPTable.counter.s:SetFontObject("MonDKPTiny");
   MonDKP.DKPTable.counter.s:SetTextColor(1, 1, 1, 0.7);
   MonDKP.DKPTable.counter.s:SetPoint("CENTER", MonDKP.DKPTable.counter, "CENTER", 0, -15);
+
+  ------------------------------
+  -- Search Box
+  ------------------------------
+
+  MonDKP.UIConfig.search = CreateFrame("EditBox", nil, MonDKP.UIConfig)
+  MonDKP.UIConfig.search:SetPoint("BOTTOMLEFT", MonDKP.UIConfig, "BOTTOMLEFT", 50, 20)     
+  MonDKP.UIConfig.search:SetAutoFocus(false)
+  MonDKP.UIConfig.search:SetMultiLine(false)
+  MonDKP.UIConfig.search:SetSize(140, 24)
+  MonDKP.UIConfig.search:SetBackdrop({
+    bgFile   = "Textures\\white.blp", tile = true,
+    edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
+  });
+  MonDKP.UIConfig.search:SetBackdropColor(0,0,0,0.9)
+  MonDKP.UIConfig.search:SetBackdropBorderColor(1,1,1,0.6)
+  MonDKP.UIConfig.search:SetMaxLetters(50)
+  MonDKP.UIConfig.search:SetTextColor(0.4, 0.4, 0.4, 1)
+  MonDKP.UIConfig.search:SetFontObject("MonDKPNormalLeft")
+  MonDKP.UIConfig.search:SetTextInsets(10, 10, 5, 5)
+  MonDKP.UIConfig.search:SetText("Search")
+  MonDKP.UIConfig.search:SetScript("OnKeyUp", function(self)    -- clears text and focus on esc
+    MonDKP:FilterDKPTable(core.currentSort, "reset")
+  end)
+  MonDKP.UIConfig.search:SetScript("OnEscapePressed", function(self)    -- clears text and focus on esc
+    self:ClearFocus()
+  end)
+  MonDKP.UIConfig.search:SetScript("OnEnterPressed", function(self)    -- clears text and focus on enter
+    self:ClearFocus()
+  end)
+  MonDKP.UIConfig.search:SetScript("OnTabPressed", function(self)    -- clears text and focus on tab
+    self:ClearFocus()
+  end)
+  MonDKP.UIConfig.search:SetScript("OnEditFocusGained", function(self)
+    if (self:GetText() == "Search") then
+      self:SetText("");
+      self:SetTextColor(1, 1, 1, 1)
+    else
+      self:HighlightText();
+    end
+  end)
+  MonDKP.UIConfig.search:SetScript("OnEditFocusLost", function(self)
+    if (self:GetText() == "") then
+      self:SetText("Search")
+      self:SetTextColor(0.3, 0.3, 0.3, 1)
+    end
+  end)
 
   ---------------------------------------
   -- Expand / Collapse Arrow
