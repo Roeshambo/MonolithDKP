@@ -359,6 +359,10 @@ function MonDKP:LootHistory_Reset()
 end
 
 function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call, runs set assigned for when a filter is selected in dropdown.
+	if not MonDKP.UIConfig:IsShown() then 			-- prevents history update from firing if the DKP window is not opened (eliminate lag). Update run when opened
+		return;
+	end
+
 	local thedate;
 	local linesToUse = 1;
 	MonDKP:SortLootTable()

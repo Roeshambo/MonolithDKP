@@ -2,7 +2,7 @@
 ## Title: M|cffaeaeddonolith|r |cffff0000DKP|r
 ## Author: Roeshambo-Stalagg
 ## Notes: Comprehensive DKP and raid management utility.
-## Version: 1.5.1
+## Version: 1.5.4
 ## DefaultState: enabled
 ## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_DKPHistory, MonDKP_MinBids, MonDKP_Whitelist, MonDKP_Standby
 

@@ -51,6 +51,7 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
   end
 
   core.MonDKPUI:SetScale(MonDKP_DB.defaults.MonDKPScaleSize)
+  MonDKP:DKPHistory_Update()
   MonDKP:LootHistory_Update("No Filter");
   MonDKP:SeedVerify_Update()
   DKPTable_Update()

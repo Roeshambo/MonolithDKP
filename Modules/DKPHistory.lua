@@ -134,6 +134,10 @@ local function RightClickDKPMenu(self, item, timestamp)
 end
 
 function MonDKP:DKPHistory_Update()
+	if not MonDKP.UIConfig:IsShown() then 			-- prevents history update from firing if the DKP window is not opened (eliminate lag). Update run when opened
+		return;
+	end
+	
 	MonDKP.ConfigTab6.history = history;
 	MonDKP:SortDKPHistoryTable()
 
