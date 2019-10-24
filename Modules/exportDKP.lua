@@ -302,7 +302,7 @@ function MonDKPExportBox_Show(text)
 			preferredIndex = 3,
 		}
 
-        f.GenerateDKPButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -355, 20, "1) "..L["GenDKPTable"]);
+        f.GenerateDKPButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -355, 20, "1) "..L["GENDKPTABLE"]);
 		f.GenerateDKPButton:SetSize(150, 24)
 		f.GenerateDKPButton:SetScript("OnClick", function()
 			if CurFormat then
@@ -312,7 +312,7 @@ function MonDKPExportBox_Show(text)
 			end
 		end)
 
-		f.GenerateDKPHistoryButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -200, 20, "2) "..L["GenDKPHist"]);
+		f.GenerateDKPHistoryButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -200, 20, "2) "..L["GENDKPHIST"]);
 		f.GenerateDKPHistoryButton:SetSize(150, 24)
 		f.GenerateDKPHistoryButton:SetScript("OnClick", function()
 			if CurFormat then
@@ -322,7 +322,7 @@ function MonDKPExportBox_Show(text)
 			end
 		end)
 
-		f.GenerateDKPLootButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -45, 20, "3) "..L["GenLootHist"]);
+		f.GenerateDKPLootButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -45, 20, "3) "..L["GENLOOTHIST"]);
 		f.GenerateDKPLootButton:SetSize(150, 24)
 		f.GenerateDKPLootButton:SetScript("OnClick", function()
 			if CurFormat then
@@ -332,7 +332,7 @@ function MonDKPExportBox_Show(text)
 			end
 		end)
 
-		f.SelectAllButton = MonDKP:CreateButton("BOTTOMLEFT", f, "BOTTOMLEFT", 45, 20, L["SelectAll"]);
+		f.SelectAllButton = MonDKP:CreateButton("BOTTOMLEFT", f, "BOTTOMLEFT", 45, 20, L["SELECTALL"]);
 		f.SelectAllButton:SetSize(100, 20)
 		f.SelectAllButton:SetScript("OnClick", function()
 			MonDKPExportBoxEditBox:HighlightText()

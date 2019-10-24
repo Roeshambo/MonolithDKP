@@ -136,8 +136,8 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v1.5.3";
-core.BuildNumber = 10503;
+core.MonVersion = "v1.5.4";
+core.BuildNumber = 10504;
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
@@ -189,7 +189,7 @@ function MonDKP:ResetPosition()
   core.ShowState = false;
   MonDKP.BidTimer:ClearAllPoints()
   MonDKP.BidTimer:SetPoint("CENTER", UIParent)
-  MonDKP:Print(L["PositionReset"])
+  MonDKP:Print(L["POSITIONRESET"])
 end
 
 function MonDKP:GetGuildRank(player)
@@ -205,9 +205,9 @@ function MonDKP:GetGuildRank(player)
         return rank, rankIndex;
       end
     end
-    return L["NotInGuild"];
+    return L["NOTINGUILD"];
   end
-  return L["NoGuild"]
+  return L["NOGUILD"]
 end
 
 function MonDKP:GetGuildRankIndex(player)
@@ -297,7 +297,7 @@ function MonDKP:RosterSeedUpdate(index)
     note = note .. " " .. textseed
 
     StaticPopupDialogs["SEED_VALIDATE"] = {
-      text = L["NoteTooLong"],
+      text = L["NOTETOOLONG"],
       button1 = "Ok",
       timeout = 0,
       whileDead = true,
@@ -409,7 +409,7 @@ function MonDKP:BroadcastTimer(seconds, ...)       -- broadcasts timer and start
   if IsInRaid() and core.IsOfficer == true then
     local title = ...;
     if not tonumber(seconds) then       -- cancels the function if the command was entered improperly (eg. no number for time)
-      MonDKP:Print(L["InvalidTimer"]);
+      MonDKP:Print(L["INVALIDTIMER"]);
       return;
     end
     MonDKP:StartTimer(seconds, ...)
@@ -422,7 +422,7 @@ function MonDKP:StartTimer(seconds, ...)
   local alpha = 1;
 
   if not tonumber(seconds) then       -- cancels the function if the command was entered improperly (eg. no number for time)
-    MonDKP:Print(L["InvalidTimer"]);
+    MonDKP:Print(L["INVALIDTIMER"]);
     return;
   end
 
@@ -500,9 +500,9 @@ function MonDKP:SeedVerify_Update()
       MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\up-to-date")
       MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
-        GameTooltip:SetText(L["DKPStatus"], 0.25, 0.75, 0.90, 1, true);
-        GameTooltip:AddLine(L["AllTables"].." |cff00ff00"..L["UpToDate"].."|r.", 1.0, 1.0, 1.0, false);
-        GameTooltip:AddLine("|cffff0000"..L["ClickQueryGuild"].."|r.", 1.0, 1.0, 1.0, false);
+        GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
+        GameTooltip:AddLine(L["ALLTABLES"].." |cff00ff00"..L["UPTODATE"].."|r.", 1.0, 1.0, 1.0, false);
+        GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r.", 1.0, 1.0, 1.0, false);
         GameTooltip:Show()
       end)
 
@@ -512,10 +512,10 @@ function MonDKP:SeedVerify_Update()
       MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\out-of-date")
       MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
-        GameTooltip:SetText(L["DKPStatus"], 0.25, 0.75, 0.90, 1, true);
-        GameTooltip:AddLine(L["OneTableOOD"].." |cffff0000"..L["OutOfDate"].."|r.", 1.0, 1.0, 1.0, false);
-        GameTooltip:AddLine(L["RequestTablesOfficer"], 1.0, 1.0, 1.0, false);
-        GameTooltip:AddLine("|cffff0000"..L["ClickQueryGuild"].."|r.", 1.0, 1.0, 1.0, false);
+        GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
+        GameTooltip:AddLine(L["ONETABLEOOD"].." |cffff0000"..L["OUTOFDATE"].."|r.", 1.0, 1.0, 1.0, false);
+        GameTooltip:AddLine(L["REQUESTTABLESOFFICER"], 1.0, 1.0, 1.0, false);
+        GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r.", 1.0, 1.0, 1.0, false);
         GameTooltip:Show()
       end)
 
@@ -524,8 +524,8 @@ function MonDKP:SeedVerify_Update()
   else
     MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
         GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
-        GameTooltip:SetText(L["DKPStatus"], 0.25, 0.75, 0.90, 1, true);
-        GameTooltip:AddLine(L["CurrNotInGuild"], 1.0, 1.0, 1.0, true);
+        GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
+        GameTooltip:AddLine(L["CURRNOTINGUILD"], 1.0, 1.0, 1.0, true);
         GameTooltip:Show()
       end)
 
@@ -539,16 +539,16 @@ function MonDKP:UpdateQuery()
   table.wipe(core.UpdateCheck.nonofficer)
   table.wipe(core.UpdateCheck.nonofficer_updated)
   MonDKP.Sync:SendData("MonDKPTableCheck", "DKPTableUpdateCheck")
-  MonDKP:Print(L["TableQuerySent"].."...")
+  MonDKP:Print(L["TABLEQUERYSENT"].."...")
   MonDKP:SeedVerify_Update()
   C_Timer.After(2, function()
     local updated, OOD, nonofficer;
     GameTooltip:ClearLines()
     GameTooltip:Hide()
     GameTooltip:SetOwner(MonDKP.DKPTable.SeedVerify, "ANCHOR_RIGHT", 0, 0);
-    GameTooltip:SetText("|cff10b2e3"..L["TableQueryHeader"].."|r")
+    GameTooltip:SetText("|cff10b2e3"..L["TABLEQUERYHEADER"].."|r")
     GameTooltip:AddLine("|cff10b2e3-------------------------------------------|r")
-    GameTooltip:AddLine(L["TableQueryOfficer"]..":", 0, 0.4, 0.7, true)
+    GameTooltip:AddLine(L["TABLEQUERYOFFICER"]..":", 0, 0.4, 0.7, true)
     if #core.UpdateCheck.updated > 0 then
       for i=1, #core.UpdateCheck.updated do
         if i==1 then
@@ -557,9 +557,9 @@ function MonDKP:UpdateQuery()
           updated = updated..", "..core.UpdateCheck.updated[i]
         end
       end
-      GameTooltip:AddLine("|cff00ff00"..L["TableQueryUTD"].."|r: "..updated, 1, 1, 1, true)
+      GameTooltip:AddLine("|cff00ff00"..L["TABLEQUERYUTD"].."|r: "..updated, 1, 1, 1, true)
     else
-      GameTooltip:AddLine("|cff00ff00"..L["TableQueryUTD"].."|r: "..L["None"], 1, 1, 1, true)
+      GameTooltip:AddLine("|cff00ff00"..L["TABLEQUERYUTD"].."|r: "..L["NONE"], 1, 1, 1, true)
     end
     if #core.UpdateCheck.OOD > 0 then
       for i=1, #core.UpdateCheck.OOD do
@@ -569,13 +569,13 @@ function MonDKP:UpdateQuery()
           OOD = OOD..", "..core.UpdateCheck.OOD[i]
         end
       end
-      GameTooltip:AddLine("|cffff0000"..L["TableQueryOOD"].."|r: "..OOD, 1, 1, 1, true)
+      GameTooltip:AddLine("|cffff0000"..L["TABLEQUERYOOD"].."|r: "..OOD, 1, 1, 1, true)
     else
-      GameTooltip:AddLine("|cffff0000"..L["TableQueryOOD"].."|r: "..L["None"], 1, 1, 1, true)
+      GameTooltip:AddLine("|cffff0000"..L["TABLEQUERYOOD"].."|r: "..L["NONE"], 1, 1, 1, true)
     end
     GameTooltip:AddLine("|cff10b2e3-------------------------------------------|r", 1, 1, 1, true)
     if core.IsOfficer then
-      GameTooltip:AddLine(L["TableQueryNonOfficer"]..":", 0, 0.4, 0.7, true)
+      GameTooltip:AddLine(L["TABLEQUERYNONOFFICER"]..":", 0, 0.4, 0.7, true)
       if #core.UpdateCheck.nonofficer > 0 then
         for i=1, #core.UpdateCheck.nonofficer do
           if i==1 then
@@ -584,33 +584,33 @@ function MonDKP:UpdateQuery()
             nonofficer = nonofficer..", "..core.UpdateCheck.nonofficer[i]
           end
         end
-        GameTooltip:AddLine("|cffff0000"..L["TableQueryOOD"].."|r: "..nonofficer, 1, 1, 1, true)
+        GameTooltip:AddLine("|cffff0000"..L["TABLEQUERYOOD"].."|r: "..nonofficer, 1, 1, 1, true)
       else
-        GameTooltip:AddLine("|cffff0000"..L["TableQueryOOD"].."|r: "..L["None"], 1, 1, 1, true)
+        GameTooltip:AddLine("|cffff0000"..L["TABLEQUERYOOD"].."|r: "..L["NONE"], 1, 1, 1, true)
       end
       GameTooltip:AddLine(" ");
       local TotalCount = #core.UpdateCheck.nonofficer + #core.UpdateCheck.nonofficer_updated + #core.UpdateCheck.OOD + #core.UpdateCheck.updated
-      GameTooltip:AddLine(L["TotalMonDKPUsers"]..": "..TotalCount, 1, 1, 1, true)
+      GameTooltip:AddLine(L["TOTALMONDKPUSERS"]..": "..TotalCount, 1, 1, 1, true)
       GameTooltip:AddLine("|cff10b2e3-------------------------------------------|r", 1, 1, 1, true)
     end
     if core.UpToDate then
-      GameTooltip:AddLine(L["YourTablesAreCurr"]..": |cff00ff00"..L["TableQueryUTD"].."|r", 1, 1, 1, true)
+      GameTooltip:AddLine(L["YOURTABLESARECURR"]..": |cff00ff00"..L["TABLEQUERYUTD"].."|r", 1, 1, 1, true)
     else
-      GameTooltip:AddLine(L["YourTablesAreCurr"]..": |cffff0000"..L["TableQueryOOD"].."|r", 1, 1, 1, true)
-      GameTooltip:AddLine(L["ContactOfficer"])
+      GameTooltip:AddLine(L["YOURTABLESARECURR"]..": |cffff0000"..L["TABLEQUERYOOD"].."|r", 1, 1, 1, true)
+      GameTooltip:AddLine(L["CONTACTOFFICER"])
     end
     GameTooltip:AddLine("|cff10b2e3-------------------------------------------|r", 1, 1, 1, true)
 
-    GameTooltip:AddLine("|cffff0000"..L["ClickQueryGuild"].."|r", 1.0, 1.0, 1.0, false);
+    GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, false);
     GameTooltip:Show()
 
     -- Mouseover
 
     MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
-      GameTooltip:SetText("|cff10b2e3"..L["TableQueryHeader"].."|r", 1, 1, 1, true)
+      GameTooltip:SetText("|cff10b2e3"..L["TABLEQUERYHEADER"].."|r", 1, 1, 1, true)
       GameTooltip:AddLine("|cff10b2e3-------------------------------------------|r", 1, 1, 1, true)
-      GameTooltip:AddLine(L["TableQueryOfficer"]..":", 0, 0.4, 0.7, true)
+      GameTooltip:AddLine(L["TABLEQUERYOFFICER"]..":", 0, 0.4, 0.7, true)
       if #core.UpdateCheck.updated > 0 then
         for i=1, #core.UpdateCheck.updated do
           if i==1 then
@@ -619,9 +619,9 @@ function MonDKP:UpdateQuery()
             updated = updated..", "..core.UpdateCheck.updated[i]
           end
         end
-        GameTooltip:AddLine("|cff00ff00"..L["TableQueryUTD"].."|r: "..updated, 1, 1, 1, true)
+        GameTooltip:AddLine("|cff00ff00"..L["TABLEQUERYUTD"].."|r: "..updated, 1, 1, 1, true)
       else
-        GameTooltip:AddLine("|cff00ff00"..L["TableQueryUTD"].."|r: "..L["None"], 1, 1, 1, true)
+        GameTooltip:AddLine("|cff00ff00"..L["TABLEQUERYUTD"].."|r: "..L["NONE"], 1, 1, 1, true)
       end
       if #core.UpdateCheck.OOD > 0 then
         for i=1, #core.UpdateCheck.OOD do
@@ -631,13 +631,13 @@ function MonDKP:UpdateQuery()
             OOD = OOD..", "..core.UpdateCheck.OOD[i]
           end
         end
-        GameTooltip:AddLine("|cffff0000"..L["TableQueryOOD"].."|r: "..OOD, 1, 1, 1, true)
+        GameTooltip:AddLine("|cffff0000"..L["TABLEQUERYOOD"].."|r: "..OOD, 1, 1, 1, true)
       else
-        GameTooltip:AddLine("|cffff0000"..L["TableQueryOOD"].."|r: "..L["None"], 1, 1, 1, true)
+        GameTooltip:AddLine("|cffff0000"..L["TABLEQUERYOOD"].."|r: "..L["NONE"], 1, 1, 1, true)
       end
       GameTooltip:AddLine("|cff10b2e3-------------------------------------------|r", 1, 1, 1, true)
       if core.IsOfficer then
-        GameTooltip:AddLine(L["TableQueryNonOfficer"]..":", 0, 0.4, 0.7, true)
+        GameTooltip:AddLine(L["TABLEQUERYNONOFFICER"]..":", 0, 0.4, 0.7, true)
         if #core.UpdateCheck.nonofficer > 0 then
           for i=1, #core.UpdateCheck.nonofficer do
             if i==1 then
@@ -646,24 +646,24 @@ function MonDKP:UpdateQuery()
               nonofficer = nonofficer..", "..core.UpdateCheck.nonofficer[i]
             end
           end
-          GameTooltip:AddLine("|cffff0000"..L["TableQueryOOD"].."|r: "..nonofficer, 1, 1, 1, true)
+          GameTooltip:AddLine("|cffff0000"..L["TABLEQUERYOOD"].."|r: "..nonofficer, 1, 1, 1, true)
         else
-          GameTooltip:AddLine("|cffff0000"..L["TableQueryOOD"].."|r: "..L["None"], 1, 1, 1, true)
+          GameTooltip:AddLine("|cffff0000"..L["TABLEQUERYOOD"].."|r: "..L["NONE"], 1, 1, 1, true)
         end
         GameTooltip:AddLine(" ");
         local TotalCount = #core.UpdateCheck.nonofficer + #core.UpdateCheck.nonofficer_updated + #core.UpdateCheck.OOD + #core.UpdateCheck.updated
-        GameTooltip:AddLine(L["TotalMonDKPUsers"]..": "..TotalCount, 1, 1, 1, true)
+        GameTooltip:AddLine(L["TOTALMONDKPUSERS"]..": "..TotalCount, 1, 1, 1, true)
         GameTooltip:AddLine("|cff10b2e3-------------------------------------------|r", 1, 1, 1, true)
       end
       if core.UpToDate then
-        GameTooltip:AddLine(L["YourTablesAreCurr"]..": |cff00ff00"..L["TableQueryUTD"].."|r", 1, 1, 1, true)
+        GameTooltip:AddLine(L["YOURTABLESARECURR"]..": |cff00ff00"..L["TABLEQUERYUTD"].."|r", 1, 1, 1, true)
       else
-        GameTooltip:AddLine(L["YourTablesAreCurr"]..": |cffff0000"..L["TableQueryOOD"].."|r", 1, 1, 1, true)
-        GameTooltip:AddLine(L["ContactOfficer"])
+        GameTooltip:AddLine(L["YOURTABLESARECURR"]..": |cffff0000"..L["TABLEQUERYOOD"].."|r", 1, 1, 1, true)
+        GameTooltip:AddLine(L["CONTACTOFFICER"])
       end
       GameTooltip:AddLine("|cff10b2e3-------------------------------------------|r", 1, 1, 1, true)
 
-      GameTooltip:AddLine("|cffff0000"..L["ClickQueryGuild"].."|r", 1.0, 1.0, 1.0, false);
+      GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, false);
       GameTooltip:Show()
     end)
   end)

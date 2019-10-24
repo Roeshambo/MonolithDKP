@@ -22,7 +22,7 @@ local function AwardItem(player, cost, boss, zone, loot)
         if search then
           cost = MonDKP_round(MonDKP_DKPTable[search[1][1]].dkp * (cost / 100), MonDKP_DB.modes.rounding);
         else
-          print(L["Error"])
+          print(L["ERROR"])
         end
       else
         cost = MonDKP_round(MonDKP_DKPTable[search[1][1]].dkp * (cost / 100), MonDKP_DB.modes.rounding);
@@ -47,7 +47,7 @@ local function AwardItem(player, cost, boss, zone, loot)
 
     if core.BiddingWindow and core.BiddingWindow:IsShown() then  -- runs below if award is through bidding window (update minbids and zerosum bank)
       if _G["MonDKPBiddingStartBiddingButton"] then
-        _G["MonDKPBiddingStartBiddingButton"]:SetText(L["StartBidding"])
+        _G["MonDKPBiddingStartBiddingButton"]:SetText(L["STARTBIDDING"])
         _G["MonDKPBiddingStartBiddingButton"]:SetScript("OnClick", function (self)
           ToggleTimerBtn(self)
         end)
@@ -56,7 +56,7 @@ local function AwardItem(player, cost, boss, zone, loot)
 
       core.BidInProgress = false;
       MonDKP:BroadcastStopBidTimer()
-      SendChatMessage(L["Congrats"].." "..winner.." "..L["On"].." "..loot.." @ "..cost.." "..L["DKP"], "RAID_WARNING")
+      SendChatMessage(L["CONGRATS"].." "..winner.." "..L["ON"].." "..loot.." @ "..cost.." "..L["DKP"], "RAID_WARNING")
         
       if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
         local search = MonDKP:Table_Search(MonDKP_MinBids, core.BiddingWindow.itemName:GetText())
@@ -114,13 +114,13 @@ local function AwardConfirm_Create()
   f.confirmHeader:SetFontObject("MonDKPLargeRight");
   f.confirmHeader:SetScale(0.9)
   f.confirmHeader:SetPoint("TOPLEFT", f, "TOPLEFT", 15, -15);
-  f.confirmHeader:SetText(L["ConfAward"])
+  f.confirmHeader:SetText(L["CONFAWARD"])
 
   f.playerHeader = f:CreateFontString(nil, "OVERLAY")
   f.playerHeader:SetFontObject("MonDKPLargeRight");
   f.playerHeader:SetScale(0.7)
   f.playerHeader:SetPoint("TOPLEFT", f, "TOPLEFT", 120, -60);
-  f.playerHeader:SetText(L["Player"]..":")
+  f.playerHeader:SetText(L["PLAYER"]..":")
 
   f.player = f:CreateFontString(nil, "OVERLAY")
   f.player:SetFontObject("MonDKPNormalLeft");
@@ -131,7 +131,7 @@ local function AwardConfirm_Create()
   f.lootHeader:SetFontObject("MonDKPLargeRight");
   f.lootHeader:SetScale(0.7)
   f.lootHeader:SetPoint("TOPRIGHT", f.playerHeader, "BOTTOMRIGHT", 0, -10);
-  f.lootHeader:SetText(L["Item"]..":")
+  f.lootHeader:SetText(L["ITEM"]..":")
 
   f.lootIcon = f:CreateTexture(nil, "OVERLAY", nil);
   f.lootIcon:SetPoint("LEFT", f.lootHeader, "RIGHT", 5, 0);
@@ -147,7 +147,7 @@ local function AwardConfirm_Create()
   f.costHeader:SetFontObject("MonDKPLargeRight");
   f.costHeader:SetScale(0.7)
   f.costHeader:SetPoint("TOPRIGHT", f.lootHeader, "BOTTOMRIGHT", 0, -10);
-  f.costHeader:SetText(L["ItemCost"]..":")
+  f.costHeader:SetText(L["ITEMCOST"]..":")
 
   f.cost = f:CreateFontString(nil, "OVERLAY")
   f.cost:SetFontObject("MonDKPNormalLeft");
@@ -158,7 +158,7 @@ local function AwardConfirm_Create()
   f.bossHeader:SetFontObject("MonDKPLargeRight");
   f.bossHeader:SetScale(0.7)
   f.bossHeader:SetPoint("TOPRIGHT", f.costHeader, "BOTTOMRIGHT", 0, -10);
-  f.bossHeader:SetText(L["Boss"]..":")
+  f.bossHeader:SetText(L["BOSS"]..":")
 
   f.bossDropDown = CreateFrame("FRAME", "MonDKPAwardConfirmBossDropDown", f, "MonolithDKPUIDropDownMenuTemplate")
   f.bossDropDown:SetPoint("LEFT", f.bossHeader, "RIGHT", -15, 0)
@@ -169,15 +169,15 @@ local function AwardConfirm_Create()
   f.zoneHeader:SetFontObject("MonDKPLargeRight");
   f.zoneHeader:SetScale(0.7)
   f.zoneHeader:SetPoint("TOPRIGHT", f.bossHeader, "BOTTOMRIGHT", 0, -10);
-  f.zoneHeader:SetText(L["Zone"]..":")
+  f.zoneHeader:SetText(L["ZONE"]..":")
 
   f.zoneDropDown = CreateFrame("FRAME", "MonDKPAwardConfirmBossDropDown", f, "MonolithDKPUIDropDownMenuTemplate")
   f.zoneDropDown:SetPoint("LEFT", f.zoneHeader, "RIGHT", -15, 0)
   UIDropDownMenu_SetWidth(f.zoneDropDown, 150)
   UIDropDownMenu_JustifyText(f.zoneDropDown, "LEFT")
 
-  f.yesButton = MonDKP:CreateButton("BOTTOMLEFT", f, "BOTTOMLEFT", 20, 15, L["Confirm"]);
-  f.noButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -20, 15, L["Cancel"]);
+  f.yesButton = MonDKP:CreateButton("BOTTOMLEFT", f, "BOTTOMLEFT", 20, 15, L["CONFIRM"]);
+  f.noButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -20, 15, L["CANCEL"]);
 
   return f;
 end
@@ -185,7 +185,7 @@ end
 function MonDKP:AwardConfirm(player, cost, boss, zone, loot)
   if core.CurrentlySyncing then
     StaticPopupDialogs["CURRENTLY_SYNC"] = {
-      text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CurrentlySyncing"],
+      text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CURRENTLYSYNCING"],
       button1 = L["OK"],
       timeout = 0,
       whileDead = true,

@@ -35,19 +35,19 @@ MonDKP.Commands = {
 			local validation = MonDKP:Table_Search(MonDKP_DKPTable, name)
 
 			if not validation then 			-- validate command name, cost and itemlink
-				MonDKP:Print(L["InvalidTargetPlayer"])
+				MonDKP:Print(L["INVALIDTARGETPLAYER"])
 				return;
 			elseif not tonumber(cost) then
-				MonDKP:Print(L["InvalidItemCost"])
+				MonDKP:Print(L["INVALIDITEMCOST"])
 				return;
 			elseif not strfind(item, "|Hitem:") then
-				MonDKP:Print(L["InvalidItemLink"])
+				MonDKP:Print(L["INVALIDITEMLINK"])
 				return;
 			end
 
 			if core.UpToDate == false and core.IsOfficer == true then
 			    StaticPopupDialogs["CONFIRM_PUSH"] = {
-					text = "|CFFFF0000"..L["WARNING"].."|r: "..L["OutdateModifyWarn"],
+					text = "|CFFFF0000"..L["WARNING"].."|r: "..L["OUTDATEMODIFYWARN"],
 					button1 = L["YES"],
 					button2 = L["NO"],
 					OnAccept = function()
@@ -63,7 +63,7 @@ MonDKP.Commands = {
 				MonDKP:AwardConfirm(MonDKP_DKPTable[validation[1][1]].player, cost, MonDKP_DB.bossargs.LastKilledBoss, MonDKP_DB.bossargs.CurrentRaidZone, item)
 			end
 		else
-			MonDKP:Print(L["NoPermission"])
+			MonDKP:Print(L["NOPERMISSION"])
 		end
 	end,
 	["lockouts"] = function()
@@ -87,25 +87,25 @@ MonDKP.Commands = {
 		if core.IsOfficer then
 			MonDKP:ToggleDKPModesWindow()
 		else
-			MonDKP:Print(L["NoPermission"])
+			MonDKP:Print(L["NOPERMISSION"])
 		end
 	end,
 	["help"] = function()
 		print(" ");
-		MonDKP:Print(L["SlashCommandList"]..":")
-		MonDKP:Print("|cff00cc66/dkp|r - "..L["DKPLaunch"]);
-		MonDKP:Print("|cff00cc66/dkp ?|r - "..L["HelpInfo"]);
-		MonDKP:Print("|cff00cc66/dkp reset|r - "..L["DKPResetPos"]);
-		MonDKP:Print("|cff00cc66/dkp lockouts|r - "..L["DKPLockout"]);
-		MonDKP:Print("|cff00cc66/dkp timer|r - "..L["CreateRaidTimer"]);
-		MonDKP:Print("|cff00cc66/dkp bid|r - "..L["OpenBidWindowHelp"]);
-		MonDKP:Print("|cff00cc66/dkp award "..L["PlayerCost"].."|r - "..L["DKPAwardHelp"]);
-		MonDKP:Print("|cff00cc66/dkp modes|r - "..L["DKPModesHelp"]);
-		MonDKP:Print("|cff00cc66/dkp export|r - "..L["DKPExportHelp"]);
+		MonDKP:Print(L["SLASHCOMMANDLIST"]..":")
+		MonDKP:Print("|cff00cc66/dkp|r - "..L["DKPLAUNCH"]);
+		MonDKP:Print("|cff00cc66/dkp ?|r - "..L["HELPINFO"]);
+		MonDKP:Print("|cff00cc66/dkp reset|r - "..L["DKPRESETPOS"]);
+		MonDKP:Print("|cff00cc66/dkp lockouts|r - "..L["DKPLOCKOUT"]);
+		MonDKP:Print("|cff00cc66/dkp timer|r - "..L["CREATERAIDTIMER"]);
+		MonDKP:Print("|cff00cc66/dkp bid|r - "..L["OPENBIDWINDOWHELP"]);
+		MonDKP:Print("|cff00cc66/dkp award "..L["PLAYERCOST"].."|r - "..L["DKPAWARDHELP"]);
+		MonDKP:Print("|cff00cc66/dkp modes|r - "..L["DKPMODESHELP"]);
+		MonDKP:Print("|cff00cc66/dkp export|r - "..L["DKPEXPORTHELP"]);
 		print(" ");
-		MonDKP:Print(L["WhisperCmdsHelp"]);
-		MonDKP:Print("|cff00cc66!bid (or !bid <"..L["Value"]..">)|r - "..L["BidHelp"]);
-		MonDKP:Print("|cff00cc66!dkp (or !dkp <"..L["PlayerName"]..">)|r - "..L["DKPCmdHelp"]);
+		MonDKP:Print(L["WHISPERCMDSHELP"]);
+		MonDKP:Print("|cff00cc66!bid (or !bid <"..L["VALUE"]..">)|r - "..L["BIDHELP"]);
+		MonDKP:Print("|cff00cc66!dkp (or !dkp <"..L["PLAYERNAME"]..">)|r - "..L["DKPCMDHELP"]);
 	end,
 };
 
@@ -206,9 +206,9 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			-- Prints info after all addons have loaded. Circumvents addons that load saved chat messages pushing info out of view.
 			C_Timer.After(3, function ()
 				MonDKP:CheckOfficer()
-				MonDKP:Print(L["Version"].." "..core.MonVersion..", "..L["CreatedMaintain"].." Roeshambo@Stalagg-PvP");
-				MonDKP:Print(L["Loaded"].." "..#MonDKP_DKPTable.." "..L["PlayerRecords"]..", "..#MonDKP_Loot.." "..L["LootHistRecords"].." "..#MonDKP_DKPHistory.." "..L["DKPHistRecords"]..".");
-				MonDKP:Print(L["Use"].." /dkp ? "..L["SubmitBugs"].." @ https://github.com/Roeshambo/MonolithDKP/issues");
+				MonDKP:Print(L["VERSION"].." "..core.MonVersion..", "..L["CREATEDMAINTAIN"].." Roeshambo@Stalagg-PvP");
+				MonDKP:Print(L["LOADED"].." "..#MonDKP_DKPTable.." "..L["PLAYERRECORDS"]..", "..#MonDKP_Loot.." "..L["LOOTHISTRECORDS"].." "..#MonDKP_DKPHistory.." "..L["DKPHISTRECORDS"]..".");
+				MonDKP:Print(L["USE"].." /dkp ? "..L["SUBMITBUGS"].." @ https://github.com/Roeshambo/MonolithDKP/issues");
 				MonDKP.Sync:SendData("MonDKPBuildCheck", tostring(core.BuildNumber)) -- broadcasts build number to guild to check if a newer version is available
 			end)
 		end
@@ -251,9 +251,9 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			hours = math.floor(math.floor(reset % 86400) / 3600)
 			mins = math.ceil((reset % 3600) / 60)
 			
-			if days > 1 then days = " "..days.." "..L["Days"] elseif days == 0 then days = "" else days = " "..days.." "..L["Day"] end
-			if hours > 1 then hours = " "..hours.." "..L["Hours"] elseif hours == 0 then hours = "" else hours = " "..hours.." "..L["Hour"].."." end
-			if mins > 1 then mins = " "..mins.." "..L["Minutes"].."." elseif mins == 0 then mins = "" else mins = " "..mins.." "..L["Minute"].."." end
+			if days > 1 then days = " "..days.." "..L["DAYS"] elseif days == 0 then days = "" else days = " "..days.." "..L["DAY"] end
+			if hours > 1 then hours = " "..hours.." "..L["HOURS"] elseif hours == 0 then hours = "" else hours = " "..hours.." "..L["HOUR"].."." end
+			if mins > 1 then mins = " "..mins.." "..L["MINUTES"].."." elseif mins == 0 then mins = "" else mins = " "..mins.." "..L["MINUTE"].."." end
 
 			if k == "Three" then raidString = "ZG, AQ20"
 			elseif k == "Five" then raidString = "Onyxia"
@@ -261,7 +261,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			end
 
 			if k ~= "Three" then 	-- remove when three day raid lockouts are added
-				MonDKP:Print(raidString.." "..L["ResetsIn"]..days..hours..mins.." ("..date("%A @ %H:%M:%S%p", v)..")")
+				MonDKP:Print(raidString.." "..L["RESETSIN"]..days..hours..mins.." ("..date("%A @ %H:%M:%S%p", v)..")")
 			end
 		end
 
@@ -393,10 +393,10 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 				MonDKP_DKPTable[i].rankName = "None"
 			end
 			if not MonDKP_DKPTable[i].spec then
-				MonDKP_DKPTable[i].spec = L["NoSpecReported"]
+				MonDKP_DKPTable[i].spec = L["NOSPECREPORTED"]
 			end
 			if not MonDKP_DKPTable[i].role then
-				MonDKP_DKPTable[i].role = L["NoRoleDetected"]
+				MonDKP_DKPTable[i].role = L["NOROLEDETECTED"]
 			end
 		end
 

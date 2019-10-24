@@ -69,8 +69,10 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
     local InRaid = false;
     local searchFilter = true
 
-    if MonDKP.UIConfig.search:GetText() ~= L["Search"] and MonDKP.UIConfig.search:GetText() ~= "" then
-      if not strfind(string.upper(v.player), string.upper(MonDKP.UIConfig.search:GetText())) and not strfind(string.upper(v.class), string.upper(MonDKP.UIConfig.search:GetText())) and not strfind(string.upper(v.role), string.upper(MonDKP.UIConfig.search:GetText()))then
+    if MonDKP.UIConfig.search:GetText() ~= L["SEARCH"] and MonDKP.UIConfig.search:GetText() ~= "" then
+      if not strfind(string.upper(v.player), string.upper(MonDKP.UIConfig.search:GetText())) and not strfind(string.upper(v.class), string.upper(MonDKP.UIConfig.search:GetText()))
+      and not strfind(string.upper(v.role), string.upper(MonDKP.UIConfig.search:GetText())) and not strfind(string.upper(v.rankName), string.upper(MonDKP.UIConfig.search:GetText())) 
+      and not strfind(string.upper(v.spec), string.upper(MonDKP.UIConfig.search:GetText())) then
         searchFilter = false;
       end
     end
@@ -120,7 +122,7 @@ end
 function MonDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable based on id passed. Avail IDs are "class", "player" and "dkp"
   local button;                                 -- passing "reset" forces it to do initial sort (A to Z repeatedly instead of A to Z then Z to A toggled)
 
-  if id == "class" or id == "rank" or id == "role" then
+  if id == "class" or id == "rank" or id == "role" or id == "spec" then
     button = SortButtons.class
   elseif id == "spec" then                -- doesn't allow "spec" to be sorted.
     DKPTable_Update()
@@ -243,32 +245,32 @@ function MonDKP:CreateMenu()
   SortButtons.player.t:SetFontObject("MonDKPNormal")
   SortButtons.player.t:SetTextColor(1, 1, 1, 1);
   SortButtons.player.t:SetPoint("LEFT", SortButtons.player, "LEFT", 50, 0);
-  SortButtons.player.t:SetText(L["Player"]); 
+  SortButtons.player.t:SetText(L["PLAYER"]); 
 
   --[[SortButtons.class.t = SortButtons.class:CreateFontString(nil, "OVERLAY")
   SortButtons.class.t:SetFontObject("MonDKPNormal");
   SortButtons.class.t:SetTextColor(1, 1, 1, 1);
   SortButtons.class.t:SetPoint("CENTER", SortButtons.class, "CENTER", 0, 0);
-  SortButtons.class.t:SetText(L["Class"]); --]]
+  SortButtons.class.t:SetText(L["CLASS"]); --]]
 
   -- center column dropdown (class, rank, spec etc..)
   SortButtons.class.t = CreateFrame("FRAME", "MonDKPSortColDropdown", SortButtons.class, "MonolithDKPTableHeaderDropDownMenuTemplate")
   SortButtons.class.t:SetPoint("CENTER", SortButtons.class, "CENTER", 4, -3)
   UIDropDownMenu_JustifyText(SortButtons.class.t, "CENTER")
   UIDropDownMenu_SetWidth(SortButtons.class.t, 80)
-  UIDropDownMenu_SetText(SortButtons.class.t, L["Class"])
+  UIDropDownMenu_SetText(SortButtons.class.t, L["CLASS"])
 
   UIDropDownMenu_Initialize(SortButtons.class.t, function(self, level, menuList)
   local reason = UIDropDownMenu_CreateInfo()
     reason.func = self.SetValue
     reason.fontObject = "MonDKPSmallCenter"
-    reason.text, reason.arg1, reason.arg2, reason.checked, reason.isNotRadio = L["Class"], "class", L["Class"], "class" == core.CenterSort, true
+    reason.text, reason.arg1, reason.arg2, reason.checked, reason.isNotRadio = L["CLASS"], "class", L["CLASS"], "class" == core.CenterSort, true
     UIDropDownMenu_AddButton(reason)
-    reason.text, reason.arg1, reason.arg2, reason.checked, reason.isNotRadio = L["Spec"], "spec", L["Spec"], "spec" == core.CenterSort, true
+    reason.text, reason.arg1, reason.arg2, reason.checked, reason.isNotRadio = L["SPEC"], "spec", L["SPEC"], "spec" == core.CenterSort, true
     UIDropDownMenu_AddButton(reason)
-    reason.text, reason.arg1, reason.arg2, reason.checked, reason.isNotRadio = L["Rank"], "rank", L["Rank"], "rank" == core.CenterSort, true
+    reason.text, reason.arg1, reason.arg2, reason.checked, reason.isNotRadio = L["RANK"], "rank", L["RANK"], "rank" == core.CenterSort, true
     UIDropDownMenu_AddButton(reason)
-    reason.text, reason.arg1, reason.arg2, reason.checked, reason.isNotRadio = L["Role"], "role", L["Role"], "role" == core.CenterSort, true
+    reason.text, reason.arg1, reason.arg2, reason.checked, reason.isNotRadio = L["ROLE"], "role", L["ROLE"], "role" == core.CenterSort, true
     UIDropDownMenu_AddButton(reason)
   end)
 
@@ -288,17 +290,17 @@ function MonDKP:CreateMenu()
   SortButtons.dkp.t:SetTextColor(1, 1, 1, 1);
   if MonDKP_DB.modes.mode == "Roll Based Bidding" then
     SortButtons.dkp.t:SetPoint("RIGHT", SortButtons.dkp, "RIGHT", -50, 0);
-    SortButtons.dkp.t:SetText(L["TotalDKP"]);
+    SortButtons.dkp.t:SetText(L["TOTALDKP"]);
 
     SortButtons.dkp.roll = SortButtons.dkp:CreateFontString(nil, "OVERLAY");
     SortButtons.dkp.roll:SetFontObject("MonDKPNormal")
     SortButtons.dkp.roll:SetScale("0.8")
     SortButtons.dkp.roll:SetTextColor(1, 1, 1, 1);
     SortButtons.dkp.roll:SetPoint("LEFT", SortButtons.dkp, "LEFT", 20, -1);
-    SortButtons.dkp.roll:SetText(L["RollRange"])
+    SortButtons.dkp.roll:SetText(L["ROLLRANGE"])
   else
     SortButtons.dkp.t:SetPoint("CENTER", SortButtons.dkp, "CENTER", 20, 0);
-    SortButtons.dkp.t:SetText(L["TotalDKP"]);
+    SortButtons.dkp.t:SetText(L["TOTALDKP"]);
   end
 
   ----- Counter below DKP Table
@@ -321,7 +323,7 @@ function MonDKP:CreateMenu()
   ------------------------------
 
   MonDKP.UIConfig.search = CreateFrame("EditBox", nil, MonDKP.UIConfig)
-  MonDKP.UIConfig.search:SetPoint("BOTTOMLEFT", MonDKP.UIConfig, "BOTTOMLEFT", 50, 20)     
+  MonDKP.UIConfig.search:SetPoint("BOTTOMLEFT", MonDKP.UIConfig, "BOTTOMLEFT", 50, 18)
   MonDKP.UIConfig.search:SetAutoFocus(false)
   MonDKP.UIConfig.search:SetMultiLine(false)
   MonDKP.UIConfig.search:SetSize(140, 24)
@@ -335,12 +337,12 @@ function MonDKP:CreateMenu()
   MonDKP.UIConfig.search:SetTextColor(0.4, 0.4, 0.4, 1)
   MonDKP.UIConfig.search:SetFontObject("MonDKPNormalLeft")
   MonDKP.UIConfig.search:SetTextInsets(10, 10, 5, 5)
-  MonDKP.UIConfig.search:SetText( L["Search"])
+  MonDKP.UIConfig.search:SetText( L["SEARCH"])
   MonDKP.UIConfig.search:SetScript("OnKeyUp", function(self)    -- clears text and focus on esc
     MonDKP:FilterDKPTable(core.currentSort, "reset")
   end)
   MonDKP.UIConfig.search:SetScript("OnEscapePressed", function(self)    -- clears text and focus on esc
-    self:SetText(L["Search"])
+    self:SetText(L["SEARCH"])
     self:SetTextColor(0.3, 0.3, 0.3, 1)
     self:ClearFocus()
     MonDKP:FilterDKPTable(core.currentSort, "reset")
@@ -352,7 +354,7 @@ function MonDKP:CreateMenu()
     self:ClearFocus()
   end)
   MonDKP.UIConfig.search:SetScript("OnEditFocusGained", function(self)
-    if (self:GetText() ==  L["Search"]) then
+    if (self:GetText() ==  L["SEARCH"]) then
       self:SetText("");
       self:SetTextColor(1, 1, 1, 1)
     else
@@ -361,14 +363,14 @@ function MonDKP:CreateMenu()
   end)
   MonDKP.UIConfig.search:SetScript("OnEditFocusLost", function(self)
     if (self:GetText() == "") then
-      self:SetText(L["Search"])
+      self:SetText(L["SEARCH"])
       self:SetTextColor(0.3, 0.3, 0.3, 1)
     end
   end)
   MonDKP.UIConfig.search:SetScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-    GameTooltip:SetText(L["Search"], 0.25, 0.75, 0.90, 1, true);
-    GameTooltip:AddLine(L["SearchDesc"], 1.0, 1.0, 1.0, true);
+    GameTooltip:SetText(L["SEARCH"], 0.25, 0.75, 0.90, 1, true);
+    GameTooltip:AddLine(L["SEARCHDESC"], 1.0, 1.0, 1.0, true);
     GameTooltip:Show();
   end)
 
@@ -431,7 +433,7 @@ function MonDKP:CreateMenu()
     MonDKP.ChangeLogDisplay = CreateFrame("Frame", "MonDKP_ChangeLogDisplay", UIParent, "ShadowOverlaySmallTemplate");
 
     MonDKP.ChangeLogDisplay:SetPoint("TOP", UIParent, "TOP", 0, -200);
-    MonDKP.ChangeLogDisplay:SetSize(800, 600);
+    MonDKP.ChangeLogDisplay:SetSize(800, 100);
     MonDKP.ChangeLogDisplay:SetBackdrop( {
       bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
       edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3,  
@@ -468,7 +470,7 @@ function MonDKP:CreateMenu()
 
     MonDKP.ChangeLogDisplay.ChangeLogText = MonDKP.ChangeLogDisplay:CreateFontString(nil, "OVERLAY")   -- Filters header
     MonDKP.ChangeLogDisplay.ChangeLogText:ClearAllPoints();
-    MonDKP.ChangeLogDisplay.ChangeLogText:SetWidth(780)
+    MonDKP.ChangeLogDisplay.ChangeLogText:SetWidth(740)
     MonDKP.ChangeLogDisplay.ChangeLogText:SetFontObject("MonDKPNormalLeft")
     MonDKP.ChangeLogDisplay.ChangeLogText:SetPoint("TOPLEFT", MonDKP.ChangeLogDisplay.VerNumber, "BOTTOMLEFT", -15, -0);
 
@@ -489,7 +491,7 @@ function MonDKP:CreateMenu()
     MonDKP.ChangeLogDisplay.DontShowCheck = CreateFrame("CheckButton", nil, MonDKP.ChangeLogDisplay, "UICheckButtonTemplate");
     MonDKP.ChangeLogDisplay.DontShowCheck:SetChecked(false)
     MonDKP.ChangeLogDisplay.DontShowCheck:SetScale(0.6);
-    MonDKP.ChangeLogDisplay.DontShowCheck.text:SetText("  |cff5151de"..L["DontShow"].."|r");
+    MonDKP.ChangeLogDisplay.DontShowCheck.text:SetText("  |cff5151de"..L["DONTSHOW"].."|r");
     MonDKP.ChangeLogDisplay.DontShowCheck.text:SetScale(1.5);
     MonDKP.ChangeLogDisplay.DontShowCheck.text:SetFontObject("MonDKPSmallLeft")
     MonDKP.ChangeLogDisplay.DontShowCheck:SetPoint("LEFT", MonDKP.ChangeLogDisplay.ChangeLogHeader, "RIGHT", 10, 0);
@@ -501,13 +503,16 @@ function MonDKP:CreateMenu()
       end
     end)
 
-    MonDKP.ChangeLogDisplay.Notes:SetText("|CFFAEAEDD"..L["BestPractices"].."|r")
+    MonDKP.ChangeLogDisplay.Notes:SetText("|CFFAEAEDD"..L["BESTPRACTICES"].."|r")
     MonDKP.ChangeLogDisplay.VerNumber:SetText(core.MonVersion)
 
     --------------------------------------
     -- ChangeLog variable calls (bottom of localization files)
     --------------------------------------
-    MonDKP.ChangeLogDisplay.ChangeLogText:SetText(L["ChangeLog1"].."\n\n"..L["ChangeLog2"].."\n\n"..L["ChangeLog3"].."\n\n"..L["ChangeLog4"].."\n\n"..L["ChangeLog5"].."\n\n"..L["ChangeLog6"].."\n\n"..L["ChangeLog7"].."\n\n"..L["ChangeLog8"].."\n\n"..L["ChangeLog9"].."\n\n"..L["ChangeLog10"]);
+    MonDKP.ChangeLogDisplay.ChangeLogText:SetText(L["CHANGELOG1"].."\n\n"..L["CHANGELOG2"].."\n\n"..L["CHANGELOG3"].."\n\n"..L["CHANGELOG4"].."\n\n"..L["CHANGELOG5"].."\n\n"..L["CHANGELOG6"].."\n\n"..L["CHANGELOG7"].."\n\n"..L["CHANGELOG8"].."\n\n"..L["CHANGELOG9"].."\n\n"..L["CHANGELOG10"]);
+
+    local logHeight = MonDKP.ChangeLogDisplay.ChangeLogHeader:GetHeight() + MonDKP.ChangeLogDisplay.Notes:GetHeight() + MonDKP.ChangeLogDisplay.VerNumber:GetHeight() + MonDKP.ChangeLogDisplay.ChangeLogText:GetHeight();
+    MonDKP.ChangeLogDisplay:SetSize(800, logHeight);  -- resize container
   end
 
   ---------------------------------------

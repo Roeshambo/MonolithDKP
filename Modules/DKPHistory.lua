@@ -16,9 +16,9 @@ local player_table = {};
 local classSearch;
 local playerString = "";
 local c;
-local currentLength = 50;
+local currentLength = 5;
 local currentRow = 0;
-local btnText = 50;
+local btnText = 5;
 local curDate;
 local history = {};
 local menuFrame = CreateFrame("Frame", "MonDKPDeleteDKPMenuFrame", UIParent, "UIDropDownMenuTemplate")
@@ -31,11 +31,11 @@ end
 
 function MonDKP:DKPHistory_Reset()
 	currentRow = 0
-	currentLength = 50;
+	currentLength = 5;
 	curDate = nil;
-	btnText = 50;
+	btnText = 5;
 	if MonDKP.ConfigTab6.loadMoreBtn then
-		MonDKP.ConfigTab6.loadMoreBtn:SetText(L["Load"].." "..btnText.." "..L["More"].."...")
+		MonDKP.ConfigTab6.loadMoreBtn:SetText(L["LOAD"].." "..btnText.." "..L["MORE"].."...")
 	end
 
 	for i=1, #MonDKP.ConfigTab6.history do
@@ -55,7 +55,7 @@ end
 local function MonDKPDeleteDKPEntry(item, timestamp)
 	if core.CurrentlySyncing then
 		StaticPopupDialogs["CURRENTLY_SYNC"] = {
-			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CurrentlySyncing"],
+			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CURRENTLYSYNCING"],
 			button1 = L["OK"],
 			timeout = 0,
 			whileDead = true,
@@ -71,7 +71,7 @@ local function MonDKPDeleteDKPEntry(item, timestamp)
 	if strfind(reason_header, "%%") then
 		reason_header = gsub(reason_header, "%%", "%%%%")
 	end
-	local confirm_string = L["ConfirmDeleteEntry1"]..":\n\n"..reason_header.."\n\n|CFFFF0000"..L["WARNING"].."|r: "..L["DeleteEntryRefundConf"];
+	local confirm_string = L["CONFIRMDELETEENTRY1"]..":\n\n"..reason_header.."\n\n|CFFFF0000"..L["WARNING"].."|r: "..L["DELETEENTRYREFUNDCONF"];
 
 	StaticPopupDialogs["CONFIRM_DELETE"] = {
 
@@ -126,7 +126,7 @@ end
 local function RightClickDKPMenu(self, item, timestamp)
 	menu = {
 	{ text = MonDKP_DKPHistory[item]["dkp"].." "..L["DKP"].." - "..MonDKP_DKPHistory[item]["reason"].." @ "..formdate("%m/%d/%y %H:%M:%S", MonDKP_DKPHistory[item]["date"]), isTitle = true},
-	{ text = L["DeleteDKPEntry"], func = function()
+	{ text = L["DELETEDKPENTRY"], func = function()
 		MonDKPDeleteDKPEntry(item, timestamp)
 	end },
 	}
@@ -231,20 +231,20 @@ function MonDKP:DKPHistory_Update()
 		currentRow = currentRow + 1;
 	end
 
-	if (#MonDKP_DKPHistory - currentLength) < 50 then btnText = #MonDKP_DKPHistory - currentLength end
+	if (#MonDKP_DKPHistory - currentLength) < 5 then btnText = #MonDKP_DKPHistory - currentLength end
 
 	if not MonDKP.ConfigTab6.loadMoreBtn then
 		MonDKP.ConfigTab6.loadMoreBtn = CreateFrame("Button", nil, MonDKP.ConfigTab6, "MonolithDKPButtonTemplate")
 		MonDKP.ConfigTab6.loadMoreBtn:SetSize(100, 30);
-		MonDKP.ConfigTab6.loadMoreBtn:SetText(L["Load"].." "..btnText.." "..L["More"].."...");
+		MonDKP.ConfigTab6.loadMoreBtn:SetText(L["LOAD"].." "..btnText.." "..L["MORE"].."...");
 		MonDKP.ConfigTab6.loadMoreBtn:GetFontString():SetTextColor(1, 1, 1, 1)
 		MonDKP.ConfigTab6.loadMoreBtn:SetNormalFontObject("MonDKPSmallCenter");
 		MonDKP.ConfigTab6.loadMoreBtn:SetHighlightFontObject("MonDKPSmallCenter");
 		MonDKP.ConfigTab6.loadMoreBtn:SetPoint("TOP", MonDKP.ConfigTab6.history[currentRow], "BOTTOM", 0, -10);
 		MonDKP.ConfigTab6.loadMoreBtn:SetScript("OnClick", function()
-			currentLength = currentLength + 50;
+			currentLength = currentLength + 5;
 			MonDKP:DKPHistory_Update();
-			MonDKP.ConfigTab6.loadMoreBtn:SetText(L["Load"].." "..btnText.." "..L["More"].."...")
+			MonDKP.ConfigTab6.loadMoreBtn:SetText(L["LOAD"].." "..btnText.." "..L["MORE"].."...")
 			MonDKP.ConfigTab6.loadMoreBtn:SetPoint("TOP", MonDKP.ConfigTab6.history[currentRow], "BOTTOM", 0, -10)
 		end)
 	end
@@ -253,7 +253,7 @@ function MonDKP:DKPHistory_Update()
 		MonDKP.ConfigTab6.loadMoreBtn:Hide();
 	elseif MonDKP.ConfigTab6.loadMoreBtn and currentRow < #MonDKP_DKPHistory then
 		MonDKP.ConfigTab6.loadMoreBtn:Show();
-		MonDKP.ConfigTab6.loadMoreBtn:SetText(L["Load"].." "..btnText.." "..L["More"].."...")
+		MonDKP.ConfigTab6.loadMoreBtn:SetText(L["LOAD"].." "..btnText.." "..L["MORE"].."...")
 		MonDKP.ConfigTab6.loadMoreBtn:SetPoint("TOP", MonDKP.ConfigTab6.history[currentRow], "BOTTOM", 0, -10);
 	end
 end

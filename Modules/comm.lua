@@ -121,50 +121,50 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 			
 				if curClass == "WARRIOR" then
 					if strfind(message, "Protection") then
-						curSelection.role = L["Tank"]
+						curSelection.role = L["TANK"]
 					else
-						curSelection.role = L["MeleeDPS"]
+						curSelection.role = L["MELEEDPS"]
 					end
 				elseif curClass == "PALADIN" then
 					if strfind(message, "Protection") then
-						curSelection.role = L["Tank"]
+						curSelection.role = L["TANK"]
 					elseif strfind(message, "Holy") then
-						curSelection.role = L["Healer"]
+						curSelection.role = L["HEALER"]
 					else
-						curSelection.role = L["MeleeDPS"]
+						curSelection.role = L["MELEEDPS"]
 					end
 				elseif curClass == "HUNTER" then
-					curSelection.role = L["RangeDPS"]
+					curSelection.role = L["RANGEDPS"]
 				elseif curClass == "ROGUE" then
-					curSelection.role = L["MeleeDPS"]
+					curSelection.role = L["MELEEDPS"]
 				elseif curClass == "PRIEST" then
 					if strfind(message, "Shadow") then
-						curSelection.role = L["CasterDPS"]
+						curSelection.role = L["CASTERDPS"]
 					else
-						curSelection.role = L["Healer"]
+						curSelection.role = L["HEALER"]
 					end
 				elseif curClass == "SHAMAN" then
 					if strfind(message, "Restoration") then
-						curSelection.role = L["Healer"]
+						curSelection.role = L["HEALER"]
 					elseif strfind(message, "Elemental") then
-						curSelection.role = L["CasterDPS"]
+						curSelection.role = L["CASTERDPS"]
 					else
-						curSelection.role = L["MeleeDPS"]
+						curSelection.role = L["MELEEDPS"]
 					end
 				elseif curClass == "MAGE" then
-					curSelection.role = L["CasterDPS"]
+					curSelection.role = L["CASTERDPS"]
 				elseif curClass == "WARLOCK" then
-					curSelection.role = L["CasterDPS"]
+					curSelection.role = L["CASTERDPS"]
 				elseif curClass == "DRUID" then
 					if strfind(message, "Feral") then
-						curSelection.role = L["Tank"]
+						curSelection.role = L["TANK"]
 					elseif strfind(message, "Balance") then
-						curSelection.role = L["CasterDPS"]
+						curSelection.role = L["CASTERDPS"]
 					else
-						curSelection.role = L["Healer"]
+						curSelection.role = L["HEALER"]
 					end
 				else
-					curSelection.role = L["NoRoleDetected"]
+					curSelection.role = L["NOROLEDETECTED"]
 				end
 			end
 			return;
@@ -174,7 +174,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 			if LastVerCheck > 1800 then   					-- limits the Out of Date message from firing more than every 30 minutes 
 				core.LastVerCheck = time();
 				if tonumber(message) > core.BuildNumber then
-					MonDKP:Print(L["OutOfDateAnnounce"])
+					MonDKP:Print(L["OUTOFDATEANNOUNCE"])
 				end
 			end
 
@@ -201,17 +201,31 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 					end
 				end
 			elseif prefix == "MonDKPRaidTimer" and sender ~= UnitName("player") and core.IsOfficer then
-				local command, arg1 = strsplit(",", message);
+				local command, args = strsplit(",", message);
 				if command == "start" then
-					if arg1 == "true" then
-						arg1 = true
-					else
-						arg1 = false
-					end
+					local arg1, arg2, arg3, arg4, arg5, arg6 = strsplit(" ", args, 6)
+					if arg1 == "true" then arg1 = true else arg1 = false end
+					if arg4 == "true" then arg4 = true else arg4 = false end
+					if arg5 == "true" then arg5 = true else arg5 = false end
+					if arg6 == "true" then arg6 = true else arg6 = false end
+
+					MonDKP.ConfigTab2.RaidTimerContainer.interval:SetNumber(tonumber(arg2));
+					MonDKP_DB.modes.increment = tonumber(arg2);
+					MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetNumber(tonumber(arg3));
+					MonDKP_DB.DKPBonus.IntervalBonus = tonumber(arg3);
+					MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:SetChecked(arg4);
+					MonDKP_DB.DKPBonus.GiveRaidStart = arg4;
+					MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:SetChecked(arg5);
+					MonDKP_DB.DKPBonus.GiveRaidEnd = arg5;
+					MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:SetChecked(arg6);
+					MonDKP_DB.DKPBonus.IncStandby = arg6;
 
 					MonDKP:StartRaidTimer(arg1)
 				elseif command == "stop" then
 					MonDKP:StopRaidTimer()
+				elseif strfind(command, "sync", 1) then
+					local _, syncTimer, syncSecondCount, syncMinuteCount, syncAward = strsplit(" ", command, 5)
+					MonDKP:StartRaidTimer(nil, syncTimer, syncSecondCount, syncMinuteCount, syncAward)
 				end
 			end
 			if (sender ~= UnitName("player")) then
@@ -226,14 +240,14 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						if (prefix == "MonDKPLogSync") then
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_HIST_BCAST1"] = {
-									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODLogSync"],
+									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODLOGSYNC"],
 									button1 = L["YES"],
 									button2 = L["NO"],
 									OnAccept = function()
 										MonDKP_Loot = deserialized;
 										MonDKP:LootHistory_Reset()
 										MonDKP:LootHistory_Update("No Filter")
-										MonDKP:Print(L["LootHistoryUpdateComp"])
+										MonDKP:Print(L["LOOTHISTORYUPDATECOMP"])
 									end,
 									timeout = 5,
 									whileDead = true,
@@ -247,12 +261,12 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								MonDKP_DKPTable.seed = deserialized.seed
 								MonDKP:LootHistory_Reset()
 								MonDKP:LootHistory_Update("No Filter")
-								MonDKP:Print(L["LootHistoryUpdateComp"])
+								MonDKP:Print(L["LOOTHISTORYUPDATECOMP"])
 							end
 						elseif prefix == "MonDKPLootAward" then
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_LOOT_AWARD_BCAST"] = {
-									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODDKPHistoryEntry"],
+									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODDKPHISTORYENTRY"],
 									button1 = L["YES"],
 									button2 = L["NO"],
 									OnAccept = function()
@@ -277,7 +291,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						elseif prefix == "MonDKPDKPAward" then
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_DKP_AWARD_BCAST"] = {
-									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODDKPHistoryEntry"],
+									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODDKPHISTORYENTRY"],
 									button1 = L["YES"],
 									button2 = L["NO"],
 									OnAccept = function()
@@ -306,7 +320,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						elseif prefix == "MonDKPDKPLogSync" then
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_HIST_BCAST2"] = {
-									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODDKPHistoryTable"],
+									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODDKPHISTORYTABLE"],
 									button1 = L["YES"],
 									button2 = L["NO"],
 									OnAccept = function()
@@ -315,7 +329,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 											MonDKP:DKPHistory_Reset()
 										end
 				      					MonDKP:DKPHistory_Update()
-										MonDKP:Print(L["DKPHistoryUpdateComp"])
+										MonDKP:Print(L["DKPHISTORYUPDATECOMP"])
 									end,
 									timeout = 5,
 									whileDead = true,
@@ -331,12 +345,12 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 									MonDKP:DKPHistory_Reset()
 								end
 		      					MonDKP:DKPHistory_Update()
-								MonDKP:Print(L["DKPHistoryUpdateComp"])
+								MonDKP:Print(L["DKPHISTORYUPDATECOMP"])
 							end
 						elseif prefix == "MonDKPDeleteLoot" then
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_LOOT_BCAST1"] = {
-									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODLootHistoryDelete"],
+									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODLOOTHISTORYDELETE"],
 									button1 = L["YES"],
 									button2 = L["NO"],
 									OnAccept = function()
@@ -374,7 +388,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						elseif prefix == "MonDKPEditLoot" then
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_LOOT_ADJUST_BCAST"] = {
-									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODLootTableItem"],
+									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODLOOTTABLEITEM"],
 									button1 = L["YES"],
 									button2 = L["NO"],
 									OnAccept = function()
@@ -408,7 +422,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						elseif prefix == "MonDKPDKPDelSync" then
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_DKP_DELETE_BCAST"] = {
-									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODDKPHistoryDelete"],
+									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODDKPHISTORYDELETE"],
 									button1 = L["YES"],
 									button2 = L["NO"],
 									OnAccept = function()
@@ -459,7 +473,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 										table.insert(MonDKP_MinBids, deserialized[2][i])
 									end
 								end
-								MonDKP:Print(L["MinBidValuesReceived"].." "..sender)
+								MonDKP:Print(L["MINBIDVALUESRECEIVED"].." "..sender)
 							end
 						elseif prefix == "MonDKPWhitelist" then
 							MonDKP_Whitelist = deserialized;
@@ -477,7 +491,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 							MonDKP_DB.DKPBonus = deserialized[2]
 							MonDKP_DB.raiders = deserialized[3]
 							StaticPopupDialogs["SEND_MODES"] = {
-								text = sender.." "..L["ReloadUIForSettings"],
+								text = sender.." "..L["RELOADUIFORSETTINGS"],
 								button1 = L["YES"],
 								button2 = L["NO"],
 								OnAccept = function()
@@ -492,14 +506,14 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						else
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_DKP_BROADCAST"] = {
-									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODDKPTableBroadcast"],
+									text = "|CFFFF0000"..L["WARNING"].."|r: "..sender.." "..L["OODDKPTABLEBROADCAST"],
 									button1 = L["YES"],
 									button2 = L["NO"],
 									OnAccept = function()
 										MonDKP_DKPTable = deserialized;			-- commits to SavedVariables
 										MonDKP:FilterDKPTable(core.currentSort, "reset")
 										MonDKP:SeedVerify_Update()
-										MonDKP:Print(L["DKPDataUpdatedBy"].." "..sender.."...")
+										MonDKP:Print(L["DKPDATAUPDATEDBY"].." "..sender.."...")
 									end,
 									timeout = 5,
 									whileDead = true,
@@ -513,7 +527,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								MonDKP_DKPHistory.seed = deserialized.seed
 								MonDKP:FilterDKPTable(core.currentSort, "reset")
 								MonDKP:SeedVerify_Update()
-								MonDKP:Print(L["DKPDataUpdatedBy"].." "..sender.."...")
+								MonDKP:Print(L["DKPDATAUPDATEDBY"].." "..sender.."...")
 							end
 						end
 					else
@@ -522,12 +536,12 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				end
 			end
 			if (sender == UnitName("player") and prefix == "MonDKPLogSync") then
-				MonDKP:Print(L["LootHistCastComp"])
+				MonDKP:Print(L["LOOTHISTCASTCOMP"])
 			end
 			if (sender == UnitName("player") and prefix == "MonDKPDKPLogSync") then
-				MonDKP:Print(L["DKPHistCastComp"])
+				MonDKP:Print(L["DKPHISTCASTCOMP"])
 				StaticPopupDialogs["BCAST_COMP"] = {
-					text = L["BcastCompleted"],
+					text = L["BCASTCOMPLETED"],
 					button1 = L["OK"],
 					timeout = 0,
 					whileDead = true,
@@ -545,9 +559,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				local msg;
 
 				if #MonDKP_Whitelist > 0 then
-					msg = sender..", "..L["UnauthUpdate1"];
+					msg = sender..", "..L["UNAUTHUPDATE1"];
 				else
-					msg = sender..", "..L["UnauthUpdate2"];
+					msg = sender..", "..L["UNAUTHUPDATE2"];
 				end
 				MonDKP:Print(msg)
 				StaticPopupDialogs["MODIFY_WARNING"] = {
@@ -649,11 +663,11 @@ function MonDKP.Sync:SendData(prefix, data)
 
 		-- Verify Send
 		if (prefix == "MonDKPDataSync") then
-			MonDKP:Print(L["DKPBroadcasted"])
+			MonDKP:Print(L["DKPBROADCASTED"])
 		elseif (prefix == "MonDKPLogSync") then
-			MonDKP:Print(L["BCastLootHist"].."...")
+			MonDKP:Print(L["BCASTLOOTHIST"].."...")
 		elseif (prefix == "MonDKPDKPLogSync") then
-			MonDKP:Print(L["BCastDKPHist"].."...")
+			MonDKP:Print(L["BCASTDKPHIST"].."...")
 		end
 	end
 end

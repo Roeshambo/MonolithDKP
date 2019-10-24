@@ -11,7 +11,7 @@ function MonDKP:ToggleDKPModesWindow()
 		if core.BiddingWindow then core.BiddingWindow:SetFrameLevel(6) end
 		if MonDKP.UIConfig then MonDKP.UIConfig:SetFrameLevel(2) end
 	else
-		MonDKP:Print(L["NoPermission"])
+		MonDKP:Print(L["NOPERMISSION"])
 	end
 end
 
@@ -21,7 +21,7 @@ function MonDKP:DKPModesFrame_Create()
 	local ActiveCostType = MonDKP_DB.modes.costvalue;
 
 	if not core.IsOfficer then
-		MonDKP:Print(L["NoPermission"])
+		MonDKP:Print(L["NOPERMISSION"])
 		return
 	end
 
@@ -74,22 +74,22 @@ function MonDKP:DKPModesFrame_Create()
 	f.ModeDescription:SetWidth(400);
 	f.ModeDescription:SetFontObject("MonDKPSmallLeft")
 	
-	local MinBidDescription = L["MinBidDescription"]
-	local StaticDescription = L["StaticDescription"]
-	local RollDescription = L["RollDescription"]
-	local ZeroSumDescription = L["ZeroSumDescription"];
+	local MinBidDescription = L["MINBIDDESCRIPTION"]
+	local StaticDescription = L["STATICDESCRIPTION"]
+	local RollDescription = L["ROLLDESCRIPTION"]
+	local ZeroSumDescription = L["ZEROSUMDESCRIPTION"];
 
 	if MonDKP_DB.modes.mode == "Minimum Bid Values" then
-		f.ModeDescriptionHeader:SetText(L["MinBidValuesHead"])
+		f.ModeDescriptionHeader:SetText(L["MINBIDVALUESHEAD"])
 		f.ModeDescription:SetText(MinBidDescription)
 	elseif MonDKP_DB.modes.mode == "Static Item Values" then
-		f.ModeDescriptionHeader:SetText(L["StaticItemValuesHead"])
+		f.ModeDescriptionHeader:SetText(L["STATICITEMVALUESHEAD"])
 		f.ModeDescription:SetText(StaticDescription)
 	elseif MonDKP_DB.modes.mode == "Roll Based Bidding" then
-		f.ModeDescriptionHeader:SetText(L["RollBiddingHead"])
+		f.ModeDescriptionHeader:SetText(L["ROLLBIDDINGHEAD"])
 		f.ModeDescription:SetText(RollDescription)
 	elseif MonDKP_DB.modes.mode == "Zero Sum" then
-		f.ModeDescriptionHeader:SetText(L["ZeroSumHead"])
+		f.ModeDescriptionHeader:SetText(L["ZEROSUMHEAD"])
 		f.ModeDescription:SetText(ZeroSumDescription)
 	end
 
@@ -98,13 +98,13 @@ function MonDKP:DKPModesFrame_Create()
 	local LocalMode;
 
 	if CurMode == "Minimum Bid Values" then
-		LocalMode = L["MinBidValuesHead"];
+		LocalMode = L["MINBIDVALUESHEAD"];
 	elseif CurMode == "Static Item Values" then
-		LocalMode = L["StaticItemValuesHead"]
+		LocalMode = L["STATICITEMVALUESHEAD"]
 	elseif CurMode == "Roll Based Bidding" then
-		LocalMode = L["RollBiddingHead"]
+		LocalMode = L["ROLLBIDDINGHEAD"]
 	elseif CurMode == "Zero Sum" then
-		LocalMode = L["ZeroSumHead"]
+		LocalMode = L["ZEROSUMHEAD"]
 	end
 
 
@@ -118,13 +118,13 @@ function MonDKP:DKPModesFrame_Create()
 	local DKPMode = UIDropDownMenu_CreateInfo()
 		DKPMode.func = self.SetValue
 		DKPMode.fontObject = "MonDKPSmallCenter"
-		DKPMode.text, DKPMode.arg1, DKPMode.checked, DKPMode.isNotRadio = L["MinBidValuesHead"], "Minimum Bid Values", "Minimum Bid Values" == CurMode, false
+		DKPMode.text, DKPMode.arg1, DKPMode.checked, DKPMode.isNotRadio = L["MINBIDVALUESHEAD"], "Minimum Bid Values", "Minimum Bid Values" == CurMode, false
 		UIDropDownMenu_AddButton(DKPMode)
-		DKPMode.text, DKPMode.arg1, DKPMode.checked, DKPMode.isNotRadio = L["StaticItemValuesHead"], "Static Item Values", "Static Item Values" == CurMode, false
+		DKPMode.text, DKPMode.arg1, DKPMode.checked, DKPMode.isNotRadio = L["STATICITEMVALUESHEAD"], "Static Item Values", "Static Item Values" == CurMode, false
 		UIDropDownMenu_AddButton(DKPMode)
-		DKPMode.text, DKPMode.arg1, DKPMode.checked, DKPMode.isNotRadio = L["RollBiddingHead"], "Roll Based Bidding", "Roll Based Bidding" == CurMode, false
+		DKPMode.text, DKPMode.arg1, DKPMode.checked, DKPMode.isNotRadio = L["ROLLBIDDINGHEAD"], "Roll Based Bidding", "Roll Based Bidding" == CurMode, false
 		UIDropDownMenu_AddButton(DKPMode)
-		DKPMode.text, DKPMode.arg1, DKPMode.checked, DKPMode.isNotRadio = L["ZeroSumHead"], "Zero Sum", "Zero Sum" == CurMode, false
+		DKPMode.text, DKPMode.arg1, DKPMode.checked, DKPMode.isNotRadio = L["ZEROSUMHEAD"], "Zero Sum", "Zero Sum" == CurMode, false
 		UIDropDownMenu_AddButton(DKPMode)
 	end)
 
@@ -236,13 +236,13 @@ function MonDKP:DKPModesFrame_Create()
 		end
 
 		if CurMode == "Minimum Bid Values" then
-			LocalMode = L["MinBidValuesHead"];
+			LocalMode = L["MINBIDVALUESHEAD"];
 		elseif CurMode == "Static Item Values" then
-			LocalMode = L["StaticItemValuesHead"]
+			LocalMode = L["STATICITEMVALUESHEAD"]
 		elseif CurMode == "Roll Based Bidding" then
-			LocalMode = L["RollBiddingHead"]
+			LocalMode = L["ROLLBIDDINGHEAD"]
 		elseif CurMode == "Zero Sum" then
-			LocalMode = L["ZeroSumHead"]
+			LocalMode = L["ZEROSUMHEAD"]
 		end
 
 		UIDropDownMenu_SetText(f.ModesDropDown, LocalMode)
@@ -251,8 +251,8 @@ function MonDKP:DKPModesFrame_Create()
 
 	f.ModesDropDown:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["DKPModes"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["DKPModesTTDesc"], 1.0, 1.0, 1.0, true);
+		GameTooltip:SetText(L["DKPMODES"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["DKPMODESTTDESC"], 1.0, 1.0, 1.0, true);
 		GameTooltip:Show();
 	end)
 	f.ModesDropDown:SetScript("OnLeave", function(self)
@@ -262,7 +262,7 @@ function MonDKP:DKPModesFrame_Create()
 	f.ModeHeader = f:CreateFontString(nil, "OVERLAY")
 	f.ModeHeader:SetPoint("BOTTOMLEFT", f.ModesDropDown, "TOPLEFT", 25, 0);
 	f.ModeHeader:SetFontObject("MonDKPSmallLeft")
-	f.ModeHeader:SetText(L["DKPModes"])
+	f.ModeHeader:SetText(L["DKPMODES"])
 
 	-- Rounding DROPDOWN box 
 	f.RoundDropDown = CreateFrame("FRAME", "MonDKPModeSelectDropDown", f, "MonolithDKPUIDropDownMenuTemplate")
@@ -299,8 +299,8 @@ function MonDKP:DKPModesFrame_Create()
 	end)
 	f.RoundDropDown:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["DKPRounding"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["DKPRoundingTTDesc"], 1.0, 1.0, 1.0, true);
+		GameTooltip:SetText(L["DKPROUNDING"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["DKPROUNDINGTTDESC"], 1.0, 1.0, 1.0, true);
 		GameTooltip:Show();
 	end)
     f.RoundDropDown:SetScript("OnLeave", function(self)
@@ -310,13 +310,13 @@ function MonDKP:DKPModesFrame_Create()
 	f.RoundHeader = f:CreateFontString(nil, "OVERLAY")
 	f.RoundHeader:SetPoint("BOTTOMLEFT", f.RoundDropDown, "TOPLEFT", 25, 0);
 	f.RoundHeader:SetFontObject("MonDKPSmallLeft")
-	f.RoundHeader:SetText(L["DKPRounding"])
+	f.RoundHeader:SetText(L["DKPROUNDING"])
 
 	-- Channels DROPDOWN box 
 	f.ChannelsDropDown = CreateFrame("FRAME", "MonDKPModeSelectDropDown", f, "MonolithDKPUIDropDownMenuTemplate")
 	f.ChannelsDropDown:SetPoint("LEFT", f.ModesDropDown, "RIGHT", 30, 0)
 	UIDropDownMenu_SetWidth(f.ChannelsDropDown, 150)
-	UIDropDownMenu_SetText(f.ChannelsDropDown, L["OpenChannels"])
+	UIDropDownMenu_SetText(f.ChannelsDropDown, L["OPENCHANNELS"])
 
 	-- Create and bind the initialization function to the dropdown menu
 	UIDropDownMenu_Initialize(f.ChannelsDropDown, function(self, level, menuList)
@@ -325,11 +325,11 @@ function MonDKP:DKPModesFrame_Create()
 		OpenChannel.fontObject = "MonDKPSmallCenter"
 		OpenChannel.keepShownOnClick = true;
 		OpenChannel.isNotRadio = true;
-		OpenChannel.text, OpenChannel.arg1, OpenChannel.checked = L["Whisper"], "Whisper", true == MonDKP_DB.modes.channels.whisper
+		OpenChannel.text, OpenChannel.arg1, OpenChannel.checked = L["WHISPER"], "Whisper", true == MonDKP_DB.modes.channels.whisper
 		UIDropDownMenu_AddButton(OpenChannel)
-		OpenChannel.text, OpenChannel.arg1, OpenChannel.checked = L["Raid"], "Raid", true == MonDKP_DB.modes.channels.raid
+		OpenChannel.text, OpenChannel.arg1, OpenChannel.checked = L["RAID"], "Raid", true == MonDKP_DB.modes.channels.raid
 		UIDropDownMenu_AddButton(OpenChannel)
-		OpenChannel.text, OpenChannel.arg1, OpenChannel.checked = L["Guild"], "Guild", true == MonDKP_DB.modes.channels.guild
+		OpenChannel.text, OpenChannel.arg1, OpenChannel.checked = L["GUILD"], "Guild", true == MonDKP_DB.modes.channels.guild
 		UIDropDownMenu_AddButton(OpenChannel)
 	end)
 
@@ -349,8 +349,8 @@ function MonDKP:DKPModesFrame_Create()
 
 	f.ChannelsDropDown:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["CommandChannels"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["CommandChannelsTTDesc"], 1.0, 1.0, 1.0, true);
+		GameTooltip:SetText(L["COMMANDCHANNELS"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["COMMANDCHANNELSTTDESC"], 1.0, 1.0, 1.0, true);
 		GameTooltip:Show();
 	end)
 	f.ChannelsDropDown:SetScript("OnLeave", function(self)
@@ -360,7 +360,7 @@ function MonDKP:DKPModesFrame_Create()
 	f.ChannelsHeader = f:CreateFontString(nil, "OVERLAY")
 	f.ChannelsHeader:SetPoint("BOTTOMLEFT", f.ChannelsDropDown, "TOPLEFT", 25, 0);
 	f.ChannelsHeader:SetFontObject("MonDKPSmallLeft")
-	f.ChannelsHeader:SetText(L["CommandChannels"])
+	f.ChannelsHeader:SetText(L["COMMANDCHANNELS"])
 
 	-- Cost Auto Update Value DROPDOWN box 
 	if not MonDKP_DB.modes.CostSelection then MonDKP_DB.modes.CostSelection = "Second Bidder" end
@@ -370,9 +370,9 @@ function MonDKP:DKPModesFrame_Create()
 	local LocalCostSel;
 
 	if MonDKP_DB.modes.CostSelection == "First Bidder" then
-		LocalCostSel = L["FirstBidder"]
+		LocalCostSel = L["FIRSTBIDDER"]
 	elseif MonDKP_DB.modes.CostSelection == "Second Bidder" then
-		LocalCostSel = L["SecondBidder"]
+		LocalCostSel = L["SECONDBIDDER"]
 	end
 
 	UIDropDownMenu_SetWidth(f.CostSelection, 150)
@@ -383,9 +383,9 @@ function MonDKP:DKPModesFrame_Create()
 	local CostSelect = UIDropDownMenu_CreateInfo()
 		CostSelect.func = self.SetValue
 		CostSelect.fontObject = "MonDKPSmallCenter"
-		CostSelect.text, CostSelect.arg1, CostSelect.checked, CostSelect.isNotRadio = L["FirstBidder"], "First Bidder", "First Bidder" == MonDKP_DB.modes.CostSelection, false
+		CostSelect.text, CostSelect.arg1, CostSelect.checked, CostSelect.isNotRadio = L["FIRSTBIDDER"], "First Bidder", "First Bidder" == MonDKP_DB.modes.CostSelection, false
 		UIDropDownMenu_AddButton(CostSelect)
-		CostSelect.text, CostSelect.arg1, CostSelect.checked, CostSelect.isNotRadio = L["SecondBidder"], "Second Bidder", "Second Bidder" == MonDKP_DB.modes.CostSelection, false
+		CostSelect.text, CostSelect.arg1, CostSelect.checked, CostSelect.isNotRadio = L["SECONDBIDDER"], "Second Bidder", "Second Bidder" == MonDKP_DB.modes.CostSelection, false
 		UIDropDownMenu_AddButton(CostSelect)
 	end)
 
@@ -394,9 +394,9 @@ function MonDKP:DKPModesFrame_Create()
 		MonDKP_DB.modes.CostSelection = arg1
 
 		if arg1 == "First Bidder" then
-			LocalCostSel = L["FirstBidder"]
+			LocalCostSel = L["FIRSTBIDDER"]
 		else
-			LocalCostSel = L["SecondBidder"]
+			LocalCostSel = L["SECONDBIDDER"]
 		end
 
 		UIDropDownMenu_SetText(f.CostSelection, LocalCostSel)
@@ -405,8 +405,8 @@ function MonDKP:DKPModesFrame_Create()
 
 	f.CostSelection:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["CostAutoUpdate"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["CostAutoUpdateTTDesc"], 1.0, 1.0, 1.0, true);
+		GameTooltip:SetText(L["COSTAUTOUPDATE"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["COSTAUTOUPDATETTDESC"], 1.0, 1.0, 1.0, true);
 		GameTooltip:Show();
 	end)
 	f.CostSelection:SetScript("OnLeave", function(self)
@@ -416,7 +416,7 @@ function MonDKP:DKPModesFrame_Create()
 	f.CostSelectionHeader = f:CreateFontString(nil, "OVERLAY")
 	f.CostSelectionHeader:SetPoint("BOTTOMLEFT", f.CostSelection, "TOPLEFT", 25, 0);
 	f.CostSelectionHeader:SetFontObject("MonDKPSmallLeft")
-	f.CostSelectionHeader:SetText(L["CostAutoUpdateValue"])
+	f.CostSelectionHeader:SetText(L["COSTAUTOUPDATEVALUE"])
 
 	if not (MonDKP_DB.modes.mode == "Minimum Bid Values" or (MonDKP_DB.modes.mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid")) then
 		f.CostSelection:Hide()
@@ -456,8 +456,8 @@ function MonDKP:DKPModesFrame_Create()
     end)
     f.Inflation:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["ArtificialInflation"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["ArtInflatTTDesc"], 1.0, 1.0, 1.0, true);
+		GameTooltip:SetText(L["ARTIFICIALINFLATION"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["ARTINFLATTTDESC"], 1.0, 1.0, 1.0, true);
 		GameTooltip:Show();
 	end)
     f.Inflation:SetScript("OnLeave", function(self)
@@ -468,7 +468,7 @@ function MonDKP:DKPModesFrame_Create()
     f.Inflation.Header = f.Inflation:CreateFontString(nil, "OVERLAY")
     f.Inflation.Header:SetFontObject("MonDKPNormalLeft");
     f.Inflation.Header:SetPoint("BOTTOM", f.Inflation, "TOP", -20, 2);
-    f.Inflation.Header:SetText(L["Inflation"])
+    f.Inflation.Header:SetText(L["INFLATION"])
 
     if MonDKP_DB.modes.mode == "Zero Sum" then
     	f.Inflation:Show()
@@ -486,9 +486,9 @@ function MonDKP:DKPModesFrame_Create()
 	local BidType = UIDropDownMenu_CreateInfo()
 		BidType.func = self.SetValue
 		BidType.fontObject = "MonDKPSmallCenter"
-		BidType.text, BidType.arg1, BidType.checked, BidType.isNotRadio = L["Static"], "Static", "Static" == MonDKP_DB.modes.ZeroSumBidType, false
+		BidType.text, BidType.arg1, BidType.checked, BidType.isNotRadio = L["STATIC"], "Static", "Static" == MonDKP_DB.modes.ZeroSumBidType, false
 		UIDropDownMenu_AddButton(BidType)
-		BidType.text, BidType.arg1, BidType.checked, BidType.isNotRadio = L["MinimumBid"], "Minimum Bid", "Minimum Bid" == MonDKP_DB.modes.ZeroSumBidType, false
+		BidType.text, BidType.arg1, BidType.checked, BidType.isNotRadio = L["MINIMUMBID"], "Minimum Bid", "Minimum Bid" == MonDKP_DB.modes.ZeroSumBidType, false
 		UIDropDownMenu_AddButton(BidType)
 	end)
 
@@ -500,7 +500,7 @@ function MonDKP:DKPModesFrame_Create()
 			f.MaxBid.Header:Hide();
 			f.CostSelection:Hide();
 			f.CostSelectionHeader:Hide();
-			newValue = L["Static"]
+			newValue = L["STATIC"]
 			f.SubZeroBidding:Hide()
 			f.AllowNegativeBidders:Hide()
 		else
@@ -508,7 +508,7 @@ function MonDKP:DKPModesFrame_Create()
 			f.MaxBid.Header:Show();
 			f.CostSelection:Show();
 			f.CostSelectionHeader:Show();
-			newValue = L["MinimumBid"]
+			newValue = L["MINIMUMBID"]
 			f.SubZeroBidding:Show()
 			f.AllowNegativeBidders:Show()
 		end
@@ -519,8 +519,8 @@ function MonDKP:DKPModesFrame_Create()
 
 	f.ZeroSumType:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["ZeroSumItemCost"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["ZeroSumItemCostTTDesc"], 1.0, 1.0, 1.0, true);
+		GameTooltip:SetText(L["ZEROSUMITEMCOST"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["ZEROSUMITEMCOSTTTDESC"], 1.0, 1.0, 1.0, true);
 		GameTooltip:Show();
 	end)
 	f.ZeroSumType:SetScript("OnLeave", function(self)
@@ -530,7 +530,7 @@ function MonDKP:DKPModesFrame_Create()
 	f.ZeroSumTypeHeader = f:CreateFontString(nil, "OVERLAY")
 	f.ZeroSumTypeHeader:SetPoint("BOTTOMLEFT", f.ZeroSumType, "TOPLEFT", 25, 0);
 	f.ZeroSumTypeHeader:SetFontObject("MonDKPSmallLeft")
-	f.ZeroSumTypeHeader:SetText(L["BidMethod"])
+	f.ZeroSumTypeHeader:SetText(L["BIDMETHOD"])
 
 	if MonDKP_DB.modes.mode ~= "Zero Sum" then
 		f.ZeroSumType:Hide()
@@ -548,9 +548,9 @@ function MonDKP:DKPModesFrame_Create()
 	local CostValue = UIDropDownMenu_CreateInfo()
 		CostValue.func = self.SetValue
 		CostValue.fontObject = "MonDKPSmallCenter"
-		CostValue.text, CostValue.arg1, CostValue.checked, CostValue.isNotRadio = L["Integer"], "Integer", "Integer" == MonDKP_DB.modes.costvalue, false
+		CostValue.text, CostValue.arg1, CostValue.checked, CostValue.isNotRadio = L["INTEGER"], "Integer", "Integer" == MonDKP_DB.modes.costvalue, false
 		UIDropDownMenu_AddButton(CostValue)
-		CostValue.text, CostValue.arg1, CostValue.checked, CostValue.isNotRadio = L["Percent"], "Percent", "Percent" == MonDKP_DB.modes.costvalue, false
+		CostValue.text, CostValue.arg1, CostValue.checked, CostValue.isNotRadio = L["PERCENT"], "Percent", "Percent" == MonDKP_DB.modes.costvalue, false
 		UIDropDownMenu_AddButton(CostValue)
 	end)
 
@@ -578,8 +578,8 @@ function MonDKP:DKPModesFrame_Create()
 
 	f.ItemCostDropDown:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["ItemCostTypes"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["ItemCostTypesTTDesc"], 1.0, 1.0, 1.0, true);
+		GameTooltip:SetText(L["ITEMCOSTTYPES"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["ITEMCOSTTYPESTTDESC"], 1.0, 1.0, 1.0, true);
 		GameTooltip:Show();
 	end)
 	f.ItemCostDropDown:SetScript("OnLeave", function(self)
@@ -589,7 +589,7 @@ function MonDKP:DKPModesFrame_Create()
 	f.ItemCostHeader = f:CreateFontString(nil, "OVERLAY")
 	f.ItemCostHeader:SetPoint("BOTTOMLEFT", f.ItemCostDropDown, "TOPLEFT", 25, 0);
 	f.ItemCostHeader:SetFontObject("MonDKPSmallLeft")
-	f.ItemCostHeader:SetText(L["ItemCostTypes"])
+	f.ItemCostHeader:SetText(L["ITEMCOSTTYPES"])
 
 	if MonDKP_DB.modes.mode == "Minimum Bid Values" then
 		f.ItemCostDropDown:Hide();
@@ -635,8 +635,8 @@ function MonDKP:DKPModesFrame_Create()
     end)
     f.MaxBid:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["MaximumBid"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["MaximumBidTTDesc"], 1.0, 1.0, 1.0, true);
+		GameTooltip:SetText(L["MAXIMUMBID"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["MAXIMUMBIDTTDESC"], 1.0, 1.0, 1.0, true);
 		GameTooltip:Show();
 	end)
     f.MaxBid:SetScript("OnLeave", function(self)
@@ -647,7 +647,7 @@ function MonDKP:DKPModesFrame_Create()
     f.MaxBid.Header = f.MaxBid:CreateFontString(nil, "OVERLAY")
     f.MaxBid.Header:SetFontObject("MonDKPNormalLeft");
     f.MaxBid.Header:SetPoint("BOTTOM", f.MaxBid, "TOP", -8, 2);
-    f.MaxBid.Header:SetText(L["MaximumBid"])
+    f.MaxBid.Header:SetText(L["MAXIMUMBID"])
 
 
     if MonDKP_DB.modes.mode == "Minimum Bid Values" or (MonDKP_DB.modes.mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
@@ -659,7 +659,7 @@ function MonDKP:DKPModesFrame_Create()
 	f.SubZeroBidding = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
 	f.SubZeroBidding:SetChecked(MonDKP_DB.modes.SubZeroBidding)
 	f.SubZeroBidding:SetScale(0.6);
-	f.SubZeroBidding.text:SetText("  |cff5151de"..L["SubZeroBidding"].."|r");
+	f.SubZeroBidding.text:SetText("  |cff5151de"..L["SUBZEROBIDDING"].."|r");
 	f.SubZeroBidding.text:SetScale(1.5);
 	f.SubZeroBidding.text:SetFontObject("MonDKPSmallLeft")
 	f.SubZeroBidding:SetPoint("TOP", f.ModesDropDown, "BOTTOMLEFT", 60, 0);
@@ -667,12 +667,12 @@ function MonDKP:DKPModesFrame_Create()
 		if not MonDKP_DB.modes.SubZeroBidding then MonDKP_DB.modes.SubZeroBidding = false end
 		if self:GetChecked() == true then
 			MonDKP_DB.modes.SubZeroBidding = true;
-			MonDKP:Print("Sub Zero Bidding |cff00ff00"..L["Enabled"].."|r")
+			MonDKP:Print("Sub Zero Bidding |cff00ff00"..L["ENABLED"].."|r")
 			f.AllowNegativeBidders:Show()
 			f.AllowNegativeBidders:SetChecked(MonDKP_DB.modes.AllowNegativeBidders)
 		else
 			MonDKP_DB.modes.SubZeroBidding = false;
-			MonDKP:Print("Sub Zero Bidding |cffff0000"..L["Disabled"].."|r")
+			MonDKP:Print("Sub Zero Bidding |cffff0000"..L["DISABLED"].."|r")
 			MonDKP_DB.modes.AllowNegativeBidders = false
 			f.AllowNegativeBidders:Hide()
 		end
@@ -680,8 +680,8 @@ function MonDKP:DKPModesFrame_Create()
 	end)
 	f.SubZeroBidding:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["SubZeroBidding"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["SubZeroBiddingTTDesc"], 1.0, 1.0, 1.0, true);
+		GameTooltip:SetText(L["SUBZEROBIDDING"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["SUBZEROBIDDINGTTDESC"], 1.0, 1.0, 1.0, true);
 		GameTooltip:Show();
 	end)
 	f.SubZeroBidding:SetScript("OnLeave", function(self)
@@ -695,7 +695,7 @@ function MonDKP:DKPModesFrame_Create()
 	f.AllowNegativeBidders = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
 	f.AllowNegativeBidders:SetChecked(MonDKP_DB.modes.AllowNegativeBidders)
 	f.AllowNegativeBidders:SetScale(0.6);
-	f.AllowNegativeBidders.text:SetText("  |cff5151de"..L["AllowNegativeBidders"].."|r");
+	f.AllowNegativeBidders.text:SetText("  |cff5151de"..L["ALLOWNEGATIVEBIDDERS"].."|r");
 	f.AllowNegativeBidders.text:SetScale(1.5);
 	f.AllowNegativeBidders.text:SetFontObject("MonDKPSmallLeft")
 	f.AllowNegativeBidders:SetPoint("TOPLEFT", f.SubZeroBidding, "BOTTOMLEFT", 0, 0);
@@ -703,17 +703,17 @@ function MonDKP:DKPModesFrame_Create()
 		if not MonDKP_DB.modes.AllowNegativeBidders then MonDKP_DB.modes.AllowNegativeBidders = false end
 		if self:GetChecked() == true then
 			MonDKP_DB.modes.AllowNegativeBidders = true;
-			MonDKP:Print("Allow Negative Bidders |cff00ff00"..L["Enabled"].."|r")
+			MonDKP:Print("Allow Negative Bidders |cff00ff00"..L["ENABLED"].."|r")
 		else
 			MonDKP_DB.modes.AllowNegativeBidders = false;
-			MonDKP:Print("Allow Negative Bidders |cffff0000"..L["Disabled"].."|r")
+			MonDKP:Print("Allow Negative Bidders |cffff0000"..L["DISABLED"].."|r")
 		end
 		PlaySound(808);
 	end)
 	f.AllowNegativeBidders:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["AllowNegativeBidders"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["AllowNegativeBidTTDesc"], 1.0, 1.0, 1.0, true);
+		GameTooltip:SetText(L["ALLOWNEGATIVEBIDDERS"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["ALLOWNEGATIVEBIDTTDESC"], 1.0, 1.0, 1.0, true);
 		GameTooltip:Show();
 	end)
 	f.AllowNegativeBidders:SetScript("OnLeave", function(self)
@@ -744,7 +744,7 @@ function MonDKP:DKPModesFrame_Create()
     f.RollContainer.Header:SetFontObject("MonDKPLargeLeft");
     f.RollContainer.Header:SetScale(0.6)
     f.RollContainer.Header:SetPoint("TOPLEFT", f.RollContainer, "TOPLEFT", 15, -15);
-    f.RollContainer.Header:SetText(L["RollSettings"])
+    f.RollContainer.Header:SetText(L["ROLLSETTINGS"])
 
 
 		-- Min Roll Editbox
@@ -784,8 +784,8 @@ function MonDKP:DKPModesFrame_Create()
 	    end)
 	    f.RollContainer.rollMin:SetScript("OnEnter", function(self)
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-			GameTooltip:SetText(L["MinimumRoll"], 0.25, 0.75, 0.90, 1, true);
-			GameTooltip:AddLine(L["MinimumRollTTDesc"], 1.0, 1.0, 1.0, true);
+			GameTooltip:SetText(L["MINIMUMROLL"], 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine(L["MINIMUMROLLTTDESC"], 1.0, 1.0, 1.0, true);
 			--GameTooltip:AddLine("The state of this option will persist indefinitely until manually disabled/enabled.", 1.0, 0, 0, true);
 			GameTooltip:Show();
 		end)
@@ -797,7 +797,7 @@ function MonDKP:DKPModesFrame_Create()
 	    f.RollContainer.rollMin.Header = f.RollContainer.rollMin:CreateFontString(nil, "OVERLAY")
 	    f.RollContainer.rollMin.Header:SetFontObject("MonDKPNormalLeft");
 	    f.RollContainer.rollMin.Header:SetPoint("BOTTOM", f.RollContainer.rollMin, "TOP", -20, 2);
-	    f.RollContainer.rollMin.Header:SetText(L["Min"])
+	    f.RollContainer.rollMin.Header:SetText(L["MIN"])
 
 	    -- Dash Between Rolls
 	    f.RollContainer.dash = f.RollContainer:CreateFontString(nil, "OVERLAY")
@@ -842,9 +842,9 @@ function MonDKP:DKPModesFrame_Create()
 	    end)
 	    f.RollContainer.rollMax:SetScript("OnEnter", function(self)
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-			GameTooltip:SetText(L["MaximumRoll"], 0.25, 0.75, 0.90, 1, true);
-			GameTooltip:AddLine(L["MaximumRollTTDesc"], 1.0, 1.0, 1.0, true);
-			GameTooltip:AddLine(L["MaximumRollTTWarn"], 1.0, 0, 0, true);
+			GameTooltip:SetText(L["MAXIMUMROLL"], 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine(L["MAXIMUMROLLTTDESC"], 1.0, 1.0, 1.0, true);
+			GameTooltip:AddLine(L["MAXIMUMROLLTTWARN"], 1.0, 0, 0, true);
 			GameTooltip:Show();
 		end)
 	    f.RollContainer.rollMax:SetScript("OnLeave", function(self)
@@ -855,7 +855,7 @@ function MonDKP:DKPModesFrame_Create()
 	    f.RollContainer.rollMax.Header = f.RollContainer.rollMax:CreateFontString(nil, "OVERLAY")
 	    f.RollContainer.rollMax.Header:SetFontObject("MonDKPNormalLeft");
 	    f.RollContainer.rollMax.Header:SetPoint("BOTTOM", f.RollContainer.rollMax, "TOP", -20, 2);
-	    f.RollContainer.rollMax.Header:SetText(L["Max"])
+	    f.RollContainer.rollMax.Header:SetText(L["MAX"])
 
 		f.RollContainer.rollMin.perc = f.RollContainer.rollMin:CreateFontString(nil, "OVERLAY")
 		f.RollContainer.rollMin.perc:SetFontObject("MonDKPSmallLeft");
@@ -873,7 +873,7 @@ function MonDKP:DKPModesFrame_Create()
 		f.RollContainer.UsePerc = CreateFrame("CheckButton", nil, f.RollContainer, "UICheckButtonTemplate");
 		f.RollContainer.UsePerc:SetChecked(MonDKP_DB.modes.rolls.UsePerc)
 		f.RollContainer.UsePerc:SetScale(0.6);
-		f.RollContainer.UsePerc.text:SetText("  |cff5151de"..L["UsePercentage"].."|r");
+		f.RollContainer.UsePerc.text:SetText("  |cff5151de"..L["USEPERCENTAGE"].."|r");
 		f.RollContainer.UsePerc.text:SetScale(1.5);
 		f.RollContainer.UsePerc.text:SetFontObject("MonDKPSmallLeft")
 		f.RollContainer.UsePerc:SetPoint("TOP", f.RollContainer.rollMin, "BOTTOMLEFT", 0, -10);
@@ -888,9 +888,9 @@ function MonDKP:DKPModesFrame_Create()
 		end)
 		f.RollContainer.UsePerc:SetScript("OnEnter", function(self)
 			GameTooltip:SetOwner(self, "ANCHOR_LEFT");
-			GameTooltip:SetText(L["UsePercForRolls"], 0.25, 0.75, 0.90, 1, true);
-			GameTooltip:AddLine(L["UsePercRollsTTDesc"], 1.0, 1.0, 1.0, true);
-			GameTooltip:AddLine(L["UsePercRollsTTWarn"], 1.0, 0, 0, true);
+			GameTooltip:SetText(L["USEPERCFORROLLS"], 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine(L["USEPERCROLLSTTDESC"], 1.0, 1.0, 1.0, true);
+			GameTooltip:AddLine(L["USEPERCROLLSTTWARN"], 1.0, 0, 0, true);
 			GameTooltip:Show();
 		end)
 		f.RollContainer.UsePerc:SetScript("OnLeave", function(self)
@@ -934,9 +934,9 @@ function MonDKP:DKPModesFrame_Create()
 	    end)
 	    f.RollContainer.AddMax:SetScript("OnEnter", function(self)
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-			GameTooltip:SetText(L["AddToMaxRoll"], 0.25, 0.75, 0.90, 1, true);
-			GameTooltip:AddLine(L["AddToMaxRollTTDesc"], 1.0, 1.0, 1.0, true);
-			GameTooltip:AddLine(L["AddToMaxRollTTWarn"], 1.0, 0, 0, true);
+			GameTooltip:SetText(L["ADDTOMAXROLL"], 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine(L["ADDTOMAXROLLTTDESC"], 1.0, 1.0, 1.0, true);
+			GameTooltip:AddLine(L["ADDTOMAXROLLTTWARN"], 1.0, 0, 0, true);
 			GameTooltip:Show();
 		end)
 	    f.RollContainer.AddMax:SetScript("OnLeave", function(self)
@@ -947,10 +947,10 @@ function MonDKP:DKPModesFrame_Create()
 	    f.RollContainer.AddMax.Header = f.RollContainer.rollMax:CreateFontString(nil, "OVERLAY")
 	    f.RollContainer.AddMax.Header:SetFontObject("MonDKPSmallRight");
 	    f.RollContainer.AddMax.Header:SetPoint("RIGHT", f.RollContainer.AddMax, "LEFT", -5, 0);
-	    f.RollContainer.AddMax.Header:SetText(L["AddToMaxRoll"]..": ")
+	    f.RollContainer.AddMax.Header:SetText(L["ADDTOMAXROLL"]..": ")
 
 	-- Broadcast DKP Modes Button
-	f.BroadcastSettings = self:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -30, 30, L["BroadcastSettings"]);
+	f.BroadcastSettings = self:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -30, 30, L["BROADCASTSETTINGS"]);
 	f.BroadcastSettings:SetSize(110,25)
 	f.BroadcastSettings:SetScript("OnClick", function()
 		MonDKP_DB.modes.rolls.min = f.RollContainer.rollMin:GetNumber()
@@ -959,7 +959,7 @@ function MonDKP:DKPModesFrame_Create()
 
 		if (MonDKP_DB.modes.rolls.min > MonDKP_DB.modes.rolls.max and MonDKP_DB.modes.rolls.max ~= 0 and MonDKP_DB.modes.rolls.UserPerc == false) or (MonDKP_DB.modes.rolls.UsePerc and (MonDKP_DB.modes.rolls.min < 0 or MonDKP_DB.modes.rolls.max > 100 or MonDKP_DB.modes.rolls.min > MonDKP_DB.modes.rolls.max)) then
 			StaticPopupDialogs["NOTIFY_ROLLS"] = {
-				text = "|CFFFF0000"..L["WARNING"].."|r: "..L["InvalidRollRange"],
+				text = "|CFFFF0000"..L["WARNING"].."|r: "..L["INVALIDROLLRANGE"],
 				button1 = L["OK"],
 				timeout = 0,
 				whileDead = true,
@@ -971,7 +971,7 @@ function MonDKP:DKPModesFrame_Create()
 		end
 
 		StaticPopupDialogs["SEND_MODES"] = {
-			text = L["AreYouSureBroadcast"],
+			text = L["AREYOUSUREBROADCAST"],
 			button1 = L["YES"],
 			button2 = L["NO"],
 			OnAccept = function()
@@ -980,7 +980,7 @@ function MonDKP:DKPModesFrame_Create()
 				table.insert(temptable1, MonDKP_DB.DKPBonus)
 				table.insert(temptable1, MonDKP_DB.raiders)
 				MonDKP.Sync:SendData("MonDKPModes", temptable1)
-				MonDKP:Print(L["DKPModeSentConf"])
+				MonDKP:Print(L["DKPMODESENTCONF"])
 				local temptable2 = {}
 	            table.insert(temptable2, MonDKP_DB.MinBidBySlot)
 	            table.insert(temptable2, MonDKP_MinBids)
@@ -995,8 +995,8 @@ function MonDKP:DKPModesFrame_Create()
 	end);
 	f.BroadcastSettings:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-		GameTooltip:SetText(L["BroadcastSettings"], 0.25, 0.75, 0.90, 1, true)
-		GameTooltip:AddLine(L["BroadcastSetTTDesc"], 1.0, 1.0, 1.0, true);
+		GameTooltip:SetText(L["BROADCASTSETTINGS"], 0.25, 0.75, 0.90, 1, true)
+		GameTooltip:AddLine(L["BROADCASTSETTTDESC"], 1.0, 1.0, 1.0, true);
 		GameTooltip:Show()
 	end)
 	f.BroadcastSettings:SetScript("OnLeave", function()
@@ -1008,7 +1008,7 @@ function MonDKP:DKPModesFrame_Create()
     f.Footer:SetFontObject("MonDKPNormalLeft");
     f.Footer:SetWidth(375)
     f.Footer:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 15, 150);
-    f.Footer:SetText(L["DKPModesFooter"])
+    f.Footer:SetText(L["DKPMODESFOOTER"])
 
 	f:SetScript("OnHide", function()
 		MonDKP_DB.modes.rolls.min = f.RollContainer.rollMin:GetNumber()
@@ -1017,7 +1017,7 @@ function MonDKP:DKPModesFrame_Create()
 
 		if (MonDKP_DB.modes.rolls.min > MonDKP_DB.modes.rolls.max and MonDKP_DB.modes.rolls.max ~= 0 and MonDKP_DB.modes.rolls.UserPerc == false) or (MonDKP_DB.modes.rolls.UsePerc and (MonDKP_DB.modes.rolls.min < 0 or MonDKP_DB.modes.rolls.max > 100 or MonDKP_DB.modes.rolls.min > MonDKP_DB.modes.rolls.max)) then
 			StaticPopupDialogs["NOTIFY_ROLLS"] = {
-				text = "|CFFFF0000"..L["WARNING"].."|r: "..L["InvalidRollParam"],
+				text = "|CFFFF0000"..L["WARNING"].."|r: "..L["INVALIDROLLPARAM"],
 				button1 = L["OK"],
 				timeout = 0,
 				whileDead = true,
@@ -1029,7 +1029,7 @@ function MonDKP:DKPModesFrame_Create()
 			return;
 		end
 		StaticPopupDialogs["CONFIRM_SAVE"] = {
-			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["ReloadUIConfirm"],
+			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["RELOADUICONFIRM"],
 			button1 = L["YES"],
 			button2 = L["NO"],
 			OnAccept = function()

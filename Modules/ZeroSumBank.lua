@@ -6,7 +6,7 @@ local L = core.L;
 local function ZeroSumDistribution()
 	if core.CurrentlySyncing then
 		StaticPopupDialogs["CURRENTLY_SYNC"] = {
-			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CurrentlySyncing"],
+			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CURRENTLYSYNCING"],
 			button1 = L["OK"],
 			timeout = 0,
 			whileDead = true,
@@ -65,8 +65,8 @@ local function ZeroSumDistribution()
 		tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=players, dkp=distribution, reason=reason, date=curTime}})
 		MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
 		table.wipe(temp_table)
-		MonDKP.Sync:SendData("MonDKPBroadcast", L["RaidDKPAdjustBy"].." "..distribution.." "..L["Among"].." "..#VerifyTable.." "..L["PlayersForReason"]..": "..reason)
-		MonDKP:Print("Raid DKP Adjusted by "..distribution.." "..L["Among"].." "..#VerifyTable.." "..L["PlayersForReason"]..": "..reason)
+		MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDDKPADJUSTBY"].." "..distribution.." "..L["AMONG"].." "..#VerifyTable.." "..L["PLAYERSFORREASON"]..": "..reason)
+		MonDKP:Print("Raid DKP Adjusted by "..distribution.." "..L["AMONG"].." "..#VerifyTable.." "..L["PLAYERSFORREASON"]..": "..reason)
 		
 		table.wipe(VerifyTable)
 		table.wipe(MonDKP_DB.modes.ZeroSumBank)
@@ -77,7 +77,7 @@ local function ZeroSumDistribution()
 		MonDKP:ZeroSumBank_Update()
 		core.ZeroSumBank:Hide();
 	else
-		MonDKP:Print(L["NotInRaidParty"])
+		MonDKP:Print(L["NOTINRAIDPARTY"])
 	end
 end
 
@@ -87,9 +87,9 @@ function MonDKP:ZeroSumBank_Update()
 
 	for i=1, #MonDKP_DB.modes.ZeroSumBank do
  		if i==1 then
- 			core.ZeroSumBank.LootFrame.LootList:SetText(MonDKP_DB.modes.ZeroSumBank[i].loot.." "..L["For"].." "..MonDKP_DB.modes.ZeroSumBank[i].cost.." "..L["DKP"].."\n")
+ 			core.ZeroSumBank.LootFrame.LootList:SetText(MonDKP_DB.modes.ZeroSumBank[i].loot.." "..L["FOR"].." "..MonDKP_DB.modes.ZeroSumBank[i].cost.." "..L["DKP"].."\n")
  		else
- 			core.ZeroSumBank.LootFrame.LootList:SetText(core.ZeroSumBank.LootFrame.LootList:GetText()..MonDKP_DB.modes.ZeroSumBank[i].loot.." "..L["For"].." "..MonDKP_DB.modes.ZeroSumBank[i].cost.." "..L["DKP"].."\n")
+ 			core.ZeroSumBank.LootFrame.LootList:SetText(core.ZeroSumBank.LootFrame.LootList:GetText()..MonDKP_DB.modes.ZeroSumBank[i].loot.." "..L["FOR"].." "..MonDKP_DB.modes.ZeroSumBank[i].cost.." "..L["DKP"].."\n")
  		end
  	end
  	
@@ -140,7 +140,7 @@ function MonDKP:ZeroSumBank_Create()
 	f.BankHeader:SetFontObject("MonDKPLargeLeft");
 	f.BankHeader:SetScale(1)
 	f.BankHeader:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -10);
-	f.BankHeader:SetText(L["ZeroSumBank"])
+	f.BankHeader:SetText(L["ZEROSUMBANK"])
 
 	f.Boss = f:CreateFontString(nil, "OVERLAY")
 	f.Boss:SetFontObject("MonDKPSmallLeft");
@@ -150,7 +150,7 @@ function MonDKP:ZeroSumBank_Create()
 	f.Boss.Header:SetFontObject("MonDKPLargeRight");
 	f.Boss.Header:SetScale(0.7)
 	f.Boss.Header:SetPoint("RIGHT", f.Boss, "LEFT", -7, 0);
-	f.Boss.Header:SetText(L["Boss"]..": ")
+	f.Boss.Header:SetText(L["BOSS"]..": ")
 
 	f.Balance = CreateFrame("EditBox", nil, f)
 	f.Balance:SetPoint("TOPLEFT", f, "TOPLEFT", 70, -65)   
@@ -172,8 +172,8 @@ function MonDKP:ZeroSumBank_Create()
     end)
     f.Balance:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["ZeroSumBalance"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["ZeroSumBalanceTTDesc"], 1.0, 1.0, 1.0, true);
+		GameTooltip:SetText(L["ZEROSUMBALANCE"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["ZEROSUMBALANCETTDESC"], 1.0, 1.0, 1.0, true);
 		GameTooltip:Show();
 	end)
 	f.Balance:SetScript("OnLeave", function(self)
@@ -184,19 +184,19 @@ function MonDKP:ZeroSumBank_Create()
 	f.Balance.Header:SetFontObject("MonDKPLargeRight");
 	f.Balance.Header:SetScale(0.7)
 	f.Balance.Header:SetPoint("RIGHT", f.Balance, "LEFT", -7, 0);
-	f.Balance.Header:SetText(L["Balance"]..": ")
+	f.Balance.Header:SetText(L["BALANCE"]..": ")
 
 	f.Distribute = CreateFrame("Button", "MonDKPBiddingDistributeButton", f, "MonolithDKPButtonTemplate")
 	f.Distribute:SetPoint("TOPRIGHT", f, "TOPRIGHT", -15, -95);
 	f.Distribute:SetSize(90, 25);
-	f.Distribute:SetText(L["DistributeDKP"]);
+	f.Distribute:SetText(L["DISTRIBUTEDKP"]);
 	f.Distribute:GetFontString():SetTextColor(1, 1, 1, 1)
 	f.Distribute:SetNormalFontObject("MonDKPSmallCenter");
 	f.Distribute:SetHighlightFontObject("MonDKPSmallCenter");
 	f.Distribute:SetScript("OnClick", function (self)
 		if MonDKP_DB.modes.ZeroSumBank.balance > 0 then
 			StaticPopupDialogs["CONFIRM_ADJUST1"] = {
-				text = L["DistributeAllDKPConf"],
+				text = L["DISTRIBUTEALLDKPCONF"],
 				button1 = L["YES"],
 				button2 = L["NO"],
 				OnAccept = function()
@@ -209,13 +209,13 @@ function MonDKP:ZeroSumBank_Create()
 			}
 			StaticPopup_Show ("CONFIRM_ADJUST1")
 		else
-			MonDKP:Print(L["NoPointsToDistribute"])
+			MonDKP:Print(L["NOPOINTSTODISTRIBUTE"])
 		end
 	end)
 	f.Distribute:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["DistributeDKP"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["DistrubuteBanked"], 1.0, 1.0, 1.0, true);
+		GameTooltip:SetText(L["DISTRIBUTEDKP"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["DISTRUBUTEBANKED"], 1.0, 1.0, 1.0, true);
 		GameTooltip:Show();
 	end)
 	f.Distribute:SetScript("OnLeave", function(self)
@@ -227,7 +227,7 @@ function MonDKP:ZeroSumBank_Create()
 	f.IncludeStandby = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
 	f.IncludeStandby:SetChecked(MonDKP_DB.modes.ZeroSumStandby)
 	f.IncludeStandby:SetScale(0.6);
-	f.IncludeStandby.text:SetText("  |cff5151de"..L["IncludeStandby"].."|r");
+	f.IncludeStandby.text:SetText("  |cff5151de"..L["INCLUDESTANDBY"].."|r");
 	f.IncludeStandby.text:SetScale(1.5);
 	f.IncludeStandby.text:SetFontObject("MonDKPSmallLeft")
 	f.IncludeStandby:SetPoint("TOPLEFT", f.Distribute, "BOTTOMLEFT", -15, -10);
@@ -237,9 +237,9 @@ function MonDKP:ZeroSumBank_Create()
 	end)
 	f.IncludeStandby:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["IncludeStandbyList"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["IncStandbyListTTDesc"], 1.0, 1.0, 1.0, true);
-		GameTooltip:AddLine(L["IncStandbyListTTWarn"], 1.0, 0, 0, true);
+		GameTooltip:SetText(L["INCLUDESTANDBYLIST"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["INCSTANDBYLISTTTDESC"], 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine(L["INCSTANDBYLISTTTWARN"], 1.0, 0, 0, true);
 		GameTooltip:Show();
 	end)
 	f.IncludeStandby:SetScript("OnLeave", function(self)
@@ -261,7 +261,7 @@ function MonDKP:ZeroSumBank_Create()
 	f.LootFrame.Header:SetFontObject("MonDKPLargeLeft");
 	f.LootFrame.Header:SetScale(0.7)
 	f.LootFrame.Header:SetPoint("TOPLEFT", f.LootFrame, "TOPLEFT", 8, -8);
-	f.LootFrame.Header:SetText(L["LootBanked"])
+	f.LootFrame.Header:SetText(L["LOOTBANKED"])
 
 	f.LootFrame.LootList = f.LootFrame:CreateFontString(nil, "OVERLAY")
 	f.LootFrame.LootList:SetFontObject("MonDKPNormalLeft");

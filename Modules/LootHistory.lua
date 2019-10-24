@@ -37,7 +37,7 @@ end
 local function DeleteLootHistoryEntry(target)
 	if core.CurrentlySyncing then
 		StaticPopupDialogs["CURRENTLY_SYNC"] = {
-			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CurrentlySyncing"],
+			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CURRENTLYSYNCING"],
 			button1 = L["OK"],
 			timeout = 0,
 			whileDead = true,
@@ -54,7 +54,7 @@ local function DeleteLootHistoryEntry(target)
 	MonDKP:SeedVerify_Update()
 	if core.UpToDate == false and core.IsOfficer == true then
 		StaticPopupDialogs["CONFIRM_DELETE"] = {
-			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["OutdateModifyWarn"],
+			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["OUTDATEMODIFYWARN"],
 			button1 = L["YES"],
 			button2 = L["NO"],
 			OnAccept = function()
@@ -102,7 +102,7 @@ end
 local function ReassignLootEntry(entry)
 	if core.CurrentlySyncing then
 		StaticPopupDialogs["CURRENTLY_SYNC"] = {
-			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CurrentlySyncing"],
+			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CURRENTLYSYNCING"],
 			button1 = L["OK"],
 			timeout = 0,
 			whileDead = true,
@@ -116,7 +116,7 @@ local function ReassignLootEntry(entry)
 		MonDKP:SeedVerify_Update()
 		if core.UpToDate == false and core.IsOfficer == true then
 			StaticPopupDialogs["CONFIRM_ADJUST2"] = {
-				text = "|CFFFF0000"..L["WARNING"].."|r: "..L["OutdateModifyWarn"],
+				text = "|CFFFF0000"..L["WARNING"].."|r: "..L["OUTDATEMODIFYWARN"],
 				button1 = L["YES"],
 				button2 = L["NO"],
 				OnAccept = function()
@@ -182,7 +182,7 @@ local function ReassignLootEntry(entry)
 		end
 	else
 		StaticPopupDialogs["REASSIGN_LOOT_ENTRY_FAIL"] = {
-			text = L["AlreadyAssigned"],
+			text = L["ALREADYASSIGNED"],
 			button1 = L["OK"],
 			timeout = 0,
 			whileDead = true,
@@ -196,7 +196,7 @@ end
 local function ReassignLootEntryConfirmation(entry)
 	if core.CurrentlySyncing then
 		StaticPopupDialogs["CURRENTLY_SYNC"] = {
-			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CurrentlySyncing"],
+			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CURRENTLYSYNCING"],
 			button1 = L["OK"],
 			timeout = 0,
 			whileDead = true,
@@ -214,7 +214,7 @@ local function ReassignLootEntryConfirmation(entry)
 	else
 		cl = { hex="444444" }
 	end
-	local deleteString = L["AreYouSureReassign"].." "..MonDKP_Loot[entry]["loot"].." ("..MonDKP_Loot[entry]["cost"].." "..L["DKP"]..") "..L["To"].." |cff"..c.hex..core.SelectedData[1].player.."|r?\n\n("..L["ThisWillRefund"].." "..MonDKP_Loot[entry]["cost"].." "..L["DKP"].." "..L["To"].." |cff"..cl.hex..MonDKP_Loot[entry]["player"].."|r "..L["AndChargeItTo"].." |cff"..c.hex..core.SelectedData[1].player.."|r)";
+	local deleteString = L["AREYOUSUREREASSIGN"].." "..MonDKP_Loot[entry]["loot"].." ("..MonDKP_Loot[entry]["cost"].." "..L["DKP"]..") "..L["TO"].." |cff"..c.hex..core.SelectedData[1].player.."|r?\n\n("..L["THISWILLREFUND"].." "..MonDKP_Loot[entry]["cost"].." "..L["DKP"].." "..L["TO"].." |cff"..cl.hex..MonDKP_Loot[entry]["player"].."|r "..L["ANDCHARGEITTO"].." |cff"..c.hex..core.SelectedData[1].player.."|r)";
 
 	StaticPopupDialogs["REASSIGN_LOOT_ENTRY"] = {
 	  text = deleteString,
@@ -234,7 +234,7 @@ end
 local function MonDKPDeleteMenu(item)
 	local search = MonDKP:Table_Search(MonDKP_DKPTable, MonDKP_Loot[item]["player"])
 	local c = MonDKP:GetCColors(MonDKP_DKPTable[search[1][1]].class)
-	local deleteString = L["ConfirmDeleteEntry1"]..": |cff"..c.hex..MonDKP_Loot[item]["player"].."|r "..L["Won"].." "..MonDKP_Loot[item]["loot"].." "..L["For"].." "..MonDKP_Loot[item]["cost"].." "..L["DKP"].."?\n\n("..L["ThisWillRefund"].." |cff"..c.hex..MonDKP_Loot[item].player.."|r "..MonDKP_Loot[item]["cost"].." "..L["DKP"]..")";
+	local deleteString = L["CONFIRMDELETEENTRY1"]..": |cff"..c.hex..MonDKP_Loot[item]["player"].."|r "..L["WON"].." "..MonDKP_Loot[item]["loot"].." "..L["FOR"].." "..MonDKP_Loot[item]["cost"].." "..L["DKP"].."?\n\n("..L["THISWILLREFUND"].." |cff"..c.hex..MonDKP_Loot[item].player.."|r "..MonDKP_Loot[item]["cost"].." "..L["DKP"]..")";
 
 	StaticPopupDialogs["DELETE_LOOT_ENTRY"] = {
 	  text = deleteString,
@@ -253,16 +253,16 @@ end
 
 local function RightClickLootMenu(self, item)  -- called by right click function on ~201 row:SetScript
   menu = {
-      { text = MonDKP_Loot[item]["loot"].." "..L["For"].." "..MonDKP_Loot[item]["cost"].." "..L["DKP"], isTitle = true},
+      { text = MonDKP_Loot[item]["loot"].." "..L["FOR"].." "..MonDKP_Loot[item]["cost"].." "..L["DKP"], isTitle = true},
       { text = "Delete Entry", func = function()
         MonDKPDeleteMenu(item)
       end },
-      { text = L["ReassignSelected"], func = function()
+      { text = L["REASSIGNSELECTED"], func = function()
       	if #core.SelectedData == 1 then
       		ReassignLootEntryConfirmation(item)
       	elseif #core.SelectedData > 1 then
       		StaticPopupDialogs["TOO_MANY_SELECTED_LOOT"] = {
-				text = L["TooManyPlayersSelect"],
+				text = L["TOOMANYPLAYERSSELECT"],
 				button1 = L["OK"],
 				timeout = 0,
 				whileDead = true,
@@ -272,7 +272,7 @@ local function RightClickLootMenu(self, item)  -- called by right click function
 			StaticPopup_Show ("TOO_MANY_SELECTED_LOOT")
       	else
 			StaticPopupDialogs["PLAYER_NOT_SELECTED_LOOT"] = {
-				text = L["NoPlayersSelected"],
+				text = L["NOPLAYERSSELECTED"],
 				button1 = L["OK"],
 				timeout = 0,
 				whileDead = true,
@@ -372,10 +372,10 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		MonDKP:LootHistory_Reset()
 	end
 
-	MonDKP.ConfigTab5.inst:SetText(L["LootHistInst1"]);
+	MonDKP.ConfigTab5.inst:SetText(L["LOOTHISTINST1"]);
 	if core.IsOfficer == true then
-		MonDKP.ConfigTab5.inst:SetText(MonDKP.ConfigTab5.inst:GetText().."\n"..L["LootHistInst2"])
-		MonDKP.ConfigTab6.inst:SetText(L["LootHistInst3"])
+		MonDKP.ConfigTab5.inst:SetText(MonDKP.ConfigTab5.inst:GetText().."\n"..L["LOOTHISTINST2"])
+		MonDKP.ConfigTab6.inst:SetText(L["LOOTHISTINST3"])
 	end
 
 	if CurrentLimit > #MonDKP_Loot then CurrentLimit = #MonDKP_Loot end;
@@ -439,7 +439,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 
 		    if strsub(thedate, 1, 8) ~= curDate or MonDKP_Loot[i]["zone"] ~= curZone then
 				feedString = date2.."/"..date3.."/"..date1.." - "..MonDKP_Loot[i]["zone"].."\n  |cffff0000"..MonDKP_Loot[i]["boss"].."|r |cff555555("..strtrim(strsub(thedate, 10), " ")..")|r".."\n"
-				feedString = feedString.."    "..itemToLink.." "..L["WonBy"].." |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." "..L["DKP"]..")|r"
+				feedString = feedString.."    "..itemToLink.." "..L["WONBY"].." |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." "..L["DKP"]..")|r"
 				        
 				MonDKP.ConfigTab5.looter[i]:SetText(feedString);
 				curDate = strtrim(strsub(thedate, 1, 8), " ")
@@ -447,13 +447,13 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 				curBoss = MonDKP_Loot[i]["boss"];
 		    elseif MonDKP_Loot[i]["boss"] ~= curBoss then
 		    	feedString = "  |cffff0000"..MonDKP_Loot[i]["boss"].."|r |cff555555("..strtrim(strsub(thedate, 10), " ")..")|r".."\n"
-		    	feedString = feedString.."    "..itemToLink.." "..L["WonBy"].." |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." "..L["DKP"]..")|r"
+		    	feedString = feedString.."    "..itemToLink.." "..L["WONBY"].." |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." "..L["DKP"]..")|r"
 		    	
 		    	MonDKP.ConfigTab5.looter[i]:SetText(feedString);
 		    	curDate = strtrim(strsub(thedate, 1, 8), " ")
 		    	curBoss = MonDKP_Loot[i]["boss"]
 		    else
-		    	feedString = "    "..itemToLink.." "..L["WonBy"].." |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." "..L["DKP"]..")|r"
+		    	feedString = "    "..itemToLink.." "..L["WONBY"].." |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." "..L["DKP"]..")|r"
 		    	
 		    	MonDKP.ConfigTab5.looter[i]:SetText(feedString);
 		    	curZone = MonDKP_Loot[i]["zone"];
@@ -495,7 +495,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 			    		ChatFrame1EditBox:SetFocus();
 			    	elseif IsAltKeyDown() then
 			    		ChatFrame1EditBox:Show();
-			    		ChatFrame1EditBox:SetText(ChatFrame1EditBox:GetText()..MonDKP_Loot[i]["player"].." "..L["Won"].." "..select(2,GetItemInfo(itemToLink)).." "..L["Off"].." "..MonDKP_Loot[i]["boss"].." "..L["In"].." "..MonDKP_Loot[i]["zone"].." ("..date2.."/"..date3.."/"..date1..") "..L["For"].." "..MonDKP_Loot[i]["cost"].." "..L["DKP"])
+			    		ChatFrame1EditBox:SetText(ChatFrame1EditBox:GetText()..MonDKP_Loot[i]["player"].." "..L["WON"].." "..select(2,GetItemInfo(itemToLink)).." "..L["OFF"].." "..MonDKP_Loot[i]["boss"].." "..L["IN"].." "..MonDKP_Loot[i]["zone"].." ("..date2.."/"..date3.."/"..date1..") "..L["FOR"].." "..MonDKP_Loot[i]["cost"].." "..L["DKP"])
 			    		ChatFrame1EditBox:SetFocus();		    		
 			    	end
 	   			end
@@ -559,7 +559,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 
 		    if strtrim(strsub(thedate, 1, 8), " ") ~= curDate or MonDKP_Loot[i]["zone"] ~= curZone then
 				feedString = date2.."/"..date3.."/"..date1.." - "..MonDKP_Loot[i]["zone"].."\n  |cffff0000"..MonDKP_Loot[i]["boss"].."|r |cff555555("..strtrim(strsub(thedate, 10), " ")..")|r".."\n"
-				feedString = feedString.."    "..itemToLink.." "..L["WonBy"].." |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." "..L["DKP"]..")|r"
+				feedString = feedString.."    "..itemToLink.." "..L["WONBY"].." |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." "..L["DKP"]..")|r"
 				        
 				MonDKP.ConfigTab5.looter[i]:SetText(feedString);
 				curDate = strtrim(strsub(thedate, 1, 8), " ")
@@ -567,13 +567,13 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 				curBoss = MonDKP_Loot[i]["boss"];
 		    elseif MonDKP_Loot[i]["boss"] ~= curBoss then
 		    	feedString = "  |cffff0000"..MonDKP_Loot[i]["boss"].."|r |cff555555("..strtrim(strsub(thedate, 10), " ")..")|r".."\n"
-		    	feedString = feedString.."    "..itemToLink.." "..L["WonBy"].." |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." "..L["DKP"]..")|r"
+		    	feedString = feedString.."    "..itemToLink.." "..L["WONBY"].." |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." "..L["DKP"]..")|r"
 		    	 
 		    	MonDKP.ConfigTab5.looter[i]:SetText(feedString);
 		    	curDate = strtrim(strsub(thedate, 1, 8), " ")
 		    	curBoss = MonDKP_Loot[i]["boss"]
 		    else
-		    	feedString = "    "..itemToLink.." "..L["WonBy"].." |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." "..L["DKP"]..")|r"
+		    	feedString = "    "..itemToLink.." "..L["WONBY"].." |cff"..c.hex..MonDKP_Loot[i]["player"].."|r |cff555555("..MonDKP_Loot[i]["cost"].." "..L["DKP"]..")|r"
 		    	
 		    	MonDKP.ConfigTab5.looter[i]:SetText(feedString);
 		    	curZone = MonDKP_Loot[i]["zone"];
@@ -615,7 +615,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 			    		ChatFrame1EditBox:SetFocus();
 			    	elseif IsAltKeyDown() then
 			    		ChatFrame1EditBox:Show();
-			    		ChatFrame1EditBox:SetText(ChatFrame1EditBox:GetText()..MonDKP_Loot[i]["player"].." "..L["Won"].." "..select(2,GetItemInfo(itemToLink)).." "..L["Off"].." "..MonDKP_Loot[i]["boss"].." "..L["In"].." "..MonDKP_Loot[i]["zone"].." ("..date2.."/"..date3.."/"..date1..") "..L["For"].." "..MonDKP_Loot[i]["cost"].." "..L["DKP"])
+			    		ChatFrame1EditBox:SetText(ChatFrame1EditBox:GetText()..MonDKP_Loot[i]["player"].." "..L["WON"].." "..select(2,GetItemInfo(itemToLink)).." "..L["OFF"].." "..MonDKP_Loot[i]["boss"].." "..L["IN"].." "..MonDKP_Loot[i]["zone"].." ("..date2.."/"..date3.."/"..date1..") "..L["FOR"].." "..MonDKP_Loot[i]["cost"].." "..L["DKP"])
 			    		ChatFrame1EditBox:SetFocus();
 			    	end
 	   			end		    	
@@ -629,7 +629,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
  	end
  	if CurrentLimit < #MonDKP_Loot and not MonDKP.ConfigTab5.LoadHistory then
 	 	-- Load More History Button
-		MonDKP.ConfigTab5.LoadHistory = self:CreateButton("TOP", MonDKP.ConfigTab5.lootFrame[CurrentLimit], "BOTTOM", 0, 0, L["Load50More"]);
+		MonDKP.ConfigTab5.LoadHistory = self:CreateButton("TOP", MonDKP.ConfigTab5.lootFrame[CurrentLimit], "BOTTOM", 0, 0, L["LOAD50MORE"]);
 		MonDKP.ConfigTab5.LoadHistory:SetSize(110,25)
 		MonDKP.ConfigTab5.LoadHistory:SetScript("OnClick", function()
 			CurrentLimit = CurrentLimit + 50
@@ -645,7 +645,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		if (#MonDKP_Loot - CurrentPosition) < 50 then
 			ButtonText = #MonDKP_Loot - CurrentPosition;
 		end
-		MonDKP.ConfigTab5.LoadHistory:SetText(L["Load"].." "..ButtonText.." "..L["More"].."...")
+		MonDKP.ConfigTab5.LoadHistory:SetText(L["LOAD"].." "..ButtonText.." "..L["MORE"].."...")
 		if CurrentLimit == #MonDKP_Loot then
 			MonDKP.ConfigTab5.LoadHistory:Hide();
 		else
