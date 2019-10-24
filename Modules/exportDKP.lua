@@ -60,13 +60,12 @@ local function GenerateDKPTables(table, format)
 		end
 	elseif format == "CSV" then
 		if table == MonDKP_DKPTable then
-			ExportString = "Listed As: Player,class,dkp,previousDKP,lifetimeGained,lifetimeSpent,...\n"
-			ExportString = ExportString.."DKPTable = ";
+			ExportString = "player, class, DKP, previousDKP, lifetimeGained, lifetimeSpent\n"
 			for i=1, #MonDKP_DKPTable do
 				if i == #MonDKP_DKPTable then
 					ExportString = ExportString..MonDKP_DKPTable[i].player..","..MonDKP_DKPTable[i].class..","..MonDKP_DKPTable[i].dkp..","..MonDKP_DKPTable[i].previous_dkp..","..MonDKP_DKPTable[i].lifetime_gained..","..MonDKP_DKPTable[i].lifetime_spent;
 				else
-					ExportString = ExportString..MonDKP_DKPTable[i].player..","..MonDKP_DKPTable[i].class..","..MonDKP_DKPTable[i].dkp..","..MonDKP_DKPTable[i].previous_dkp..","..MonDKP_DKPTable[i].lifetime_gained..","..MonDKP_DKPTable[i].lifetime_spent..","
+					ExportString = ExportString..MonDKP_DKPTable[i].player..","..MonDKP_DKPTable[i].class..","..MonDKP_DKPTable[i].dkp..","..MonDKP_DKPTable[i].previous_dkp..","..MonDKP_DKPTable[i].lifetime_gained..","..MonDKP_DKPTable[i].lifetime_spent.."\n";
 				end
 			end
 		elseif table == MonDKP_DKPHistory then
