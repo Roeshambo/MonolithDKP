@@ -529,6 +529,60 @@ function MonDKP:ManageEntries()
 		end
 	end);
 
+	MonDKP.ConfigTab3.CleanList = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["PURGELIST"]);
+	MonDKP.ConfigTab3.CleanList:SetSize(120,25);
+	MonDKP.ConfigTab3.CleanList:ClearAllPoints()
+	MonDKP.ConfigTab3.CleanList:SetPoint("TOP", MonDKP.ConfigTab3.AddTargetToDKP, "BOTTOM", 0, -16)
+	MonDKP.ConfigTab3.CleanList:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText(L["PURGELIST"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["PURGELISTTTDESC"], 1.0, 1.0, 1.0, true);
+		GameTooltip:Show();
+	end)
+	MonDKP.ConfigTab3.CleanList:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+	MonDKP.ConfigTab3.CleanList:SetScript("OnClick", function()
+		StaticPopupDialogs["PURGE_CONFIRM"] = {
+			text = L["PURGECONFIRM"],
+			button1 = L["YES"],
+			button2 = L["NO"],
+			OnAccept = function()
+				local purgeString, c, name;
+				local count = 0;
+				local i = 1;
+
+				while i <= #MonDKP_DKPTable do
+					local search = MonDKP:TableStrFind(MonDKP_DKPHistory, MonDKP_DKPTable[i].player..",")
+
+					if MonDKP_DKPTable[i].dkp == 0 and not search then
+						c = MonDKP:GetCColors(MonDKP_DKPTable[i].class)
+						name = MonDKP_DKPTable[i].player;
+
+						if purgeString == nil then
+							purgeString = "|cff"..c.hex..name.."|r"; 
+						else
+							purgeString = purgeString..", |cff"..c.hex..name.."|r"
+						end
+
+						count = count + 1;
+						table.remove(MonDKP_DKPTable, i)
+					else
+						i=i+1;
+					end
+				end
+				MonDKP:Print(L["PURGECONFIRM"].." ("..count.."):")
+				MonDKP:Print(purgeString)
+				MonDKP:FilterDKPTable(core.currentSort, "reset")
+				end,
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = true,
+			preferredIndex = 3,
+		}
+		StaticPopup_Show ("PURGE_CONFIRM")
+	end)
+
 	MonDKP.ConfigTab3.WhitelistContainer = CreateFrame("Frame", nil, MonDKP.ConfigTab3);
 	MonDKP.ConfigTab3.WhitelistContainer:SetSize(475, 200);
 	MonDKP.ConfigTab3.WhitelistContainer:SetPoint("TOPLEFT", MonDKP.ConfigTab3.GuildRankDropDown, "BOTTOMLEFT", 20, -30)
