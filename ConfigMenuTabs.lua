@@ -62,6 +62,11 @@ local function Tab_OnClick(self)
     MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:Hide()
   end
 
+  if self:GetID() == 6 then
+    MonDKP:DKPHistory_Reset()
+    MonDKP:DKPHistory_Update()
+  end
+
   local scrollChild = MonDKP.UIConfig.TabMenu.ScrollFrame:GetScrollChild();
   if (scrollChild) then
     scrollChild:Hide();
@@ -305,6 +310,7 @@ function MonDKP:ConfigMenuTabs()
   
   if #MonDKP_DKPHistory > 0 then
     MonDKP:DKPHistory_Update()
+    DKPHistoryFilterBox_Create()
   end
 
 end

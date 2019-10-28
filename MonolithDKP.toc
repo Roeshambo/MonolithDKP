@@ -2,7 +2,7 @@
 ## Title: M|cffaeaeddonolith|r |cffff0000DKP|r
 ## Author: Roeshambo-Stalagg
 ## Notes: Comprehensive DKP and raid management utility.
-## Version: 1.5.4
+## Version: 1.6.2
 ## DefaultState: enabled
 ## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_DKPHistory, MonDKP_MinBids, MonDKP_Whitelist, MonDKP_Standby
 
@@ -17,6 +17,7 @@ Localization\Localization.tw.lua
 embeds.xml
 Core.lua
 Modules\comm.lua
+Modules\Standby.lua
 Modules\Bidding.lua
 MonolithDKP.lua
 init.lua

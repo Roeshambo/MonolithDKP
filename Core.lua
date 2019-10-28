@@ -91,14 +91,6 @@ core.settings = {             -- From MonDKP_DB
   }
 }
 
-----------------------------------------------------
--- Boss/Encounter List
--- search = MonDKP:Table_Search(core.BossList, "Lucifron") returns search[1] { 1 = MC, 2 = 1} (lucifron is at 1st spot in MC table)
--- [1][1] will return "MC" and [1][2] will return "1" indicating the position of "Lucifron" in the MC table.
--- core.BossList[search[1][1]][search[1][2]] would be core.BossList["MC"][1] = Lucifron
---
--- Can alternatively use tContains(core.BossList.MC, "Lucifron") for a true/false return if path isn't required
-----------------------------------------------------
 core.EncounterList = {      -- Event IDs must be in the exact same order as core.BossList declared in localization files
   MC = {
     663, 664, 665,
@@ -136,14 +128,15 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v1.5.4";
-core.BuildNumber = 10504;
+core.MonVersion = "v1.6.2";
+core.BuildNumber = 10602;
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
 core.IsOfficer = "";
 core.UpToDate = false;
 core.ShowState = false;
+core.StandbyActive = false;
 core.currentSort = "class"		-- stores current sort selection
 core.BidInProgress = false;   -- flagged true if bidding in progress. else; false.
 core.RaidInProgress = false;

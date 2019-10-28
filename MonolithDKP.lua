@@ -51,6 +51,9 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
   end
 
   core.MonDKPUI:SetScale(MonDKP_DB.defaults.MonDKPScaleSize)
+  if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
+    MonDKP:DKPHistory_Reset()
+  end
   MonDKP:DKPHistory_Update()
   MonDKP:LootHistory_Update("No Filter");
   MonDKP:SeedVerify_Update()
@@ -63,8 +66,25 @@ end
 local SortButtons = {}
 
 function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTable based on classes in classFiltered table. core.currentSort should be used in most cases
+  local parentTable;
+
+  if core.CurSubView ~= "all" then
+    if core.CurSubView == "raid" then
+      MonDKP:ViewLimited(true)
+    elseif core.CurSubView == "standby" then
+      MonDKP:ViewLimited(false, true)
+    elseif core.CurSubView == "raid and standby" then
+      MonDKP:ViewLimited(true, true)
+    elseif core.CurSubView == "core" then
+      MonDKP:ViewLimited(false, false, true)
+    end
+    parentTable = core.WorkingTable;
+  else
+    parentTable = MonDKP_DKPTable;
+  end
+
   core.WorkingTable = {}
-  for k,v in ipairs(MonDKP_DKPTable) do        -- sort and reset are used to pass along to MonDKP:SortDKPTable()
+  for k,v in ipairs(parentTable) do        -- sort and reset are used to pass along to MonDKP:SortDKPTable()
     local IsOnline = false;
     local name;
     local InRaid = false;
@@ -90,7 +110,7 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
         end
       end
     end
-    if(core.classFiltered[MonDKP_DKPTable[k]["class"]] == true) and searchFilter == true then
+    if(core.classFiltered[parentTable[k]["class"]] == true) and searchFilter == true then
       if MonDKP.ConfigTab1.checkBtn[10]:GetChecked() or MonDKP.ConfigTab1.checkBtn[12]:GetChecked() then
         for i=1, 40 do
           tempName,_,_,_,_,tempClass = GetRaidRosterInfo(i)

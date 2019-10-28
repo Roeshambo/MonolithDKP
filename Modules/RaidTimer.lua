@@ -31,7 +31,7 @@ function SecondsToClock(seconds)
   end
 end
 
-local function AwardPlayer(name, amount)
+function MonDKP:AwardPlayer(name, amount)
 	local search = MonDKP:Table_Search(MonDKP_DKPTable, name)
 	local path;
 
@@ -59,7 +59,7 @@ local function AwardRaid(amount, reason)
 		search_DKP = MonDKP:Table_Search(MonDKP_DKPTable, tempName)
 
 		if search_DKP then
-			AwardPlayer(tempName, amount)
+			MonDKP:AwardPlayer(tempName, amount)
 			tempList = tempList..tempName..",";
 		end
 	end
@@ -69,7 +69,7 @@ local function AwardRaid(amount, reason)
 			if strfind(tempList, MonDKP_Standby[i].player) then
 				table.remove(MonDKP_Standby, i)
 			else
-				AwardPlayer(MonDKP_Standby[i].player, amount)
+				MonDKP:AwardPlayer(MonDKP_Standby[i].player, amount)
 				tempList = tempList..MonDKP_Standby[i].player..",";
 			end
 		end
@@ -83,10 +83,10 @@ local function AwardRaid(amount, reason)
 			MonDKP:UpdateSeeds()
 		end
 		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
-		if MonDKP.ConfigTab6.history then
+		if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
 			MonDKP:DKPHistory_Reset()
+			MonDKP:DKPHistory_Update()
 		end
-		MonDKP:DKPHistory_Update()
 		DKPTable_Update()
 
 		local temp_table = {}

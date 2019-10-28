@@ -66,7 +66,7 @@ local function DeleteLootHistoryEntry(target)
 					table.remove(MonDKP_Loot, search[1][1])
 				end
 
-				MonDKP.Sync:SendData("MonDKPDeleteLoot", {seed = MonDKP_Loot.seed, search[1][1]})
+				MonDKP.Sync:SendData("MonDKPDeleteLoot", {seed = MonDKP_Loot.seed, search[1][1], itemDate})
 				MonDKP:SortLootTable()
 				DKPTable_Update()
 				MonDKP:LootHistory_Update("No Filter");
@@ -81,8 +81,10 @@ local function DeleteLootHistoryEntry(target)
 	else
 		MonDKP:LootHistory_Reset()
 
-		MonDKP_DKPTable[search_player[1][1]].dkp = MonDKP_DKPTable[search_player[1][1]].dkp + target.cost 							-- refund previous looter
-		MonDKP_DKPTable[search_player[1][1]].lifetime_spent = MonDKP_DKPTable[search_player[1][1]].lifetime_spent + target.cost 	-- remove from lifetime_spent
+		if search_player then
+			MonDKP_DKPTable[search_player[1][1]].dkp = MonDKP_DKPTable[search_player[1][1]].dkp + target.cost 							-- refund previous looter
+			MonDKP_DKPTable[search_player[1][1]].lifetime_spent = MonDKP_DKPTable[search_player[1][1]].lifetime_spent + target.cost 	-- remove from lifetime_spent
+		end
 
 		if search then
 			table.remove(MonDKP_Loot, search[1][1])
@@ -233,8 +235,13 @@ end
 
 local function MonDKPDeleteMenu(item)
 	local search = MonDKP:Table_Search(MonDKP_DKPTable, MonDKP_Loot[item]["player"])
-	local c = MonDKP:GetCColors(MonDKP_DKPTable[search[1][1]].class)
-	local deleteString = L["CONFIRMDELETEENTRY1"]..": |cff"..c.hex..MonDKP_Loot[item]["player"].."|r "..L["WON"].." "..MonDKP_Loot[item]["loot"].." "..L["FOR"].." "..MonDKP_Loot[item]["cost"].." "..L["DKP"].."?\n\n("..L["THISWILLREFUND"].." |cff"..c.hex..MonDKP_Loot[item].player.."|r "..MonDKP_Loot[item]["cost"].." "..L["DKP"]..")";
+	local c, deleteString;
+	if search then
+		c = MonDKP:GetCColors(MonDKP_DKPTable[search[1][1]].class)
+		deleteString = L["CONFIRMDELETEENTRY1"]..": |cff"..c.hex..MonDKP_Loot[item]["player"].."|r "..L["WON"].." "..MonDKP_Loot[item]["loot"].." "..L["FOR"].." "..MonDKP_Loot[item]["cost"].." "..L["DKP"].."?\n\n("..L["THISWILLREFUND"].." |cff"..c.hex..MonDKP_Loot[item].player.."|r "..MonDKP_Loot[item]["cost"].." "..L["DKP"]..")";
+	else
+		deleteString = L["CONFIRMDELETEENTRY1"]..": |cff444444"..MonDKP_Loot[item]["player"].."|r "..L["WON"].." "..MonDKP_Loot[item]["loot"].." "..L["FOR"].." "..MonDKP_Loot[item]["cost"].." "..L["DKP"].."?\n\n("..L["THISWILLREFUND"].." |cff444444"..MonDKP_Loot[item].player.."|r "..MonDKP_Loot[item]["cost"].." "..L["DKP"]..")";
+	end
 
 	StaticPopupDialogs["DELETE_LOOT_ENTRY"] = {
 	  text = deleteString,
@@ -317,15 +324,15 @@ function CreateSortBox()
 		     	c = { hex="444444" }
 		    end
 
-			filterName.text, filterName.arg1, filterName.checked, filterName.isNotRadio = "|cff"..c.hex..PlayerList[i].."|r", PlayerList[i], PlayerList[i] == curfilterName, true
+			filterName.text, filterName.arg1, filterName.arg2, filterName.checked, filterName.isNotRadio = "|cff"..c.hex..PlayerList[i].."|r", PlayerList[i], "|cff"..c.hex..PlayerList[i].."|r", PlayerList[i] == curfilterName, true
 			UIDropDownMenu_AddButton(filterName)
 		end
 	end);
 
   -- Dropdown Menu Function
-  function sortDropdown:FilterSetValue(newValue)
+  function sortDropdown:FilterSetValue(newValue, arg2)
     if curfilterName ~= newValue then curfilterName = newValue else curfilterName = nil end
-    UIDropDownMenu_SetText(sortDropdown, curfilterName)
+    UIDropDownMenu_SetText(sortDropdown, arg2)
     MonDKP:LootHistory_Update(newValue)
     CloseDropDownMenus()
   end

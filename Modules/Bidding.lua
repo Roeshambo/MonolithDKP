@@ -68,15 +68,16 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 	local response = L["ERRORPROCESSING"];
 	mode = MonDKP_DB.modes.mode;
 
+	if string.find(name, "-") then					-- finds and removes server name from name if exists
+		local dashPos = string.find(name, "-")
+		name = strsub(name, 1, dashPos-1)
+	end
+
 	if string.find(text, "!bid") == 1 and core.IsOfficer == true then
 		if core.BidInProgress then
 			cmd = BidCmd(text)
 			if (mode == "Static Item Values" and cmd ~= "cancel") or (mode == "Zero Sum" and cmd ~= "cancel" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
 				cmd = nil;
-			end
-			if string.find(name, "-") then					-- finds and removes server name from name if exists
-				local dashPos = string.find(name, "-")
-				name = strsub(name, 1, dashPos-1)
 			end
 			if cmd == "cancel" then
 				for i=1, #Bids_Submitted do 					-- !bid cancel will cancel their bid
@@ -140,16 +141,12 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 			SendChatMessage(L["NOBIDINPROGRESS"], "WHISPER", nil, name)
 		end	
 	elseif string.find(text, "!dkp") == 1 and core.IsOfficer == true then
-		cmd = BidCmd(text)
+		cmd = tostring(BidCmd(text))
 
-		if string.find(name, "-") then					-- finds and removes server name from name if exists
-			local dashPos = string.find(name, "-")
-			name = strsub(name, 1, dashPos-1)
-		end
-
-		if cmd and cmd:gsub("%s+", "") ~= "" then		-- allows command if it has content (removes empty spaces)
+		if cmd and cmd:gsub("%s+", "") ~= "nil" and cmd:gsub("%s+", "") ~= "" then		-- allows command if it has content (removes empty spaces)
+			cmd = cmd:gsub("%s+", "") -- removes unintended spaces from string
 			local search = MonDKP:Table_Search(MonDKP_DKPTable, cmd)
-			
+
 			if search then
 				response = "MonolithDKP: "..MonDKP_DKPTable[search[1][1]].player.." "..L["CURRENTLYHAS"].." "..MonDKP_DKPTable[search[1][1]].dkp.." "..L["DKPAVAILABLE"].."."
 			else
@@ -231,7 +228,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 			end
 		end
 		
-		if strfind(msg, "!dkp") == 1 then
+		if strfind(msg, "!dkp") == 1 and MonDKP_DB.defaults.SupressTells then
 			return true
 		end
 	end)

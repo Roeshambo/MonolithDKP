@@ -172,8 +172,8 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 			local LastVerCheck = time() - core.LastVerCheck;
 
 			if LastVerCheck > 1800 then   					-- limits the Out of Date message from firing more than every 30 minutes 
-				core.LastVerCheck = time();
 				if tonumber(message) > core.BuildNumber then
+					core.LastVerCheck = time();
 					MonDKP:Print(L["OUTOFDATEANNOUNCE"])
 				end
 			end
@@ -296,10 +296,10 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 									button2 = L["NO"],
 									OnAccept = function()
 										tinsert(MonDKP_DKPHistory, deserialized[1])
-										if MonDKP.ConfigTab6.history then
+										if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
 											MonDKP:DKPHistory_Reset()
+											MonDKP:DKPHistory_Update()
 										end
-				      					MonDKP:DKPHistory_Update()
 									end,
 									timeout = 5,
 									whileDead = true,
@@ -308,14 +308,14 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								}
 								StaticPopup_Show ("CONFIRM_DKP_AWARD_BCAST")
 							else
-								tinsert(MonDKP_DKPHistory, deserialized[1])
+								tinsert(MonDKP_DKPHistory, 1, deserialized[1])
 								MonDKP_Loot.seed = deserialized.seed
 								MonDKP_DKPHistory.seed = deserialized.seed
 								MonDKP_DKPTable.seed = deserialized.seed
-								if MonDKP.ConfigTab6.history then
+								if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
 									MonDKP:DKPHistory_Reset()
+									MonDKP:DKPHistory_Update()
 								end
-		      					MonDKP:DKPHistory_Update()
 		      				end
 						elseif prefix == "MonDKPDKPLogSync" then
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
@@ -355,9 +355,18 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 									button2 = L["NO"],
 									OnAccept = function()
 										MonDKP:SortLootTable()
-										table.remove(MonDKP_Loot, deserialized[1])
+
+										if MonDKP_Loot[deserialized[1]] and MonDKP_Loot[deserialized[1]].date == deserialized[2] then	
+											table.remove(MonDKP_Loot, deserialized[1])
+										else
+											for i=1, #MonDKP_Loot do
+												if MonDKP_Loot[i].date == deserialized[2] then
+													table.remove(MonDKP_Loot, i)
+													break;
+												end
+											end
+										end
 										MonDKP:LootHistory_Reset()
-										MonDKP:SortLootTable()
 										MonDKP:LootHistory_Update("No Filter");
 									end,
 									timeout = 5,
@@ -427,7 +436,10 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 									button2 = L["NO"],
 									OnAccept = function()
 										MonDKP:SortDKPHistoryTable()
-										table.remove(MonDKP_DKPHistory, deserialized[1])
+										local search = MonDKP:Table_Search(MonDKP_DKPHistory, deserialized[2])
+										if search then
+											table.remove(MonDKP_DKPHistory, search[1][1])
+										end
 										if MonDKP.ConfigTab6.history then
 											MonDKP:DKPHistory_Reset()
 										end

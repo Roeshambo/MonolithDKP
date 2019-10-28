@@ -312,6 +312,84 @@ function MonDKP:DKPModesFrame_Create()
 	f.RoundHeader:SetFontObject("MonDKPSmallLeft")
 	f.RoundHeader:SetText(L["DKPROUNDING"])
 
+	--MonDKP_DB.modes.AutoAward
+	-- AutoAward DKP Checkbox
+	f.AutoAward = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
+	f.AutoAward:SetChecked(MonDKP_DB.modes.AutoAward)
+	f.AutoAward:SetScale(0.6);
+	f.AutoAward.text:SetText("  |cff5151de"..L["AUTOAWARD"].."|r");
+	f.AutoAward.text:SetScale(1.5);
+	f.AutoAward.text:SetFontObject("MonDKPSmallLeft")
+	f.AutoAward:SetPoint("TOPLEFT", f.RoundDropDown, "BOTTOMLEFT", 60, -10);
+	f.AutoAward:SetScript("OnClick", function(self)
+		MonDKP_DB.modes.AutoAward = self:GetChecked();
+		if self:GetChecked() == false then
+			f.IncStandby:SetChecked(false)
+			MonDKP_DB.DKPBonus.IncStandby = false;
+		end
+		PlaySound(808);
+	end)
+	f.AutoAward:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText(L["AUTOAWARD"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["AUTOAWARDTTDESC"], 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine(L["INCLUDESBYTTWARN"], 1.0, 0, 0, true);
+		GameTooltip:Show();
+	end)
+	f.AutoAward:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+
+	-- Include Standby Checkbox
+	f.IncStandby = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
+	f.IncStandby:SetChecked(MonDKP_DB.DKPBonus.IncStandby)
+	f.IncStandby:SetScale(0.6);
+	f.IncStandby.text:SetText("  |cff5151de"..L["INCLUDESTANDBY"].."|r");
+	f.IncStandby.text:SetScale(1.5);
+	f.IncStandby.text:SetFontObject("MonDKPSmallLeft")
+	f.IncStandby:SetPoint("TOP", f.AutoAward, "BOTTOM", 0, 0);
+	f.IncStandby:SetScript("OnClick", function(self)
+		MonDKP_DB.DKPBonus.IncStandby = self:GetChecked();
+		if self:GetChecked() == true then
+			f.AutoAward:SetChecked(true)
+			MonDKP_DB.modes.AutoAward = true;
+		end
+		PlaySound(808);
+	end)
+	f.IncStandby:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText(L["INCLUDESTANDBY"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["INCLUDESBYTTDESC"], 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine(L["INCLUDESBYTTWARN"], 1.0, 0, 0, true);
+		GameTooltip:Show();
+	end)
+	f.IncStandby:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+
+	-- Standby On Boss Kill Checkbox
+	f.Standby = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
+	f.Standby:SetChecked(MonDKP_DB.modes.StandbyOptIn)
+	f.Standby:SetScale(0.6);
+	f.Standby.text:SetText("  |cff5151de"..L["STANDBYOPTIN"].."|r");
+	f.Standby.text:SetScale(1.5);
+	f.Standby.text:SetFontObject("MonDKPSmallLeft")
+	f.Standby:SetPoint("TOP", f.IncStandby, "BOTTOM", 0, 0);
+	f.Standby:SetScript("OnClick", function(self)
+		MonDKP_DB.modes.StandbyOptIn = self:GetChecked();
+		PlaySound(808);
+	end)
+	f.Standby:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText(L["STANDBYOPTIN"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["STANDBYOPTINTTDESC"], 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine(L["STANDBYOPTINTTWARN"], 1.0, 0, 0, true);
+		GameTooltip:Show();
+	end)
+	f.Standby:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+
 	-- Channels DROPDOWN box 
 	f.ChannelsDropDown = CreateFrame("FRAME", "MonDKPModeSelectDropDown", f, "MonolithDKPUIDropDownMenuTemplate")
 	f.ChannelsDropDown:SetPoint("LEFT", f.ModesDropDown, "RIGHT", 30, 0)
@@ -1007,7 +1085,7 @@ function MonDKP:DKPModesFrame_Create()
     f.Footer = f:CreateFontString(nil, "OVERLAY")
     f.Footer:SetFontObject("MonDKPNormalLeft");
     f.Footer:SetWidth(375)
-    f.Footer:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 15, 150);
+    f.Footer:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 15, 100);
     f.Footer:SetText(L["DKPMODESFOOTER"])
 
 	f:SetScript("OnHide", function()

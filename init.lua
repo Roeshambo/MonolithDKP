@@ -154,7 +154,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		self:UnregisterEvent("CHAT_MSG_RAID_LEADER")
 		return
 	end
-	if event == "CHAT_MSG_GUILD" and not MonDKP_DB.modes.channels.guild then
+	if event == "CHAT_MSG_GUILD" and not MonDKP_DB.modes.channels.guild and not MonDKP_DB.modes.StandbyOptIn then
 		self:UnregisterEvent("CHAT_MSG_GUILD")
 		return
 	end
@@ -162,10 +162,6 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 	if event == "ADDON_LOADED" then
 		MonDKP:OnInitialize(event, arg1)
 		self:UnregisterEvent("ADDON_LOADED")
-	--[[elseif event == "ENCOUNTER_START" then  				-- tentatively used for whisper standby. Announce to guild when a boss dies etc.
-		--local otherStuff = ...;
-	elseif event == "ENCOUNTER_END" then
-		--local otherStuff = ...;--]]
 	elseif event == "BOSS_KILL" then
 		MonDKP:CheckOfficer()
 		if core.IsOfficer and IsInRaid() then
@@ -173,9 +169,19 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 
 			if MonDKP:Table_Search(core.EncounterList, arg1) then
 				MonDKP.ConfigTab2.BossKilledDropdown:SetValue(arg1)
-			end
 
-			if boss_name == core.BossList["WORLD"][1] or boss_name == core.BossList["WORLD"][2] or boss_name == core.BossList["WORLD"][3] or boss_name == core.BossList["WORLD"][4] or boss_name == core.BossList["WORLD"][5] or boss_name == core.BossList["WORLD"][6] then 		-- requests IDs to be reported when discovered
+				if MonDKP_DB.modes.StandbyOptIn then
+					MonDKP_Standby_Announce(boss_name)
+				end
+
+				if MonDKP_DB.modes.AutoAward then
+					if not MonDKP_DB.modes.StandbyOptIn and MonDKP_DB.DKPBonus.IncStandby then
+						MonDKP:AutoAward(3, MonDKP_DB.DKPBonus.BossKillBonus, MonDKP_DB.bossargs.CurrentRaidZone..": "..MonDKP_DB.bossargs.LastKilledBoss)
+					else
+						MonDKP:AutoAward(1, MonDKP_DB.DKPBonus.BossKillBonus, MonDKP_DB.bossargs.CurrentRaidZone..": "..MonDKP_DB.bossargs.LastKilledBoss)
+					end
+				end
+			else
 				MonDKP:Print("Event ID: "..arg1.." - > "..boss_name.." Killed. Please report this Event ID at https://www.curseforge.com/wow/addons/monolith-dkp to update raid event handlers.")
 			end
 		end
@@ -184,12 +190,12 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			MonDKP:CheckOfficer()
 			if core.IsOfficer then
 				if not MonDKP:Table_Search(MonDKP_DB.bossargs.RecentZones, GetRealZoneText()) then 	-- only adds it if it doesn't already exist in the table
-					table.insert(MonDKP_DB.bossargs.RecentZones, 1, GetRealZoneText())
-					if #MonDKP_DB.bossargs.RecentZones > 15 then
-						for i=16, #MonDKP_DB.bossargs.RecentZones do  		-- trims the tail end of the stack
+					if #MonDKP_DB.bossargs.RecentZones > 14 then
+						for i=15, #MonDKP_DB.bossargs.RecentZones do  		-- trims the tail end of the stack
 							table.remove(MonDKP_DB.bossargs.RecentZones, i)
 						end
 					end
+					table.insert(MonDKP_DB.bossargs.RecentZones, 1, GetRealZoneText())
 				end
 			end
 		end
@@ -214,7 +220,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		end
 	elseif event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" then
 		MonDKP:CheckOfficer()
-		if (core.BidInProgress or string.find(arg1, "!dkp") == 1) and core.IsOfficer == true then
+		if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "!standby") == 1) and core.IsOfficer == true then
 			MonDKP_CHAT_MSG_WHISPER(arg1, ...)
 		end
 	elseif event == "UPDATE_INSTANCE_INFO" then
@@ -268,8 +274,12 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		self:UnregisterEvent("UPDATE_INSTANCE_INFO");
 	elseif event == "CHAT_MSG_GUILD" then
 		MonDKP:CheckOfficer()
-		if (core.BidInProgress or string.find(arg1, "!dkp") == 1) and core.IsOfficer == true then
-			MonDKP_CHAT_MSG_WHISPER(arg1, ...)
+		if core.IsOfficer then
+			if (core.BidInProgress or string.find(arg1, "!dkp") == 1) and MonDKP_DB.modes.channels.guild then
+				MonDKP_CHAT_MSG_WHISPER(arg1, ...)
+			elseif string.find(arg1, "!standby") == 1 and core.StandbyActive then
+				MonDKP_Standby_Handler(arg1, ...)
+			end
 		end
 	--elseif event == "CHAT_MSG_SYSTEM" then
 		--MonoDKP_CHAT_MSG_SYSTEM(arg1)
@@ -288,12 +298,12 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				MonDKP:CheckOfficer()
 				if core.IsOfficer then
 					if not MonDKP:Table_Search(MonDKP_DB.bossargs.LastKilledNPC, arg3) then 	-- only adds it if it doesn't already exist in the table
-						table.insert(MonDKP_DB.bossargs.LastKilledNPC, 1, arg3)
-						if #MonDKP_DB.bossargs.LastKilledNPC > 15 then
-							for i=16, #MonDKP_DB.bossargs.LastKilledNPC do  		-- trims the tail end of the stack
+						if #MonDKP_DB.bossargs.LastKilledNPC > 14 then
+							for i=15, #MonDKP_DB.bossargs.LastKilledNPC do  		-- trims the tail end of the stack
 								table.remove(MonDKP_DB.bossargs.LastKilledNPC, i)
 							end
 						end
+						table.insert(MonDKP_DB.bossargs.LastKilledNPC, 1, arg3)
 					end
 				end
 			end

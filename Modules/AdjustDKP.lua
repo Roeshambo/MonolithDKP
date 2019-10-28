@@ -5,7 +5,7 @@ local L = core.L;
 
 local curReason;
 
-local function AdjustDKP()
+function MonDKP:AdjustDKP(value)
 	if core.CurrentlySyncing then
 		StaticPopupDialogs["CURRENTLY_SYNC"] = {
 			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CURRENTLYSYNCING"],
@@ -19,8 +19,12 @@ local function AdjustDKP()
 		return;
 	end
 	local adjustReason = curReason;
-	local c = MonDKP:GetCColors();
 	local curTime = time()
+	local c;
+
+	if not IsInRaid() then
+		c = MonDKP:GetCColors();
+	end
 
 	if (curReason == L["OTHER"]) then adjustReason = L["OTHER"].." - "..MonDKP.ConfigTab2.otherReason:GetText(); end
 	if curReason == L["BOSSKILLBONUS"] then adjustReason = core.CurrentRaidZone..": "..core.LastKilledBoss; end
@@ -37,29 +41,29 @@ local function AdjustDKP()
 					local dkpHistoryString = ""   -- stores list for MonDKP_DKPHistory
 					for i=1, #core.SelectedData do
 						if MonDKP:Table_Search(core.WorkingTable, core.SelectedData[i]["player"]) then
-								if i < #core.SelectedData then
-									tempString = tempString.."|cff"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r, ";
-								else
-									tempString = tempString.."|cff"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r";
-								end
-								dkpHistoryString = dkpHistoryString..core.SelectedData[i]["player"]..","
-								MonDKP:DKPTable_Set(core.SelectedData[i]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber(), false)
+							if i < #core.SelectedData then
+								tempString = tempString.."|cff"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r, ";
+							else
+								tempString = tempString.."|cff"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r";
+							end
+							dkpHistoryString = dkpHistoryString..core.SelectedData[i]["player"]..","
+							MonDKP:DKPTable_Set(core.SelectedData[i]["player"], "dkp", value, false)
 						end
 					end
-					tinsert(MonDKP_DKPHistory, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=curTime})
+					tinsert(MonDKP_DKPHistory, 1, {players=dkpHistoryString, dkp=value, reason=adjustReason, date=curTime})
 					MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
 					if MonDKP.ConfigTab6.history then
 						MonDKP:DKPHistory_Reset()
 					end
 					MonDKP:DKPHistory_Update()
 					local temp_table = {}
-					tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=curTime}})
+					tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=dkpHistoryString, dkp=value, reason=adjustReason, date=curTime}})
 					MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
 					table.wipe(temp_table)
 					if (MonDKP.ConfigTab1.checkBtn[10]:GetChecked() and MonDKP.ConfigTab2.selectAll:GetChecked()) then
-						MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDDKPADJUSTBY"].." "..MonDKP.ConfigTab2.addDKP:GetNumber().." "..L["FORREASON"]..": "..adjustReason)
+						MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDDKPADJUSTBY"].." "..value.." "..L["FORREASON"]..": "..adjustReason)
 					else
-						MonDKP.Sync:SendData("MonDKPBroadcast", L["DKPADJUSTBY"].." "..MonDKP.ConfigTab2.addDKP:GetNumber().." "..L["FORPLAYERS"]..": ")
+						MonDKP.Sync:SendData("MonDKPBroadcast", L["DKPADJUSTBY"].." "..value.." "..L["FORPLAYERS"]..": ")
 						MonDKP.Sync:SendData("MonDKPBroadcast", tempString)
 						MonDKP.Sync:SendData("MonDKPBroadcast", L["REASON"]..": "..adjustReason)
 					end
@@ -70,35 +74,44 @@ local function AdjustDKP()
 				preferredIndex = 3,
 			}
 			StaticPopup_Show ("CONFIRM_ADJUST1")
-		else
+		elseif core.IsOfficer then
 			local tempString = "";       -- stores list of changes
 			local dkpHistoryString = ""   -- stores list for MonDKP_DKPHistory
 			for i=1, #core.SelectedData do
-				if MonDKP:Table_Search(core.WorkingTable, core.SelectedData[i]["player"]) then
+				local current;
+				local search = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[i]["player"])
+				if search then
+					if not IsInRaid() then
 						if i < #core.SelectedData then
 							tempString = tempString.."|cff"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r, ";
 						else
 							tempString = tempString.."|cff"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r";
 						end
-						dkpHistoryString = dkpHistoryString..core.SelectedData[i]["player"]..","
-						MonDKP:DKPTable_Set(core.SelectedData[i]["player"], "dkp", MonDKP.ConfigTab2.addDKP:GetNumber(), false)
+					end
+					dkpHistoryString = dkpHistoryString..core.SelectedData[i]["player"]..","
+					current = MonDKP_DKPTable[search[1][1]].dkp
+					MonDKP_DKPTable[search[1][1]].dkp = MonDKP_round(tonumber(current + value), MonDKP_DB.modes.rounding)
+					if value > 0 then
+						MonDKP_DKPTable[search[1][1]]["lifetime_gained"] = MonDKP_round(tonumber(MonDKP_DKPTable[search[1][1]]["lifetime_gained"] + value), MonDKP_DB.modes.rounding)
+					end
 				end
 			end
-			tinsert(MonDKP_DKPHistory, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=curTime})
+			DKPTable_Update()
+			tinsert(MonDKP_DKPHistory, 1, {players=dkpHistoryString, dkp=value, reason=adjustReason, date=curTime})
 			MonDKP:UpdateSeeds()
 			MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
-			if MonDKP.ConfigTab6.history then
+			if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
 				MonDKP:DKPHistory_Reset()
+				MonDKP:DKPHistory_Update()
 			end
-			MonDKP:DKPHistory_Update()
 			local temp_table = {}
-			tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=dkpHistoryString, dkp=MonDKP.ConfigTab2.addDKP:GetNumber(), reason=adjustReason, date=curTime}})
+			tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=dkpHistoryString, dkp=value, reason=adjustReason, date=curTime}})
 			MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
 			table.wipe(temp_table)
-			if (MonDKP.ConfigTab1.checkBtn[10]:GetChecked() and MonDKP.ConfigTab2.selectAll:GetChecked()) then
-				MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDDKPADJUSTBY"].." "..MonDKP.ConfigTab2.addDKP:GetNumber().." "..L["FORREASON"]..": "..adjustReason)
+			if IsInRaid() then
+				MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDDKPADJUSTBY"].." "..value.." "..L["FORREASON"]..": "..adjustReason)
 			else
-				MonDKP.Sync:SendData("MonDKPBroadcast", L["DKPADJUSTBY"].." "..MonDKP.ConfigTab2.addDKP:GetNumber().." "..L["FORPLAYERS"]..": ")
+				MonDKP.Sync:SendData("MonDKPBroadcast", L["DKPADJUSTBY"].." "..value.." "..L["FORPLAYERS"]..": ")
 				MonDKP.Sync:SendData("MonDKPBroadcast", tempString)
 				MonDKP.Sync:SendData("MonDKPBroadcast", L["REASON"]..": "..adjustReason)
 			end
@@ -287,6 +300,7 @@ local function RaidTimerPopout_Create()
 	    MonDKP.RaidTimerPopout.Output:SetScale(0.8)
 	    MonDKP.RaidTimerPopout.Output:SetPoint("CENTER", MonDKP.RaidTimerPopout, "CENTER", 0, 0);
 	    MonDKP.RaidTimerPopout.Output:SetText("|cff00ff0000:00:00|r")
+	    MonDKP.RaidTimerPopout:Hide();
 	else
 		MonDKP.RaidTimerPopout:Show()
 	end
@@ -426,7 +440,7 @@ function MonDKP:AdjustDKPTab_Create()
 	UIDropDownMenu_Initialize(MonDKP.ConfigTab2.BossKilledDropdown, function(self, level, menuList)
 		local boss = UIDropDownMenu_CreateInfo()
 		boss.fontObject = "MonDKPSmallCenter"
-		if (level or 1) == 1 then	  
+		if (level or 1) == 1 then
 			boss.text, boss.checked, boss.menuList, boss.hasArrow = core.ZoneList[1], core.CurrentRaidZone == core.ZoneList[1], "MC", true
 			UIDropDownMenu_AddButton(boss)
 			boss.text, boss.checked, boss.menuList, boss.hasArrow = core.ZoneList[2], core.CurrentRaidZone == core.ZoneList[2], "BWL", true
@@ -574,7 +588,7 @@ function MonDKP:AdjustDKPTab_Create()
 				button1 = L["YES"],
 				button2 = L["NO"],
 				OnAccept = function()
-					AdjustDKP()
+					MonDKP:AdjustDKP(MonDKP.ConfigTab2.addDKP:GetNumber())
 				end,
 				timeout = 0,
 				whileDead = true,
@@ -583,7 +597,7 @@ function MonDKP:AdjustDKPTab_Create()
 			}
 			StaticPopup_Show ("ADJUST_DKP")
 		else
-			AdjustDKP();
+			MonDKP:AdjustDKP(MonDKP.ConfigTab2.addDKP:GetNumber());
 		end
 	end)
 	MonDKP.ConfigTab2.adjustButton:SetScript("OnEnter", function(self)
@@ -1108,4 +1122,5 @@ function MonDKP:AdjustDKPTab_Create()
 	    MonDKP.ConfigTab2.RaidTimerContainer.TimerWarning:SetWidth(180)
 	    MonDKP.ConfigTab2.RaidTimerContainer.TimerWarning:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab2.RaidTimerContainer, "BOTTOMLEFT", 10, 10);
 	    MonDKP.ConfigTab2.RaidTimerContainer.TimerWarning:SetText("|CFFFF0000"..L["TIMERWARNING"].."|r")
+	    RaidTimerPopout_Create()
 end
