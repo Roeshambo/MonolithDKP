@@ -55,11 +55,11 @@ local function Tab_OnClick(self)
   PanelTemplates_SetTab(self:GetParent(), self:GetID());
   
   if self:GetID() > 4 then
-    MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:Show()
+    self:GetParent().ScrollFrame.ScrollBar:Show()
   elseif self:GetID() == 4 and core.IsOfficer == true then
-  	MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:Show()
+  	self:GetParent().ScrollFrame.ScrollBar:Show()
   else
-    MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:Hide()
+    self:GetParent().ScrollFrame.ScrollBar:Hide()
   end
 
   if self:GetID() == 6 then
@@ -67,18 +67,18 @@ local function Tab_OnClick(self)
     MonDKP:DKPHistory_Update()
   end
 
-  local scrollChild = MonDKP.UIConfig.TabMenu.ScrollFrame:GetScrollChild();
+  local scrollChild = self:GetParent().ScrollFrame:GetScrollChild();
   if (scrollChild) then
     scrollChild:Hide();
   end
   
   PlaySound(808)
-  MonDKP.UIConfig.TabMenu.ScrollFrame:SetScrollChild(self.content);
+  self:GetParent().ScrollFrame:SetScrollChild(self.content);
   self.content:Show();
-  MonDKP.UIConfig.TabMenu.ScrollFrame:SetVerticalScroll(0)
+  self:GetParent().ScrollFrame:SetVerticalScroll(0)
 end
 
-local function SetTabs(frame, numTabs, ...)
+function MonDKP:SetTabs(frame, numTabs, width, height, ...)
   frame.numTabs = numTabs;
   
   local contents = {};
@@ -92,14 +92,14 @@ local function SetTabs(frame, numTabs, ...)
     tab:GetFontString():SetTextColor(0.7, 0.7, 0.86, 1)
     tab:SetScript("OnClick", Tab_OnClick);
     
-    tab.content = CreateFrame("Frame", nil, MonDKP.UIConfig.TabMenu.ScrollFrame);
-    tab.content:SetSize(475, 490);
+    tab.content = CreateFrame("Frame", nil, frame.ScrollFrame);
+    tab.content:SetSize(width, height);
     tab.content:Hide();
         
     table.insert(contents, tab.content);
     
     if (i == 1) then
-      tab:SetPoint("TOPLEFT", MonDKP.UIConfig.TabMenu, "BOTTOMLEFT", -5, 1);
+      tab:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", -5, 1);
     else
       tab:SetPoint("TOPLEFT", _G[frameName.."Tab"..(i - 1)], "TOPRIGHT", -17, 0);
     end 
@@ -148,7 +148,7 @@ function MonDKP:ConfigMenuTabs()
   MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", MonDKP.UIConfig.TabMenu.ScrollFrame, "TOPRIGHT", -20, -12);
   MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", MonDKP.UIConfig.TabMenu.ScrollFrame, "BOTTOMRIGHT", -2, 15);
 
-  MonDKP.ConfigTab1, MonDKP.ConfigTab2, MonDKP.ConfigTab3, MonDKP.ConfigTab4, MonDKP.ConfigTab5, MonDKP.ConfigTab6 = SetTabs(MonDKP.UIConfig.TabMenu, 6, L["FILTERS"], L["ADJUSTDKP"], L["MANAGE"], L["OPTIONS"], L["LOOTHISTORY"], L["DKPHISTORY"]);
+  MonDKP.ConfigTab1, MonDKP.ConfigTab2, MonDKP.ConfigTab3, MonDKP.ConfigTab4, MonDKP.ConfigTab5, MonDKP.ConfigTab6 = MonDKP:SetTabs(MonDKP.UIConfig.TabMenu, 6, 475, 490, L["FILTERS"], L["ADJUSTDKP"], L["MANAGE"], L["OPTIONS"], L["LOOTHISTORY"], L["DKPHISTORY"]);
 
   ---------------------------------------
   -- MENU TAB 1

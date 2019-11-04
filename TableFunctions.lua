@@ -655,7 +655,9 @@ function DKPTable_Update()
           row.DKPInfo[2]:SetText("No Spec Reported")
         end
       elseif core.CenterSort == "role" then
-        row.DKPInfo[2]:SetText(core.WorkingTable[index].role)
+        if core.WorkingTable[index].role then
+          row.DKPInfo[2]:SetText(core.WorkingTable[index].role)
+        end
       end
       
       row.DKPInfo[3]:SetText(MonDKP_round(core.WorkingTable[index].dkp, MonDKP_DB.modes.rounding))
@@ -698,6 +700,8 @@ function DKPTable_Update()
         else
           row.DKPInfo[3].rollrange:SetText("("..math.floor(minimum).."-"..math.floor(maximum)..")")
         end
+      elseif row.DKPInfo[3].rollrange then
+        row.DKPInfo[3].rollrange:SetText("")
       end
 
       local a = MonDKP:Table_Search(core.SelectedData, core.WorkingTable[index].player);  -- searches selectedData for the player name indexed.

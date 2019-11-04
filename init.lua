@@ -9,7 +9,26 @@ local lockouts = CreateFrame("Frame", "LockoutsFrame");
 -- Slash Command
 --------------------------------------
 MonDKP.Commands = {
-	["config"] = MonDKP.Toggle,
+	["config"] = function()
+		local pass, err = pcall(MonDKP.Toggle)
+
+		if not pass then
+			core.MonDKPUI:SetShown(false)
+			StaticPopupDialogs["SUGGEST_RELOAD"] = {
+				text = "|CFFFF0000"..L["WARNING"].."|r: "..L["MUSTRELOADUI"],
+				button1 = L["YES"],
+				button2 = L["NO"],
+				OnAccept = function()
+					ReloadUI();
+				end,
+				timeout = 0,
+				whileDead = true,
+				hideOnEscape = true,
+				preferredIndex = 3,
+			}
+			StaticPopup_Show ("SUGGEST_RELOAD")
+		end
+	end,
 	["reset"] = MonDKP.ResetPosition,
 	["bid"] = function(...)
 		local item = strjoin(" ", ...)
@@ -24,10 +43,12 @@ MonDKP.Commands = {
 				MonDKP:Print("Opening Bid Window for: ".. item)
 				MonDKP:ToggleBidWindow(item, itemIcon, itemName)
 			end
-		else
-			MonDKP:Print("You do not have permission to access that feature.")
 		end
+		MonDKP:BidInterface_Toggle() 
 	end,
+	--[[["test"] = function() 			-- test new features
+		MonDKP:BidInterface_Toggle()
+	end,--]]
 	["award"] = function (name, cost, ...)
 		if core.IsOfficer then
 			MonDKP:SeedVerify_Update()
@@ -184,6 +205,15 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			else
 				MonDKP:Print("Event ID: "..arg1.." - > "..boss_name.." Killed. Please report this Event ID at https://www.curseforge.com/wow/addons/monolith-dkp to update raid event handlers.")
 			end
+		elseif IsInRaid() then
+			MonDKP_DB.bossargs.LastKilledBoss = ...;
+		end
+	elseif event == "ENCOUNTER_START" then
+		if MonDKP_DB.defaults.AutoLog and IsInRaid() then
+			if not LoggingCombat() then
+				LoggingCombat(1)
+				MonDKP:Print("Now logging combat.")
+			end
 		end
 	elseif event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then   		-- logs 15 recent zones entered while in a raid party
 		if IsInRaid() then 					-- only processes combat log events if in raid
@@ -198,10 +228,16 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 					table.insert(MonDKP_DB.bossargs.RecentZones, 1, GetRealZoneText())
 				end
 			end
+			if MonDKP_DB.defaults.AutoLog and MonDKP:Table_Search(core.ZoneList, GetRealZoneText()) then
+				if not LoggingCombat() then
+					LoggingCombat(1)
+					MonDKP:Print("Now logging combat.")
+				end
+			end
 		end
 	elseif event == "CHAT_MSG_WHISPER" then
 		MonDKP:CheckOfficer()
-		if (core.BidInProgress or string.find(arg1, "!dkp") == 1) and core.IsOfficer == true then
+		if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "！dkp") == 1) and core.IsOfficer == true then
 			MonDKP_CHAT_MSG_WHISPER(arg1, ...)
 		end
 	elseif event == "GUILD_ROSTER_UPDATE" then
@@ -220,7 +256,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		end
 	elseif event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" then
 		MonDKP:CheckOfficer()
-		if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "!standby") == 1) and core.IsOfficer == true then
+		if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "!standby") == 1 or string.find(arg1, "！dkp") == 1) and core.IsOfficer == true then
 			MonDKP_CHAT_MSG_WHISPER(arg1, ...)
 		end
 	elseif event == "UPDATE_INSTANCE_INFO" then
@@ -275,7 +311,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 	elseif event == "CHAT_MSG_GUILD" then
 		MonDKP:CheckOfficer()
 		if core.IsOfficer then
-			if (core.BidInProgress or string.find(arg1, "!dkp") == 1) and MonDKP_DB.modes.channels.guild then
+			if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "！dkp") == 1) and MonDKP_DB.modes.channels.guild then
 				MonDKP_CHAT_MSG_WHISPER(arg1, ...)
 			elseif string.find(arg1, "!standby") == 1 and core.StandbyActive then
 				MonDKP_Standby_Handler(arg1, ...)
@@ -331,8 +367,33 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			end
 		end--]]
 	elseif event == "LOOT_OPENED" then
-		if IsInRaid() then
+		if core.IsOfficer then
 			MonDKP_Register_ShiftClickLootWindowHook()
+			local lootTable = {}
+			local lootList = {};
+
+			for i=1, GetNumLootItems() do
+				if LootSlotHasItem(i) and GetLootSlotLink(i) then
+					if not GetLootSlotLink(i) then return end -- prevent errors if auto loot is used causing the items to be removed from the frame before loop completes
+					local _,link,quality = GetItemInfo(GetLootSlotLink(i))
+					
+					if quality >= 4 then
+						table.insert(lootTable, link)
+					end
+				end
+			end
+			lootTable.boss=UnitName("target")
+			MonDKP.Sync:SendData("MonDKPLootTable", lootTable)
+
+			for i=1, #lootTable do
+				local item = Item:CreateFromItemLink(lootTable[i]);
+				item:ContinueOnItemLoad(function()
+					local icon = item:GetItemIcon()
+					table.insert(lootList, {icon=icon, link=item:GetItemLink()})
+				end);
+			end
+
+			MonDKP:LootTable_Set(lootList)
 		end
 	end
 end
@@ -396,7 +457,8 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_DB.bossargs.LastKilledNPC then MonDKP_DB.bossargs.LastKilledNPC = {} end
 		if not MonDKP_DB.bossargs.RecentZones then MonDKP_DB.bossargs.RecentZones = {} end
 		if not MonDKP_DB.defaults.HideChangeLogs then MonDKP_DB.defaults.HideChangeLogs = 0 end
-
+		if not MonDKP_DB.modes.AntiSnipe then MonDKP_DB.modes.AntiSnipe = 0 end
+	
 		for i=1, #MonDKP_DKPTable do
 			if not MonDKP_DKPTable[i].rank or not MonDKP_DKPTable[i].rankName or MonDKP_DKPTable[i].rank == "None" then
 				MonDKP_DKPTable[i].rank = 20
@@ -431,7 +493,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		end
 		
 		core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();		-- creates main menu
-		MonDKP:StartBidTimer(seconds, nil)							-- initiates timer frame for use
+		MonDKP:StartBidTimer("seconds", nil)							-- initiates timer frame for use
 		MonDKP:PurgeLootHistory()									-- purges Loot History entries that exceed the "HistoryLimit" option variable (oldest entries)
 		MonDKP:PurgeDKPHistory()									-- purges DKP History entries that exceed the "DKPHistoryLimit" option variable (oldest entries)
 	end
@@ -445,7 +507,6 @@ local events = CreateFrame("Frame", "EventsFrame");
 events:RegisterEvent("ADDON_LOADED");
 events:RegisterEvent("GROUP_ROSTER_UPDATE");
 events:RegisterEvent("ENCOUNTER_START");  		-- FOR TESTING PURPOSES.
-events:RegisterEvent("ENCOUNTER_END");  		-- FOR TESTING PURPOSES.
 events:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED") -- NPC kill event
 events:RegisterEvent("LOOT_OPENED")
 events:RegisterEvent("CHAT_MSG_RAID")

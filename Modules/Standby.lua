@@ -86,10 +86,10 @@ function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to awar
 		end
 
 		if tempList ~= "" or tempList2 ~= "" then
-			if phase == 1 or phase == 3 and tempList ~= "" then
+			if (phase == 1 or phase == 3) and tempList ~= "" then
 				tinsert(MonDKP_DKPHistory, {players=tempList, dkp=amount, reason=reason, date=curTime})
 			end
-			if phase == 2 or phase == 3 and tempList2 ~= "" then
+			if (phase == 2 or phase == 3) and tempList2 ~= "" then
 				tinsert(MonDKP_DKPHistory, {players=tempList2, dkp=amount, reason=reason.." (Standby)", date=curTime+1})
 			end
 
@@ -106,12 +106,12 @@ function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to awar
 
 			local temp_table = {}
 			local temp_table2 = {}
-			if phase == 1 or phase == 3 and tempList ~= "" then
+			if (phase == 1 or phase == 3) and tempList ~= "" then
 				tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=tempList, dkp=amount, reason=reason, date=curTime}})
 				MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
 				MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDDKPADJUSTBY"].." "..amount.." "..L["FORREASON"]..": "..reason)
 			end
-			if phase == 2 or phase == 3 and tempList2 ~= "" then
+			if (phase == 2 or phase == 3) and tempList2 ~= "" then
 				tinsert(temp_table2, {seed = MonDKP_DKPHistory.seed, {players=tempList2, dkp=amount, reason=reason.." (Standby)", date=curTime+1}})
 				MonDKP.Sync:SendData("MonDKPDKPAward", temp_table2[1])
 				MonDKP.Sync:SendData("MonDKPBroadcast", L["STANDBYADJUSTBY"].." "..amount.." "..L["FORREASON"]..": "..reason)

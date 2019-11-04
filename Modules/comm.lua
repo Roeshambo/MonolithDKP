@@ -60,6 +60,9 @@ function MonDKP.Sync:OnEnable()
 	MonDKP.Sync:RegisterComm("MonDKPBuildCheck", MonDKP.Sync:OnCommReceived())		-- broadcasts Addon build number to inform others an update is available.
 	MonDKP.Sync:RegisterComm("MonDKPTalCheck", MonDKP.Sync:OnCommReceived())		-- broadcasts current spec
 	MonDKP.Sync:RegisterComm("MonDKPRoleCheck", MonDKP.Sync:OnCommReceived())		-- broadcasts current role info
+	MonDKP.Sync:RegisterComm("MonDKPLootTable", MonDKP.Sync:OnCommReceived())		-- broadcast current loot table
+	MonDKP.Sync:RegisterComm("MonDKPBidTable", MonDKP.Sync:OnCommReceived())		-- broadcast accepted bids
+	MonDKP.Sync:RegisterComm("MonDKPBidSubmit", MonDKP.Sync:OnCommReceived())		-- Submit bids
 end
 
 function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
@@ -103,6 +106,8 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				end
 			end
 			return
+		elseif prefix == "MonDKPBidSubmit" and core.BidInProgress then
+			MonDKP_CHAT_MSG_WHISPER(message, sender)
 		elseif prefix == "MonDKPTalCheck" then
 			local search = MonDKP:Table_Search(MonDKP_DKPTable, sender)
 
@@ -193,32 +198,51 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						MonDKP:StartTimer(arg1, arg2)
 					elseif command == "StartBidTimer" then
 						MonDKP:StartBidTimer(arg1, arg2, arg3)
+						core.BiddingInProgress = true;
+						if strfind(arg1, "{") then
+							MonDKP:Print("Bid timer extended by "..tonumber(strsub(arg1, strfind(arg1, "{")+1)).." seconds.")
+						end
 					elseif command == "StopBidTimer" then
 						if MonDKP.BidTimer then
 							MonDKP.BidTimer:SetScript("OnUpdate", nil)
 							MonDKP.BidTimer:Hide()
+							core.BiddingInProgress = false;
 						end
+					elseif command == "BidInfo" then
+						MonDKP:BidInterface_Toggle()
+						MonDKP:CurrItem_Set(arg1, arg2, arg3, sender)
 					end
 				end
 			elseif prefix == "MonDKPRaidTimer" and sender ~= UnitName("player") and core.IsOfficer then
 				local command, args = strsplit(",", message);
 				if command == "start" then
 					local arg1, arg2, arg3, arg4, arg5, arg6 = strsplit(" ", args, 6)
+
 					if arg1 == "true" then arg1 = true else arg1 = false end
 					if arg4 == "true" then arg4 = true else arg4 = false end
 					if arg5 == "true" then arg5 = true else arg5 = false end
 					if arg6 == "true" then arg6 = true else arg6 = false end
 
-					MonDKP.ConfigTab2.RaidTimerContainer.interval:SetNumber(tonumber(arg2));
-					MonDKP_DB.modes.increment = tonumber(arg2);
-					MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetNumber(tonumber(arg3));
-					MonDKP_DB.DKPBonus.IntervalBonus = tonumber(arg3);
-					MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:SetChecked(arg4);
-					MonDKP_DB.DKPBonus.GiveRaidStart = arg4;
-					MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:SetChecked(arg5);
-					MonDKP_DB.DKPBonus.GiveRaidEnd = arg5;
-					MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:SetChecked(arg6);
-					MonDKP_DB.DKPBonus.IncStandby = arg6;
+					if arg2 ~= nil then
+						MonDKP.ConfigTab2.RaidTimerContainer.interval:SetNumber(tonumber(arg2));
+						MonDKP_DB.modes.increment = tonumber(arg2);
+					end
+					if arg3 ~= nil then
+						MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetNumber(tonumber(arg3));
+						MonDKP_DB.DKPBonus.IntervalBonus = tonumber(arg3);
+					end
+					if arg4 ~= nil then
+						MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:SetChecked(arg4);
+						MonDKP_DB.DKPBonus.GiveRaidStart = arg4;
+					end
+					if arg5 ~= nil then
+						MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:SetChecked(arg5);
+						MonDKP_DB.DKPBonus.GiveRaidEnd = arg5;
+					end
+					if arg6 ~= nil then
+						MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:SetChecked(arg6);
+						MonDKP_DB.DKPBonus.IncStandby = arg6;
+					end
 
 					MonDKP:StartRaidTimer(arg1)
 				elseif command == "stop" then
@@ -231,7 +255,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 			if (sender ~= UnitName("player")) then
 				if (prefix == "MonDKPDataSync" or prefix == "MonDKPLogSync" or prefix == "MonDKPLootAward" or prefix == "MonDKPDKPLogSync" or prefix == "MonDKPDKPAward"
 				or prefix == "MonDKPDeleteLoot" or prefix == "MonDKPEditLoot" or prefix == "MonDKPDKPDelSync" or prefix == "MonDKPMinBids" or prefix == "MonDKPWhitelist"
-				or prefix == "MonDKPModes" or prefix == "MonDKPStandby" or prefix == "MonDKPZeroSum") then
+				or prefix == "MonDKPModes" or prefix == "MonDKPStandby" or prefix == "MonDKPZeroSum" or prefix == "MonDKPLootTable" or prefix == "MonDKPBidTable") then
 					decoded = LibCompress:Decompress(LibCompressAddonEncodeTable:Decode(message))
 					local success, deserialized = LibAceSerializer:Deserialize(decoded);
 					if success then
@@ -502,19 +526,23 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 							MonDKP_DB.modes = deserialized[1]
 							MonDKP_DB.DKPBonus = deserialized[2]
 							MonDKP_DB.raiders = deserialized[3]
-							StaticPopupDialogs["SEND_MODES"] = {
-								text = sender.." "..L["RELOADUIFORSETTINGS"],
-								button1 = L["YES"],
-								button2 = L["NO"],
-								OnAccept = function()
-									ReloadUI();
-								end,
-								timeout = 0,
-								whileDead = true,
-								hideOnEscape = true,
-								preferredIndex = 3,
-							}
-							StaticPopup_Show ("SEND_MODES")
+						elseif prefix == "MonDKPLootTable" then
+							local lootList = {};
+							MonDKP_DB.bossargs.LastKilledBoss = deserialized.boss;
+						
+							for i=1, #deserialized do
+								local item = Item:CreateFromItemLink(deserialized[i]);
+								item:ContinueOnItemLoad(function()
+									local icon = item:GetItemIcon()
+									table.insert(lootList, {icon=icon, link=item:GetItemLink()})
+								end);
+							end
+
+							MonDKP:LootTable_Set(lootList)
+						elseif prefix == "MonDKPBidTable" then
+							if core.BidInterface then
+								MonDKP:Bids_Set(deserialized)
+							end
 						else
 							if leader[1].seed > deserialized.seed and core.IsOfficer == true then
 								StaticPopupDialogs["CONFIRM_DKP_BROADCAST"] = {
@@ -602,6 +630,9 @@ function MonDKP.Sync:SendData(prefix, data)
 		elseif prefix == "MonDKPTalCheck" or prefix == "MonDKPRoleCheck" then
 			MonDKP.Sync:SendCommMessage(prefix, data, "GUILD")
 			return;
+		elseif prefix == "MonDKPBidSubmit" then		-- bid submissions. Keep to raid.
+			MonDKP.Sync:SendCommMessage(prefix, data, "RAID")
+			return;
 		end
 	end
 	if IsInGuild() and core.IsOfficer then
@@ -660,7 +691,7 @@ function MonDKP.Sync:SendData(prefix, data)
 		print("LZQ: ", strlen(lzwCompressed)) --]]
 
 		-- send packet
-		if (prefix == "MonDKPZeroSum") then							-- Zero Sum bank data. Keep to raid.
+		if (prefix == "MonDKPZeroSum" or prefix == "MonDKPLootTable" or prefix == "MonDKPBidTable") then		-- Zero Sum bank/loot table/bid table data and bid submissions. Keep to raid.
 			MonDKP.Sync:SendCommMessage(prefix, packet, "RAID")
 			return;
 		end

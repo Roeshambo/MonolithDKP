@@ -824,19 +824,18 @@ function MonDKP:AdjustDKPTab_Create()
 				StaticPopup_Show ("NO_RAID_TIMER")
 				return;
 			end
-			if not core.RaidInProgress then
+			if not core.RaidInProgress then				
 				if MonDKP_DB.DKPBonus.GiveRaidStart and self:GetText() ~= L["CONTINUERAID"] then
 					StaticPopupDialogs["START_RAID_BONUS"] = {
 						text = L["RAIDTIMERBONUSCONFIRM"],
 						button1 = L["YES"],
 						button2 = L["NO"],
-						OnAccept = function()
+						OnAccept = function()						
 							local setInterval = MonDKP.ConfigTab2.RaidTimerContainer.interval:GetNumber();
 							local setBonus = MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:GetNumber();
 							local setOnTime = tostring(MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:GetChecked());
 							local setGiveEnd = tostring(MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:GetChecked());
 							local setStandby = tostring(MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:GetChecked());
-
 							MonDKP.Sync:SendData("MonDKPRaidTimer", "start,false "..setInterval.. " "..setBonus.." "..setOnTime.." "..setGiveEnd.." "..setStandby)
 							if MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:GetText() == L["CONTINUERAID"] then
 								MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDRESUME"])
@@ -853,7 +852,12 @@ function MonDKP:AdjustDKPTab_Create()
 					}
 					StaticPopup_Show ("START_RAID_BONUS")
 				else
-					MonDKP.Sync:SendData("MonDKPRaidTimer", "start,false")
+					local setInterval = MonDKP.ConfigTab2.RaidTimerContainer.interval:GetNumber();
+					local setBonus = MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:GetNumber();
+					local setOnTime = tostring(MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:GetChecked());
+					local setGiveEnd = tostring(MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:GetChecked());
+					local setStandby = tostring(MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:GetChecked());
+					MonDKP.Sync:SendData("MonDKPRaidTimer", "start,false "..setInterval.. " "..setBonus.." "..setOnTime.." "..setGiveEnd.." "..setStandby)
 					if MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:GetText() == L["CONTINUERAID"] then
 						MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDRESUME"])
 					else
@@ -897,7 +901,13 @@ function MonDKP:AdjustDKPTab_Create()
 		MonDKP.ConfigTab2.RaidTimerContainer.PauseTimer:Hide();
 		MonDKP.ConfigTab2.RaidTimerContainer.PauseTimer:SetScript("OnClick", function(self)
 			if core.RaidInProgress then
-				MonDKP.Sync:SendData("MonDKPRaidTimer", "start,true")
+				local setInterval = MonDKP.ConfigTab2.RaidTimerContainer.interval:GetNumber();
+				local setBonus = MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:GetNumber();
+				local setOnTime = tostring(MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:GetChecked());
+				local setGiveEnd = tostring(MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:GetChecked());
+				local setStandby = tostring(MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:GetChecked());
+
+				MonDKP.Sync:SendData("MonDKPRaidTimer", "start,true "..setInterval.. " "..setBonus.." "..setOnTime.." "..setGiveEnd.." "..setStandby)
 				MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDPAUSE"].." "..MonDKP.ConfigTab2.RaidTimerContainer.Output:GetText().."!")
 				MonDKP:StartRaidTimer(true)
 			end

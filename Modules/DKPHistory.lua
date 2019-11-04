@@ -85,25 +85,25 @@ function DKPHistoryFilterBox_Create()
 		local filterName = UIDropDownMenu_CreateInfo()
 		local ranges = {1}
 		while ranges[#ranges] < #PlayerList do
-			table.insert(ranges, ranges[#ranges]+40)
+			table.insert(ranges, ranges[#ranges]+20)
 		end
 
 		if (level or 1) == 1 then
-			local numSubs = ceil(#PlayerList/40)
+			local numSubs = ceil(#PlayerList/20)
 			filterName.func = self.FilterSetValue
 			filterName.text, filterName.arg1, filterName.arg2, filterName.checked, filterName.isNotRadio = "No Filter", "No Filter", "No Filter", "No Filter" == curfilterName, true
 			UIDropDownMenu_AddButton(filterName)
 		
 			for i=1, numSubs do
-				local max = i*40;
+				local max = i*20;
 				if max > #PlayerList then max = #PlayerList end
-				filterName.text, filterName.checked, filterName.menuList, filterName.hasArrow = "Players "..((i*40)-39).."-"..max, curSelected >= (i*40)-39 and curSelected <= i*40, i, true
+				filterName.text, filterName.checked, filterName.menuList, filterName.hasArrow = "Players "..((i*20)-19).."-"..max, curSelected >= (i*20)-19 and curSelected <= i*20, i, true
 				UIDropDownMenu_AddButton(filterName)
 			end
 			
 		else
 			filterName.func = self.FilterSetValue
-			for i=ranges[menuList], ranges[menuList]+39 do
+			for i=ranges[menuList], ranges[menuList]+19 do
 				if PlayerList[i] then
 					local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, PlayerList[i])
 				    local c;

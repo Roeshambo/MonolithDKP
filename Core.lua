@@ -410,6 +410,33 @@ function MonDKP:BroadcastTimer(seconds, ...)       -- broadcasts timer and start
   end
 end
 
+function MonDKP:CreateContainer(parent, name, header)
+  local f = CreateFrame("Frame", "MonDKP"..name, parent);
+  f:SetBackdrop( {
+    edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
+    insets = { left = 0, right = 0, top = 0, bottom = 0 }
+  });
+  f:SetBackdropColor(0,0,0,0.9);
+  f:SetBackdropBorderColor(1,1,1,0.5)
+
+  f.header = CreateFrame("Frame", "MonDKP"..name.."Header", f)
+  f.header:SetBackdrop( {
+    bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
+    insets = { left = 0, right = 0, top = 0, bottom = 0 }
+  });
+  f.header:SetBackdropColor(0,0,0,1)
+  f.header:SetBackdropBorderColor(0,0,0,1)
+  f.header:SetPoint("LEFT", f, "TOPLEFT", 20, 0)
+  f.header.text = f.header:CreateFontString(nil, "OVERLAY")
+  f.header.text:SetFontObject("MonDKPSmallCenter");
+  f.header.text:SetPoint("CENTER", f.header, "CENTER", 0, 0);
+  f.header.text:SetText(header);
+  f.header:SetWidth(f.header.text:GetWidth() + 10)
+  f.header:SetHeight(f.header.text:GetHeight() + 4)
+
+  return f;
+end
+
 function MonDKP:StartTimer(seconds, ...)
   local duration = tonumber(seconds)
   local alpha = 1;
@@ -664,12 +691,12 @@ function MonDKP:UpdateQuery()
 end
 
 -------------------------------------
--- Recursively searches tar (table) for val (string) as far as 4 nests deep
+-- Recursively searches tar (table) for val (string) as far as 4 nests deep (use field only if you wish to search a specific key IE: MonDKP_DKPTable, "Roeshambo", "player" would only search for Roeshambo in the player key)
 -- returns an indexed array of the keys to get to it.
 -- IE: If the returned array is {1,3,2,player} it means it is located at tar[1][3][2][player]
 -- use to search for players in SavedVariables. Only two possible returns is the table or false.
 -------------------------------------
-function MonDKP:Table_Search(tar, val)
+function MonDKP:Table_Search(tar, val, field)
   local value = string.upper(tostring(val));
   local location = {}
   for k,v in pairs(tar) do
@@ -683,22 +710,46 @@ function MonDKP:Table_Search(tar, val)
               local temp3 = k
               for k,v in pairs(v) do
                 if string.upper(tostring(v)) == value then
-                  tinsert(location, {temp1, temp2, temp3, k} )
+                  if field then
+                    if k == field then
+                      tinsert(location, {temp1, temp2, temp3, k} )
+                    end
+                  else
+                    tinsert(location, {temp1, temp2, temp3, k} )
+                  end
                 end;
               end
             end
             if string.upper(tostring(v)) == value then
-              tinsert(location, {temp1, temp2, k} )
+              if field then
+                if k == field then
+                  tinsert(location, {temp1, temp2, k} )
+                end
+              else
+                tinsert(location, {temp1, temp2, k} )
+              end
             end;
           end
         end
         if string.upper(tostring(v)) == value then
-          tinsert(location, {temp1, k} )
+          if field then
+            if k == field then
+              tinsert(location, {temp1, k} )
+            end
+          else
+            tinsert(location, {temp1, k} )
+          end
         end;
       end
     end
     if string.upper(tostring(v)) == value then  -- only returns in indexed arrays
-      tinsert(location, k)
+      if field then
+        if k == field then
+          tinsert(location, k)
+        end
+      else
+        tinsert(location, k)
+      end
     end;
   end
   if (#location > 0) then

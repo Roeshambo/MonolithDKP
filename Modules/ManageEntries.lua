@@ -111,6 +111,8 @@ function AddRaidToDKPTable()
 						lifetime_spent = 0,
 						rank = rankIndex,
 						rankName = rank,
+						spec = "No Spec Reported",
+						role = "No Role Reported",
 					});
 					numPlayers = numPlayers + 1;
 					c = MonDKP:GetCColors(tempClass)
@@ -158,6 +160,8 @@ local function AddGuildToDKPTable(rank)
 				lifetime_spent = 0,
 				rank=rank,
 				rankName=rankName,
+				spec = "No Spec Reported",
+				role = "No Role Reported",
 			});
 			numPlayers = numPlayers + 1;
 			c = MonDKP:GetCColors(class)
@@ -196,6 +200,8 @@ local function AddTargetToDKPTable()
 			lifetime_spent = 0,
 			rank=20,
 			rankName="None",
+			spec = "No Spec Reported",
+			role = "No Role Reported",
 		});
 
 		MonDKP:FilterDKPTable(core.currentSort, "reset")
@@ -571,7 +577,7 @@ function MonDKP:ManageEntries()
 						i=i+1;
 					end
 				end
-				MonDKP:Print(L["PURGECONFIRM"].." ("..count.."):")
+				MonDKP:Print(L["PURGELIST"].." ("..count.."):")
 				MonDKP:Print(purgeString)
 				MonDKP:FilterDKPTable(core.currentSort, "reset")
 				end,

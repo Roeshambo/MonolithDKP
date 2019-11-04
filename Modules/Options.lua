@@ -810,9 +810,30 @@ function MonDKP:Options()
     PlaySound(808)
   end)
 
+  -- Combat Logging checkbox
+  MonDKP.ConfigTab4.CombatLogging = CreateFrame("CheckButton", nil, MonDKP.ConfigTab4, "UICheckButtonTemplate");
+  MonDKP.ConfigTab4.CombatLogging:SetPoint("TOP", MonDKP.ConfigTab4.supressNotifications, "BOTTOM", 0, 0)
+  MonDKP.ConfigTab4.CombatLogging:SetChecked(MonDKP_DB.defaults.AutoLog)
+  MonDKP.ConfigTab4.CombatLogging:SetScale(0.8)
+  MonDKP.ConfigTab4.CombatLogging.text:SetText("|cff5151de"..L["AUTOCOMBATLOG"].."|r");
+  MonDKP.ConfigTab4.CombatLogging.text:SetFontObject("MonDKPSmall")
+  MonDKP.ConfigTab4.CombatLogging:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+    GameTooltip:SetText(L["AUTOCOMBATLOG"], 0.25, 0.75, 0.90, 1, true)
+    GameTooltip:AddLine(L["AUTOCOMBATLOGTTDESC"], 1.0, 1.0, 1.0, true);
+    GameTooltip:AddLine(L["AUTOCOMBATLOGTTWARN"], 1.0, 0, 0, true);
+    GameTooltip:Show()
+  end)
+  MonDKP.ConfigTab4.CombatLogging:SetScript("OnLeave", function()
+    GameTooltip:Hide()
+  end)
+  MonDKP.ConfigTab4.CombatLogging:SetScript("OnClick", function(self)
+    MonDKP_DB.defaults.AutoLog = self:GetChecked()
+    PlaySound(808)
+  end)
+
   if core.IsOfficer == true then
     -- Supress Broadcast Notifications checkbox
-    if not MonDKP_DB.defaults.SupressTells then MonDKP_DB.defaults.SupressTells = true end
     MonDKP.ConfigTab4.supressTells = CreateFrame("CheckButton", nil, MonDKP.ConfigTab4, "UICheckButtonTemplate");
     MonDKP.ConfigTab4.supressTells:SetPoint("LEFT", MonDKP.ConfigTab4.supressNotifications, "RIGHT", 200, 0)
     MonDKP.ConfigTab4.supressTells:SetChecked(MonDKP_DB.defaults.SupressTells)
@@ -844,7 +865,7 @@ function MonDKP:Options()
   -- Save Settings Button
   MonDKP.ConfigTab4.submitSettings = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab4, "BOTTOMLEFT", 30, 30, L["SAVESETTINGS"]);
   MonDKP.ConfigTab4.submitSettings:ClearAllPoints();
-  MonDKP.ConfigTab4.submitSettings:SetPoint("TOP", MonDKP.ConfigTab4.supressNotifications, "BOTTOMLEFT", 20, -20)
+  MonDKP.ConfigTab4.submitSettings:SetPoint("TOP", MonDKP.ConfigTab4.supressNotifications, "BOTTOMLEFT", 20, -40)
   MonDKP.ConfigTab4.submitSettings:SetSize(90,25)
   MonDKP.ConfigTab4.submitSettings:SetScript("OnClick", function()
     if core.IsOfficer == true then

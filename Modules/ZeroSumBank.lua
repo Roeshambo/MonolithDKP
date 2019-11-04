@@ -223,7 +223,6 @@ function MonDKP:ZeroSumBank_Create()
 	end)
 
 	-- Include Standby Checkbox
-	if not MonDKP_DB.modes.ZeroSumStandby then MonDKP_DB.modes.ZeroSumStandby = false end
 	f.IncludeStandby = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
 	f.IncludeStandby:SetChecked(MonDKP_DB.modes.ZeroSumStandby)
 	f.IncludeStandby:SetScale(0.6);
