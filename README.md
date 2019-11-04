@@ -1,5 +1,5 @@
 # MonolithDKP
-This is the development repository for Monolith DKP and may not necessarily reflect current releases on Curse or WoWI. Back up your saved variables file prior to attempting to use to prevent any possible data loss.
+This is the development repository for Monolith DKP and may not necessarily reflect current releases on Curse or WoWI. It may also create compatibility issues with those that have older versiond depending on the features added. Back up your saved variables file prior to attempting to use to prevent any possible data loss.
 
 Instructions: Clone and remove "-master" from the addon directory. Place in "Interface\AddOns" folder  
 
