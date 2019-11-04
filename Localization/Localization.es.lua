@@ -640,7 +640,23 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     ZEROSUMITEMCOSTTTDESC = "Seleccione el tipo de costo del artículo que desea usar. Estático le da a los artículos un costo definido. Mientras que la oferta mínima permite a los jugadores enviar una oferta que define el costo mientras establece un umbral de oferta mínima.",
     ZONE                  = "Zona",
     STANDBYADJUSTBY       = "DKP en espera ajustado por",
+
+    ANTISNIPE             = "Anti Snipe",
+    ANTISNIPETTDESC       = "Número de segundos que desea que se extienda el temporizador de ofertas si se recibe una oferta cuando el temporizador de ofertas es inferior a 10 segundos. (Para evitar el último intento de francotirador)",
+    ANTISNIPETTWARN       = "Establecer en 0 para desactivar anti snipe.",
+    ANNOUNCEBID           = "Anuncie la oferta más alta",
+    ANNOUNCEBIDTTDESC     = "Cada vez que un nuevo postor toma la oferta más alta, tendrá esa nueva oferta alta para atacar",
+    INCLUDENAME           = "Incluir postor",
+    INCLUDENAMETTDESC     = "Incluye el nombre del postor que presentó la oferta más alta actual al anunciar el mejor postor.",
+    ANNOUNCEAWARD         = "Anunciar premio al gremio",
+    ANNOUNCEAWARDTTDESC   = "Si se selecciona, también anunciará quién ganó un elemento para el chat del gremio.",
     
+    ROLLDECLINED          = "Rollo rechazado. El rango de rollo esperado es",
+    NEWHIGHROLL           = "Nuevo rollo más alto es",
+    NEWHIGHROLLER         = "Nuevo rodillo más alto es",
+    NEWHIGHBID            = "La nueva oferta más alta es",
+    NEWHIGHBIDDER         = "El nuevo postor más alto es",
+
     CHANGELOG1            = "- Optimizaciones adicionales para reducir el retraso de las transmisiones.",
     CHANGELOG2            = "- Ajuste DKP optimizado para reducir drásticamente el tiempo de ejecución.",
     CHANGELOG3            = "- Los filtros ahora funcionan correctamente con todas las vistas de lista (raid, standby, core, etc.)",

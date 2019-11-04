@@ -641,6 +641,22 @@ if GetLocale() == "frFR" then
     ZONE                  = "Zone",
     STANDBYADJUSTBY       = "Standby DKP ajusté par",
 
+    ANTISNIPE             = "Anti Snipe",
+    ANTISNIPETTDESC       = "Nombre de secondes pendant lequel vous souhaitez prolonger le délai du compteur d'enchères si une offre est reçue alors qu'il est inférieur à 10 secondes. (Pour éviter les coupures de la dernière seconde offre)",
+    ANTISNIPETTWARN       = "Réglez sur 0 pour désactiver l'anti-snipe.",
+    ANNOUNCEBID           = "Annonce la plus haute enchère",
+    ANNOUNCEBIDTTDESC     = "Chaque fois qu'un nouvel enchérisseur prend l'offre la plus élevée, cette nouvelle enchère est la meilleure",
+    INCLUDENAME           = "Inclure le soumissionnaire",
+    INCLUDENAMETTDESC     = "Inclut le nom du soumissionnaire qui a soumis l'offre la plus élevée en cours lors de l'annonce du plus offrant.",
+    ANNOUNCEAWARD         = "Annoncer un prix à la guilde",
+    ANNOUNCEAWARDTTDESC   = "Si cette option est sélectionnée, vous annoncerez également qui a gagné un objet à discuter avec la guilde.",
+
+    ROLLDECLINED          = "Le rouleau a décliné. La plage de roulis attendue est",
+    NEWHIGHROLL           = "Le nouveau rouleau le plus élevé est",
+    NEWHIGHROLLER         = "Le nouveau rouleau le plus élevé est",
+    NEWHIGHBID            = "La nouvelle offre la plus élevée est",
+    NEWHIGHBIDDER         = "Le nouveau plus offrant est",
+
     CHANGELOG1            = "- Optimisations supplémentaires pour réduire le décalage par rapport aux émissions.",
     CHANGELOG2            = "- Optimisation du DKP pour réduire considérablement le temps d'exécution.",
     CHANGELOG3            = "- Les filtres fonctionnent maintenant correctement avec toutes les vues de liste (raid, veille, base, etc.)",

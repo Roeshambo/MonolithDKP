@@ -641,6 +641,22 @@ if GetLocale() == "koKR" then
     ZONE                  = "존",
     STANDBYADJUSTBY       = "대기 DKP 조정",
 
+    ANTISNIPE             = "안티 스 나이프",
+    ANTISNIPETTDESC       = "입찰 타이머가 10 초 미만일 때 입찰이 수신되면 입찰 타이머를 연장하려는 시간 (초)입니다. (마지막 두 번째 입찰 스니핑을 방지하려면)",
+    ANTISNIPETTWARN       = "도난 방지를 끄려면 0으로 설정하십시오.",
+    ANNOUNCEBID           = "최고 입찰가 발표",
+    ANNOUNCEBIDTTDESC     = "새로운 입찰자가 가장 높은 입찰을 할 때마다 새로운 높은 입찰을 습격합니다",
+    INCLUDENAME           = "입찰자 포함",
+    INCLUDENAMETTDESC     = "최고 입찰자를 발표 할 때 현재 최고 입찰을 제출 한 입찰자의 이름을 포함합니다.",
+    ANNOUNCEAWARD         = "길드 어워드 발표",
+    ANNOUNCEAWARDTTDESC   = "선택하면 길드 채팅에서 누가 이겼는지 알 수 있습니다.",
+
+    ROLLDECLINED          = "롤이 거부되었습니다. 예상 롤 범위는",
+    NEWHIGHROLL           = "새로운 최고 롤은",
+    NEWHIGHROLLER         = "새로운 최고 롤러는",
+    NEWHIGHBID            = "새로운 최고 입찰가는",
+    NEWHIGHBIDDER         = "새로운 최고 입찰자는",
+
     CHANGELOG1            = "- 방송 지연을 줄이기위한 추가 최적화.",
     CHANGELOG2            = "- 최적화 된 DKP는 실행 시간을 크게 줄 이도록 조정됩니다.",
     CHANGELOG3            = "- 모든 목록보기 (공격, 대기, 코어 등)에서 필터가 올바르게 작동합니다.",
