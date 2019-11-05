@@ -12,6 +12,7 @@ local function AwardItem(player, cost, boss, zone, loot)
 	local loot = loot;
 	local BidsEntry = {};
 	local mode = MonDKP_DB.modes.mode;
+	local temp_table = {}
 
 	MonDKP:SeedVerify_Update()
 
@@ -32,6 +33,10 @@ local function AwardItem(player, cost, boss, zone, loot)
 			cost = MonDKP_round(cost, MonDKP_DB.modes.rounding)
 		end
 
+		if core.UpToDate and core.IsOfficer then -- updates seeds only if table is currently up to date.
+			MonDKP:UpdateSeeds()
+		end
+		
 		if MonDKP_DB.modes.StoreBids then
 			local Bids_Submitted = MonDKP:BidsSubmitted_Get();
 
@@ -46,32 +51,32 @@ local function AwardItem(player, cost, boss, zone, loot)
 			end
 			if Bids_Submitted[1].bid then
 				tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, bids={ }})
+				tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, bids={ }}})
 				for k,v in pairs(BidsEntry) do
 					table.insert(MonDKP_Loot[1].bids, {player=k, bid=v});
+					table.insert(temp_table[1][1].bids, {player=k, bid=v});
 				end
 			elseif Bids_Submitted[1].dkp then
 				tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, dkp={ }})
+				tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, dkp={ }}})
 				for k,v in pairs(BidsEntry) do
 					table.insert(MonDKP_Loot[1].dkp, {player=k, dkp=v});
+					table.insert(temp_table[1][1].dkp, {player=k, bid=v});
 				end
 			elseif Bids_Submitted[1].roll then
 				tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, rolls={ }})
+				tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, rolls={ }}})
 				for k,v in pairs(BidsEntry) do
 					table.insert(MonDKP_Loot[1].rolls, {player=k, roll=v});
+					table.insert(temp_table[1][1].rolls, {player=k, bid=v});
 				end
 			end
 		else
 			tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost})
+			tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost}})
 		end
 		
 		MonDKP:DKPTable_Set(winner, "dkp", MonDKP_round(-cost, MonDKP_DB.modes.rounding), true)
-		
-		if core.UpToDate and core.IsOfficer then -- updates seeds only if table is currently up to date.
-			MonDKP:UpdateSeeds()
-		end
-		
-		local temp_table = {}
-		tinsert(temp_table, {seed = MonDKP_Loot.seed, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost}})
 		MonDKP:LootHistory_Reset();
 		MonDKP:LootHistory_Update("No Filter")
 		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)

@@ -193,7 +193,7 @@ function MonDKP:BidInterface_Toggle()
 	local f = core.BidInterface;
 	local mode = MonDKP_DB.modes.mode;
 
-	if MonDKP_DB.modes.BroadcastBids and not core.BiddingWindow:IsShown() then
+	if MonDKP_DB.modes.BroadcastBids and not core.BiddingWindow then
 		core.BidInterface:SetHeight(500);
 		core.BidInterface.bidTable:Show();
 		for k, v in pairs(f.headerButtons) do

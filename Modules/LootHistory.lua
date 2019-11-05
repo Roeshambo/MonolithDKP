@@ -478,19 +478,19 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 
 		    		tooltip:AddLine(" ")
 		    		if MonDKP_Loot[i].bids then
-		    			tooltip:AddLine("Bids:")
+		    			tooltip:AddLine(L["BIDS"]..":")
 		    			table.sort(MonDKP_Loot[i].bids, function(a, b)
 							return a["bid"] > b["bid"]
 						end)
 						path = MonDKP_Loot[i].bids
 		    		elseif MonDKP_Loot[i].dkp then
-		    			tooltip:AddLine("DKP Values:")
+		    			tooltip:AddLine(L["DKPVALUES"]..":")
 		    			table.sort(MonDKP_Loot[i].dkp, function(a, b)
 							return a["dkp"] > b["dkp"]
 						end)
 						path = MonDKP_Loot[i].dkp
 		    		elseif MonDKP_Loot[i].rolls then
-		    			tooltip:AddLine("Rolls:")
+		    			tooltip:AddLine(L["ROLLS"]..":")
 		    			table.sort(MonDKP_Loot[i].rolls, function(a, b)
 							return a["roll"] > b["roll"]
 						end)
@@ -520,7 +520,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		    			end
 		    			if history == 0 then
 		    				tooltip:AddLine(" ");
-		    				tooltip:AddLine("Also won by:");
+		    				tooltip:AddLine(L["ALSOWONBY"]..":");
 		    				history = 1;
 		    			end
 		    			tooltip:AddDoubleLine("|cff"..col.hex..MonDKP_Loot[j].player.."|r |cffffffff("..date("%m/%d/%y", MonDKP_Loot[j].date)..")|r", "|cffff0000"..MonDKP_Loot[j].cost.." DKP|r", 1.0, 0, 0)
@@ -629,24 +629,24 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		    	local history = 0;
 		    	tooltip:SetOwner(MonDKP.ConfigTab5.looter[i], "ANCHOR_RIGHT", -50, 0)
 		    	tooltip:SetHyperlink(itemToLink)
-		    	if MonDKP_Loot[i].bids or MonDKP_Loot[i].dkp or MonDKP_Loot[i].rolls then
+		    	if MonDKP_Loot[i].bids or MonDKP_Loot[i].dkp or MonDKP_Loot[i].rolls then  		-- displays bids/rolls/dkp values if "Log Bids" checked in modes
 		    		local path;
 
 		    		tooltip:AddLine(" ")
 		    		if MonDKP_Loot[i].bids then
-		    			tooltip:AddLine("Bids:")
+		    			tooltip:AddLine(L["BIDS"]..":")
 		    			table.sort(MonDKP_Loot[i].bids, function(a, b)
 							return a["bid"] > b["bid"]
 						end)
 						path = MonDKP_Loot[i].bids
 		    		elseif MonDKP_Loot[i].dkp then
-		    			tooltip:AddLine("DKP Values:")
+		    			tooltip:AddLine(L["DKPVALUES"]..":")
 		    			table.sort(MonDKP_Loot[i].dkp, function(a, b)
 							return a["dkp"] > b["dkp"]
 						end)
 						path = MonDKP_Loot[i].dkp
 		    		elseif MonDKP_Loot[i].rolls then
-		    			tooltip:AddLine("Rolls:")
+		    			tooltip:AddLine(L["ROLLS"]..":")
 		    			table.sort(MonDKP_Loot[i].rolls, function(a, b)
 							return a["roll"] > b["roll"]
 						end)
@@ -676,7 +676,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		    			end
 		    			if history == 0 then
 		    				tooltip:AddLine(" ");
-		    				tooltip:AddLine("Also won by:");
+		    				tooltip:AddLine(L["ALSOWONBY"]..":");
 		    				history = 1;
 		    			end
 		    			tooltip:AddDoubleLine("|cff"..col.hex..MonDKP_Loot[j].player.."|r |cffffffff("..date("%m/%d/%y", MonDKP_Loot[j].date)..")|r", "|cffff0000"..MonDKP_Loot[j].cost.." "..L["DKP"].."|r", 1.0, 0, 0)
