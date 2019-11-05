@@ -662,7 +662,7 @@ core.L = {
   BROADCASTBIDS         = "Broadcast Bids",
   BROADCASTBIDSTTDESC   = "When activated, everyone in the raid will see all bids submitted in their bid interface. Turn off if you do not want players to see everyone's bids.",
   DECLINELOWBIDS        = "Decline Low Bids",
-  DECLINELOWBIDSTTDESC  = "Automatically decline any bids submitted if they are below the current highest bid.",
+  DECLINELOWBIDSTTDESC  = "Automatically decline any bids submitted if they are at or below the current highest bid.",
   AUTOCOMBATLOG         = "Auto Combat Log",
   AUTOCOMBATLOGTTDESC   = "Automatically activates /combatlog when in a raid and entering a raid zone or entering combat with a raid encounter.",
   AUTOCOMBATLOGTTWARN   = "You must still manually activate Advanced Combat Logging in System > Network if you haven't done so already.",
@@ -671,6 +671,11 @@ core.L = {
   MISCSETTINGS          = "Misc Settings",
   LOGBIDS               = "Log Bids/Rolls",
   LOGBIDSTTDESC         = "This will log and include the bids/rolls on the tooltip of each item won in the Loot History tab.",
+  BIDS                  = "Bids",
+  DKPVALUES             = "DKP Values",
+  ROLLS                 = "Rolls",
+  ALSOWONBY             = "Also won by",
+
 
   CHANGELOG1            = "- Additional optimizations to reduce lag from broadcasts.",
   CHANGELOG2            = "- Optimized DKP adjust to reduce execution time dramatically.",
