@@ -666,6 +666,11 @@ core.L = {
   AUTOCOMBATLOG         = "Auto Combat Log",
   AUTOCOMBATLOGTTDESC   = "Automatically activates /combatlog when in a raid and entering a raid zone or entering combat with a raid encounter.",
   AUTOCOMBATLOGTTWARN   = "You must still manually activate Advanced Combat Logging in System > Network if you haven't done so already.",
+  NOWLOGGINGCOMBAT      = "Now logging combat.",
+  HIGHESTBID            = "Highest Bid",
+  MISCSETTINGS          = "Misc Settings",
+  LOGBIDS               = "Log Bids/Rolls",
+  LOGBIDSTTDESC         = "This will log and include the bids/rolls on the tooltip of each item won in the Loot History tab.",
 
   CHANGELOG1            = "- Additional optimizations to reduce lag from broadcasts.",
   CHANGELOG2            = "- Optimized DKP adjust to reduce execution time dramatically.",
