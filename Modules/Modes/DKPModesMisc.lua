@@ -7,7 +7,7 @@ local L = core.L;
 function MonDKP:DKPModes_Misc()
     local f = core.ModesWindow.DKPModesMisc;
 
-    f.AutoAwardContainer = MonDKP:CreateContainer(f, "AutoAwardContainer", "Auto Award")
+    f.AutoAwardContainer = MonDKP:CreateContainer(f, "AutoAwardContainer", L["AUTOAWARD"])
     f.AutoAwardContainer:SetPoint("TOPLEFT", f, "TOPLEFT", 40, -40)
     f.AutoAwardContainer:SetSize(175, 50)
 
@@ -66,7 +66,7 @@ function MonDKP:DKPModes_Misc()
 		end)
 
 	-- Announce Highest Bidder Container
-	f.AnnounceBidContainer = MonDKP:CreateContainer(f, "AnnounceBidContainer", "Highest Bid")
+	f.AnnounceBidContainer = MonDKP:CreateContainer(f, "AnnounceBidContainer", L["HIGHESTBID"])
     f.AnnounceBidContainer:SetPoint("TOPRIGHT", f, "TOPRIGHT", -50, -40)
     f.AnnounceBidContainer:SetSize(175, 70)
 
@@ -144,9 +144,9 @@ function MonDKP:DKPModes_Misc()
 		end)
 
 	--Misc Options Container
-	f.MiscContainer = MonDKP:CreateContainer(f, "MiscContainer", "Misc Settings")
+	f.MiscContainer = MonDKP:CreateContainer(f, "MiscContainer", L["MISCSETTINGS"])
     f.MiscContainer:SetPoint("TOPLEFT", f.AutoAwardContainer, "BOTTOMLEFT", 0, -20)
-    f.MiscContainer:SetSize(175, 70)
+    f.MiscContainer:SetSize(175, 90)
 
 		-- Standby On Boss Kill Checkbox
 		f.MiscContainer.Standby = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
@@ -212,6 +212,28 @@ function MonDKP:DKPModes_Misc()
 			GameTooltip:Show();
 		end)
 		f.MiscContainer.BroadcastBids:SetScript("OnLeave", function(self)
+			GameTooltip:Hide()
+		end)
+
+		-- Log Bids/Rolls
+		f.MiscContainer.StoreBids = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
+		f.MiscContainer.StoreBids:SetChecked(MonDKP_DB.modes.StoreBids)
+		f.MiscContainer.StoreBids:SetScale(0.6);
+		f.MiscContainer.StoreBids.text:SetText("  |cff5151de"..L["LOGBIDS"].."|r");
+		f.MiscContainer.StoreBids.text:SetScale(1.5);
+		f.MiscContainer.StoreBids.text:SetFontObject("MonDKPSmallLeft")
+		f.MiscContainer.StoreBids:SetPoint("TOP", f.MiscContainer.BroadcastBids, "BOTTOM", 0, 0);
+		f.MiscContainer.StoreBids:SetScript("OnClick", function(self)
+			MonDKP_DB.modes.StoreBids = self:GetChecked();
+			PlaySound(808);
+		end)
+		f.MiscContainer.StoreBids:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText(L["LOGBIDS"], 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine(L["LOGBIDSTTDESC"], 1.0, 1.0, 1.0, true);
+			GameTooltip:Show();
+		end)
+		f.MiscContainer.StoreBids:SetScript("OnLeave", function(self)
 			GameTooltip:Hide()
 		end)
 end

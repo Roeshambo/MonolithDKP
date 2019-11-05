@@ -964,12 +964,12 @@ function MonDKP:DKPModes_Main()
 				table.insert(temptable1, MonDKP_DB.modes)
 				table.insert(temptable1, MonDKP_DB.DKPBonus)
 				table.insert(temptable1, MonDKP_DB.raiders)
-				MonDKP.Sync:SendData("MonDKPModes222", temptable1)
+				MonDKP.Sync:SendData("MonDKPModes", temptable1)
 				MonDKP:Print(L["DKPMODESENTCONF"])
 				local temptable2 = {}
 	            table.insert(temptable2, MonDKP_DB.MinBidBySlot)
 	            table.insert(temptable2, MonDKP_MinBids)
-	            MonDKP.Sync:SendData("MonDKPMinBids222", temptable2)
+	            MonDKP.Sync:SendData("MonDKPMinBids", temptable2)
 			end,
 			timeout = 0,
 			whileDead = true,

@@ -231,7 +231,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			if MonDKP_DB.defaults.AutoLog and MonDKP:Table_Search(core.ZoneList, GetRealZoneText()) then
 				if not LoggingCombat() then
 					LoggingCombat(1)
-					MonDKP:Print("Now logging combat.")
+					MonDKP:Print(L["NOWLOGGINGCOMBAT"])
 				end
 			end
 		end
@@ -493,7 +493,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		end
 		
 		core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();		-- creates main menu
-		MonDKP:StartBidTimer("seconds", nil)							-- initiates timer frame for use
+		MonDKP:StartBidTimer("seconds", nil)						-- initiates timer frame for use
 		MonDKP:PurgeLootHistory()									-- purges Loot History entries that exceed the "HistoryLimit" option variable (oldest entries)
 		MonDKP:PurgeDKPHistory()									-- purges DKP History entries that exceed the "DKPHistoryLimit" option variable (oldest entries)
 	end

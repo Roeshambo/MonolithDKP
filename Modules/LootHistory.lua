@@ -8,8 +8,6 @@ local curfilterName = "No Filter";
 
 local menuFrame = CreateFrame("Frame", "MonDKPDeleteLootMenuFrame", UIParent, "UIDropDownMenuTemplate")
 
---MonDKP_Loot[i]["loot"].." for "..MonDKP_Loot[i]["cost"].." DKP
-
 function MonDKP:SortLootTable()             -- sorts the Loot History Table by date
   table.sort(MonDKP_Loot, function(a, b)
     return a["date"] > b["date"]
@@ -475,6 +473,42 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		    	local history = 0;
 		    	tooltip:SetOwner(MonDKP.ConfigTab5.looter[i], "ANCHOR_RIGHT", -50, 0)
 		    	tooltip:SetHyperlink(itemToLink)
+		    	if MonDKP_Loot[i].bids or MonDKP_Loot[i].dkp or MonDKP_Loot[i].rolls then  		-- displays bids/rolls/dkp values if "Log Bids" checked in modes
+		    		local path;
+
+		    		tooltip:AddLine(" ")
+		    		if MonDKP_Loot[i].bids then
+		    			tooltip:AddLine("Bids:")
+		    			table.sort(MonDKP_Loot[i].bids, function(a, b)
+							return a["bid"] > b["bid"]
+						end)
+						path = MonDKP_Loot[i].bids
+		    		elseif MonDKP_Loot[i].dkp then
+		    			tooltip:AddLine("DKP Values:")
+		    			table.sort(MonDKP_Loot[i].dkp, function(a, b)
+							return a["dkp"] > b["dkp"]
+						end)
+						path = MonDKP_Loot[i].dkp
+		    		elseif MonDKP_Loot[i].rolls then
+		    			tooltip:AddLine("Rolls:")
+		    			table.sort(MonDKP_Loot[i].rolls, function(a, b)
+							return a["roll"] > b["roll"]
+						end)
+						path = MonDKP_Loot[i].rolls
+		    		end
+		    		for i=1, #path do
+		    			local col;
+		    			local s = MonDKP:Table_Search(MonDKP_DKPTable, path[i].player)
+		    			local path2 = path[i].bid or path[i].dkp or path[i].roll
+
+		    			if s then
+		    				col = MonDKP:GetCColors(MonDKP_DKPTable[s[1][1]].class)
+		    			else
+		    				col = { hex="444444" }
+		    			end
+		    			tooltip:AddLine("|cff"..col.hex..path[i].player.."|r: "..path2)
+		    		end
+		    	end
 		    	for j=1, #MonDKP_Loot do
 		    		if MonDKP_Loot[j]["loot"] == itemToLink and MonDKP_Loot[i].date ~= MonDKP_Loot[j].date then
 		    			local col;
@@ -595,6 +629,42 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		    	local history = 0;
 		    	tooltip:SetOwner(MonDKP.ConfigTab5.looter[i], "ANCHOR_RIGHT", -50, 0)
 		    	tooltip:SetHyperlink(itemToLink)
+		    	if MonDKP_Loot[i].bids or MonDKP_Loot[i].dkp or MonDKP_Loot[i].rolls then
+		    		local path;
+
+		    		tooltip:AddLine(" ")
+		    		if MonDKP_Loot[i].bids then
+		    			tooltip:AddLine("Bids:")
+		    			table.sort(MonDKP_Loot[i].bids, function(a, b)
+							return a["bid"] > b["bid"]
+						end)
+						path = MonDKP_Loot[i].bids
+		    		elseif MonDKP_Loot[i].dkp then
+		    			tooltip:AddLine("DKP Values:")
+		    			table.sort(MonDKP_Loot[i].dkp, function(a, b)
+							return a["dkp"] > b["dkp"]
+						end)
+						path = MonDKP_Loot[i].dkp
+		    		elseif MonDKP_Loot[i].rolls then
+		    			tooltip:AddLine("Rolls:")
+		    			table.sort(MonDKP_Loot[i].rolls, function(a, b)
+							return a["roll"] > b["roll"]
+						end)
+						path = MonDKP_Loot[i].rolls
+		    		end
+		    		for i=1, #path do
+		    			local col;
+		    			local s = MonDKP:Table_Search(MonDKP_DKPTable, path[i].player)
+		    			local path2 = path[i].bid or path[i].dkp or path[i].roll
+
+		    			if s then
+		    				col = MonDKP:GetCColors(MonDKP_DKPTable[s[1][1]].class)
+		    			else
+		    				col = { hex="444444" }
+		    			end
+		    			tooltip:AddLine("|cff"..col.hex..path[i].player.."|r: "..path2)
+		    		end
+		    	end
 		    	for j=1, #MonDKP_Loot do
 		    		if MonDKP_Loot[j]["loot"] == itemToLink and MonDKP_Loot[i].date ~= MonDKP_Loot[j].date then
 		    			local col;

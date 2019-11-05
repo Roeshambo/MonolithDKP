@@ -21,6 +21,10 @@ local function UpdateBidWindow()
 	core.BiddingWindow.itemIcon:SetTexture(CurrItemIcon)
 end
 
+function MonDKP:BidsSubmitted_Get()
+	return Bids_Submitted;
+end
+
 local function Roll_OnEvent(self, event, arg1, ...)
 	if event == "CHAT_MSG_SYSTEM" and core.BidInProgress then
 
@@ -168,7 +172,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 								if MonDKP_DB.modes.BroadcastBids then
 									MonDKP.Sync:SendData("MonDKPBidTable", Bids_Submitted)
 								end
-								if Timer ~= 0 and Timer > (core.BiddingWindow.bidTimer:GetText() - 10) and MonDKP_DB.modes.AntiSnipe ~= 0 then
+								if Timer ~= 0 and Timer > (core.BiddingWindow.bidTimer:GetText() - 10) and MonDKP_DB.modes.AntiSnipe > 0 then
 									MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText().."{"..MonDKP_DB.modes.AntiSnipe, core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), core.BiddingWindow.itemIcon:GetTexture());
 								end
 							elseif mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
@@ -184,7 +188,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 									MonDKP.Sync:SendData("MonDKPBidTable", Bids_Submitted)
 								end
 								response = L["BIDWASACCEPTED"]
-								if Timer ~= 0 and Timer > (core.BiddingWindow.bidTimer:GetText() - 10) and MonDKP_DB.modes.AntiSnipe ~= 0 then
+								if Timer ~= 0 and Timer > (core.BiddingWindow.bidTimer:GetText() - 10) and MonDKP_DB.modes.AntiSnipe > 0 then
 									MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText().."{"..MonDKP_DB.modes.AntiSnipe, core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), core.BiddingWindow.itemIcon:GetTexture());
 								end
 							end
@@ -609,7 +613,8 @@ function MonDKP_Register_ShiftClickLootWindowHook()			-- hook function into Loot
 	local num = GetNumLootItems();
 	
 	if getglobal("ElvLootSlot1") then 			-- fixes hook for ElvUI loot frame
-		for i = 1, num do 
+		for i = 1, num do
+			if not GetLootSlotLink(i) then return end  -- prevent errors if auto loot is used causing the items to be removed from the frame before loop completes
 			getglobal("ElvLootSlot"..i):HookScript("OnClick", function()
 		        if ( IsShiftKeyDown() and IsAltKeyDown() ) then
 		        	local pass, err = pcall(function()
@@ -641,7 +646,8 @@ function MonDKP_Register_ShiftClickLootWindowHook()			-- hook function into Loot
 	else
 		if num > 4 then num = 4 end
 
-		for i = 1, num do 
+		for i = 1, num do
+			if not GetLootSlotLink(i) then return end   -- prevent errors if auto loot is used causing the items to be removed from the frame before loop completes
 			getglobal("LootButton"..i):HookScript("OnClick", function()
 		        if ( IsShiftKeyDown() and IsAltKeyDown() ) then
 		        	local pass, err = pcall(function()
