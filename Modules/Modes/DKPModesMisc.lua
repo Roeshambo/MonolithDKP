@@ -20,9 +20,9 @@ function MonDKP:DKPModes_Misc()
 		f.AutoAwardContainer.AutoAward.text:SetFontObject("MonDKPSmallLeft")
 		f.AutoAwardContainer.AutoAward:SetPoint("TOPLEFT", f.AutoAwardContainer, "TOPLEFT", 10, -10);
 		f.AutoAwardContainer.AutoAward:SetScript("OnClick", function(self)
-			MonDKP_DB.modes.AutoAwardContainer.AutoAward = self:GetChecked();
+			MonDKP_DB.modes.AutoAward = self:GetChecked();
 			if self:GetChecked() == false then
-				f.IncStandby:SetChecked(false)
+				f.AutoAwardContainer.IncStandby:SetChecked(false)
 				MonDKP_DB.DKPBonus.AutoIncStandby = false;
 			end
 			PlaySound(808);
