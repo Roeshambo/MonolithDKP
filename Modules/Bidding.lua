@@ -98,6 +98,8 @@ local function BidCmd(...)
 
 	if tonumber(cmd) then
 		cmd = tonumber(cmd) -- converts it to a number if it's a valid numeric string
+	elseif cmd then
+		cmd = cmd:trim()
 	end
 
 	return cmd;
@@ -219,7 +221,9 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 	elseif string.find(text, "!dkp") == 1 and core.IsOfficer == true then
 		cmd = tostring(BidCmd(text))
 
-		if cmd and cmd:gsub("%s+", "") ~= "nil" and cmd:gsub("%s+", "") ~= "" then		-- allows command if it has content (removes empty spaces)
+		if cmd and cmd:gsub("%d+", "") == "" then
+			return MonDKP_CHAT_MSG_WHISPER("!bid "..cmd, name)
+		elseif cmd and cmd:gsub("%s+", "") ~= "nil" and cmd:gsub("%s+", "") ~= "" then		-- allows command if it has content (removes empty spaces)
 			cmd = cmd:gsub("%s+", "") -- removes unintended spaces from string
 			local search = MonDKP:Table_Search(MonDKP_DKPTable, cmd, "player")
 
