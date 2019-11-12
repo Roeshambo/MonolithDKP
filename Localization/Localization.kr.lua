@@ -292,6 +292,8 @@ if GetLocale() == "koKR" then
     INCLUDESTANDBYLIST    = "대기 목록 포함",
     INCLUDESTANDBYTTDESC  = "이것을 선택하면 모든 자동 DKP 배포에 대기 목록이 포함됩니다.",
     INCLUDESTANDBYTTWARN  = "DKP 테이블에서 공격대에 속하지 않은 플레이어를 선택하여 대기 목록을 작성하고> 대기 목록 관리> 선택한 플레이어를 대기 목록에 추가를 마우스 오른쪽 단추로 클릭하십시오.",
+    LIMITTOZONE           = "존에 플레이어 만 포함",
+    LIMITTOZONETTDESC     = "이것을 선택하면 배급 자와 같은 지역에있는 플레이어에게만 DKP를 배급합니다. 대기중인 플레이어에는 영향을 미치지 않습니다.",  
     INCREMENTINVALIDWARN  = "증가분이 유효하지 않습니다.",
     INCSTANDBYLISTTTDESC  = "대기 목록에있는 플레이어를 배포에 포함합니다.",
     INCSTANDBYLISTTTWARN  = "이것은 공격대에서 플레이어에게 더 작은 가치를 줄 것입니다.",

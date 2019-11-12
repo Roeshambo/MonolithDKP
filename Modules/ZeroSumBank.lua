@@ -30,11 +30,13 @@ local function ZeroSumDistribution()
 		end		
 
 		for i=1, 40 do
-			local tempName = GetRaidRosterInfo(i)
+			local tempName, _rank, _subgroup, _level, _class, _fileName, zone, online = GetRaidRosterInfo(i)
 			local search = MonDKP:Table_Search(VerifyTable, tempName)
 			local search2 = MonDKP:Table_Search(MonDKP_DKPTable, tempName)
+			local limitToZone = MonDKP_DB.DKPBonus.LimitToZone
+			local isSameZone = online and zone == GetRealZoneText()
 
-			if not search and search2 then
+			if not search and search2 and (not limitToZone or isSameZone) then
 				tinsert(VerifyTable, tempName)
 			end
 		end
@@ -242,6 +244,28 @@ function MonDKP:ZeroSumBank_Create()
 		GameTooltip:Show();
 	end)
 	f.IncludeStandby:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+
+	-- Limit To Zone Checkbox
+	f.LimitToZone = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
+	f.LimitToZone:SetChecked(MonDKP_DB.DKPBonus.LimitToZone)
+	f.LimitToZone:SetScale(0.6);
+	f.LimitToZone.text:SetText("  |cff5151de"..L["LIMITTOZONE"].."|r");
+	f.LimitToZone.text:SetScale(1.5);
+	f.LimitToZone.text:SetFontObject("MonDKPSmallLeft")
+	f.LimitToZone:SetPoint("RIGHT", f.IncludeStandby, "LEFT", -250, 0);
+	f.LimitToZone:SetScript("OnClick", function(self)
+		MonDKP_DB.DKPBonus.LimitToZone = self:GetChecked();
+		PlaySound(808);
+	end)
+	f.LimitToZone:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText(L["LIMITTOZONE"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["LIMITTOZONETTDESC"], 1.0, 1.0, 1.0, true);
+		GameTooltip:Show();
+	end)
+	f.LimitToZone:SetScript("OnLeave", function(self)
 		GameTooltip:Hide()
 	end)
 

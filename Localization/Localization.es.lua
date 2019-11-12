@@ -292,6 +292,8 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     INCLUDESTANDBYLIST    = "Incluir lista de espera",
     INCLUDESTANDBYTTDESC  = "Al seleccionar esto, se incluirá la lista de espera en todas las distribuciones automáticas de DKP.",
     INCLUDESTANDBYTTWARN  = "Cree una lista de espera seleccionando jugadores en la tabla DKP que no están en la redada, haciendo clic con el botón derecho> Administrar lista de espera> Agregar jugadores seleccionados a la lista de espera.",
+    LIMITTOZONE           = "Incluir solo jugadores en la zona",
+    LIMITTOZONETTDESC     = "Al seleccionar esto solo se distribuirá DKP a los jugadores en la misma zona que el distribuidor. Esto no afecta a los jugadores que están en espera.",  
     INCREMENTINVALIDWARN  = "El incremento es un número no válido.",
     INCSTANDBYLISTTTDESC  = "Incluye jugadores en la lista de espera en la distribución.",
     INCSTANDBYLISTTTWARN  = "Esto producirá valores más pequeños dados a los jugadores en la redada.",

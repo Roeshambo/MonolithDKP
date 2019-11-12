@@ -292,6 +292,8 @@ if GetLocale() == "zhCN" then
     INCLUDESTANDBYLIST    = "包括备用清单",
     INCLUDESTANDBYTTDESC  = "选择此选项将在所有自动DKP分发中包括“待机”列表。",
     INCLUDESTANDBYTTWARN  = "通过选择DKP表上不在团队中的播放器来创建备用列表，右键单击>管理备用列表>将选定的播放器添加到备用列表。",
+    LIMITTOZONE           = "仅包括区域中的玩家",
+    LIMITTOZONETTDESC     = "选择此项只会将DKP分发给与分发者位于同一区域的播放器。这不会影响待命的播放器。",  
     INCREMENTINVALIDWARN  = "增量是无效数字",
     INCSTANDBYLISTTTDESC  = "在分发中的待机列表中包括播放器。",
     INCSTANDBYLISTTTWARN  = "这将给团队中的玩家带来较小的价值。",

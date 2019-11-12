@@ -292,6 +292,8 @@ if GetLocale() == "frFR" then
     INCLUDESTANDBYLIST    = "Inclure la liste d'attente",
     INCLUDESTANDBYTTDESC  = "Cette sélection inclura la liste Veille dans toutes les distributions DKP automatiques.",
     INCLUDESTANDBYTTWARN  = "Créez une liste de secours en sélectionnant des joueurs de la table DKP qui ne font pas partie du raid, en cliquant avec le bouton droit de la souris sur> Gérer la liste de veille> Ajouter les joueurs sélectionnés à la liste de veille.",
+    LIMITTOZONE           = "Inclure uniquement les joueurs dans la zone",
+    LIMITTOZONETTDESC     = "En sélectionnant cette option, DKP ne sera distribué qu'aux joueurs de la même zone que le distributeur. Cela n'affecte pas les joueurs en veille.",  
     INCREMENTINVALIDWARN  = "L'incrément est un nombre invalide.",
     INCSTANDBYLISTTTDESC  = "Inclut les joueurs dans la liste de réserve dans la distribution.",
     INCSTANDBYLISTTTWARN  = "Cela donnera des valeurs plus petites données aux joueurs du raid.",

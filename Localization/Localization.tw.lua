@@ -292,6 +292,8 @@ if GetLocale() == "zhTW" then
     INCLUDESTANDBYLIST    = "包括備用清單",
     INCLUDESTANDBYTTDESC  = "選擇此選項將在所有自動DKP分發版中包括備用清單。",
     INCLUDESTANDBYTTWARN  = "通過在DKP錶中選擇不在RAID中的玩家創建待機清單，按右鍵>管理待機清單>將所選玩家添加到待機清單。",
+    LIMITTOZONE           = "仅包括区域中的玩家",
+    LIMITTOZONETTDESC     = "选择此项只会将DKP分发给与分发者位于同一区域的播放器。这不会影响待命的播放器。",  
     INCREMENTINVALIDWARN  = "增量是無效數位。",
     INCSTANDBYLISTTTDESC  = "在分發中的待機列表中包括播放器。",
     INCSTANDBYLISTTTWARN  = "這將給團隊中的玩家帶來較小的價值。",

@@ -292,6 +292,8 @@ if GetLocale() == "deDE" then
     INCLUDESTANDBYLIST    = "Standby-Liste einschließen",
     INCLUDESTANDBYTTDESC  = "Durch Auswahl dieser Option wird die Standby-Liste in alle automatischen DKP-Verteilungen einbezogen.",
     INCLUDESTANDBYTTWARN  = "Erstellen Sie eine Standby-Liste, indem Sie Spieler auf dem DKP-Tisch auswählen, die sich nicht im Schlachtzug befinden. Klicken Sie dazu mit der rechten Maustaste auf> Standby-Liste verwalten> Ausgewählte Spieler zur Standby-Liste hinzufügen.",
+    LIMITTOZONE           = "Nur Spieler in Zone einbeziehen",
+    LIMITTOZONETTDESC     = "Durch Auswahl dieser Option wird DKP nur an Spieler in derselben Zone wie der Verteiler verteilt. Dies wirkt sich nicht auf Spieler aus, die sich im Standby-Modus befinden.",  
     INCREMENTINVALIDWARN  = "Inkrement ist eine ungültige Zahl.",
     INCSTANDBYLISTTTDESC  = "Bezieht Spieler in die Standby-Liste in die Verteilung ein.",
     INCSTANDBYLISTTTWARN  = "Dies ergibt geringere Werte für die Spieler des Schlachtzugs.",
