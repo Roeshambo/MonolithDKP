@@ -1,4 +1,6 @@
 # MonolithDKP
+[![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=USXJZT2BKCYBS&currency_code=USD&source=url)
+
 This is the development repository for Monolith DKP and may not necessarily reflect current releases on Curse or WoWI. It may also create compatibility issues with those that have older versiond depending on the features added. Back up your saved variables file prior to attempting to use to prevent any possible data loss.
 
 Instructions: Clone and remove "-master" from the addon directory. Place in "Interface\AddOns" folder  
