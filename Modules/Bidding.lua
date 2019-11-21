@@ -146,6 +146,12 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 				SendChatMessage(response, "WHISPER", nil, name)
 				return
 			end
+
+			-- player is bidding all of their dkp
+			if cmd == "max" then
+				cmd = dkp
+			end
+			
 			if (tonumber(cmd) and (MonDKP_DB.modes.MaximumBid == nil or tonumber(cmd) <= MonDKP_DB.modes.MaximumBid or MonDKP_DB.modes.MaximumBid == 0)) or ((mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static")) and not cmd) then
 				if dkp then
 					if (cmd and cmd <= dkp) or (MonDKP_DB.modes.SubZeroBidding == true and dkp >= 0) or (MonDKP_DB.modes.SubZeroBidding == true and MonDKP_DB.modes.AllowNegativeBidders == true) or (mode == "Static Item Values" and dkp > 0 and (dkp > core.BiddingWindow.cost:GetNumber() or MonDKP_DB.modes.SubZeroBidding == true or MonDKP_DB.modes.costvalue == "Percent")) or ((mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") and not cmd) then
