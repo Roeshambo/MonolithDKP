@@ -4,24 +4,21 @@ local MonDKP = core.MonDKP;
 local L = core.L;
 
 local function ZeroSumDistribution()
-	if core.CurrentlySyncing then
-		StaticPopupDialogs["CURRENTLY_SYNC"] = {
-			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CURRENTLYSYNCING"],
-			button1 = L["OK"],
-			timeout = 0,
-			whileDead = true,
-			hideOnEscape = true,
-			preferredIndex = 3,
-		}
-		StaticPopup_Show ("CURRENTLY_SYNC")
-		return;
-	end
-	if IsInRaid() then
+	if IsInRaid() and core.IsOfficer then
 		local curTime = time();
 		local distribution;
 		local reason = MonDKP_DB.bossargs.CurrentRaidZone..": "..MonDKP_DB.bossargs.LastKilledBoss
 		local players = "";
 		local VerifyTable = {};
+		local curOfficer = UnitName("player")
+		local curIndex, newIndex
+
+		if not MonDKP_Meta.DKP[curOfficer] then
+			MonDKP_Meta.DKP[curOfficer] = { current=0, lowest=0 }
+		end
+
+		curIndex = MonDKP_Meta.DKP[curOfficer].current
+		newIndex = tonumber(curIndex) + 1;
 
 		if MonDKP_DB.modes.ZeroSumStandby then
 			for i=1, #MonDKP_Standby do
@@ -51,21 +48,14 @@ local function ZeroSumDistribution()
 			end
 		end
 		
-		MonDKP:SeedVerify_Update()
-		if core.UpToDate and core.IsOfficer then -- updates seeds only if table is currently up to date.
-			MonDKP:UpdateSeeds()
-		end
-		tinsert(MonDKP_DKPHistory, {players=players, dkp=distribution, reason=reason, date=curTime})
-		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
+		MonDKP:StatusVerify_Update()
+		tinsert(MonDKP_DKPHistory, 1, {players=players, dkp=distribution, reason=reason, date=curTime, index=curOfficer.."-"..newIndex})
 		if MonDKP.ConfigTab6.history then
-			MonDKP:DKPHistory_Reset()
+			MonDKP:DKPHistory_Update(true)
 		end
-		MonDKP:DKPHistory_Update()
-		local temp_table = {}
-		tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=players, dkp=distribution, reason=reason, date=curTime}})
-		MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
-		table.wipe(temp_table)
-		MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDDKPADJUSTBY"].." "..distribution.." "..L["AMONG"].." "..#VerifyTable.." "..L["PLAYERSFORREASON"]..": "..reason)
+
+		MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP_DKPHistory[1])
+		MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..distribution.." "..L["AMONG"].." "..#VerifyTable.." "..L["PLAYERSFORREASON"]..": "..reason)
 		MonDKP:Print("Raid DKP Adjusted by "..distribution.." "..L["AMONG"].." "..#VerifyTable.." "..L["PLAYERSFORREASON"]..": "..reason)
 		
 		table.wipe(VerifyTable)
@@ -73,7 +63,7 @@ local function ZeroSumDistribution()
 		MonDKP_DB.modes.ZeroSumBank.balance = 0
 		core.ZeroSumBank.LootFrame.LootList:SetText("")
 		DKPTable_Update()
-		MonDKP.Sync:SendData("MonDKPZeroSum", MonDKP_DB.modes.ZeroSumBank)
+		MonDKP.Sync:SendData("MonDKPZSumBank", MonDKP_DB.modes.ZeroSumBank)
 		MonDKP:ZeroSumBank_Update()
 		core.ZeroSumBank:Hide();
 	else

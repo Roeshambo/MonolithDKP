@@ -13,7 +13,7 @@ local CurZone;
 local Timer = 0;
 local timerToggle = 0;
 local mode;
-local events = CreateFrame("Frame", "EventsFrame");
+local events = CreateFrame("Frame", "BiddingEventsFrame");
 local menuFrame = CreateFrame("Frame", "MonDKPBidWindowMenuFrame", UIParent, "UIDropDownMenuTemplate")
 
 local function UpdateBidWindow()
@@ -23,6 +23,10 @@ end
 
 function MonDKP:BidsSubmitted_Get()
 	return Bids_Submitted;
+end
+
+function MonDKP:BidsSubmitted_Clear()
+	Bids_Submitted = {};
 end
 
 local function Roll_OnEvent(self, event, arg1, ...)
@@ -79,7 +83,7 @@ local function Roll_OnEvent(self, event, arg1, ...)
 				end
 				table.insert(Bids_Submitted, {player=name, roll=roll, range=" ("..low.."-"..high..")"})
 				if MonDKP_DB.modes.BroadcastBids then
-					MonDKP.Sync:SendData("MonDKPBidTable", Bids_Submitted)
+					MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
 				end
 			else
 				if not search then
@@ -126,7 +130,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 					if Bids_Submitted[i] and Bids_Submitted[i].player == name then
 						table.remove(Bids_Submitted, i)
 						if MonDKP_DB.modes.BroadcastBids then
-							MonDKP.Sync:SendData("MonDKPBidTable", Bids_Submitted)
+							MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
 						end
 						BidScrollFrame_Update()
 						response = L["BIDCANCELLED"]
@@ -170,7 +174,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 									response = L["YOURBIDOF"].." "..cmd.." "..L["DKPWASACCEPTED"].."."
 								end
 								if MonDKP_DB.modes.BroadcastBids then
-									MonDKP.Sync:SendData("MonDKPBidTable", Bids_Submitted)
+									MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
 								end
 								if Timer ~= 0 and Timer > (core.BiddingWindow.bidTimer:GetText() - 10) and MonDKP_DB.modes.AntiSnipe > 0 then
 									MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText().."{"..MonDKP_DB.modes.AntiSnipe, core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), core.BiddingWindow.itemIcon:GetTexture());
@@ -185,7 +189,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 								end
 								table.insert(Bids_Submitted, {player=name, dkp=dkp})
 								if MonDKP_DB.modes.BroadcastBids then
-									MonDKP.Sync:SendData("MonDKPBidTable", Bids_Submitted)
+									MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
 								end
 								response = L["BIDWASACCEPTED"]
 								if Timer ~= 0 and Timer > (core.BiddingWindow.bidTimer:GetText() - 10) and MonDKP_DB.modes.AntiSnipe > 0 then
@@ -358,9 +362,16 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 
 	if core.IsOfficer == true then
 		core.BiddingWindow = core.BiddingWindow or MonDKP:CreateBidWindow();
-	 	core.BiddingWindow:SetShown(true)
-	 	core.BiddingWindow:SetFrameLevel(10)
 
+	 	if MonDKP_DB.bidpos then
+	 		core.BiddingWindow:ClearAllPoints()
+			local a = MonDKP_DB.bidpos
+			core.BiddingWindow:SetPoint(a.point, a.relativeTo, a.relativePoint, a.x, a.y)
+		end
+
+		core.BiddingWindow:SetShown(true)
+	 	core.BiddingWindow:SetFrameLevel(10)
+		
 	 	if MonDKP_DB.modes.mode == "Zero Sum" then
 		 	core.ZeroSumBank = core.ZeroSumBank or MonDKP:ZeroSumBank_Create()
 		 	core.ZeroSumBank:SetShown(true)
@@ -375,7 +386,7 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 	 	if loot then
 	 		Bids_Submitted = {}
 	 		if MonDKP_DB.modes.BroadcastBids then
-				MonDKP.Sync:SendData("MonDKPBidTable", Bids_Submitted)
+				MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
 			end
 	 		local search = MonDKP:Table_Search(MonDKP_MinBids, itemName)
 
@@ -448,9 +459,12 @@ local function StartBidding()
 	if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
 		core.BiddingWindow.cost:SetNumber(MonDKP_round(core.BiddingWindow.minBid:GetNumber(), MonDKP_DB.modes.rounding))
 		MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), CurrItemIcon)
-		MonDKP.Sync:SendData("MonDKPNotify", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.minBid:GetText()..","..CurrItemIcon)
-		MonDKP:BidInterface_Toggle()
+		MonDKP.Sync:SendData("MonDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.minBid:GetText()..","..CurrItemIcon)
 		MonDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.minBid:GetText(), CurrItemIcon, UnitName("player"))
+
+		if MonDKP_DB.defaults.AutoOpenBid then	-- toggles bid window if option is set to
+			MonDKP:BidInterface_Toggle()
+		end
 
 		local search = MonDKP:Table_Search(MonDKP_MinBids, core.BiddingWindow.itemName:GetText())
 		local val = MonDKP:GetMinBid(CurrItemForBid);
@@ -474,7 +488,7 @@ local function StartBidding()
 	else
 		if MonDKP_DB.modes.costvalue == "Percent" then perc = "%" else perc = " DKP" end;
 		MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Cost: "..core.BiddingWindow.cost:GetNumber()..perc, CurrItemIcon)
-		MonDKP.Sync:SendData("MonDKPNotify", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.cost:GetText()..perc..","..CurrItemIcon)
+		MonDKP.Sync:SendData("MonDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.cost:GetText()..perc..","..CurrItemIcon)
 		MonDKP:BidInterface_Toggle()
 		MonDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.cost:GetText()..perc, CurrItemIcon, UnitName("player"))
 	end
@@ -547,7 +561,7 @@ function ClearBidWindow()
 	Bids_Submitted = {}
 	SelectedBidder = {}
 	if MonDKP_DB.modes.BroadcastBids then
-		MonDKP.Sync:SendData("MonDKPBidTable", Bids_Submitted)
+		MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
 	end
 	core.BiddingWindow.cost:SetText("")
 	core.BiddingWindow.CustomMinBid:Hide();
@@ -595,7 +609,7 @@ end
 
 function MonDKP:BroadcastBidTimer(seconds, title, itemIcon)       -- broadcasts timer and starts it natively
 	local title = title;
-	MonDKP.Sync:SendData("MonDKPNotify", "StartBidTimer,"..seconds..","..title..","..itemIcon)
+	MonDKP.Sync:SendData("MonDKPCommand", "StartBidTimer,"..seconds..","..title..","..itemIcon)
 	MonDKP:StartBidTimer(seconds, title, itemIcon)
 
 	if strfind(seconds, "{") then
@@ -606,7 +620,7 @@ end
 function MonDKP:BroadcastStopBidTimer()
 	MonDKP.BidTimer:SetScript("OnUpdate", nil)
 	MonDKP.BidTimer:Hide()
-	MonDKP.Sync:SendData("MonDKPNotify", "StopBidTimer")
+	MonDKP.Sync:SendData("MonDKPCommand", "StopBidTimer")
 end
 
 function MonDKP_Register_ShiftClickLootWindowHook()			-- hook function into LootFrame window (BREAKS if more than 4 loot slots... trying to fix)
@@ -914,7 +928,7 @@ local function RightClickMenu(self)
 			end
 			table.remove(Bids_Submitted, self.index)
 			if MonDKP_DB.modes.BroadcastBids then
-				MonDKP.Sync:SendData("MonDKPBidTable", Bids_Submitted)
+				MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
 			end
 			SelectedBidder = {}
 			for i=1, #core.BiddingWindow.bidTable.Rows do
@@ -1060,7 +1074,18 @@ function MonDKP:CreateBidWindow()
 	f:EnableMouse(true);
 	f:RegisterForDrag("LeftButton");
 	f:SetScript("OnDragStart", f.StartMoving);
-	f:SetScript("OnDragStop", f.StopMovingOrSizing);
+	f:SetScript("OnDragStop", function()
+		f:StopMovingOrSizing();
+		local point, relativeTo, relativePoint ,xOff,yOff = f:GetPoint(1)
+		if not MonDKP_DB.bidpos then
+			MonDKP_DB.bidpos = {}
+		end
+		MonDKP_DB.bidpos.point = point;
+		MonDKP_DB.bidpos.relativeTo = relativeTo;
+		MonDKP_DB.bidpos.relativePoint = relativePoint;
+		MonDKP_DB.bidpos.x = xOff;
+		MonDKP_DB.bidpos.y = yOff;
+	end);
 	f:SetScript("OnHide", function ()
 		if core.BidInProgress then
 			MonDKP:Print(L["CLOSEDBIDINPROGRESS"])
@@ -1492,25 +1517,8 @@ function MonDKP:CreateBidWindow()
 					StaticPopup_Show ("VALIDATE_BOSS")
 					return;
 				end
-				if core.UpToDate == false and core.IsOfficer == true then
-				    StaticPopupDialogs["CONFIRM_PUSH"] = {
-						text = "|CFFFF0000"..L["WARNING"].."|r: "..L["OUTDATEMODIFYWARN"],
-						button1 = L["YES"],
-						button2 = L["NO"],
-						OnAccept = function()
-							MonDKP:AwardConfirm(SelectedBidder["player"], f.cost:GetNumber(), f.boss:GetText(), GetRealZoneText(), CurrItemForBid)
-						end,
-						timeout = 0,
-						whileDead = true,
-						hideOnEscape = true,
-						preferredIndex = 3,
-					}
-					StaticPopup_Show ("CONFIRM_PUSH")
-				else
-					MonDKP:AwardConfirm(SelectedBidder["player"], f.cost:GetNumber(), f.boss:GetText(), GetRealZoneText(), CurrItemForBid)
-				end
-
 				
+				MonDKP:AwardConfirm(SelectedBidder["player"], f.cost:GetNumber(), f.boss:GetText(), MonDKP_DB.bossargs.CurrentRaidZone, CurrItemForBid)				
 			else
 				local selected = L["PLAYERVALIDATE"];
 

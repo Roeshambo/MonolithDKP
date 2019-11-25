@@ -31,7 +31,6 @@ function MonDKP:DKPModes_Misc()
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 			GameTooltip:SetText(L["AUTOAWARD"], 0.25, 0.75, 0.90, 1, true);
 			GameTooltip:AddLine(L["AUTOAWARDTTDESC"], 1.0, 1.0, 1.0, true);
-			GameTooltip:AddLine(L["INCLUDESBYTTWARN"], 1.0, 0, 0, true);
 			GameTooltip:Show();
 		end)
 		f.AutoAwardContainer.AutoAward:SetScript("OnLeave", function(self)

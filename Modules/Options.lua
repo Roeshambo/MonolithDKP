@@ -4,6 +4,7 @@ local MonDKP = core.MonDKP;
 local L = core.L;
 
 local moveTimerToggle = 0;
+local validating = false
 
 local function DrawPercFrame(box)
   --Draw % signs if set to percent
@@ -468,7 +469,7 @@ function MonDKP:Options()
             local temptable = {}
             table.insert(temptable, MonDKP_DB.MinBidBySlot)
             table.insert(temptable, MonDKP_MinBids)
-            MonDKP.Sync:SendData("MonDKPMinBids", temptable)
+            MonDKP.Sync:SendData("MonDKPMinBid", temptable)
             MonDKP:Print(L["MINBIDVALUESSENT"])
           end,
           timeout = 0,
@@ -832,6 +833,30 @@ function MonDKP:Options()
     PlaySound(808)
   end)
 
+  if MonDKP_DB.defaults.AutoOpenBid == nil then
+    MonDKP_DB.defaults.AutoOpenBid = true
+  end
+
+  MonDKP.ConfigTab4.AutoOpenCheckbox = CreateFrame("CheckButton", nil, MonDKP.ConfigTab4, "UICheckButtonTemplate");
+  MonDKP.ConfigTab4.AutoOpenCheckbox:SetChecked(MonDKP_DB.defaults.AutoOpenBid)
+  MonDKP.ConfigTab4.AutoOpenCheckbox:SetScale(0.8);
+  MonDKP.ConfigTab4.AutoOpenCheckbox.text:SetText("|cff5151de"..L["AUTOOPEN"].."|r");
+  MonDKP.ConfigTab4.AutoOpenCheckbox.text:SetScale(1);
+  MonDKP.ConfigTab4.AutoOpenCheckbox.text:SetFontObject("MonDKPSmallLeft")
+  MonDKP.ConfigTab4.AutoOpenCheckbox:SetPoint("TOP", MonDKP.ConfigTab4.CombatLogging, "BOTTOM", 0, 0);
+  MonDKP.ConfigTab4.AutoOpenCheckbox:SetScript("OnClick", function(self)
+    MonDKP_DB.defaults.AutoOpenBid = self:GetChecked()
+  end)
+  MonDKP.ConfigTab4.AutoOpenCheckbox:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_LEFT");
+    GameTooltip:SetText(L["AUTOOPEN"], 0.25, 0.75, 0.90, 1, true);
+    GameTooltip:AddLine(L["AUTOOPENTTDESC"], 1.0, 1.0, 1.0, true);
+    GameTooltip:Show();
+  end)
+  MonDKP.ConfigTab4.AutoOpenCheckbox:SetScript("OnLeave", function(self)
+    GameTooltip:Hide()
+  end)
+
   if core.IsOfficer == true then
     -- Supress Broadcast Notifications checkbox
     MonDKP.ConfigTab4.supressTells = CreateFrame("CheckButton", nil, MonDKP.ConfigTab4, "UICheckButtonTemplate");
@@ -865,7 +890,7 @@ function MonDKP:Options()
   -- Save Settings Button
   MonDKP.ConfigTab4.submitSettings = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab4, "BOTTOMLEFT", 30, 30, L["SAVESETTINGS"]);
   MonDKP.ConfigTab4.submitSettings:ClearAllPoints();
-  MonDKP.ConfigTab4.submitSettings:SetPoint("TOP", MonDKP.ConfigTab4.supressNotifications, "BOTTOMLEFT", 20, -40)
+  MonDKP.ConfigTab4.submitSettings:SetPoint("TOP", MonDKP.ConfigTab4.AutoOpenCheckbox, "BOTTOMLEFT", 20, -40)
   MonDKP.ConfigTab4.submitSettings:SetSize(90,25)
   MonDKP.ConfigTab4.submitSettings:SetScript("OnClick", function()
     if core.IsOfficer == true then

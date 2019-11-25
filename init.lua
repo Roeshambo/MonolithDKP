@@ -10,79 +10,70 @@ local lockouts = CreateFrame("Frame", "LockoutsFrame");
 --------------------------------------
 MonDKP.Commands = {
 	["config"] = function()
-		local pass, err = pcall(MonDKP.Toggle)
+		if core.Initialized then
+			local pass, err = pcall(MonDKP.Toggle)
 
-		if not pass then
-			core.MonDKPUI:SetShown(false)
-			StaticPopupDialogs["SUGGEST_RELOAD"] = {
-				text = "|CFFFF0000"..L["WARNING"].."|r: "..L["MUSTRELOADUI"],
-				button1 = L["YES"],
-				button2 = L["NO"],
-				OnAccept = function()
-					ReloadUI();
-				end,
-				timeout = 0,
-				whileDead = true,
-				hideOnEscape = true,
-				preferredIndex = 3,
-			}
-			StaticPopup_Show ("SUGGEST_RELOAD")
-		end
-	end,
-	["reset"] = MonDKP.ResetPosition,
-	["bid"] = function(...)
-		local item = strjoin(" ", ...)
-		MonDKP:CheckOfficer()
-		MonDKP:SeedVerify_Update()
-
-		if core.IsOfficer then	
-			if ... == nil then
-				MonDKP.ToggleBidWindow()
-			else
-				local itemName,_,_,_,_,_,_,_,_,itemIcon = GetItemInfo(item)
-				MonDKP:Print("Opening Bid Window for: ".. item)
-				MonDKP:ToggleBidWindow(item, itemIcon, itemName)
-			end
-		end
-		MonDKP:BidInterface_Toggle() 
-	end,
-	--[[["test"] = function() 			-- test new features
-		MonDKP:BidInterface_Toggle()
-	end,--]]
-	["award"] = function (name, cost, ...)
-		if core.IsOfficer then
-			MonDKP:SeedVerify_Update()
-			local item = strjoin(" ", ...)
-			local validation = MonDKP:Table_Search(MonDKP_DKPTable, name)
-
-			if not validation then 			-- validate command name, cost and itemlink
-				MonDKP:Print(L["INVALIDTARGETPLAYER"])
-				return;
-			elseif not tonumber(cost) then
-				MonDKP:Print(L["INVALIDITEMCOST"])
-				return;
-			elseif not strfind(item, "|Hitem:") then
-				MonDKP:Print(L["INVALIDITEMLINK"])
-				return;
-			end
-
-			if core.UpToDate == false and core.IsOfficer == true then
-			    StaticPopupDialogs["CONFIRM_PUSH"] = {
-					text = "|CFFFF0000"..L["WARNING"].."|r: "..L["OUTDATEMODIFYWARN"],
+			if not pass then
+				print(err)
+				core.MonDKPUI:SetShown(false)
+				StaticPopupDialogs["SUGGEST_RELOAD"] = {
+					text = "|CFFFF0000"..L["WARNING"].."|r: "..L["MUSTRELOADUI"],
 					button1 = L["YES"],
 					button2 = L["NO"],
 					OnAccept = function()
-						MonDKP:AwardConfirm(MonDKP_DKPTable[validation[1][1]].player, cost, MonDKP_DB.bossargs.LastKilledBoss, MonDKP_DB.bossargs.CurrentRaidZone, item)
+						ReloadUI();
 					end,
 					timeout = 0,
 					whileDead = true,
 					hideOnEscape = true,
 					preferredIndex = 3,
 				}
-				StaticPopup_Show ("CONFIRM_PUSH")
-			else
-				MonDKP:AwardConfirm(MonDKP_DKPTable[validation[1][1]].player, cost, MonDKP_DB.bossargs.LastKilledBoss, MonDKP_DB.bossargs.CurrentRaidZone, item)
+				StaticPopup_Show ("SUGGEST_RELOAD")
 			end
+		else
+			MonDKP:Print("Monolith DKP has not completed initialization.")
+		end
+	end,
+	["reset"] = MonDKP.ResetPosition,
+	["bid"] = function(...)
+		if core.Initialized then
+			local item = strjoin(" ", ...)
+			MonDKP:CheckOfficer()
+			MonDKP:StatusVerify_Update()
+
+			if core.IsOfficer then	
+				if ... == nil then
+					MonDKP.ToggleBidWindow()
+				else
+					local itemName,_,_,_,_,_,_,_,_,itemIcon = GetItemInfo(item)
+					MonDKP:Print("Opening Bid Window for: ".. item)
+					MonDKP:ToggleBidWindow(item, itemIcon, itemName)
+				end
+			end
+			MonDKP:BidInterface_Toggle()
+		else
+			MonDKP:Print("Monolith DKP has not completed initialization.")
+		end 
+	end,
+	["migrate"] = function()
+		if not core.Migrated then MonDKP:MigrationFrame() end
+	end,
+	--[[["test"] = function() 			-- test new features
+		MonDKP:BidInterface_Toggle()
+	end,--]]
+	["award"] = function (name, ...)
+		if core.IsOfficer and core.Initialized then
+			MonDKP:StatusVerify_Update()
+			
+			if not name or not strfind(name, ":::::") then
+				MonDKP:Print(L["AWARDWARNING"])
+				return
+			end
+			local item = strjoin(" ", ...)
+			if not item then return end
+			item = name.." "..item;
+			
+			MonDKP:AwardConfirm(nil, 0, MonDKP_DB.bossargs.LastKilledBoss, MonDKP_DB.bossargs.CurrentRaidZone, item)
 		else
 			MonDKP:Print(L["NOPERMISSION"])
 		end
@@ -104,11 +95,15 @@ MonDKP.Commands = {
 		MonDKP:ToggleExportWindow()
 	end,
 	["modes"] = function()
-		MonDKP:CheckOfficer()
-		if core.IsOfficer then
-			MonDKP:ToggleDKPModesWindow()
+		if core.Initialized then
+			MonDKP:CheckOfficer()
+			if core.IsOfficer then
+				MonDKP:ToggleDKPModesWindow()
+			else
+				MonDKP:Print(L["NOPERMISSION"])
+			end
 		else
-			MonDKP:Print(L["NOPERMISSION"])
+			MonDKP:Print("Monolith DKP has not completed initialization.")
 		end
 	end,
 	["help"] = function()
@@ -120,7 +115,7 @@ MonDKP.Commands = {
 		MonDKP:Print("|cff00cc66/dkp lockouts|r - "..L["DKPLOCKOUT"]);
 		MonDKP:Print("|cff00cc66/dkp timer|r - "..L["CREATERAIDTIMER"]);
 		MonDKP:Print("|cff00cc66/dkp bid|r - "..L["OPENBIDWINDOWHELP"]);
-		MonDKP:Print("|cff00cc66/dkp award "..L["PLAYERCOST"].."|r - "..L["DKPAWARDHELP"]);
+		MonDKP:Print("|cff00cc66/dkp award [item link]|r - "..L["DKPAWARDHELP"]);
 		MonDKP:Print("|cff00cc66/dkp modes|r - "..L["DKPMODESHELP"]);
 		MonDKP:Print("|cff00cc66/dkp export|r - "..L["DKPEXPORTHELP"]);
 		print(" ");
@@ -133,7 +128,7 @@ MonDKP.Commands = {
 local function HandleSlashCommands(str)
 	if (#str == 0) then
 		MonDKP.Commands.config();
-		return;		
+		return;
 	end	
 	
 	local args = {};
@@ -212,11 +207,11 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		if MonDKP_DB.defaults.AutoLog and IsInRaid() then
 			if not LoggingCombat() then
 				LoggingCombat(1)
-				MonDKP:Print("Now logging combat.")
+				MonDKP:Print(L["NOWLOGGINGCOMBAT"])
 			end
 		end
 	elseif event == "PLAYER_ENTERING_WORLD" or event == "ZONE_CHANGED_NEW_AREA" then   		-- logs 15 recent zones entered while in a raid party
-		if IsInRaid() then 					-- only processes combat log events if in raid
+		if IsInRaid() and core.Initialized then 					-- only processes combat log events if in raid
 			MonDKP:CheckOfficer()
 			if core.IsOfficer then
 				if not MonDKP:Table_Search(MonDKP_DB.bossargs.RecentZones, GetRealZoneText()) then 	-- only adds it if it doesn't already exist in the table
@@ -235,27 +230,92 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				end
 			end
 		end
+		MonDKP:ErrantCheck()
+		MonDKP:UpdateIndexes()
 	elseif event == "CHAT_MSG_WHISPER" then
 		MonDKP:CheckOfficer()
+		arg1 = strlower(arg1)
 		if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "！dkp") == 1) and core.IsOfficer == true then
 			MonDKP_CHAT_MSG_WHISPER(arg1, ...)
 		end
 	elseif event == "GUILD_ROSTER_UPDATE" then
-		GuildRoster()
-		if IsInGuild() then
-			self:UnregisterEvent("GUILD_ROSTER_UPDATE")
+		if IsInGuild() and not core.InitStart then
+			GuildRoster()
+			core.InitStart = true
+			--self:UnregisterEvent("GUILD_ROSTER_UPDATE")
 
 			-- Prints info after all addons have loaded. Circumvents addons that load saved chat messages pushing info out of view.
 			C_Timer.After(3, function ()
+				core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();		-- creates main menu
 				MonDKP:CheckOfficer()
 				MonDKP:Print(L["VERSION"].." "..core.MonVersion..", "..L["CREATEDMAINTAIN"].." Roeshambo@Stalagg-PvP");
 				MonDKP:Print(L["LOADED"].." "..#MonDKP_DKPTable.." "..L["PLAYERRECORDS"]..", "..#MonDKP_Loot.." "..L["LOOTHISTRECORDS"].." "..#MonDKP_DKPHistory.." "..L["DKPHISTRECORDS"]..".");
 				MonDKP:Print(L["USE"].." /dkp ? "..L["SUBMITBUGS"].." @ https://github.com/Roeshambo/MonolithDKP/issues");
-				MonDKP.Sync:SendData("MonDKPBuildCheck", tostring(core.BuildNumber)) -- broadcasts build number to guild to check if a newer version is available
+				MonDKP.Sync:SendData("MonDKPBuild", tostring(core.BuildNumber)) -- broadcasts build number to guild to check if a newer version is available
+
+				if not core.Migrated and core.IsOfficer then  	-- prompts for migration (if officer and not migrated)
+					-- initiate migration setup
+					MonDKP:MigrationFrame()
+				elseif not core.Migrated and not core.IsOfficer then -- wipes tables if non officer
+					MonDKP_DKPTable = nil
+					MonDKP_Loot = nil
+					MonDKP_DKPHistory = nil
+					MonDKP_DKPTable = {}
+					MonDKP_Loot = {}
+					MonDKP_DKPHistory = {}
+					core.Migrated = true
+					MonDKP:FilterDKPTable(core.currentSort, "reset")
+					MonDKP:RequestSync()
+				else
+					if core.IsOfficer and not MonDKP_Meta.DKP[UnitName("player")] then
+						MonDKP_Meta.DKP[UnitName("player")] = { current=0, lowest=0 }
+						MonDKP_Meta.Loot[UnitName("player")] = { current=0, lowest=0 }
+					end
+					MonDKP:RequestSync() -- Initiates sync, if officer. Requests a random officer to initiate sync if not an officer.
+				end
 			end)
+		end
+
+		if IsInGuild() then
+			local GuildName = GetGuildInfo("player")
+
+			if not MonDKP_DB.defaults.CurrentGuild[UnitName("player")] and GuildName then
+				MonDKP_DB.defaults.CurrentGuild = {}
+				MonDKP_DB.defaults.CurrentGuild[UnitName("player")] = GuildName
+			elseif GuildName and MonDKP_DB.defaults.CurrentGuild[UnitName("player")] ~= GuildName then -- prompt to wipes tables if guild changes
+				StaticPopupDialogs["GUILD_CHANGED"] = {
+					text = L["CHANGEDGUILDS"],
+					button1 = L["YES"],
+					button2 = L["NO"],
+					OnAccept = function()
+						MonDKP_DB.defaults.CurrentGuild[UnitName("player")] = GuildName
+						MonDKP_DKPTable = nil
+						MonDKP_Loot = nil
+						MonDKP_DKPHistory = nil
+						MonDKP_Meta = nil
+						MonDKP_Meta_Remote = nil
+						MonDKP_Archive = nil
+
+						MonDKP_DKPTable = {}
+						MonDKP_Loot = {}
+						MonDKP_DKPHistory = {}
+						MonDKP_Meta = {}
+						MonDKP_Meta_Remote = {}
+						MonDKP_Archive = {}
+						core.Migrated = true
+						MonDKP:FilterDKPTable(core.currentSort, "reset")
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopup_Show ("GUILD_CHANGED")
+			end
 		end
 	elseif event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" then
 		MonDKP:CheckOfficer()
+		arg1 = strlower(arg1)
 		if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "!standby") == 1 or string.find(arg1, "！dkp") == 1) and core.IsOfficer == true then
 			MonDKP_CHAT_MSG_WHISPER(arg1, ...)
 		end
@@ -311,6 +371,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 	elseif event == "CHAT_MSG_GUILD" then
 		MonDKP:CheckOfficer()
 		if core.IsOfficer then
+			arg1 = strlower(arg1)
 			if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "！dkp") == 1) and MonDKP_DB.modes.channels.guild then
 				MonDKP_CHAT_MSG_WHISPER(arg1, ...)
 			elseif string.find(arg1, "!standby") == 1 and core.StandbyActive then
@@ -320,7 +381,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 	--elseif event == "CHAT_MSG_SYSTEM" then
 		--MonoDKP_CHAT_MSG_SYSTEM(arg1)
 	elseif event == "GROUP_ROSTER_UPDATE" then 			--updates raid listing if window is open
-		if core.MonDKPUI:IsShown() then
+		if MonDKP.UIConfig and core.MonDKPUI:IsShown() then
 			if core.CurSubView == "raid" then
 				MonDKP:ViewLimited(true)
 			elseif core.CurSubView == "raid and standby" then
@@ -373,8 +434,8 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			local lootList = {};
 
 			for i=1, GetNumLootItems() do
+				if not GetLootSlotLink(i) then return end -- prevent errors if auto loot is used causing the items to be removed from the frame before loop completes
 				if LootSlotHasItem(i) and GetLootSlotLink(i) then
-					if not GetLootSlotLink(i) then return end -- prevent errors if auto loot is used causing the items to be removed from the frame before loop completes
 					local _,link,quality = GetItemInfo(GetLootSlotLink(i))
 					
 					if quality >= 4 then
@@ -383,7 +444,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				end
 			end
 			lootTable.boss=UnitName("target")
-			MonDKP.Sync:SendData("MonDKPLootTable", lootTable)
+			MonDKP.Sync:SendData("MonDKPBossLoot", lootTable)
 
 			for i=1, #lootTable do
 				local item = Item:CreateFromItemLink(lootTable[i]);
@@ -410,6 +471,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	-- Register Slash Commands
 	----------------------------------
 	SLASH_MonolithDKP1 = "/dkp";
+	SLASH_MonolithDKP2 = "/mondkp";
 	SlashCmdList.MonolithDKP = HandleSlashCommands;
 
 	--[[SLASH_RELOADUI1 = "/rl"; -- new slash command for reloading UI 				-- for debugging
@@ -422,15 +484,20 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	end--]]
 
     if(event == "ADDON_LOADED") then
-		if not MonDKP_DKPTable then MonDKP_DKPTable = {} end;
+    	core.Initialized = false
+    	core.InitStart = false
+    	core.IsOfficer = ""
+    	if not MonDKP_DKPTable then MonDKP_DKPTable = {} end;
 		if not MonDKP_Loot then MonDKP_Loot = {} end;
 		if not MonDKP_DKPHistory then MonDKP_DKPHistory = {} end;
 		if not MonDKP_MinBids then MonDKP_MinBids = {} end;
 		if not MonDKP_Whitelist then MonDKP_Whitelist = {} end;
 		if not MonDKP_Standby then MonDKP_Standby = {} end;
+		if not MonDKP_Archive then MonDKP_Archive = {} end;
 		if not MonDKP_DB then MonDKP_DB = {} end
+		if ((#MonDKP_Loot == 0 or MonDKP_Loot[1].index) and (#MonDKP_DKPHistory == 0 or MonDKP_DKPHistory[1].index)) then core.Migrated = true end;  -- determines if migration is necessary
 		if not MonDKP_DB.DKPBonus or not MonDKP_DB.DKPBonus.OnTimeBonus then
-			MonDKP_DB.DKPBonus = { 
+			MonDKP_DB.DKPBonus = {
     			OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, DecayPercentage = 20, GiveRaidStart = false, IncStandby = false,
     		}
 		end
@@ -439,9 +506,6 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
     			HistoryLimit = 2500, DKPHistoryLimit = 2500, BidTimerSize = 1.0, MonDKPScaleSize = 1.0, supressNotifications = false, TooltipHistoryCount = 15,
     		}
     	end
-		if not MonDKP_DKPTable.seed then MonDKP_DKPTable.seed = 0 end
-		if not MonDKP_DKPHistory.seed then MonDKP_DKPHistory.seed = 0 end
-		if not MonDKP_Loot.seed then MonDKP_Loot.seed = 0 end
 		if not MonDKP_DB.raiders then MonDKP_DB.raiders = {} end
 		if not MonDKP_DB.MinBidBySlot or not MonDKP_DB.MinBidBySlot.Head then
 			MonDKP_DB.MinBidBySlot = {
@@ -458,7 +522,10 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_DB.bossargs.RecentZones then MonDKP_DB.bossargs.RecentZones = {} end
 		if not MonDKP_DB.defaults.HideChangeLogs then MonDKP_DB.defaults.HideChangeLogs = 0 end
 		if not MonDKP_DB.modes.AntiSnipe then MonDKP_DB.modes.AntiSnipe = 0 end
-	
+		if not MonDKP_Meta then MonDKP_Meta = { DKP={}, Loot={} } end
+		if not MonDKP_Meta_Remote or not MonDKP_Meta_Remote.DKP or not MonDKP_Meta_Remote.Loot then MonDKP_Meta_Remote = { DKP={}, Loot={} } end
+		if not MonDKP_DB.defaults.CurrentGuild then MonDKP_DB.defaults.CurrentGuild = {} end
+
 		for i=1, #MonDKP_DKPTable do
 			if not MonDKP_DKPTable[i].rank or not MonDKP_DKPTable[i].rankName or MonDKP_DKPTable[i].rank == "None" then
 				MonDKP_DKPTable[i].rank = 20
@@ -470,15 +537,38 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 			if not MonDKP_DKPTable[i].role then
 				MonDKP_DKPTable[i].role = L["NOROLEDETECTED"]
 			end
+			if MonDKP_DKPTable[i].class == "NONE" then
+				MonDKP.Sync:SendData("MonDKPProfileReq", MonDKP_DKPTable[i].player)
+			end
 		end
 
+		for i=1, #MonDKP_DKPHistory do
+			if MonDKP_DKPHistory[i].deletes then
+				local search = MonDKP:Table_Search(MonDKP_DKPHistory, MonDKP_DKPHistory[i].deletes, "index")
+
+				if search and not MonDKP_DKPHistory[search[1][1]].deletedby then
+					MonDKP_DKPHistory[search[1][1]].deletedby = MonDKP_DKPHistory[i].index 		-- adds deltedby index to field if it was received after a delete entry was received but was sent by someone that did not have the delete entry
+				end
+			end
+		end
+
+		------------------------------------
+	    --	Validate Tables - Rebuilds DKPTable based off of DKP History, Loot History, and archived data
+	    ------------------------------------
+	    if core.Migrated then 		-- only allow this to fire if the migration has already occurred.
+			MonDKP:ValidateLootTable()  		-- clears duplicate entries in loot table
+			MonDKP:ValidateDKPHistory()			-- clears duplicate entries in dkp history table
+			MonDKP:ValidateDKPTable_Loot()		-- adds up all entries in the loot table
+			MonDKP:ValidateDKPTable_DKP()		-- adds up all entries in DKP table
+			MonDKP:ValidateDKPTable_Final()		-- rectifies incorrect DKPTable data based off of the above 2 functions
+		end
 	    ------------------------------------
 	    --	Import SavedVariables
 	    ------------------------------------
-	    core.settings.DKPBonus = MonDKP_DB.DKPBonus 				--imports default settings (Options Tab)
-	    core.settings.MinBidBySlot = MonDKP_DB.MinBidBySlot			--imports default minimum bids (Options Tab)
-	    core.settings.defaults = MonDKP_DB.defaults					--imports default UI settings
-	    core.WorkingTable = MonDKP_DKPTable;						--imports full DKP table to WorkingTable for list manipulation without altering the SavedVariable
+	    core.settings.DKPBonus = MonDKP_DB.DKPBonus 				-- imports default settings (Options Tab)
+	    core.settings.MinBidBySlot = MonDKP_DB.MinBidBySlot			-- imports default minimum bids (Options Tab)
+	    core.settings.defaults = MonDKP_DB.defaults					-- imports default UI settings
+	    core.WorkingTable = MonDKP_DKPTable;						-- imports full DKP table to WorkingTable for list manipulation without altering the SavedVariable
 	    core.CurrentRaidZone = MonDKP_DB.bossargs.CurrentRaidZone;	-- stores raid zone as a redundency
 		core.LastKilledBoss = MonDKP_DB.bossargs.LastKilledBoss;	-- stores last boss killed as a redundency
 		core.LastKilledNPC	= MonDKP_DB.bossargs.LastKilledNPC 		-- Stores last 30 mobs killed in raid.
@@ -492,10 +582,10 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 			MonDKP_DKPTable[i].class = string.upper(MonDKP_DKPTable[i].class)		-- hotfix for migrating previous class listings to localization neutral classes
 		end
 		
-		core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();		-- creates main menu
 		MonDKP:StartBidTimer("seconds", nil)						-- initiates timer frame for use
-		MonDKP:PurgeLootHistory()									-- purges Loot History entries that exceed the "HistoryLimit" option variable (oldest entries)
-		MonDKP:PurgeDKPHistory()									-- purges DKP History entries that exceed the "DKPHistoryLimit" option variable (oldest entries)
+		MonDKP:PurgeLootHistory()									-- purges Loot History entries that exceed the "HistoryLimit" option variable (oldest entries) and populates MonDKP_Archive with deleted values
+		MonDKP:PurgeDKPHistory()									-- purges DKP History entries that exceed the "DKPHistoryLimit" option variable (oldest entries) and populates MonDKP_Archive with deleted values
+		MonDKP:UpdateIndexes()
 	end
 end
 

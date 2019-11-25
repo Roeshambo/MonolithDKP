@@ -4,66 +4,65 @@ local MonDKP = core.MonDKP;
 local L = core.L;
 
 local function Remove_Entries()
-	MonDKP:SeedVerify_Update()
-	if core.UpToDate == false and core.IsOfficer == true then
-		StaticPopupDialogs["CONFIRM_REMOVE"] = {
-			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["OUTDATEMODIFYWARN"],
-			button1 = L["YES"],
-			button2 = L["NO"],
-			OnAccept = function()
-				local numPlayers = 0;
-				local removedUsers, c;
-				for i=1, #core.SelectedData do
-					local search = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[i]["player"]);
-					if search then
-						tremove(MonDKP_DKPTable, search[1][1])
-						c = MonDKP:GetCColors(core.SelectedData[i]["class"])
-						if i==1 then
-							removedUsers = "|cff"..c.hex..core.SelectedData[i]["player"].."|r"
-						else
-							removedUsers = removedUsers..", |cff"..c.hex..core.SelectedData[i]["player"].."|r"
-						end
-						numPlayers = numPlayers + 1
-					end
+	MonDKP:StatusVerify_Update()
+	local numPlayers = 0;
+	local removedUsers, c;
+	local deleted = {}
+
+	for i=1, #core.SelectedData do
+		local search = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[i]["player"]);
+		local flag = false -- flag = only create archive entry if they appear anywhere in the history. If there's no history, there's no reason anyone would have it.
+		local curTime = time()
+
+		if search then
+			local path = MonDKP_DKPTable[search[1][1]]
+
+			for i=1, #MonDKP_DKPHistory do
+				if strfind(MonDKP_DKPHistory[i].players, path.player..",") then
+					flag = true
 				end
-				table.wipe(core.SelectedData)
-				MonDKPSelectionCount_Update()
-				MonDKP:FilterDKPTable(core.currentSort, "reset")
-				MonDKP:Print("Removed "..numPlayers.." player(s): "..removedUsers)
-				table.wipe(core.SelectedData)
-				MonDKP:ClassGraph_Update()
-				MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
-			end,
-			timeout = 0,
-			whileDead = true,
-			hideOnEscape = true,
-			preferredIndex = 3,
-		}
-		StaticPopup_Show ("CONFIRM_REMOVE")
-	else
-		local numPlayers = 0;
-		local removedUsers, c;
-		for i=1, #core.SelectedData do
-			local search = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[i]["player"]);
-			if search then
-				tremove(MonDKP_DKPTable, search[1][1])
-				c = MonDKP:GetCColors(core.SelectedData[i]["class"])
-				if i==1 then
-					removedUsers = "|cff"..c.hex..core.SelectedData[i]["player"].."|r"
+			end
+
+			for i=1, #MonDKP_Loot do
+				if MonDKP_Loot[i].player == path.player then
+					flag = true
+				end
+			end
+			
+			if flag then 		-- above 2 loops flags character if they have any loot/dkp history. Only inserts to archive and broadcasts if found. Other players will not have the entry if no history exists
+				if not MonDKP_Archive[core.SelectedData[i].player] then
+					MonDKP_Archive[core.SelectedData[i].player] = { dkp=0, lifetime_spent=0, lifetime_gained=0, deleted=true, edited=curTime }
 				else
-					removedUsers = removedUsers..", |cff"..c.hex..core.SelectedData[i]["player"].."|r"
+					MonDKP_Archive[core.SelectedData[i].player].deleted = true
+					MonDKP_Archive[core.SelectedData[i].player].edited = curTime
 				end
-				numPlayers = numPlayers + 1
+				table.insert(deleted, { player=path.player, deleted=true })
+			end
+
+			c = MonDKP:GetCColors(core.SelectedData[i]["class"])
+			if i==1 then
+				removedUsers = "|cff"..c.hex..core.SelectedData[i]["player"].."|r"
+			else
+				removedUsers = removedUsers..", |cff"..c.hex..core.SelectedData[i]["player"].."|r"
+			end
+			numPlayers = numPlayers + 1
+
+			tremove(MonDKP_DKPTable, search[1][1])
+
+			local search2 = MonDKP:Table_Search(MonDKP_Standby, core.SelectedData[i].player, "player");
+
+			if search2 then
+				table.remove(MonDKP_Standby, search2[1][1])
 			end
 		end
-		table.wipe(core.SelectedData)
-		MonDKPSelectionCount_Update()
-		MonDKP:UpdateSeeds()
-		MonDKP:FilterDKPTable(core.currentSort, "reset")
-		MonDKP:Print("Removed "..numPlayers.." player(s): "..removedUsers)
-		table.wipe(core.SelectedData)
-		MonDKP:ClassGraph_Update()
-		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
+	end
+	table.wipe(core.SelectedData)
+	MonDKPSelectionCount_Update()
+	MonDKP:FilterDKPTable(core.currentSort, "reset")
+	MonDKP:Print("Removed "..numPlayers.." player(s): "..removedUsers)
+	MonDKP:ClassGraph_Update()
+	if #deleted >0 then
+		MonDKP.Sync:SendData("MonDKPDelUsers", deleted)
 	end
 end
 
@@ -84,6 +83,8 @@ function AddRaidToDKPTable()
 		local name, rank, rankIndex;
 		local InGuild = false; -- Only adds player to list if the player is found in the guild roster.
 		local GroupSize;
+		local FlagRecovery = false
+		local curTime = time()
 
 		if GroupType == "raid" then
 			GroupSize = 40
@@ -121,6 +122,11 @@ function AddRaidToDKPTable()
 					else
 						addedUsers = addedUsers..", |cff"..c.hex..tempName.."|r"
 					end
+					if MonDKP_Archive[tempName] and MonDKP_Archive[tempName].deleted then
+						MonDKP_Archive[tempName].deleted = "Recovered"
+						MonDKP_Archive[tempName].edited = curTime
+						FlagRecovery = true
+					end
 				end
 			end
 			InGuild = false;
@@ -133,8 +139,10 @@ function AddRaidToDKPTable()
 		else
 			MonDKP:ClassGraph()
 		end
+		if FlagRecovery then 
+			MonDKP:Print(L["YOUHAVERECOVERED"])
+		end
 		MonDKP:FilterDKPTable(core.currentSort, "reset")
-		--MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)   removed broadcast on add to prevent crossfire from other officers. Move it to init in the event and guild leader ONLY
 	else
 		MonDKP:Print(L["NOPARTYORRAID"])
 	end
@@ -144,6 +152,8 @@ local function AddGuildToDKPTable(rank)
 	local guildSize = GetNumGuildMembers();
 	local class, addedUsers, c, name, rankName, rankIndex;
 	local numPlayers = 0;
+	local FlagRecovery = false
+	local curTime = time()
 
 	for i=1, guildSize do
 		name,rankName,rankIndex,_,_,_,_,_,_,_,class = GetGuildRosterInfo(i)
@@ -170,11 +180,19 @@ local function AddGuildToDKPTable(rank)
 			else
 				addedUsers = addedUsers..", |cff"..c.hex..name.."|r"
 			end
+			if MonDKP_Archive[name] and MonDKP_Archive[name].deleted then
+				MonDKP_Archive[name].deleted = "Recovered"
+				MonDKP_Archive[name].edited = curTime
+				FlagRecovery = true
+			end
 		end
 	end
 	MonDKP:FilterDKPTable(core.currentSort, "reset")
 	if addedUsers then
 		MonDKP:Print(L["ADDED"].." "..numPlayers.." "..L["PLAYERS"]..": "..addedUsers)
+	end
+	if FlagRecovery then 
+		MonDKP:Print(L["YOUHAVERECOVERED"])
 	end
 	if core.ClassGraph then
 		MonDKP:ClassGraph_Update()
@@ -187,6 +205,7 @@ local function AddTargetToDKPTable()
 	local name = UnitName("target");
 	local _,class = UnitClass("target");
 	local c;
+	local curTime = time()
 
 	local search = MonDKP:Table_Search(MonDKP_DKPTable, name)
 
@@ -213,6 +232,11 @@ local function AddTargetToDKPTable()
 		else
 			MonDKP:ClassGraph()
 		end
+		if MonDKP_Archive[name] and MonDKP_Archive[name].deleted then
+			MonDKP_Archive[name].deleted = "Recovered"
+			MonDKP_Archive[name].edited = curTime
+			MonDKP:Print(L["YOUHAVERECOVERED"])
+		end
 	end
 end
 
@@ -226,12 +250,19 @@ function GetGuildRankList()
 	return tempTable;
 end
 
-local function reset_prev_dkp()
-	for i=1, #MonDKP_DKPTable do
-		MonDKP_DKPTable[i].previous_dkp = MonDKP_DKPTable[i].dkp
+function MonDKP:reset_prev_dkp(player)
+	if player then
+		local search = MonDKP:Table_Search(MonDKP_DKPTable, player, "player")
+
+		if search then
+			MonDKP_DKPTable[search[1][1]].previous_dkp = MonDKP_DKPTable[search[1][1]].dkp
+		end
+	else
+		for i=1, #MonDKP_DKPTable do
+			MonDKP_DKPTable[i].previous_dkp = MonDKP_DKPTable[i].dkp
+		end
 	end
 	MonDKP:FilterDKPTable(core.currentSort, "reset")
-	MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
 end
 
 local function UpdateWhitelist()
@@ -396,7 +427,7 @@ function MonDKP:ManageEntries()
 			button1 = L["YES"],
 			button2 = L["NO"],
 			OnAccept = function()
-			    reset_prev_dkp()
+			    MonDKP:reset_prev_dkp()
 			end,
 			timeout = 0,
 			whileDead = true,
@@ -577,10 +608,12 @@ function MonDKP:ManageEntries()
 						i=i+1;
 					end
 				end
-				MonDKP:Print(L["PURGELIST"].." ("..count.."):")
-				MonDKP:Print(purgeString)
-				MonDKP:FilterDKPTable(core.currentSort, "reset")
-				end,
+				if count > 0 then
+					MonDKP:Print(L["PURGELIST"].." ("..count.."):")
+					MonDKP:Print(purgeString)
+					MonDKP:FilterDKPTable(core.currentSort, "reset")
+				end
+			end,
 			timeout = 0,
 			whileDead = true,
 			hideOnEscape = true,
@@ -700,62 +733,4 @@ function MonDKP:ManageEntries()
 	else
 		MonDKP.ConfigTab3.WhitelistContainer:Hide()
 	end
-
-	local function SendDKPHistoryTable()
-		MonDKP.Sync:SendData("MonDKPBroadcast", L["DKPHISTUPDATEPROG"].."...")
-		MonDKP.Sync:SendData("MonDKPDKPLogSync", MonDKP_DKPHistory)
-	end
-
-	local function SendLootHistoryTable()
-		MonDKP.Sync:SendData("MonDKPBroadcast", L["LOOTHISTUPDATEPROG"].."...")
-		MonDKP.Sync:SendData("MonDKPLogSync", MonDKP_Loot)
-
-		C_Timer.After(3, function ()
-			SendDKPHistoryTable()
-		end)
-	end
-
-	-- Broadcast DKP Button
-	MonDKP.ConfigTab3.broadcastButton = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab3, "BOTTOMLEFT", 15, 15, L["BCASTDKPTABLEBTN"]);
-	MonDKP.ConfigTab3.broadcastButton:SetSize(140,25)
-	MonDKP.ConfigTab3.broadcastButton:SetScript("OnClick", function()
-		StaticPopupDialogs["BROADCAST_DKP"] = {
-			text = L["BROADCASTDKPTABLECONF"],
-			button1 = L["YES"],
-			button2 = L["NO"],
-			OnAccept = function()
-				MonDKP:SeedVerify_Update()
-				if core.UpToDate and core.IsOfficer then
-				    MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)
-				    core.CurrentlySyncing = true;
-
-				    C_Timer.After(3, function ()
-						SendLootHistoryTable()
-					end)
-				else
-					StaticPopupDialogs["BLOCK_BCAST"] = {
-						text = L["BLOCKOODBROADCAST"],
-						button1 = L["OK"],
-						timeout = 0,
-						whileDead = true,
-						hideOnEscape = true,
-						preferredIndex = 3,
-					}
-					StaticPopup_Show ("BLOCK_BCAST")
-				end
-			end,
-			timeout = 0,
-			whileDead = true,
-			hideOnEscape = true,
-			preferredIndex = 3,
-		}
-		StaticPopup_Show ("BROADCAST_DKP")
-	end)
-
-	MonDKP.ConfigTab3.BroadcastHeader = MonDKP.ConfigTab3:CreateFontString(nil, "OVERLAY")   -- Filters header
-	MonDKP.ConfigTab3.BroadcastHeader:ClearAllPoints();
-	MonDKP.ConfigTab3.BroadcastHeader:SetWidth(450)
-	MonDKP.ConfigTab3.BroadcastHeader:SetFontObject("MonDKPNormalLeft")
-	MonDKP.ConfigTab3.BroadcastHeader:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab3.broadcastButton, "TOPLEFT", 0, 10);
-	MonDKP.ConfigTab3.BroadcastHeader:SetText("|cffff0000"..L["WARNING"]..": "..L["BROADCASTHEADER"]);
 end

@@ -6,21 +6,19 @@ local L = core.L;
 local curReason;
 
 function MonDKP:AdjustDKP(value)
-	if core.CurrentlySyncing then
-		StaticPopupDialogs["CURRENTLY_SYNC"] = {
-			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["CURRENTLYSYNCING"],
-			button1 = L["OK"],
-			timeout = 0,
-			whileDead = true,
-			hideOnEscape = true,
-			preferredIndex = 3,
-		}
-		StaticPopup_Show ("CURRENTLY_SYNC")
-		return;
-	end
 	local adjustReason = curReason;
 	local curTime = time()
 	local c;
+	local curOfficer = UnitName("player")
+	local curIndex;
+	local newIndex;
+
+	if not MonDKP_Meta.DKP[curOfficer] then
+		MonDKP_Meta.DKP[curOfficer] = { current=0, lowest=0 }
+	end
+
+	curIndex = MonDKP_Meta.DKP[curOfficer].current
+	newIndex = tonumber(curIndex) + 1;
 
 	if not IsInRaid() then
 		c = MonDKP:GetCColors();
@@ -30,51 +28,7 @@ function MonDKP:AdjustDKP(value)
 	if curReason == L["BOSSKILLBONUS"] then adjustReason = core.CurrentRaidZone..": "..core.LastKilledBoss; end
 	if curReason == L["NEWBOSSKILLBONUS"] then adjustReason = core.CurrentRaidZone..": "..core.LastKilledBoss.." ("..L["FIRSTKILL"]..")" end
 	if (#core.SelectedData > 0 and adjustReason and adjustReason ~= L["OTHER"].." - "..L["ENTEROTHERREASONHERE"]) then
-		MonDKP:SeedVerify_Update()
-		if core.UpToDate == false and core.IsOfficer == true then
-			StaticPopupDialogs["CONFIRM_ADJUST1"] = {
-				text = "|CFFFF0000"..L["WARNING"].."|r: "..L["OUTDATEMODIFYWARN"],
-				button1 = L["YES"],
-				button2 = L["NO"],
-				OnAccept = function()
-					local tempString = "";       -- stores list of changes
-					local dkpHistoryString = ""   -- stores list for MonDKP_DKPHistory
-					for i=1, #core.SelectedData do
-						if MonDKP:Table_Search(core.WorkingTable, core.SelectedData[i]["player"]) then
-							if i < #core.SelectedData then
-								tempString = tempString.."|cff"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r, ";
-							else
-								tempString = tempString.."|cff"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r";
-							end
-							dkpHistoryString = dkpHistoryString..core.SelectedData[i]["player"]..","
-							MonDKP:DKPTable_Set(core.SelectedData[i]["player"], "dkp", value, false)
-						end
-					end
-					tinsert(MonDKP_DKPHistory, 1, {players=dkpHistoryString, dkp=value, reason=adjustReason, date=curTime})
-					MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
-					if MonDKP.ConfigTab6.history then
-						MonDKP:DKPHistory_Reset()
-					end
-					MonDKP:DKPHistory_Update()
-					local temp_table = {}
-					tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=dkpHistoryString, dkp=value, reason=adjustReason, date=curTime}})
-					MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
-					table.wipe(temp_table)
-					if (MonDKP.ConfigTab1.checkBtn[10]:GetChecked() and MonDKP.ConfigTab2.selectAll:GetChecked()) then
-						MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDDKPADJUSTBY"].." "..value.." "..L["FORREASON"]..": "..adjustReason)
-					else
-						MonDKP.Sync:SendData("MonDKPBroadcast", L["DKPADJUSTBY"].." "..value.." "..L["FORPLAYERS"]..": ")
-						MonDKP.Sync:SendData("MonDKPBroadcast", tempString)
-						MonDKP.Sync:SendData("MonDKPBroadcast", L["REASON"]..": "..adjustReason)
-					end
-				end,
-				timeout = 0,
-				whileDead = true,
-				hideOnEscape = true,
-				preferredIndex = 3,
-			}
-			StaticPopup_Show ("CONFIRM_ADJUST1")
-		elseif core.IsOfficer then
+		if core.IsOfficer then
 			local tempString = "";       -- stores list of changes
 			local dkpHistoryString = ""   -- stores list for MonDKP_DKPHistory
 			for i=1, #core.SelectedData do
@@ -96,29 +50,22 @@ function MonDKP:AdjustDKP(value)
 					end
 				end
 			end
-			DKPTable_Update()
-			tinsert(MonDKP_DKPHistory, 1, {players=dkpHistoryString, dkp=value, reason=adjustReason, date=curTime})
-			MonDKP:UpdateSeeds()
-			MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
+			tinsert(MonDKP_DKPHistory, 1, {players=dkpHistoryString, dkp=value, reason=adjustReason, date=curTime, index=curOfficer.."-"..newIndex})
+			MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP_DKPHistory[1])
+			MonDKP_Meta.DKP[curOfficer].current = newIndex
+
 			if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
-				MonDKP:DKPHistory_Reset()
-				MonDKP:DKPHistory_Update()
+				MonDKP:DKPHistory_Update(true)
 			end
-			local temp_table = {}
-			tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=dkpHistoryString, dkp=value, reason=adjustReason, date=curTime}})
-			MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
-			table.wipe(temp_table)
+			DKPTable_Update()
 			if IsInRaid() then
-				MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDDKPADJUSTBY"].." "..value.." "..L["FORREASON"]..": "..adjustReason)
+				MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..value.." "..L["FORREASON"]..": "..adjustReason)
 			else
-				MonDKP.Sync:SendData("MonDKPBroadcast", L["DKPADJUSTBY"].." "..value.." "..L["FORPLAYERS"]..": ")
-				MonDKP.Sync:SendData("MonDKPBroadcast", tempString)
-				MonDKP.Sync:SendData("MonDKPBroadcast", L["REASON"]..": "..adjustReason)
+				MonDKP.Sync:SendData("MonDKPBCastMsg", L["DKPADJUSTBY"].." "..value.." "..L["FORPLAYERS"]..": ")
+				MonDKP.Sync:SendData("MonDKPBCastMsg", tempString)
+				MonDKP.Sync:SendData("MonDKPBCastMsg", L["REASON"]..": "..adjustReason)
 			end
 		end
-		--[[MonDKP.ConfigTab2.RaidOnlyCheck:SetChecked(false)
-		MonDKP.ConfigTab2.selectAll:SetChecked(false)
-		core.CurView = "all"--]]
 	else
 		local validation;
 		if (#core.SelectedData == 0 and not adjustReason) then
@@ -143,115 +90,64 @@ end
 
 local function DecayDKP(amount, deductionType, GetSelections)
 	local playerString = "";
+	local dkpString = "";
 	local curTime = time()
+	local curOfficer = UnitName("player")
+	local curIndex;
+	local newIndex;
 
-	MonDKP:SeedVerify_Update()
-	if core.UpToDate == false and core.IsOfficer == true then
-		StaticPopupDialogs["CONFIRM_DECAY"] = {
-			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["OUTDATEMODIFYWARN"],
-			button1 = L["YES"],
-			button2 = L["NO"],
-			OnAccept = function()
-				for key, value in ipairs(MonDKP_DKPTable) do
-					local dkp = value["dkp"]
-					local player = value["player"]
-					local amount = amount;
-					amount = tonumber(amount) / 100		-- converts percentage to a decimal
-					if amount < 0 then
-						amount = amount * -1			-- flips value to positive if officer accidently used negative number in editbox
-					end
-					local deducted;		-- stores dkp * amount percentage as a decimal (20% = 0.2)
-
-					if (GetSelections and MonDKP:Table_Search(core.SelectedData, player)) or GetSelections == false then
-						if dkp > 0 then
-							if deductionType == "percent" then
-								deducted = dkp * amount
-								dkp = MonDKP_round(dkp - deducted, MonDKP_DB.modes.rounding);
-								value["dkp"] = MonDKP_round(tonumber(dkp), MonDKP_DB.modes.rounding);
-							elseif deductionType == "points" then
-								-- do stuff for flat point deductions
-							end
-						elseif dkp < 0 and MonDKP.ConfigTab2.AddNegative:GetChecked() then
-							if deductionType == "percent" then
-								deducted = dkp * amount
-								dkp = MonDKP_round(deducted - dkp, MonDKP_DB.modes.rounding) * -1
-								value["dkp"] = MonDKP_round(tonumber(dkp), MonDKP_DB.modes.rounding)
-							elseif deductionType == "points" then
-								-- do stuff for flat point deductions
-							end	
-						end
-						playerString = playerString..player..",";
-					end
-				end
-
-				if tonumber(amount) < 0 then amount = amount * -1 end		-- flips value to positive if officer accidently used a negative number
-
-				tinsert(MonDKP_DKPHistory, {players=playerString, dkp="-"..amount.."%", reason=L["WEEKLYDECAY"], date=curTime})
-				MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
-				if MonDKP.ConfigTab6.history then
-					MonDKP:DKPHistory_Reset()
-				end
-				MonDKP:DKPHistory_Update()
-				local temp_table = {}
-				tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=playerString, dkp="-"..amount.."%", reason=L["WEEKLYDECAY"], date=curTime}})
-				MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
-				table.wipe(temp_table)
-				DKPTable_Update()
-			end,
-			timeout = 0,
-			whileDead = true,
-			hideOnEscape = true,
-			preferredIndex = 3,
-		}
-		StaticPopup_Show ("CONFIRM_DECAY")
-	else
-		for key, value in ipairs(MonDKP_DKPTable) do
-			local dkp = tonumber(value["dkp"])
-			local player = value["player"]
-			local amount = amount;
-			amount = tonumber(amount) / 100		-- converts percentage to a decimal
-			if amount < 0 then
-				amount = amount * -1			-- flips value to positive if officer accidently used negative number in editbox
-			end
-			local deducted;
-
-			if (GetSelections and MonDKP:Table_Search(core.SelectedData, player)) or GetSelections == false then
-				if dkp > 0 then
-					if deductionType == "percent" then
-						deducted = dkp * amount
-						dkp = MonDKP_round(dkp - deducted, MonDKP_DB.modes.rounding);
-						value["dkp"] = MonDKP_round(tonumber(dkp), MonDKP_DB.modes.rounding);
-					elseif deductionType == "points" then
-						-- do stuff for flat point deductions
-					end
-				elseif dkp < 0 and MonDKP.ConfigTab2.AddNegative:GetChecked() then
-					if deductionType == "percent" then
-						deducted = dkp * amount
-						dkp = MonDKP_round(deducted - dkp, MonDKP_DB.modes.rounding) * -1
-						value["dkp"] = MonDKP_round(tonumber(dkp), MonDKP_DB.modes.rounding)
-					elseif deductionType == "points" then
-						-- do stuff for flat point deductions
-					end	
-				end
-				playerString = playerString..player..",";
-			end
-		end
-
-		if tonumber(amount) < 0 then amount = amount * -1 end		-- flips value to positive if officer accidently used a negative number
-
-		tinsert(MonDKP_DKPHistory, {players=playerString, dkp="-"..amount.."%", reason=L["WEEKLYDECAY"], date=curTime})
-		MonDKP:UpdateSeeds()
-		MonDKP.Sync:SendData("MonDKPDataSync", MonDKP_DKPTable)         -- broadcast updated DKP table
-		if MonDKP.ConfigTab6.history then
-			MonDKP:DKPHistory_Reset()
-		end
-		MonDKP:DKPHistory_Update()
-		local temp_table = {}
-		tinsert(temp_table, {seed = MonDKP_DKPHistory.seed, {players=playerString, dkp="-"..amount.."%", reason=L["WEEKLYDECAY"], date=curTime}})
-		MonDKP.Sync:SendData("MonDKPDKPAward", temp_table[1])
-		table.wipe(temp_table)
-		DKPTable_Update()
+	if not MonDKP_Meta.DKP[curOfficer] then
+		MonDKP_Meta.DKP[curOfficer] = { current=0, lowest=0 }
 	end
+
+	curIndex = MonDKP_Meta.DKP[curOfficer].current
+	newIndex = tonumber(curIndex) + 1;
+
+	for key, value in ipairs(MonDKP_DKPTable) do
+		local dkp = tonumber(value["dkp"])
+		local player = value["player"]
+		local amount = amount;
+		amount = tonumber(amount) / 100		-- converts percentage to a decimal
+		if amount < 0 then
+			amount = amount * -1			-- flips value to positive if officer accidently used negative number in editbox
+		end
+		local deducted;
+
+		if (GetSelections and MonDKP:Table_Search(core.SelectedData, player)) or GetSelections == false then
+			if dkp > 0 then
+				if deductionType == "percent" then
+					deducted = dkp * amount
+					dkp = dkp - deducted
+					value["dkp"] = MonDKP_round(tonumber(dkp), MonDKP_DB.modes.rounding);
+					dkpString = dkpString.."-"..MonDKP_round(deducted, MonDKP_DB.modes.rounding)..",";
+					playerString = playerString..player..",";
+				elseif deductionType == "points" then
+					-- do stuff for flat point deductions
+				end
+			elseif dkp < 0 and MonDKP.ConfigTab2.AddNegative:GetChecked() then
+				if deductionType == "percent" then
+					deducted = dkp * amount
+					dkp = (deducted - dkp) * -1
+					value["dkp"] = MonDKP_round(tonumber(dkp), MonDKP_DB.modes.rounding)
+					dkpString = dkpString.."-"..MonDKP_round(deducted, MonDKP_DB.modes.rounding)..",";
+					playerString = playerString..player..",";
+				elseif deductionType == "points" then
+					-- do stuff for flat point deductions
+				end	
+			end
+		end
+	end
+	dkpString = dkpString.."-"..amount.."%";
+
+	if tonumber(amount) < 0 then amount = amount * -1 end		-- flips value to positive if officer accidently used a negative number
+
+	MonDKP_Meta.DKP[curOfficer].current = newIndex; 		-- updates current index
+	tinsert(MonDKP_DKPHistory, 1, {players=playerString, dkp=dkpString, reason=L["WEEKLYDECAY"], date=curTime, index=curOfficer.."-"..newIndex})
+	MonDKP.Sync:SendData("MonDKPDecay", MonDKP_DKPHistory[1])
+	if MonDKP.ConfigTab6.history then
+		MonDKP:DKPHistory_Update(true)
+	end
+	DKPTable_Update()
 end
 
 local function RaidTimerPopout_Create()
@@ -572,11 +468,11 @@ function MonDKP:AdjustDKPTab_Create()
 			for i=1, #core.SelectedData do
 				local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[i].player)
 
-					if classSearch then
-						c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
-					else
-						c = { hex="ffffff" }
-					end
+				if classSearch then
+					c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+				else
+					c = { hex="ffffff" }
+				end
 				if i == 1 then
 					selected = selected.."|cff"..c.hex..core.SelectedData[i].player.."|r"
 				else
@@ -836,11 +732,11 @@ function MonDKP:AdjustDKPTab_Create()
 							local setOnTime = tostring(MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:GetChecked());
 							local setGiveEnd = tostring(MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:GetChecked());
 							local setStandby = tostring(MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:GetChecked());
-							MonDKP.Sync:SendData("MonDKPRaidTimer", "start,false "..setInterval.. " "..setBonus.." "..setOnTime.." "..setGiveEnd.." "..setStandby)
+							MonDKP.Sync:SendData("MonDKPRaidTime", "start,false "..setInterval.. " "..setBonus.." "..setOnTime.." "..setGiveEnd.." "..setStandby)
 							if MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:GetText() == L["CONTINUERAID"] then
-								MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDRESUME"])
+								MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDRESUME"])
 							else
-								MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDSTART"])
+								MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDSTART"])
 								MonDKP.ConfigTab2.RaidTimerContainer.Output:SetText("|cff00ff0000|r")
 							end
 							MonDKP:StartRaidTimer(false)
@@ -857,11 +753,11 @@ function MonDKP:AdjustDKPTab_Create()
 					local setOnTime = tostring(MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:GetChecked());
 					local setGiveEnd = tostring(MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:GetChecked());
 					local setStandby = tostring(MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:GetChecked());
-					MonDKP.Sync:SendData("MonDKPRaidTimer", "start,false "..setInterval.. " "..setBonus.." "..setOnTime.." "..setGiveEnd.." "..setStandby)
+					MonDKP.Sync:SendData("MonDKPRaidTime", "start,false "..setInterval.. " "..setBonus.." "..setOnTime.." "..setGiveEnd.." "..setStandby)
 					if MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:GetText() == L["CONTINUERAID"] then
-						MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDRESUME"])
+						MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDRESUME"])
 					else
-						MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDSTART"])
+						MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDSTART"])
 						MonDKP.ConfigTab2.RaidTimerContainer.Output:SetText("|cff00ff0000|r")
 					end
 					MonDKP:StartRaidTimer(false)
@@ -872,8 +768,8 @@ function MonDKP:AdjustDKPTab_Create()
 					button1 = L["YES"],
 					button2 = L["NO"],
 					OnAccept = function()
-						MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDTIMERCONCLUDE"].." "..MonDKP.ConfigTab2.RaidTimerContainer.Output:GetText().."!")
-						MonDKP.Sync:SendData("MonDKPRaidTimer", "stop")
+						MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDTIMERCONCLUDE"].." "..MonDKP.ConfigTab2.RaidTimerContainer.Output:GetText().."!")
+						MonDKP.Sync:SendData("MonDKPRaidTime", "stop")
 						MonDKP:StopRaidTimer()
 					end,
 					timeout = 0,
@@ -907,8 +803,8 @@ function MonDKP:AdjustDKPTab_Create()
 				local setGiveEnd = tostring(MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:GetChecked());
 				local setStandby = tostring(MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:GetChecked());
 
-				MonDKP.Sync:SendData("MonDKPRaidTimer", "start,true "..setInterval.. " "..setBonus.." "..setOnTime.." "..setGiveEnd.." "..setStandby)
-				MonDKP.Sync:SendData("MonDKPBroadcast", L["RAIDPAUSE"].." "..MonDKP.ConfigTab2.RaidTimerContainer.Output:GetText().."!")
+				MonDKP.Sync:SendData("MonDKPRaidTime", "start,true "..setInterval.. " "..setBonus.." "..setOnTime.." "..setGiveEnd.." "..setStandby)
+				MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDPAUSE"].." "..MonDKP.ConfigTab2.RaidTimerContainer.Output:GetText().."!")
 				MonDKP:StartRaidTimer(true)
 			end
 		end)

@@ -189,9 +189,16 @@ end
 
 function MonDKP:BidInterface_Toggle()
 	core.BidInterface = core.BidInterface or MonDKP:BidInterface_Create()
-	if core.BidInterface:IsShown() then core.BidInterface:Hide(); end
 	local f = core.BidInterface;
 	local mode = MonDKP_DB.modes.mode;
+
+	if MonDKP_DB.bidintpos then
+		core.BidInterface:ClearAllPoints()
+		local a = MonDKP_DB.bidintpos
+		core.BidInterface:SetPoint(a.point, a.relativeTo, a.relativePoint, a.x, a.y)
+	end
+
+	if core.BidInterface:IsShown() then core.BidInterface:Hide(); end
 
 	if MonDKP_DB.modes.BroadcastBids and not core.BiddingWindow then
 		core.BidInterface:SetHeight(500);
@@ -242,11 +249,19 @@ function MonDKP:BidInterface_Toggle()
 			f.headerButtons.dkp.t:SetText(L["EXPECTEDROLL"])
 			f.headerButtons.dkp.t:Show();
 		end
+	end
 
+	if MonDKP_DB.modes.BroadcastBids then
 		BidInterface_Update()
 	end
 
-	
+	if not MonDKP_DB.modes.BroadcastBids or core.BiddingWindow then
+		core.BidInterface:SetHeight(210);
+		core.BidInterface.bidTable:Hide();
+	else
+		core.BidInterface:SetHeight(500);
+		core.BidInterface.bidTable:Show();
+	end	
 
 	core.BidInterface:SetShown(true)
 end
@@ -302,13 +317,13 @@ function MonDKP:CurrItem_Set(item, value, icon, BidHost)
 			else
 				message = "!bid";
 			end
-			MonDKP.Sync:SendData("MonDKPBidSubmit", tostring(message))
+			MonDKP.Sync:SendData("MonDKPBidder", tostring(message))
 			--SendChatMessage(message, "WHISPER", nil, BidHost)
 			core.BidInterface.Bid:ClearFocus();
 		end)
 
 		core.BidInterface.CancelBid:SetScript("OnClick", function()
-			MonDKP.Sync:SendData("MonDKPBidSubmit", "!bid cancel")
+			MonDKP.Sync:SendData("MonDKPBidder", "!bid cancel")
 			--SendChatMessage("!bid cancel", "WHISPER", nil, BidHost)
 			core.BidInterface.Bid:ClearFocus();
 		end)
@@ -353,7 +368,18 @@ function MonDKP:BidInterface_Create()
 	f:EnableMouse(true);
 	f:RegisterForDrag("LeftButton");
 	f:SetScript("OnDragStart", f.StartMoving);
-	f:SetScript("OnDragStop", f.StopMovingOrSizing);
+	f:SetScript("OnDragStop", function()
+		f:StopMovingOrSizing();
+		local point, relativeTo, relativePoint ,xOff,yOff = f:GetPoint(1)
+		if not MonDKP_DB.bidintpos then
+			MonDKP_DB.bidintpos = {}
+		end
+		MonDKP_DB.bidintpos.point = point;
+		MonDKP_DB.bidintpos.relativeTo = relativeTo;
+		MonDKP_DB.bidintpos.relativePoint = relativePoint;
+		MonDKP_DB.bidintpos.x = xOff;
+		MonDKP_DB.bidintpos.y = yOff;
+	end);
 	f:SetScript("OnHide", function ()
 		if core.BiddingInProgress then
 			MonDKP:Print(L["CLOSEDBIDINPROGRESS"])
@@ -379,6 +405,30 @@ function MonDKP:BidInterface_Create()
 
 	f.closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton")
 	f.closeBtn:SetPoint("CENTER", f.closeContainer, "TOPRIGHT", -14, -14)
+
+	if MonDKP_DB.defaults.AutoOpenBid == nil then
+		MonDKP_DB.defaults.AutoOpenBid = true
+	end
+
+	f.AutoOpenCheckbox = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
+	f.AutoOpenCheckbox:SetChecked(MonDKP_DB.defaults.AutoOpenBid)
+	f.AutoOpenCheckbox:SetScale(0.6);
+	f.AutoOpenCheckbox.text:SetText("|cff5151de"..L["AUTOOPEN"].."|r");
+	f.AutoOpenCheckbox.text:SetScale(1.4);
+	f.AutoOpenCheckbox.text:SetFontObject("MonDKPSmallLeft")
+	f.AutoOpenCheckbox:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -10);
+	f.AutoOpenCheckbox:SetScript("OnClick", function(self)
+		MonDKP_DB.defaults.AutoOpenBid = self:GetChecked()
+	end)
+	f.AutoOpenCheckbox:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_LEFT");
+		GameTooltip:SetText(L["AUTOOPEN"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["AUTOOPENTTDESC"], 1.0, 1.0, 1.0, true);
+		GameTooltip:Show();
+	end)
+	f.AutoOpenCheckbox:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
 
 	f.LootTableIcons = {}
 	f.LootTableButtons = {}
