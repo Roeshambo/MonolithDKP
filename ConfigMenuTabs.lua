@@ -62,7 +62,9 @@ local function Tab_OnClick(self)
 		self:GetParent().ScrollFrame.ScrollBar:Hide()
 	end
 
-	if self:GetID() == 6 then
+	if self:GetID() == 5 then
+		MonDKP:LootHistory_Update(L["NOFILTER"]);
+	elseif self:GetID() == 6 then
 		MonDKP:DKPHistory_Update(true)
 	end
 
@@ -236,7 +238,6 @@ function MonDKP:ConfigMenuTabs()
 	MonDKP.ConfigTab1.checkBtn[12]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[11], "TOPRIGHT", 65, 0);
 
 	core.ClassGraph = MonDKP:ClassGraph()  -- draws class graph on tab1
-	
 
 	---------------------------------------
 	-- Adjust DKP TAB

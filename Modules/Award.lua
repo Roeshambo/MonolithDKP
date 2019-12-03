@@ -68,7 +68,7 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 				MonDKP_Loot[search_reassign[1][1]].deletedby = curOfficer.."-"..newIndex
 				MonDKP_DKPTable[reimburse[1][1]].dkp = MonDKP_DKPTable[reimburse[1][1]].dkp + deleted.cost
 				table.insert(MonDKP_Loot, 1, deleted)
-				MonDKP.Sync:SendData("MonDKPDelLoot", MonDKP_Loot[1])
+				MonDKP.Sync:SendData("MDKPDelLoot", MonDKP_Loot[1])
 				newIndex = newIndex + 1
 			end
 		end
@@ -120,7 +120,7 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 		end
 		
 		MonDKP:BidsSubmitted_Clear()
-		MonDKP.Sync:SendData("MonDKPLootDist", MonDKP_Loot[1])
+		MonDKP.Sync:SendData("MDKPLootDist", MonDKP_Loot[1])
 		MonDKP_Meta.Loot[curOfficer].current = newIndex;		-- updates current index
 		MonDKP:DKPTable_Set(winner, "dkp", MonDKP_round(cost, MonDKP_DB.modes.rounding), true)
 		MonDKP:LootHistory_Reset();
@@ -166,11 +166,11 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 			end
 				end
 				
-			if mode == "Zero Sum" then
-				MonDKP_DB.modes.ZeroSumBank.balance = MonDKP_DB.modes.ZeroSumBank.balance + tonumber(cost)
-				table.insert(MonDKP_DB.modes.ZeroSumBank, { loot = loot, cost = tonumber(cost) })
+			if mode == "Zero Sum" and not reassign then
+				MonDKP_DB.modes.ZeroSumBank.balance = MonDKP_DB.modes.ZeroSumBank.balance + -tonumber(cost)
+				table.insert(MonDKP_DB.modes.ZeroSumBank, { loot = loot, cost = -tonumber(cost) })
 				MonDKP:ZeroSumBank_Update()
-				MonDKP.Sync:SendData("MonDKPZSumBank", MonDKP_DB.modes.ZeroSumBank)
+				MonDKP.Sync:SendData("MDKPZeroSumBank", MonDKP_DB.modes.ZeroSumBank)
 			end
 			core.BiddingWindow:Hide()
 			ClearBidWindow()

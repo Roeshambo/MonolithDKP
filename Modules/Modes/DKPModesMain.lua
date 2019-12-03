@@ -285,6 +285,16 @@ function MonDKP:DKPModes_Main()
     	MonDKP_DB.modes.AntiSnipe = f.DKPModesMain.AntiSnipe:GetNumber()
     	self:ClearFocus()
     end)
+    f.DKPModesMain.AntiSnipe:SetScript("OnKeyUp", function(self)    -- clears focus on esc
+    	if f.DKPModesMain.AntiSnipe:GetText():match("%a+") then
+    		f.DKPModesMain.AntiSnipe:SetNumber(f.DKPModesMain.AntiSnipe:GetNumber() or 0)
+    		if f.DKPModesMain.AntiSnipe:GetText() == "0" then
+    			f.DKPModesMain.AntiSnipe:HighlightText()
+    		end
+    	else
+	    	MonDKP_DB.modes.AntiSnipe = f.DKPModesMain.AntiSnipe:GetNumber()
+	    end
+    end)
     f.DKPModesMain.AntiSnipe:SetScript("OnEnter", function(self)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 		GameTooltip:SetText(L["ANTISNIPE"], 0.25, 0.75, 0.90, 1, true);
@@ -634,6 +644,16 @@ function MonDKP:DKPModes_Main()
     f.DKPModesMain.MaxBid:SetScript("OnLeave", function(self)
       GameTooltip:Hide()
     end)
+    f.DKPModesMain.MaxBid:SetScript("OnKeyUp", function(self)    -- clears focus on esc
+    	if self:GetText():match("%a+") then
+    		self:SetNumber(self:GetNumber() or 0)
+    		if self:GetText() == "0" then
+    			self:HighlightText()
+    		end
+    	else
+	    	MonDKP_DB.modes.MaximumBid = f.DKPModesMain.MaxBid:GetNumber()
+	    end
+    end)
 
     -- Min Roll Header
     f.DKPModesMain.MaxBid.Header = f.DKPModesMain.MaxBid:CreateFontString(nil, "OVERLAY")
@@ -969,12 +989,12 @@ function MonDKP:DKPModes_Main()
 				table.insert(temptable1, MonDKP_DB.modes)
 				table.insert(temptable1, MonDKP_DB.DKPBonus)
 				table.insert(temptable1, MonDKP_DB.raiders)
-				MonDKP.Sync:SendData("MonDKPDKPModes", temptable1)
+				MonDKP.Sync:SendData("MDKPDKPModes", temptable1)
 				MonDKP:Print(L["DKPMODESENTCONF"])
 				local temptable2 = {}
 	            table.insert(temptable2, MonDKP_DB.MinBidBySlot)
 	            table.insert(temptable2, MonDKP_MinBids)
-	            MonDKP.Sync:SendData("MonDKPMinBid", temptable2)
+	            MonDKP.Sync:SendData("MDKPMinBid", temptable2)
 			end,
 			timeout = 0,
 			whileDead = true,

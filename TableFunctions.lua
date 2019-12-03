@@ -8,7 +8,7 @@ local menuFrame = CreateFrame("Frame", "MonDKPDKPTableMenuFrame", UIParent, "UID
 local ConvToRaidEvent = CreateFrame("Frame", "MonDKPConvToRaidEventsFrame");
 local InvCount;
 local LastSelection = 0;
-local SyncTimer = 0
+local CooldownTimer = 0
 
 function MonDKPSelectionCount_Update()
 	if #core.SelectedData == 0 then
@@ -23,10 +23,10 @@ function MonDKPSelectionCount_Update()
 end
 
 local function CountDown(time)
-	if time then SyncTimer = time end
-	if SyncTimer > 0 then
+	if time then CooldownTimer = time end
+	if CooldownTimer > 0 then
 		C_Timer.After(1, function()
-			SyncTimer = SyncTimer - 1
+			CooldownTimer = CooldownTimer - 1
 			CountDown()
 		end)
 	end
@@ -139,8 +139,8 @@ local function DisplayUserHistory(self, player)
 	end)
 
 	if #PlayerTable > 0 then
-		if #PlayerTable > core.settings.defaults["TooltipHistoryCount"] then
-			RowCount = core.settings.defaults["TooltipHistoryCount"]
+		if #PlayerTable > MonDKP_DB.defaults.TooltipHistoryCount then
+			RowCount = MonDKP_DB.defaults.TooltipHistoryCount
 		else
 			RowCount = #PlayerTable;
 		end
@@ -210,13 +210,13 @@ local function EditStandbyList(row, arg1)
 				end
 			end
 		end
-		MonDKP.Sync:SendData("MonDKPStand", MonDKP_Standby)
+		MonDKP.Sync:SendData("MDKPStand", MonDKP_Standby)
 		DKPTable_Update()
 	else
 		table.wipe(MonDKP_Standby)
 		core.WorkingTable = {}
 		DKPTable_Update()
-		MonDKP.Sync:SendData("MonDKPStand", MonDKP_Standby)
+		MonDKP.Sync:SendData("MDKPStand", MonDKP_Standby)
 	end
 	if #core.WorkingTable == 0 then
 		core.WorkingTable = CopyTable(MonDKP_DKPTable);
@@ -288,6 +288,7 @@ function MonDKP:ViewLimited(raid, standby, raiders)
 		end
 
 		core.SelectedData = {}
+		LastSelection = 0
 		MonDKPSelectionCount_Update()
 		core.WorkingTable = CopyTable(tempTable)
 		table.wipe(tempTable)
@@ -388,12 +389,21 @@ local function RightClickMenu(self)
 		{ text = L["MANAGECORELIST"], notCheckable = true, hasArrow = true,
 				menuList = {}
 		}, --11
+		{ text = " ", notCheckable = true, disabled = true}, --12
 		{ text = L["RESETPREVIOUS"], notCheckable = true, func = function()
 			for i=1, #core.SelectedData do
+				print(#core.SelectedData)
+				print(i)
+				print(i, " -> ", core.SelectedData[i].player)
 				MonDKP:reset_prev_dkp(core.SelectedData[i].player)
 			end
+			MonDKP:FilterDKPTable(core.currentSort)
 		end 
-		}, --12
+		}, --13
+		{ text = L["VALIDATETABLES"], notCheckable = true, func = function()
+			MonDKP:ValidateLootTable()
+		end 
+		}, --14
 	}
 
 	if #core.SelectedData < 2 then
@@ -552,7 +562,7 @@ local function RightClickMenu(self)
 	table.wipe(tempTable);
 
 	if core.IsOfficer == false then
-		for i=8, #menu-1 do
+		for i=8, #menu-2 do
 			menu[i].disabled = true
 		end
 
@@ -659,7 +669,7 @@ function DKPTable_Update()
 			local CurPlayer = core.WorkingTable[index].player;
 			
 			if core.CenterSort == "rank" then
-				local SetRank = MonDKP:Table_Search(MonDKP_DKPTable, core.WorkingTable[index].player)
+				local SetRank = MonDKP:Table_Search(MonDKP_DKPTable, core.WorkingTable[index].player, "player")
 				rank, rankIndex = MonDKP:GetGuildRank(core.WorkingTable[index].player)
 				MonDKP_DKPTable[SetRank[1][1]].rank = rankIndex or 20;
 				MonDKP_DKPTable[SetRank[1][1]].rankName = rank or "None";
@@ -676,11 +686,17 @@ function DKPTable_Update()
 				if core.WorkingTable[index].spec then
 					row.DKPInfo[2]:SetText(core.WorkingTable[index].spec)
 				else
-					row.DKPInfo[2]:SetText("No Spec Reported")
+					row.DKPInfo[2]:SetText(L["NOSPECREPORTED"])
+					local SetSpec = MonDKP:Table_Search(MonDKP_DKPTable, core.WorkingTable[index].player, "player")		-- writes "No Spec Reported" to players profile if spec field doesn't exist
+					MonDKP_DKPTable[SetSpec[1][1]].spec = L["NOSPECREPORTED"]
 				end
 			elseif core.CenterSort == "role" then
 				if core.WorkingTable[index].role then
 					row.DKPInfo[2]:SetText(core.WorkingTable[index].role)
+				else
+					row.DKPInfo[2]:SetText(L["NOROLEDETECTED"])
+					local SetRole = MonDKP:Table_Search(MonDKP_DKPTable, core.WorkingTable[index].player, "player")		-- writes "No Role Detected" to players profile if role field doesn't exist
+					MonDKP_DKPTable[SetRole[1][1]].role = L["NOROLEDETECTED"]
 				end
 			end
 			
@@ -791,11 +807,11 @@ function MonDKP:DKPTable_Create()
 		GameTooltip:Hide()
 	end)
 	MonDKP.DKPTable.SeedVerify:SetScript("OnMouseDown", function()
-		if SyncTimer == 0 then
+		if CooldownTimer == 0 then
 			MonDKP:UpdateQuery()
 			CountDown(30)
 		else
-			MonDKP:Print(L["YOUMUSTWAIT"].." "..SyncTimer.." "..L["MORESECONDSTO"])
+			MonDKP:Print(L["YOUMUSTWAIT"].." "..CooldownTimer.." "..L["MORESECONDSTO"])
 		end
 
 	end)

@@ -22,7 +22,7 @@ function MonDKP:LootTable_Set(lootList)
 	lootTable = lootList
 end
 
-local function SortBidTable()             -- sorts the Loot History Table by date
+local function SortBidTable()
 	mode = MonDKP_DB.modes.mode;
 	table.sort(Bids_Submitted, function(a, b)
 	    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
@@ -66,6 +66,10 @@ local function UpdateBidderWindow()
 	local i = 1;
 	local mode = MonDKP_DB.modes.mode;
 	local _,_,_,_,_,_,_,_,_,icon = GetItemInfo(CurrItemForBid)
+
+	if not core.BidInterface then
+		core.BidInterface = core.BidInterface or MonDKP:BidInterface_Create()
+	end
 
 	for j=2, 10 do
 		core.BidInterface.LootTableIcons[j]:Hide()
@@ -129,6 +133,8 @@ function BidInterface_Update()
 	local index, row
     local offset = FauxScrollFrame_GetOffset(core.BidInterface.bidTable) or 0
     local rank;
+
+	if not core.BidInterface.bidTable:IsShown() then return end
 
     SortBidTable()
     for i=1, numrows do
@@ -252,7 +258,25 @@ function MonDKP:BidInterface_Toggle()
 	end
 
 	if MonDKP_DB.modes.BroadcastBids then
-		BidInterface_Update()
+		local pass, err = pcall(BidInterface_Update)
+
+		if not pass then
+			print(err)
+			core.MonDKPUI:SetShown(false)
+			StaticPopupDialogs["SUGGEST_RELOAD"] = {
+				text = "|CFFFF0000"..L["WARNING"].."|r: "..L["MUSTRELOADUI"],
+				button1 = L["YES"],
+				button2 = L["NO"],
+				OnAccept = function()
+					ReloadUI();
+				end,
+				timeout = 0,
+				whileDead = true,
+				hideOnEscape = true,
+				preferredIndex = 3,
+			}
+			StaticPopup_Show ("SUGGEST_RELOAD")
+		end
 	end
 
 	if not MonDKP_DB.modes.BroadcastBids or core.BiddingWindow then
@@ -317,13 +341,13 @@ function MonDKP:CurrItem_Set(item, value, icon, BidHost)
 			else
 				message = "!bid";
 			end
-			MonDKP.Sync:SendData("MonDKPBidder", tostring(message))
+			MonDKP.Sync:SendData("MDKPBidder", tostring(message))
 			--SendChatMessage(message, "WHISPER", nil, BidHost)
 			core.BidInterface.Bid:ClearFocus();
 		end)
 
 		core.BidInterface.CancelBid:SetScript("OnClick", function()
-			MonDKP.Sync:SendData("MonDKPBidder", "!bid cancel")
+			MonDKP.Sync:SendData("MDKPBidder", "!bid cancel")
 			--SendChatMessage("!bid cancel", "WHISPER", nil, BidHost)
 			core.BidInterface.Bid:ClearFocus();
 		end)
@@ -346,7 +370,26 @@ end
 
 function MonDKP:Bids_Set(entry)
 	Bids_Submitted = entry;
-	BidInterface_Update();
+	
+	local pass, err = pcall(BidInterface_Update)
+
+	if not pass then
+		print(err)
+		core.MonDKPUI:SetShown(false)
+		StaticPopupDialogs["SUGGEST_RELOAD"] = {
+			text = "|CFFFF0000"..L["WARNING"].."|r: "..L["MUSTRELOADUI"],
+			button1 = L["YES"],
+			button2 = L["NO"],
+			OnAccept = function()
+				ReloadUI();
+			end,
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = true,
+			preferredIndex = 3,
+		}
+		StaticPopup_Show ("SUGGEST_RELOAD")
+	end
 end
 
 function MonDKP:BidInterface_Create()
@@ -380,11 +423,6 @@ function MonDKP:BidInterface_Create()
 		MonDKP_DB.bidintpos.x = xOff;
 		MonDKP_DB.bidintpos.y = yOff;
 	end);
-	f:SetScript("OnHide", function ()
-		if core.BiddingInProgress then
-			MonDKP:Print(L["CLOSEDBIDINPROGRESS"])
-		end
-	end)
 	f:SetScript("OnMouseDown", function(self)
 		self:SetFrameLevel(10)
 		if core.ModesWindow then core.ModesWindow:SetFrameLevel(6) end
@@ -393,7 +431,7 @@ function MonDKP:BidInterface_Create()
 	tinsert(UISpecialFrames, f:GetName()); -- Sets frame to close on "Escape"
 
 	  -- Close Button
-	f.closeContainer = CreateFrame("Frame", "MonDKPBidderWindowCloseButtonContainer", f)
+	f.closeContainer = CreateFrame("Frame", "MDKPBidderWindowCloseButtonContainer", f)
 	f.closeContainer:SetPoint("CENTER", f, "TOPRIGHT", -4, 0)
 	f.closeContainer:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
@@ -446,7 +484,7 @@ function MonDKP:BidInterface_Create()
 		f.LootTableIcons[i]:SetColorTexture(0, 0, 0, 1)
 		f.LootTableIcons[i]:SetSize(35, 35);
 		f.LootTableIcons[i]:Hide();
-		f.LootTableButtons[i] = CreateFrame("Button", "MonDKPBidderLootTableButton", f)
+		f.LootTableButtons[i] = CreateFrame("Button", "MDKPBidderLootTableButton", f)
 		f.LootTableButtons[i]:SetPoint("TOPLEFT", f.LootTableIcons[i], "TOPLEFT", 0, 0);
 		f.LootTableButtons[i]:SetSize(35, 35);
 		f.LootTableButtons[i]:Hide()
@@ -579,7 +617,7 @@ function MonDKP:BidInterface_Create()
 	f.headerButtons = {}
 	mode = MonDKP_DB.modes.mode;
 
-	f.BidTable_Headers = CreateFrame("Frame", "MonDKPBidderTableHeaders", f.bidTable)
+	f.BidTable_Headers = CreateFrame("Frame", "MDKPBidderTableHeaders", f.bidTable)
 	f.BidTable_Headers:SetSize(370, 22)
 	f.BidTable_Headers:SetPoint("BOTTOMLEFT", f.bidTable, "TOPLEFT", 0, 1)
 	f.BidTable_Headers:SetBackdrop({
@@ -621,6 +659,12 @@ function MonDKP:BidInterface_Create()
 	end; 		--hides table if broadcasting is set to false.
 
 	f:Hide();
+
+	f:SetScript("OnHide", function ()
+		if core.BiddingInProgress then
+			MonDKP:Print(L["CLOSEDBIDINPROGRESS"])
+		end
+	end)
 
 	return f;
 end

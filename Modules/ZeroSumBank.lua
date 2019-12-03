@@ -54,8 +54,10 @@ local function ZeroSumDistribution()
 			MonDKP:DKPHistory_Update(true)
 		end
 
-		MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP_DKPHistory[1])
-		MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..distribution.." "..L["AMONG"].." "..#VerifyTable.." "..L["PLAYERSFORREASON"]..": "..reason)
+		MonDKP_Meta.DKP[UnitName("player")].current = newIndex
+
+		MonDKP.Sync:SendData("MDKPDKPDist", MonDKP_DKPHistory[1])
+		MonDKP.Sync:SendData("MDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..distribution.." "..L["AMONG"].." "..#VerifyTable.." "..L["PLAYERSFORREASON"]..": "..reason)
 		MonDKP:Print("Raid DKP Adjusted by "..distribution.." "..L["AMONG"].." "..#VerifyTable.." "..L["PLAYERSFORREASON"]..": "..reason)
 		
 		table.wipe(VerifyTable)
@@ -63,7 +65,7 @@ local function ZeroSumDistribution()
 		MonDKP_DB.modes.ZeroSumBank.balance = 0
 		core.ZeroSumBank.LootFrame.LootList:SetText("")
 		DKPTable_Update()
-		MonDKP.Sync:SendData("MonDKPZSumBank", MonDKP_DB.modes.ZeroSumBank)
+		MonDKP.Sync:SendData("MDKPZeroSumBank", MonDKP_DB.modes.ZeroSumBank)
 		MonDKP:ZeroSumBank_Update()
 		core.ZeroSumBank:Hide();
 	else

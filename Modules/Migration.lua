@@ -41,9 +41,10 @@ function MonDKP:MigrateTables()
 
 			MonDKP_Loot[i].index = UnitName("player").."-"..MonDKP_Meta.Loot[UnitName("player")].current
 		end
-		if MonDKP_Loot[i].cost > 0 then
-			MonDKP_Loot[i].cost = MonDKP_Loot[i].cost * -1
+		if tonumber(MonDKP_Loot[i].cost) > 0 then
+			MonDKP_Loot[i].cost = tonumber(MonDKP_Loot[i].cost) * -1
 		end
+		table.insert(EntryTableTemp, MonDKP_Loot[i])
 	end
 
 	for i=1, #MonDKP_DKPHistory do
@@ -59,12 +60,6 @@ function MonDKP:MigrateTables()
 
 			MonDKP_DKPHistory[i].index = UnitName("player").."-"..MonDKP_Meta.DKP[UnitName("player")].current
 		end
-	end
-
-	for i=1, #MonDKP_Loot do
-		table.insert(EntryTableTemp, MonDKP_Loot[i])
-	end
-	for i=1, #MonDKP_DKPHistory do
 		table.insert(EntryTableTemp, MonDKP_DKPHistory[i])
 	end
 
@@ -77,9 +72,9 @@ function MonDKP:MigrateTables()
 			local search = MonDKP:Table_Search(DKPTableTemp, EntryTableTemp[i].player, "player")
 
 			if search then
-				DKPTableTemp[search[1][1]].dkp = DKPTableTemp[search[1][1]].dkp + EntryTableTemp[i].cost
+				DKPTableTemp[search[1][1]].dkp = DKPTableTemp[search[1][1]].dkp + tonumber(EntryTableTemp[i].cost)
 			else
-				table.insert(DKPTableTemp, { player=EntryTableTemp[i].player, dkp=EntryTableTemp[i].cost })
+				table.insert(DKPTableTemp, { player=EntryTableTemp[i].player, dkp=tonumber(EntryTableTemp[i].cost) })
 			end
 		elseif EntryTableTemp[i].reason then
 			local players = {strsplit(",", strsub(EntryTableTemp[i].players, 1, -2))}
@@ -179,8 +174,6 @@ function MonDKP:MigrateTables()
 	end)
 
 	local leader = MonDKP:GetGuildRankGroup(1) 	-- get leader index
-	local _,_,_,_,_,_,note = GetGuildRosterInfo(leader[1].index) -- extract leader public note
-	local offCheck = string.match(note, "{MonDKP=(%a+)}")	-- extract officer name (if any)
 	GuildRosterSetPublicNote(leader[1].index, "{MonDKP="..UnitName("player").."}")
 end
 
@@ -234,7 +227,7 @@ function MonDKP:MigrationFrame()
 				button2 = L["NO"],
 				OnAccept = function()
 					MonDKP:MigrateTables()
-					MonDKP.Sync:SendData("MonDKPMigrated", "Swap")
+					MonDKP.Sync:SendData("MDKPMigrated", "Swap")
 					ReloadUI()
 				end,
 				timeout = 0,

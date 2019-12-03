@@ -32,7 +32,7 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
 	end
 
 	if #MonDKP_Whitelist > 0 then
-		MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP_Whitelist)   -- broadcasts whitelist any time the window is opened if one exists (help ensure everyone has the information even if they were offline when it was created)
+		MonDKP.Sync:SendData("MDKPWhitelist", MonDKP_Whitelist)   -- broadcasts whitelist any time the window is opened if one exists (help ensure everyone has the information even if they were offline when it was created)
 	end
 
 	if core.CurSubView == "raid" then
@@ -47,17 +47,13 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
 		MonDKP:ViewLimited()
 	end
 
-	for i=1, #MonDKP_DKPTable do
-		if MonDKP_DKPTable[i].class == "NONE" then
-			MonDKP.Sync:SendData("MonDKPProfileReq", MonDKP_DKPTable[i].player)
-		end
-	end
-
 	core.MonDKPUI:SetScale(MonDKP_DB.defaults.MonDKPScaleSize)
 	if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
 		MonDKP:DKPHistory_Update(true)
+	elseif MonDKP.ConfigTab5 and MonDKP.ConfigTab5:IsShown() then
+		MonDKP:LootHistory_Update(L["NOFILTER"]);
 	end
-	MonDKP:LootHistory_Update(L["NOFILTER"]);
+
 	MonDKP:StatusVerify_Update()
 	DKPTable_Update()
 end
@@ -159,7 +155,7 @@ function MonDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable 
 	end
 
 	if reset and reset ~= "Clear" then                         -- reset is useful for check boxes when you don't want it repeatedly reversing the sort
-		button.Ascend = true
+		button.Ascend = button.Ascend
 	else
 		button.Ascend = not button.Ascend
 	end

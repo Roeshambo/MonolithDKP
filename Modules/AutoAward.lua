@@ -57,14 +57,14 @@ function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to awar
 		if tempList ~= "" or tempList2 ~= "" then
 			if (phase == 1 or phase == 3) and tempList ~= "" then
 				tinsert(MonDKP_DKPHistory, 1, {players=tempList, dkp=amount, reason=reason, date=curTime, index=curOfficer.."-"..newIndex})
-				MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..amount.." "..L["FORREASON"]..": "..reason)
-				MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP_DKPHistory[1])
+				MonDKP.Sync:SendData("MDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..amount.." "..L["FORREASON"]..": "..reason)
+				MonDKP.Sync:SendData("MDKPDKPDist", MonDKP_DKPHistory[1])
 				MonDKP_Meta.DKP[curOfficer].current = newIndex
 			end
 			if (phase == 2 or phase == 3) and tempList2 ~= "" then
 				tinsert(MonDKP_DKPHistory, 1, {players=tempList2, dkp=amount, reason=reason.." (Standby)", date=curTime+1, index=curOfficer.."-"..newIndex})
-				MonDKP.Sync:SendData("MonDKPBCastMsg", L["STANDBYADJUSTBY"].." "..amount.." "..L["FORREASON"]..": "..reason)
-				MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP_DKPHistory[1])
+				MonDKP.Sync:SendData("MDKPBCastMsg", L["STANDBYADJUSTBY"].." "..amount.." "..L["FORREASON"]..": "..reason)
+				MonDKP.Sync:SendData("MDKPDKPDist", MonDKP_DKPHistory[1])
 				if phase == 3 then
 					MonDKP_Meta.DKP[curOfficer].current = newIndex+1
 				else

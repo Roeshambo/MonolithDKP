@@ -62,7 +62,7 @@ local function Remove_Entries()
 	MonDKP:Print("Removed "..numPlayers.." player(s): "..removedUsers)
 	MonDKP:ClassGraph_Update()
 	if #deleted >0 then
-		MonDKP.Sync:SendData("MonDKPDelUsers", deleted)
+		MonDKP.Sync:SendData("MDKPDelUsers", deleted)
 	end
 end
 
@@ -262,7 +262,6 @@ function MonDKP:reset_prev_dkp(player)
 			MonDKP_DKPTable[i].previous_dkp = MonDKP_DKPTable[i].dkp
 		end
 	end
-	MonDKP:FilterDKPTable(core.currentSort, "reset")
 end
 
 local function UpdateWhitelist()
@@ -297,7 +296,7 @@ local function UpdateWhitelist()
 	else
 		table.wipe(MonDKP_Whitelist)
 	end
-	MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP_Whitelist)
+	MonDKP.Sync:SendData("MDKPWhitelist", MonDKP_Whitelist)
 	MonDKP:Print(L["WHITELISTBROADCASTED"])
 end
 
@@ -723,7 +722,7 @@ function MonDKP:ManageEntries()
 			GameTooltip:Hide()
 		end)
 		MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetScript("OnClick", function ()	-- confirmation dialog to add user(s)
-			MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP_Whitelist)
+			MonDKP.Sync:SendData("MDKPWhitelist", MonDKP_Whitelist)
 			MonDKP:Print(L["WHITELISTBROADCASTED"])
 		end);
 

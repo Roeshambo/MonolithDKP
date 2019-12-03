@@ -129,8 +129,8 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
 core.Errant = {}
-core.MonVersion = "v1.6.2";
-core.BuildNumber = 10602;
+core.MonVersion = "v2.0.2";
+core.BuildNumber = 20002;
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
@@ -145,10 +145,12 @@ core.Initialized = false
 core.InitStart = false
 core.CurrentRaidZone = ""
 core.LastKilledBoss = ""
+core.ArchiveActive = false
 core.CurView = "all"
 core.CurSubView = "all"
 core.LastVerCheck = 0
 core.CenterSort = "class";
+core.OOD = false
 core.Migrated = false
 
 function MonDKP:GetCColors(class)
@@ -363,7 +365,8 @@ function MonDKP:PurgeLootHistory()     -- cleans old loot history beyond history
 		while #MonDKP_Loot > limit do
 			MonDKP:SortLootTable()
 			local curOfficer, curIndex = strsplit("-", MonDKP_Loot[#MonDKP_Loot].index)
-			local index = curOfficer.."-"..curIndex+1
+			curIndex = tonumber(curIndex)
+			local newLowest = curIndex + 1
 			local path = MonDKP_Loot[#MonDKP_Loot]
 
 			if not MonDKP_Archive[path.player] then
@@ -372,7 +375,15 @@ function MonDKP:PurgeLootHistory()     -- cleans old loot history beyond history
 				MonDKP_Archive[path.player].dkp = MonDKP_Archive[path.player].dkp + path.cost
 				MonDKP_Archive[path.player].lifetime_spent = MonDKP_Archive[path.player].lifetime_spent + path.cost
 			end
-			MonDKP:CurrentIndex_Set("Loot", index)
+
+			if not MonDKP_Archive_Meta.Loot[curOfficer] or MonDKP_Archive_Meta.Loot[curOfficer] < curIndex then
+				MonDKP_Archive_Meta.Loot[curOfficer] = curIndex
+			end
+
+			if newLowest > MonDKP_Meta.Loot[curOfficer].lowest then
+				MonDKP_Meta.Loot[curOfficer].lowest = newLowest
+			end
+
 			tremove(MonDKP_Loot, #MonDKP_Loot)
 		end
 	end
@@ -388,7 +399,8 @@ function MonDKP:PurgeDKPHistory()     -- purges old entries and stores relevant 
 			local players = {strsplit(",", strsub(path.players, 1, -2))}
 			local dkp = {strsplit(",", path.dkp)}
 			local curOfficer, curIndex = strsplit("-", path.index)
-			local index = curOfficer.."-"..curIndex+1
+			curIndex = tonumber(curIndex)
+			local newLowest = curIndex + 1
 
 			if #dkp == 1 then
 				for i=1, #players do
@@ -414,34 +426,40 @@ function MonDKP:PurgeDKPHistory()     -- purges old entries and stores relevant 
 					end
 				end
 			end
-			MonDKP:CurrentIndex_Set("Loot", index)
+
+			if not MonDKP_Archive_Meta.DKP[curOfficer] or MonDKP_Archive_Meta.DKP[curOfficer] < curIndex then
+				MonDKP_Archive_Meta.DKP[curOfficer] = curIndex
+			end
+
+			if newLowest > MonDKP_Meta.DKP[curOfficer].lowest then
+				MonDKP_Meta.DKP[curOfficer].lowest = newLowest
+			end
+
 			tremove(MonDKP_DKPHistory, #MonDKP_DKPHistory)
 		end
 	end
 end
 
 function MonDKP:FormatTime(time)
-	local str;
-
-	str = date("%y/%m/%d %H:%M:%S", time)
+	local str = date("%y/%m/%d %H:%M:%S", time)
 
 	return str;
 end
 
 function MonDKP:Print(...)        --print function to add "MonolithDKP:" to the beginning of print() outputs.
-		if not MonDKP_DB["defaults"]["supressNotifications"] then
-			local curFrame = {ChatFrame1, ChatFrame2, ChatFrame3, ChatFrame4, ChatFrame5, ChatFrame6, ChatFrame7, ChatFrame8, ChatFrame9}
-			local defaults = MonDKP:GetThemeColor();
-			local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "MonolithDKP:", defaults[2].hex:upper());
-			local suffix = "|r";
-			for i=1, FCF_GetNumActiveChatFrames() do
-				if postColor then
-					curFrame[i]:AddMessage(string.join(" ", prefix, ..., suffix, postColor));
-				else
-					curFrame[i]:AddMessage(string.join(" ", prefix, ..., suffix));
-				end
+	if not MonDKP_DB.defaults.supressNotifications then
+		local defaults = MonDKP:GetThemeColor();
+		local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "MonolithDKP:", defaults[2].hex:upper());
+		local suffix = "|r";
+
+		for i = 1, NUM_CHAT_WINDOWS do
+			local name = GetChatWindowInfo(i)
+
+			if MonDKP_DB.defaults.ChatFrames[name] then
+				_G["ChatFrame"..i]:AddMessage(string.join(" ", prefix, ..., suffix));
 			end
 		end
+	end
 end
 
 function MonDKP:CreateButton(point, relativeFrame, relativePoint, xOffset, yOffset, text)
@@ -463,7 +481,7 @@ function MonDKP:BroadcastTimer(seconds, ...)       -- broadcasts timer and start
 			return;
 		end
 		MonDKP:StartTimer(seconds, ...)
-		MonDKP.Sync:SendData("MonDKPCommand", "StartTimer,"..seconds..","..title)
+		MonDKP.Sync:SendData("MDKPCommand", "StartTimer,"..seconds..","..title)
 	end
 end
 
@@ -570,11 +588,11 @@ end
 
 local tooltipShown = false  -- only updates tooltip if moused over status icon
 
-function MonDKP:StatusVerify_Update()
+function MonDKP:StatusVerify_Update(sync)
 	if IsInGuild() and core.Initialized then
-		local OOD = false;
 		local records = {};
-		
+		core.OOD = false
+
 		if #core.Errant > 0 then
 			for i=1, #core.Errant do
 				local curOfficer, curIndex = strsplit("-", core.Errant[i])
@@ -586,7 +604,7 @@ function MonDKP:StatusVerify_Update()
 					records[curOfficer] = records[curOfficer] + 1
 				end
 			end
-			OOD = true;
+			core.OOD = true;
 		end
 
 		if MonDKP_Meta_Remote.DKP then
@@ -594,14 +612,14 @@ function MonDKP:StatusVerify_Update()
 			    local tempTable = k
 				for k,v in pairs(v) do
 					if MonDKP_Meta[tempTable][k] and v > MonDKP_Meta[tempTable][k].current then
-						OOD = true;
+						core.OOD = true;
 						if not records[k] then
 							records[k] = v - MonDKP_Meta[tempTable][k].current
 						else
 							records[k] = records[k] + (v - MonDKP_Meta[tempTable][k].current)
 						end
 					elseif not MonDKP_Meta[tempTable][k] and v > 0 then
-						OOD = true
+						core.OOD = true
 						MonDKP_Meta[tempTable][k] = { current=0, lowest=0 }
 						if not records[k] then
 							records[k] = v
@@ -613,7 +631,11 @@ function MonDKP:StatusVerify_Update()
 			end
 		end
 
-		if GameTooltip:IsShown() and OOD and tooltipShown then
+		if sync then
+			MonDKP:RequestSync("init")
+		end
+
+		if GameTooltip:IsShown() and core.OOD and tooltipShown then
 			GameTooltip:ClearLines()
 			GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
 			GameTooltip:AddLine(L["ONETABLEOOD"].." |cffff0000"..L["OUTOFDATE"].."|r.", 1.0, 1.0, 1.0, false);
@@ -627,12 +649,12 @@ function MonDKP:StatusVerify_Update()
 				else
 					c = { hex="ffffff" }
 				end
-				GameTooltip:AddLine("|cff"..c.hex..k..": "..v, 1.0, 1.0, 1.0, false);
+				GameTooltip:AddLine("|cff"..c.hex..k.."|r: "..v, 1.0, 1.0, 1.0, false);
 			end
 			GameTooltip:AddLine(" ")
 			GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
 			GameTooltip:Show()
-		elseif GameTooltip:IsShown() and not OOD and tooltipShown then
+		elseif GameTooltip:IsShown() and not core.OOD and tooltipShown then
 			GameTooltip:ClearLines()
 			GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
 			GameTooltip:AddLine(L["ALLTABLES"].." |cff00ff00"..L["UPTODATE"].."|r.", 1.0, 1.0, 1.0, false);
@@ -641,7 +663,7 @@ function MonDKP:StatusVerify_Update()
 			GameTooltip:Show()
 		end
 
-		if not OOD then
+		if not core.OOD then
 			MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\up-to-date")
 			MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
 				tooltipShown = true
@@ -675,7 +697,7 @@ function MonDKP:StatusVerify_Update()
 					else
 						c = { hex="ffffff" }
 					end
-					GameTooltip:AddLine("|cff"..c.hex..k..": "..v, 1.0, 1.0, 1.0, false);
+					GameTooltip:AddLine("|cff"..c.hex..k.."|r: "..v, 1.0, 1.0, 1.0, false);
 				end
 				GameTooltip:AddLine(" ")
 				GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
@@ -688,7 +710,7 @@ function MonDKP:StatusVerify_Update()
 
 			return false;
 		end
-	else
+	elseif core.Initialized then
 		MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
 			tooltipShown = true
 			DKPStatusTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
@@ -702,82 +724,6 @@ function MonDKP:StatusVerify_Update()
 		end)
 
 		return false;
-	end
-end
-
-function MonDKP:UpdateIndexes()
-	local flagArchive = false;
-
-	for k,v in pairs(MonDKP_Meta.Loot) do
-		if k then
-			MonDKP_Meta.Loot[k].lowest = MonDKP_Meta.Loot[k].current + 1 	-- use 1 higher than current to start. to prevent indexes from being saved if all of this officers entries are knocked off the table (from old age)
-		end 																-- If that happens, the lowest was matching the current, even when the current index was no longer on the table. Causing it to be saved locally
-	end 																	-- even after it had already been archived.
-	for k,v in pairs(MonDKP_Meta.DKP) do
-		if k then
-			MonDKP_Meta.DKP[k].lowest = MonDKP_Meta.Loot[k].current + 1
-		end
-	end
-
-	for i=1, #MonDKP_Loot do
-		MonDKP:SortLootTable()
-
-		if MonDKP_Loot[i].index then
-			local curOfficer, curIndex = strsplit("-", MonDKP_Loot[i].index)
-			curIndex = tonumber(curIndex)
-
-			if not MonDKP_Meta.Loot[curOfficer] then
-				MonDKP_Meta.Loot[curOfficer] = { current=0, lowest=0 }
-			end
-
-			if MonDKP_Meta.Loot[curOfficer].current < curIndex then
-				MonDKP_Meta.Loot[curOfficer].current = curIndex
-			end
-			if MonDKP_Meta.Loot[curOfficer].lowest > curIndex or MonDKP_Meta.Loot[curOfficer].lowest == 0 then
-				MonDKP_Meta.Loot[curOfficer].lowest = curIndex
-			end
-		end
-	end
-	for i=1, #MonDKP_DKPHistory do
-		MonDKP:SortDKPHistoryTable()
-		
-		if MonDKP_DKPHistory[i].index then
-			local curOfficer, curIndex = strsplit("-", MonDKP_DKPHistory[i].index)
-			curIndex = tonumber(curIndex)
-
-			if not MonDKP_Meta.DKP[curOfficer] then
-				MonDKP_Meta.DKP[curOfficer] = { current=0, lowest=0 }
-			end
-
-			if MonDKP_Meta.DKP[curOfficer].current < curIndex then
-				MonDKP_Meta.DKP[curOfficer].current = curIndex
-			end
-			if MonDKP_Meta.DKP[curOfficer].lowest > curIndex or MonDKP_Meta.DKP[curOfficer].lowest == 0 then
-				MonDKP_Meta.DKP[curOfficer].lowest = curIndex
-			end
-		end
-	end
-
-	for k1,v1 in pairs(MonDKP_Archive) do 		-- prevends a floor of 1 being set if an entry exists with a value above 0
-		if v1.lifetime_gained > 0 or v1.lifetime_spent > 0 or v1.dkp > 0 then
-			flagArchive = true;
-		end
-	end
-
-	if not flagArchive then 	-- Only allows this if no entries exist in archive with a value greater than 0 (This would imply that an index of 1 likely couldn't exist.)
-		for k1,v1 in pairs(MonDKP_Meta) do
-			for k2,v2 in pairs(v1) do 					-- prevents lowest from incorrectly being set to a value above 1 if it still requires the 1st index
-				MonDKP_Meta[k1][k2].lowest = 1			-- Only time you should ever have a "lowest" of greater than 1 is if there is archived entries
-			end
-		end
-	end
-
-	for k1,v1 in pairs(MonDKP_Meta) do
-		for k2,v2 in pairs(v1) do
-			if MonDKP_Meta[k1][k2].current == 0 then
-				MonDKP_Meta[k1][k2].lowest = 0
-			end
-		end
 	end
 end
 

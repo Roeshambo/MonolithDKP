@@ -15,6 +15,7 @@ local timerToggle = 0;
 local mode;
 local events = CreateFrame("Frame", "BiddingEventsFrame");
 local menuFrame = CreateFrame("Frame", "MonDKPBidWindowMenuFrame", UIParent, "UIDropDownMenuTemplate")
+local hookedSlots = {}
 
 local function UpdateBidWindow()
 	core.BiddingWindow.item:SetText(CurrItemForBid)
@@ -83,7 +84,7 @@ local function Roll_OnEvent(self, event, arg1, ...)
 				end
 				table.insert(Bids_Submitted, {player=name, roll=roll, range=" ("..low.."-"..high..")"})
 				if MonDKP_DB.modes.BroadcastBids then
-					MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
+					MonDKP.Sync:SendData("MDKPBidShare", Bids_Submitted)
 				end
 			else
 				if not search then
@@ -130,7 +131,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 					if Bids_Submitted[i] and Bids_Submitted[i].player == name then
 						table.remove(Bids_Submitted, i)
 						if MonDKP_DB.modes.BroadcastBids then
-							MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
+							MonDKP.Sync:SendData("MDKPBidShare", Bids_Submitted)
 						end
 						BidScrollFrame_Update()
 						response = L["BIDCANCELLED"]
@@ -146,8 +147,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 			end
 			dkp = tonumber(MonDKP:GetPlayerDKP(name))
 			if not dkp then		-- exits function if player is not on the DKP list
-				response = L["INVALIDPLAYER"]
-				SendChatMessage(response, "WHISPER", nil, name)
+				SendChatMessage(L["INVALIDPLAYER"], "WHISPER", nil, name)
 				return
 			end
 			if (tonumber(cmd) and (MonDKP_DB.modes.MaximumBid == nil or tonumber(cmd) <= MonDKP_DB.modes.MaximumBid or MonDKP_DB.modes.MaximumBid == 0)) or ((mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static")) and not cmd) then
@@ -155,8 +155,13 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 					if (cmd and cmd <= dkp) or (MonDKP_DB.modes.SubZeroBidding == true and dkp >= 0) or (MonDKP_DB.modes.SubZeroBidding == true and MonDKP_DB.modes.AllowNegativeBidders == true) or (mode == "Static Item Values" and dkp > 0 and (dkp > core.BiddingWindow.cost:GetNumber() or MonDKP_DB.modes.SubZeroBidding == true or MonDKP_DB.modes.costvalue == "Percent")) or ((mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") and not cmd) then
 						if (cmd and core.BiddingWindow.minBid and tonumber(core.BiddingWindow.minBid:GetNumber()) <= cmd) or mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid" and cmd >= core.BiddingWindow.minBid:GetNumber()) then
 							for i=1, #Bids_Submitted do 					-- checks if a bid was submitted, removes last bid if it was
-								if Bids_Submitted[i] and Bids_Submitted[i].player == name then
+								if (mode ~= "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType ~= "Static") and Bids_Submitted[i] and Bids_Submitted[i].player == name and Bids_Submitted[i].bid < cmd then
 									table.remove(Bids_Submitted, i)
+								elseif (mode ~= "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType ~= "Static") and Bids_Submitted[i] and Bids_Submitted[i].player == name and Bids_Submitted[i].bid >= cmd then
+									SendChatMessage(L["BIDEQUALORLESS"], "WHISPER", nil, name)
+									return
+								else
+									return
 								end
 							end
 							if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
@@ -174,7 +179,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 									response = L["YOURBIDOF"].." "..cmd.." "..L["DKPWASACCEPTED"].."."
 								end
 								if MonDKP_DB.modes.BroadcastBids then
-									MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
+									MonDKP.Sync:SendData("MDKPBidShare", Bids_Submitted)
 								end
 								if Timer ~= 0 and Timer > (core.BiddingWindow.bidTimer:GetText() - 10) and MonDKP_DB.modes.AntiSnipe > 0 then
 									MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText().."{"..MonDKP_DB.modes.AntiSnipe, core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), core.BiddingWindow.itemIcon:GetTexture());
@@ -189,7 +194,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 								end
 								table.insert(Bids_Submitted, {player=name, dkp=dkp})
 								if MonDKP_DB.modes.BroadcastBids then
-									MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
+									MonDKP.Sync:SendData("MDKPBidShare", Bids_Submitted)
 								end
 								response = L["BIDWASACCEPTED"]
 								if Timer ~= 0 and Timer > (core.BiddingWindow.bidTimer:GetText() - 10) and MonDKP_DB.modes.AntiSnipe > 0 then
@@ -360,7 +365,7 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 	local minBid;
 	mode = MonDKP_DB.modes.mode;
 
-	if core.IsOfficer == true then
+	if core.IsOfficer then
 		core.BiddingWindow = core.BiddingWindow or MonDKP:CreateBidWindow();
 
 	 	if MonDKP_DB.bidpos then
@@ -386,7 +391,7 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 	 	if loot then
 	 		Bids_Submitted = {}
 	 		if MonDKP_DB.modes.BroadcastBids then
-				MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
+				MonDKP.Sync:SendData("MDKPBidShare", Bids_Submitted)
 			end
 	 		local search = MonDKP:Table_Search(MonDKP_MinBids, itemName)
 
@@ -459,7 +464,7 @@ local function StartBidding()
 	if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
 		core.BiddingWindow.cost:SetNumber(MonDKP_round(core.BiddingWindow.minBid:GetNumber(), MonDKP_DB.modes.rounding))
 		MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), CurrItemIcon)
-		MonDKP.Sync:SendData("MonDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.minBid:GetText()..","..CurrItemIcon)
+		MonDKP.Sync:SendData("MDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.minBid:GetText()..","..CurrItemIcon)
 		MonDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.minBid:GetText(), CurrItemIcon, UnitName("player"))
 
 		if MonDKP_DB.defaults.AutoOpenBid then	-- toggles bid window if option is set to
@@ -488,7 +493,7 @@ local function StartBidding()
 	else
 		if MonDKP_DB.modes.costvalue == "Percent" then perc = "%" else perc = " DKP" end;
 		MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Cost: "..core.BiddingWindow.cost:GetNumber()..perc, CurrItemIcon)
-		MonDKP.Sync:SendData("MonDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.cost:GetText()..perc..","..CurrItemIcon)
+		MonDKP.Sync:SendData("MDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.cost:GetText()..perc..","..CurrItemIcon)
 		MonDKP:BidInterface_Toggle()
 		MonDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.cost:GetText()..perc, CurrItemIcon, UnitName("player"))
 	end
@@ -561,7 +566,7 @@ function ClearBidWindow()
 	Bids_Submitted = {}
 	SelectedBidder = {}
 	if MonDKP_DB.modes.BroadcastBids then
-		MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
+		MonDKP.Sync:SendData("MDKPBidShare", Bids_Submitted)
 	end
 	core.BiddingWindow.cost:SetText("")
 	core.BiddingWindow.CustomMinBid:Hide();
@@ -609,7 +614,7 @@ end
 
 function MonDKP:BroadcastBidTimer(seconds, title, itemIcon)       -- broadcasts timer and starts it natively
 	local title = title;
-	MonDKP.Sync:SendData("MonDKPCommand", "StartBidTimer,"..seconds..","..title..","..itemIcon)
+	MonDKP.Sync:SendData("MDKPCommand", "StartBidTimer,"..seconds..","..title..","..itemIcon)
 	MonDKP:StartBidTimer(seconds, title, itemIcon)
 
 	if strfind(seconds, "{") then
@@ -620,7 +625,7 @@ end
 function MonDKP:BroadcastStopBidTimer()
 	MonDKP.BidTimer:SetScript("OnUpdate", nil)
 	MonDKP.BidTimer:Hide()
-	MonDKP.Sync:SendData("MonDKPCommand", "StopBidTimer")
+	MonDKP.Sync:SendData("MDKPCommand", "StopBidTimer")
 end
 
 function MonDKP_Register_ShiftClickLootWindowHook()			-- hook function into LootFrame window (BREAKS if more than 4 loot slots... trying to fix)
@@ -628,67 +633,76 @@ function MonDKP_Register_ShiftClickLootWindowHook()			-- hook function into Loot
 	
 	if getglobal("ElvLootSlot1") then 			-- fixes hook for ElvUI loot frame
 		for i = 1, num do
-			if not GetLootSlotLink(i) then return end  -- prevent errors if auto loot is used causing the items to be removed from the frame before loop completes
-			getglobal("ElvLootSlot"..i):HookScript("OnClick", function()
-		        if ( IsShiftKeyDown() and IsAltKeyDown() ) then
-		        	local pass, err = pcall(function()
-		        		MonDKP:CheckOfficer();
-		        		lootIcon, itemName, _, _, _ = GetLootSlotInfo(i)
-		        		itemLink = GetLootSlotLink(i)
-			            MonDKP:ToggleBidWindow(itemLink, lootIcon, itemName)
-		        	end)
+			local searchHook = MonDKP:Table_Search(hookedSlots, i)  -- blocks repeated hooking
 
-					if not pass then
-						core.BiddingWindow:SetShown(false)
-						StaticPopupDialogs["SUGGEST_RELOAD"] = {
-							text = "|CFFFF0000"..L["WARNING"].."|r: "..L["MUSTRELOADUI"],
-							button1 = L["YES"],
-							button2 = L["NO"],
-							OnAccept = function()
-								ReloadUI();
-							end,
-							timeout = 0,
-							whileDead = true,
-							hideOnEscape = true,
-							preferredIndex = 3,
-						}
-						StaticPopup_Show ("SUGGEST_RELOAD")
-					end
-		        end
-			end)
+			if not searchHook then
+				getglobal("ElvLootSlot"..i):HookScript("OnClick", function()
+			        if ( IsShiftKeyDown() and IsAltKeyDown() ) then
+			        	local pass, err = pcall(function()
+			        		MonDKP:CheckOfficer();
+			        		lootIcon, itemName, _, _, _ = GetLootSlotInfo(i)
+			        		itemLink = GetLootSlotLink(i)
+				            MonDKP:ToggleBidWindow(itemLink, lootIcon, itemName)
+			        	end)
+
+						if not pass then
+							MonDKP:Print(err)
+							core.BiddingWindow:SetShown(false)
+							StaticPopupDialogs["SUGGEST_RELOAD"] = {
+								text = "|CFFFF0000"..L["WARNING"].."|r: "..L["MUSTRELOADUI"],
+								button1 = L["YES"],
+								button2 = L["NO"],
+								OnAccept = function()
+									ReloadUI();
+								end,
+								timeout = 0,
+								whileDead = true,
+								hideOnEscape = true,
+								preferredIndex = 3,
+							}
+							StaticPopup_Show ("SUGGEST_RELOAD")
+						end
+			        end
+				end)
+				table.insert(hookedSlots, i)
+			end
 		end
 	else
 		if num > 4 then num = 4 end
 
 		for i = 1, num do
-			if not GetLootSlotLink(i) then return end   -- prevent errors if auto loot is used causing the items to be removed from the frame before loop completes
-			getglobal("LootButton"..i):HookScript("OnClick", function()
-		        if ( IsShiftKeyDown() and IsAltKeyDown() ) then
-		        	local pass, err = pcall(function()
-		        		MonDKP:CheckOfficer();
-		        		lootIcon, itemName, _, _, _ = GetLootSlotInfo(i)
-		        		itemLink = GetLootSlotLink(i)
-			            MonDKP:ToggleBidWindow(itemLink, lootIcon, itemName)
-		        	end)
+			local searchHook = MonDKP:Table_Search(hookedSlots, i)  -- blocks repeated hooking
 
-					if not pass then
-						core.BiddingWindow:SetShown(false)
-						StaticPopupDialogs["SUGGEST_RELOAD"] = {
-							text = "|CFFFF0000"..L["WARNING"].."|r: "..L["MUSTRELOADUI"],
-							button1 = L["YES"],
-							button2 = L["NO"],
-							OnAccept = function()
-								ReloadUI();
-							end,
-							timeout = 0,
-							whileDead = true,
-							hideOnEscape = true,
-							preferredIndex = 3,
-						}
-						StaticPopup_Show ("SUGGEST_RELOAD")
-					end
-		        end
-			end)
+			if not searchHook then
+				getglobal("LootButton"..i):HookScript("OnClick", function()
+			        if ( IsShiftKeyDown() and IsAltKeyDown() ) then
+			        	local pass, err = pcall(function()
+			        		MonDKP:CheckOfficer();
+			        		lootIcon, itemName, _, _, _ = GetLootSlotInfo(i)
+			        		itemLink = GetLootSlotLink(i)
+				            MonDKP:ToggleBidWindow(itemLink, lootIcon, itemName)
+			        	end)
+
+						if not pass then
+							core.BiddingWindow:SetShown(false)
+							StaticPopupDialogs["SUGGEST_RELOAD"] = {
+								text = "|CFFFF0000"..L["WARNING"].."|r: "..L["MUSTRELOADUI"],
+								button1 = L["YES"],
+								button2 = L["NO"],
+								OnAccept = function()
+									ReloadUI();
+								end,
+								timeout = 0,
+								whileDead = true,
+								hideOnEscape = true,
+								preferredIndex = 3,
+							}
+							StaticPopup_Show ("SUGGEST_RELOAD")
+						end
+			        end
+				end)
+				table.insert(hookedSlots, i)
+			end
 		end
 	end
 end
@@ -827,6 +841,11 @@ function MonDKP:StartBidTimer(seconds, title, itemIcon)
 			core.BiddingInProgress = false;
 			MonDKP.BidTimer:SetScript("OnUpdate", nil)
 			MonDKP.BidTimer:Hide();
+			if #core.BidInterface.LootTableButtons > 0 then
+				for i=1, #core.BidInterface.LootTableButtons do
+					ActionButton_HideOverlayGlow(core.BidInterface.LootTableButtons[i])
+				end
+			end
 		end
 	end)
 end
@@ -928,7 +947,7 @@ local function RightClickMenu(self)
 			end
 			table.remove(Bids_Submitted, self.index)
 			if MonDKP_DB.modes.BroadcastBids then
-				MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
+				MonDKP.Sync:SendData("MDKPBidShare", Bids_Submitted)
 			end
 			SelectedBidder = {}
 			for i=1, #core.BiddingWindow.bidTable.Rows do
@@ -1301,7 +1320,7 @@ function MonDKP:CreateBidWindow()
 			f.boss:ClearFocus()
 			f.cost:ClearFocus()
 			if not pass then
-				print(err)
+				MonDKP:Print(err)
 				core.BiddingWindow:SetShown(false)
 				StaticPopupDialogs["SUGGEST_RELOAD"] = {
 					text = "|CFFFF0000"..L["WARNING"].."|r: "..L["MUSTRELOADUI"],
