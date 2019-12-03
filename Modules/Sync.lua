@@ -77,6 +77,14 @@ end
 
 function MonDKP_OffMetaCount_Handler(meta) -- returns number of entries officer has over initiating officer to determine who should update them
 	local count = 0
+	
+	for k1,v1 in pairs(meta) do
+		for k2,v2 in pairs(v1) do
+			if not MonDKP_Meta[k1][k2] then
+				MonDKP_Meta[k1][k2] = { current=0, lowest=0 }
+			end
+		end
+	end
 
 	for k1,v1 in pairs(MonDKP_Meta) do
 		for k2,v2 in pairs(v1) do
@@ -90,3 +98,18 @@ function MonDKP_OffMetaCount_Handler(meta) -- returns number of entries officer 
 
 	return count
 end
+--[[function MonDKP_OffMetaCount_Handler(meta) -- returns number of entries officer has over initiating officer to determine who should update them
+	local count = 0
+
+	for k1,v1 in pairs(MonDKP_Meta) do
+		for k2,v2 in pairs(v1) do
+			if meta[k1][k2] and MonDKP_Meta[k1][k2].current > meta[k1][k2].current then
+				count = count + MonDKP_Meta[k1][k2].current - meta[k1][k2].current
+			elseif not meta[k1][k2] then
+				count = count + MonDKP_Meta[k1][k2].current
+			end
+		end
+	end
+
+	return count
+end--]]
