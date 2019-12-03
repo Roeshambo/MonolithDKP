@@ -319,7 +319,7 @@ core.L = {
   LIFETIMEEARNED        = "Lifetime Earned",
   LIFETIMESPENT         = "Lifetime Spent",
   LOAD                  = "Load",
-  LOAD50MORE            = "Load 50 More...",
+  LOAD50MORE            = "Load %d More...",
   LOADED                = "Loaded",
   LOOTBANKED            = "Loot Banked",
   LOOTHISTCASTCOMP      = "Loot History Broadcast Complete",
@@ -415,7 +415,7 @@ core.L = {
   OODLOGSYNC            = "has broadcast an out of date Loot History Table. This can cause irreversable damage to your Loot History table. Would you like to accept?",
   OODLOOTHISTORYDELETE  = "has deleted an item from an outdated Loot History table. This could cause the wrong item in your table to be deleted. Would you like to accept?",
   OODLOOTTABLEITEM      = "has attempted to update an item from an out of date Loot Table. This can cause irreversable damage to your DKP table. Would you like to accept?",
-  OPENBIDWINDOWHELP     = "Opens Bid Window (Officers Only) (eg. /dkp bid [item link])",
+  OPENBIDWINDOWHELP     = "Opens Bid Window",
   OPENCHANNELS          = "Open Channels",
   OPTIONS               = "Options",
   OR                    = "or",
@@ -686,13 +686,23 @@ core.L = {
   CONFIRMMIGRATE        = "Are you certain you wish to be the officer conducting the migration? This is a non-reversable process.",
   AUTOOPEN              = "Auto Open Bid Window",
   AUTOOPENTTDESC        = "When checked, bidding window will automatically open when a new item is being auctioned. If unchecked, you will be required to open it manually when needed with \"/dkp bid\".",
-
   DELETETABLES          = "Delete Tables",
   YOUHAVERECOVERED      = "You have recovered a player. Please reload your interface to recalculate values.",
   MIGRATEINST1          = "|cffff0000IMPORTANT!!|r: Back up your saved variables file prior to proceeding. With 2.0 comes a brand new indexed broadcast system. This requires your current tables to be migrated with new values. This migration is a one time process that can ONLY be conducted by ONE officer. Select the officer with the most accurate data to conduct the migration. All other officers will be blocked and will have their data deleted to accept a broadcast of the new data from that selected officer. This is to prevent duplicated data. Once ALL officers have received the new data, you can delete the {MonDKP=OFFICER_NAME} tag from the Guild Leaders public note. It is crutially important that only one officer conducts the migration or you will have duplicate data and your tables will be corrupted (Only way to correct the issue is to have all officers that have corrupted tables log off and delete their saved variables files simultaneously or else you'll simply receive the corrupted data again as soon as you login). Additionally, all members must be using 2.0 or later to be compatible. Older versions will NOT work.\n\nThis window can be reopened with \"/dkp migrate\".",
   MIGRATEINST2          = "%s has already conducted the migration. Please back up your saved variables file immediately (WTF\\Account\\ACCOUNT_NAME\\SavedVariables\\MonolithDKP.lua) and then click the delete tables button below. If %s is online, they will automatically push a sync to you after you've reloaded. If not, one will be pushed when they log in or you can request they push a sync (this is done by clicking the table status button on the bottom left corner of the main GUI). If any errors occur in the migration process for your guild, delete the migrating officers tag from the guild leader's public note and have all officers that have participated so far delete their corrupted saved variables file and restore it to the one that was backed up. Everyone must do this at the same time and not login (with the addon enabled) until this has been completed. Anyone online with migrated tables will automatically push that data to you as soon as you log in.",
-
   CHANGEDGUILDS         = "It appears you have joined a new guild. Would you like to clear your DKP tables? Not clearing them could cause severe problems.",
+
+  VALIDATETABLES        = "Validate Tables",
+  VALIDATINGTABLES      = "Validating and rebuilding tables. This can take a few minutes...",
+  VALIDATEINPROG        = "There is currently a validation in progress. Please wait...",
+  VALIDATIONCOMPLETE1   = "Validation Completed. All profiles are accurate!",
+  VALIDATIONCOMPLETE2   = "Validation Completed. %s profiles were rebuilt!",
+  BIDEQUALORLESS        = "You already have a bid that is equal to or less than that bid.",
+  OPENAUCWINHELP        = "Opens Auction Window with linked item (Officers Only)",
+  RECOMMENDRELOAD       = "DKP Settings have been changed. It is recommended you reload your interface to ensure no errors occur.",
+
+  SYNCCOMPLETE2         = "Sync Complete. All players are up to date.",
+  BEGINSYNC             = "Synchronizing DKP Tables",
 
   CHANGELOG1            = "- Too many to list here. View all new additions in the ChangeLog at CurseForge or WoWInterface.",
   CHANGELOG2            = "https://www.curseforge.com/wow/addons/monolith-dkp",
