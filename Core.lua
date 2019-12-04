@@ -51,46 +51,6 @@ local defaults = {
 }
 
 core.WorkingTable = {};       -- table of all entries from MonDKP_DKPTable that are currently visible in the window. From MonDKP_DKPTable
-core.settings = {             -- From MonDKP_DB
-	DKPBonus = { 
-		OnTimeBonus = 15,
-		BossKillBonus = 5,
-		CompletionBonus = 10,
-		NewBossKillBonus = 10,
-		UnexcusedAbsence = -25,
-		BidTimer = 30,
-		DecayPercentage = 20,
-	},
-	defaults = {
-		HistoryLimit = 2500,
-		DKPHistoryLimit = 2500,
-		BidTimerSize = 1.0,
-		MonDKPScaleSize = 1.0,
-		supressNotifications = false,
-		TooltipHistoryCount = 15,
-		SupressTells = true,
-	},
-	MinBidBySlot = {
-		Head = 70,
-		Neck = 70,
-		Shoulders = 70,
-		Cloak = 70,
-		Chest = 70,
-		Bracers = 70,
-		Hands = 70,
-		Belt = 70,
-		Legs = 70,
-		Boots = 70,
-		Ring = 70,
-		Trinket = 70,
-		OneHanded = 70,
-		TwoHanded = 70,
-		OffHand = 70,
-		Range = 70,
-		Other = 70,
-	}
-}
-
 core.EncounterList = {      -- Event IDs must be in the exact same order as core.BossList declared in localization files
 	MC = {
 		663, 664, 665,
@@ -129,8 +89,8 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
 core.Errant = {}
-core.MonVersion = "v2.0.2";
-core.BuildNumber = 20002;
+core.MonVersion = "v2.0.2 beta 2";
+core.BuildNumber = 20002.02;
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
@@ -348,14 +308,6 @@ function MonDKP:GetPlayerDKP(player)
 	else
 		return false;
 	end
-end
-
-function MonDKP:GetDKPSettings()
-	return core.settings["DKPBonus"];
-end
-
-function MonDKP:GetMinBidSettings()
-	return core.settings["MinBidBySlot"];
 end
 
 function MonDKP:PurgeLootHistory()     -- cleans old loot history beyond history limit to reduce native system load
@@ -607,25 +559,23 @@ function MonDKP:StatusVerify_Update(sync)
 			core.OOD = true;
 		end
 
-		if MonDKP_Meta_Remote.DKP then
-			for k,v in pairs(MonDKP_Meta_Remote) do
-			    local tempTable = k
-				for k,v in pairs(v) do
-					if MonDKP_Meta[tempTable][k] and v > MonDKP_Meta[tempTable][k].current then
-						core.OOD = true;
-						if not records[k] then
-							records[k] = v - MonDKP_Meta[tempTable][k].current
-						else
-							records[k] = records[k] + (v - MonDKP_Meta[tempTable][k].current)
-						end
-					elseif not MonDKP_Meta[tempTable][k] and v > 0 then
-						core.OOD = true
-						MonDKP_Meta[tempTable][k] = { current=0, lowest=0 }
-						if not records[k] then
-							records[k] = v
-						else
-							records[k] = records[k] + v
-						end
+		for k,v in pairs(MonDKP_Meta_Remote) do
+		    local tempTable = k
+			for k,v in pairs(v) do
+				if MonDKP_Meta[tempTable][k] and v > MonDKP_Meta[tempTable][k].current then
+					core.OOD = true;
+					if not records[k] then
+						records[k] = v - MonDKP_Meta[tempTable][k].current
+					else
+						records[k] = records[k] + (v - MonDKP_Meta[tempTable][k].current)
+					end
+				elseif not MonDKP_Meta[tempTable][k] and v > 0 then
+					core.OOD = true
+					MonDKP_Meta[tempTable][k] = { current=0, lowest=0 }
+					if not records[k] then
+						records[k] = v
+					else
+						records[k] = records[k] + v
 					end
 				end
 			end

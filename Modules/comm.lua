@@ -275,6 +275,7 @@ local function SyncInit()
 			if OnlinePlayers[InitCount] ~= UnitName("player") then
 				MonDKP.Sync:SendData("MDKPSyncInit", MonDKP_Meta, OnlinePlayers[InitCount])			-- request tables from players to determine what to send
 			end
+			SyncTimer = 0
 			InitCount = InitCount + 1
 			InitTimerElapsed = 0
 		elseif InitCount > #OnlinePlayers then
@@ -717,17 +718,61 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 
 				if type(deserialized) == "table" then
 					for k1,v1 in pairs(deserialized) do
-					    for k2,v2 in pairs(v1) do
-					    	if not MonDKP_Meta[k1][k2] then
-					    		MonDKP_Meta[k1][k2] = { current=0, lowest=0 }
-					    	end
-					    	if not MonDKP_Meta_Remote[k1][k2] or deserialized[k1][k2] > MonDKP_Meta_Remote[k1][k2] then -- updates highest known entry for each off. in Meta_Remote
-					            MonDKP_Meta_Remote[k1][k2] = deserialized[k1][k2]
-					        end
-					        if (not Meta_Remote_Temp[k1][k2] or Meta_Remote_Temp[k1][k2] == 0 or Meta_Remote_Temp[k1][k2] > deserialized[k1][k2]) and core.IsOfficer and InitiatingOfficer then	-- updates temp meta with lowest known value for broadcasting
-					        	Meta_Remote_Temp[k1][k2] = deserialized[k1][k2]
-					        end
-					    end
+						if type(v1) == "table" then
+						    for k2,v2 in pairs(v1) do
+						    	if not MonDKP_Meta[k1][k2] then
+						    		MonDKP_Meta[k1][k2] = { current=0, lowest=0 }
+						    	end
+						    	if not MonDKP_Meta_Remote[k1][k2] or deserialized[k1][k2] > MonDKP_Meta_Remote[k1][k2] then -- updates highest known entry for each off. in Meta_Remote
+						            MonDKP_Meta_Remote[k1][k2] = deserialized[k1][k2]
+						        end
+						        if (not Meta_Remote_Temp[k1][k2] or Meta_Remote_Temp[k1][k2] == 0 or Meta_Remote_Temp[k1][k2] > deserialized[k1][k2]) and core.IsOfficer and InitiatingOfficer then	-- updates temp meta with lowest known value for broadcasting
+						        	Meta_Remote_Temp[k1][k2] = deserialized[k1][k2]
+						        end
+						    end
+						end
+					end
+
+					if (tonumber(deserialized.OffDKP) and tonumber(deserialized.OffLoot)) and MonDKP:ValidateSender(sender) then
+						local oldDKP, oldLoot
+						local flag = false
+						local newLoot = tonumber(deserialized.OffLoot)
+						local newDKP = tonumber(deserialized.OffDKP)
+
+						if not MonDKP_Meta_Remote.DKP[sender] or newDKP < MonDKP_Meta_Remote.DKP[sender] then
+							oldDKP = MonDKP_Meta_Remote.DKP[sender]
+							MonDKP_Meta_Remote.DKP[sender] = newDKP
+
+							if newDKP < oldDKP then
+								for i=newDKP+1, oldDKP do
+									local search = MonDKP:Table_Search(MonDKP_DKPHistory, sender.."-"..i, "index")
+
+									if search then
+										table.remove(MonDKP_DKPHistory, search[1][1])
+										flag = true
+									end
+								end
+							end
+						end
+
+						if not MonDKP_Meta_Remote.Loot[sender] or newLoot <  MonDKP_Meta_Remote.Loot[sender] then
+							oldLoot = MonDKP_Meta_Remote.Loot[sender]
+							MonDKP_Meta_Remote.Loot[sender] = newLoot
+
+							if newLoot < oldLoot then
+								for i=newLoot+1, oldLoot do
+									local search = MonDKP:Table_Search(MonDKP_Loot, sender.."-"..i, "index")
+
+									if search then
+										table.remove(MonDKP_Loot, search[1][1])
+										flag = true
+									end
+								end
+							end
+						end
+						if flag then
+							MonDKP:Print(L["PLEASEVALIDATE"])
+						end
 					end
 				elseif deserialized == "Full Sync" and core.IsOfficer and InitiatingOfficer then  -- message sent by player if they have no entries rather than sending full meta (reduces traffic)
 					local archive = {}
@@ -758,17 +803,19 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				MonDKP:StatusVerify_Update()
 			end
 			return
-		elseif prefix == "MDKPTableComp" and UnitName("player") ~= sender and not RecentlySynced then
-			decoded = LibDeflate:DecompressDeflate(LibDeflate:DecodeForWoWAddonChannel(message))
-			local success, deserialized = LibAceSerializer:Deserialize(decoded);
-			if success then
-				local response = MonDKP_TableComp_Handler(deserialized)
-				MonDKP:StatusVerify_Update()
-				if response then
-					MonDKP.Sync:SendData("MDKPSyncReq", response) -- sends table with local "current" values, if they differ from the initiating officers table.
+		elseif prefix == "MDKPTableComp" and UnitName("player") ~= sender then
+			if not RecentlySynced then
+				decoded = LibDeflate:DecompressDeflate(LibDeflate:DecodeForWoWAddonChannel(message))
+				local success, deserialized = LibAceSerializer:Deserialize(decoded);
+				if success then
+					local response = MonDKP_TableComp_Handler(deserialized)
+					MonDKP:StatusVerify_Update()
+					if response then
+						MonDKP.Sync:SendData("MDKPSyncReq", response) -- sends table with local "current" values, if they differ from the initiating officers table.
+					end
+					RecentlySynced = true
+					C_Timer.After(60, function() RecentlySynced = false end) -- blocks additional meta requests for 60 seconds, just in case
 				end
-				RecentlySynced = true
-				C_Timer.After(60, function() RecentlySynced = false end) -- blocks additional meta requests for 60 seconds, just in case
 			end
 		elseif prefix == "MDKPSyncDKP" or prefix == "MDKPSyncLoot" then 				-- insert entries received if they don't exist in local tables
 			if name ~= UnitName("player") and MonDKP:ValidateSender(sender) then
@@ -1700,27 +1747,6 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						MonDKP:Print("Report the following error on Curse or Github: "..deserialized)  -- error reporting if string doesn't get deserialized correctly
 					end
 				end
-			end
-		else
-			MonDKP:CheckOfficer()
-			if core.IsOfficer == true and UnitName("player") ~= sender then
-				local msg;
-
-				if #MonDKP_Whitelist > 0 then
-					msg = sender..", "..L["UNAUTHUPDATE1"];
-				else
-					msg = sender..", "..L["UNAUTHUPDATE2"];
-				end
-				MonDKP:Print(msg..": "..prefix)
-				StaticPopupDialogs["MODIFY_WARNING"] = {
-					text = msg,
-					button1 = L["OK"],
-					timeout = 0,
-					whileDead = true,
-					hideOnEscape = true,
-					preferredIndex = 3,
-				}
-				StaticPopup_Show ("MODIFY_WARNING")
 			end
 		end
 	end

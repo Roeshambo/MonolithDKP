@@ -16,19 +16,19 @@ end
 
 local function SaveSettings()
 	if MonDKP.ConfigTab4.default[1] then
-		MonDKP_DB["DKPBonus"]["OnTimeBonus"] = MonDKP.ConfigTab4.default[1]:GetNumber();
-		MonDKP_DB["DKPBonus"]["BossKillBonus"] = MonDKP.ConfigTab4.default[2]:GetNumber();
-		MonDKP_DB["DKPBonus"]["CompletionBonus"] = MonDKP.ConfigTab4.default[3]:GetNumber();
-		MonDKP_DB["DKPBonus"]["NewBossKillBonus"] = MonDKP.ConfigTab4.default[4]:GetNumber();
-		MonDKP_DB["DKPBonus"]["UnexcusedAbsence"] = MonDKP.ConfigTab4.default[5]:GetNumber();
+		MonDKP_DB.DKPBonus.OnTimeBonus = MonDKP.ConfigTab4.default[1]:GetNumber();
+		MonDKP_DB.DKPBonus.BossKillBonus = MonDKP.ConfigTab4.default[2]:GetNumber();
+		MonDKP_DB.DKPBonus.CompletionBonus = MonDKP.ConfigTab4.default[3]:GetNumber();
+		MonDKP_DB.DKPBonus.NewBossKillBonus = MonDKP.ConfigTab4.default[4]:GetNumber();
+		MonDKP_DB.DKPBonus.UnexcusedAbsence = MonDKP.ConfigTab4.default[5]:GetNumber();
 		if MonDKP.ConfigTab4.default[6]:GetNumber() < 0 then
-			MonDKP_DB["DKPBonus"]["DecayPercentage"] = 0 - MonDKP.ConfigTab4.default[6]:GetNumber();
+			MonDKP_DB.DKPBonus.DecayPercentage = 0 - MonDKP.ConfigTab4.default[6]:GetNumber();
 		else
-			MonDKP_DB["DKPBonus"]["DecayPercentage"] = MonDKP.ConfigTab4.default[6]:GetNumber();
+			MonDKP_DB.DKPBonus.DecayPercentage = MonDKP.ConfigTab4.default[6]:GetNumber();
 		end
-		MonDKP.ConfigTab2.decayDKP:SetNumber(MonDKP_DB["DKPBonus"]["DecayPercentage"]);
-		MonDKP.ConfigTab4.default[6]:SetNumber(MonDKP_DB["DKPBonus"]["DecayPercentage"])
-		MonDKP_DB["DKPBonus"]["BidTimer"] = MonDKP.ConfigTab4.bidTimer:GetNumber();
+		MonDKP.ConfigTab2.decayDKP:SetNumber(MonDKP_DB.DKPBonus.DecayPercentage);
+		MonDKP.ConfigTab4.default[6]:SetNumber(MonDKP_DB.DKPBonus.DecayPercentage)
+		MonDKP_DB.DKPBonus.BidTimer = MonDKP.ConfigTab4.bidTimer:GetNumber();
 
 		MonDKP_DB.MinBidBySlot.Head = MonDKP.ConfigTab4.DefaultMinBids.SlotBox[1]:GetNumber()
 		MonDKP_DB.MinBidBySlot.Neck = MonDKP.ConfigTab4.DefaultMinBids.SlotBox[2]:GetNumber()
@@ -49,19 +49,16 @@ local function SaveSettings()
 		MonDKP_DB.MinBidBySlot.Other = MonDKP.ConfigTab4.DefaultMinBids.SlotBox[17]:GetNumber()
 	end
 
-	core.MonDKPUI:SetScale(MonDKP_DB["defaults"]["MonDKPScaleSize"]);
-	MonDKP_DB["defaults"]["HistoryLimit"] = MonDKP.ConfigTab4.history:GetNumber();
-	MonDKP_DB["defaults"]["DKPHistoryLimit"] = MonDKP.ConfigTab4.DKPHistory:GetNumber();
-	MonDKP_DB["defaults"]["TooltipHistoryCount"] = MonDKP.ConfigTab4.TooltipHistory:GetNumber();
+	core.MonDKPUI:SetScale(MonDKP_DB.defaults.MonDKPScaleSize);
+	MonDKP_DB.defaults.HistoryLimit = MonDKP.ConfigTab4.history:GetNumber();
+	MonDKP_DB.defaults.DKPHistoryLimit = MonDKP.ConfigTab4.DKPHistory:GetNumber();
+	MonDKP_DB.defaults.TooltipHistoryCount = MonDKP.ConfigTab4.TooltipHistory:GetNumber();
 	DKPTable_Update()
 end
 
 function MonDKP:Options()
 	local default = {}
 	MonDKP.ConfigTab4.default = default;
-	local DKPSettings = MonDKP:GetDKPSettings();
-	local MinBidSettings = MonDKP:GetMinBidSettings();
-
 
 	MonDKP.ConfigTab4.header = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
 	MonDKP.ConfigTab4.header:SetFontObject("MonDKPLargeCenter");
@@ -159,28 +156,28 @@ function MonDKP:Options()
 			MonDKP.ConfigTab4.ModesButton:Hide()
 		end
 
-		MonDKP.ConfigTab4.default[1]:SetText(tonumber(DKPSettings["OnTimeBonus"]))
+		MonDKP.ConfigTab4.default[1]:SetText(MonDKP_DB.DKPBonus.OnTimeBonus)
 		MonDKP.ConfigTab4.default[1].tooltipText = L["ONTIMEBONUS"]
 		MonDKP.ConfigTab4.default[1].tooltipDescription = L["ONTIMEBONUSTTDESC"]
 			
-		MonDKP.ConfigTab4.default[2]:SetText(tonumber(DKPSettings["BossKillBonus"]))
+		MonDKP.ConfigTab4.default[2]:SetText(MonDKP_DB.DKPBonus.BossKillBonus)
 		MonDKP.ConfigTab4.default[2].tooltipText = L["BOSSKILLBONUS"]
 		MonDKP.ConfigTab4.default[2].tooltipDescription = L["BOSSKILLBONUSTTDESC"]
 			 
-		MonDKP.ConfigTab4.default[3]:SetText(tonumber(DKPSettings["CompletionBonus"]))
+		MonDKP.ConfigTab4.default[3]:SetText(MonDKP_DB.DKPBonus.CompletionBonus)
 		MonDKP.ConfigTab4.default[3].tooltipText = L["RAIDCOMPLETIONBONUS"]
 		MonDKP.ConfigTab4.default[3].tooltipDescription = L["RAIDCOMPLETEBONUSTT"]
 			
-		MonDKP.ConfigTab4.default[4]:SetText(tonumber(DKPSettings["NewBossKillBonus"]))
+		MonDKP.ConfigTab4.default[4]:SetText(MonDKP_DB.DKPBonus.NewBossKillBonus)
 		MonDKP.ConfigTab4.default[4].tooltipText = L["NEWBOSSKILLBONUS"]
 		MonDKP.ConfigTab4.default[4].tooltipDescription = L["NEWBOSSKILLTTDESC"]
 
-		MonDKP.ConfigTab4.default[5]:SetText(tonumber(DKPSettings["UnexcusedAbsence"]))
+		MonDKP.ConfigTab4.default[5]:SetText(MonDKP_DB.DKPBonus.UnexcusedAbsence)
 		MonDKP.ConfigTab4.default[5].tooltipText = L["UNEXCUSEDABSENCE"]
 		MonDKP.ConfigTab4.default[5].tooltipDescription = L["UNEXCUSEDTTDESC"]
 		MonDKP.ConfigTab4.default[5].tooltipWarning = L["UNEXCUSEDTTWARN"]
 
-		MonDKP.ConfigTab4.default[6]:SetText(tonumber(DKPSettings["DecayPercentage"]))
+		MonDKP.ConfigTab4.default[6]:SetText(MonDKP_DB.DKPBonus.DecayPercentage)
 		MonDKP.ConfigTab4.default[6]:SetTextInsets(0, 15, 0, 0)
 		MonDKP.ConfigTab4.default[6].tooltipText = L["DECAYPERCENTAGE"]
 		MonDKP.ConfigTab4.default[6].tooltipDescription = L["DECAYPERCENTAGETTDESC"]
@@ -364,87 +361,87 @@ function MonDKP:Options()
 			end
 
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[1].Header:SetText(L["HEAD"]..": ")
-			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[1]:SetText(tonumber(MinBidSettings["Head"]))
+			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[1]:SetText(MonDKP_DB.MinBidBySlot.Head)
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[1].tooltipText = L["HEAD"]
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[1].tooltipDescription = prefix.." "..L["FORHEADSLOT"]
 
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[2].Header:SetText(L["NECK"]..": ")
-			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[2]:SetText(tonumber(MinBidSettings["Neck"]))
+			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[2]:SetText(MonDKP_DB.MinBidBySlot.Neck)
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[2].tooltipText = L["NECK"]
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[2].tooltipDescription = prefix.." "..L["FORNECKSLOT"]
 
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[3].Header:SetText(L["SHOULDERS"]..": ")
-			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[3]:SetText(tonumber(MinBidSettings["Shoulders"]))
+			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[3]:SetText(MonDKP_DB.MinBidBySlot.Shoulders)
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[3].tooltipText = L["SHOULDERS"]
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[3].tooltipDescription = prefix.." "..L["FORSHOULDERSLOT"]
 
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[4].Header:SetText(L["CLOAK"]..": ")
-			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[4]:SetText(tonumber(MinBidSettings["Cloak"]))
+			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[4]:SetText(MonDKP_DB.MinBidBySlot.Cloak)
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[4].tooltipText = L["CLOAK"]
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[4].tooltipDescription = prefix.." "..L["FORBACKSLOT"]
 
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[5].Header:SetText(L["CHEST"]..": ")
-			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[5]:SetText(tonumber(MinBidSettings["Chest"]))
+			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[5]:SetText(MonDKP_DB.MinBidBySlot.Chest)
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[5].tooltipText = L["CHEST"]
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[5].tooltipDescription = prefix.." "..L["FORCHESTSLOT"]
 
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[6].Header:SetText(L["BRACERS"]..": ")
-			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[6]:SetText(tonumber(MinBidSettings["Bracers"]))
+			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[6]:SetText(MonDKP_DB.MinBidBySlot.Bracers)
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[6].tooltipText = L["BRACERS"]
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[6].tooltipDescription = prefix.." "..L["FORWRISTSLOT"]
 
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[7].Header:SetText(L["HANDS"]..": ")
-			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[7]:SetText(tonumber(MinBidSettings["Hands"]))
+			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[7]:SetText(MonDKP_DB.MinBidBySlot.Hands)
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[7].tooltipText = L["HANDS"]
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[7].tooltipDescription = prefix.." "..L["FORHANDSLOT"]
 
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[8].Header:SetText(L["BELT"]..": ")
-			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[8]:SetText(tonumber(MinBidSettings["Belt"]))
+			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[8]:SetText(MonDKP_DB.MinBidBySlot.Belt)
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[8].tooltipText = L["BELT"]
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[8].tooltipDescription = prefix.." "..L["FORWAISTSLOT"]
 
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[9].Header:SetText(L["LEGS"]..": ")
-			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[9]:SetText(tonumber(MinBidSettings["Legs"]))
+			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[9]:SetText(MonDKP_DB.MinBidBySlot.Legs)
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[9].tooltipText = L["LEGS"]
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[9].tooltipDescription = prefix.." "..L["FORLEGSLOT"]
 
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[10].Header:SetText(L["BOOTS"]..": ")
-			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[10]:SetText(tonumber(MinBidSettings["Boots"]))
+			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[10]:SetText(MonDKP_DB.MinBidBySlot.Boots)
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[10].tooltipText = L["BOOTS"]
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[10].tooltipDescription = prefix.." "..L["FORFEETSLOT"]
 
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[11].Header:SetText(L["RINGS"]..": ")
-			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[11]:SetText(tonumber(MinBidSettings["Ring"]))
+			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[11]:SetText(MonDKP_DB.MinBidBySlot.Ring)
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[11].tooltipText = L["RINGS"]
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[11].tooltipDescription = prefix.." "..L["FORFINGERSLOT"]
 
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[12].Header:SetText(L["TRINKET"]..": ")
-			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[12]:SetText(tonumber(MinBidSettings["Trinket"]))
+			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[12]:SetText(MonDKP_DB.MinBidBySlot.Trinket)
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[12].tooltipText = L["TRINKET"]
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[12].tooltipDescription = prefix.." "..L["FORTRINKETSLOT"]
 
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[13].Header:SetText(L["ONEHANDED"]..": ")
-			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[13]:SetText(tonumber(MinBidSettings["OneHanded"]))
+			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[13]:SetText(MonDKP_DB.MinBidBySlot.OneHanded)
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[13].tooltipText = L["ONEHANDEDWEAPONS"]
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[13].tooltipDescription = prefix.." "..L["FORONEHANDSLOT"]
 
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[14].Header:SetText(L["TWOHANDED"]..": ")
-			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[14]:SetText(tonumber(MinBidSettings["TwoHanded"]))
+			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[14]:SetText(MonDKP_DB.MinBidBySlot.TwoHanded)
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[14].tooltipText = L["TWOHANDEDWEAPONS"]
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[14].tooltipDescription = prefix.." "..L["FORTWOHANDSLOT"]
 
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[15].Header:SetText(L["OFFHAND"]..": ")
-			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[15]:SetText(tonumber(MinBidSettings["OffHand"]))
+			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[15]:SetText(MonDKP_DB.MinBidBySlot.OffHand)
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[15].tooltipText = L["OFFHANDITEMS"]
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[15].tooltipDescription = prefix.." "..L["FOROFFHANDSLOT"]
 
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[16].Header:SetText(L["RANGE"]..": ")
-			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[16]:SetText(tonumber(MinBidSettings["Range"]))
+			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[16]:SetText(MonDKP_DB.MinBidBySlot.Range)
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[16].tooltipText = L["RANGE"]
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[16].tooltipDescription = prefix.." "..L["FORRANGESLOT"]
 
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[17].Header:SetText(L["OTHER"]..": ")
-			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[17]:SetText(tonumber(MinBidSettings["Other"]))
+			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[17]:SetText(MonDKP_DB.MinBidBySlot.Other)
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[17].tooltipText = L["OTHER"]
 			MonDKP.ConfigTab4.DefaultMinBids.SlotBox[17].tooltipDescription = prefix.." "..L["FOROTHERSLOT"]
 
@@ -494,7 +491,7 @@ function MonDKP:Options()
 		MonDKP.ConfigTab4.bidTimerSlider = CreateFrame("SLIDER", "$parentBidTimerSlider", MonDKP.ConfigTab4, "MonDKPOptionsSliderTemplate");
 		MonDKP.ConfigTab4.bidTimerSlider:SetPoint("TOPLEFT", MonDKP.ConfigTab4.DefaultMinBids, "BOTTOMLEFT", 54, -40);
 		MonDKP.ConfigTab4.bidTimerSlider:SetMinMaxValues(10, 90);
-		MonDKP.ConfigTab4.bidTimerSlider:SetValue(DKPSettings["BidTimer"]);
+		MonDKP.ConfigTab4.bidTimerSlider:SetValue(MonDKP_DB.DKPBonus.BidTimer);
 		MonDKP.ConfigTab4.bidTimerSlider:SetValueStep(1);
 		MonDKP.ConfigTab4.bidTimerSlider.tooltipText = L["BIDTIMER"]
 		MonDKP.ConfigTab4.bidTimerSlider.tooltipRequirement = L["BIDTIMERDEFAULTTTDESC"]

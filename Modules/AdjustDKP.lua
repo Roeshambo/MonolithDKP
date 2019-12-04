@@ -249,20 +249,19 @@ function MonDKP:AdjustDKPTab_Create()
 	function MonDKP.ConfigTab2.reasonDropDown:SetValue(newValue)
 		if curReason ~= newValue then curReason = newValue else curReason = nil end
 
-		local DKPSettings = MonDKP:GetDKPSettings()
 		UIDropDownMenu_SetText(MonDKP.ConfigTab2.reasonDropDown, curReason)
 
-		if (curReason == L["ONTIMEBONUS"]) then MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["OnTimeBonus"])); MonDKP.ConfigTab2.BossKilledDropdown:Hide()
+		if (curReason == L["ONTIMEBONUS"]) then MonDKP.ConfigTab2.addDKP:SetNumber(MonDKP_DB.DKPBonus.OnTimeBonus); MonDKP.ConfigTab2.BossKilledDropdown:Hide()
 		elseif (curReason == L["BOSSKILLBONUS"]) then
-			MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["BossKillBonus"]));
+			MonDKP.ConfigTab2.addDKP:SetNumber(MonDKP_DB.DKPBonus.BossKillBonus);
 			MonDKP.ConfigTab2.BossKilledDropdown:Show()
 			UIDropDownMenu_SetText(MonDKP.ConfigTab2.BossKilledDropdown, core.CurrentRaidZone..": "..core.LastKilledBoss)
-		elseif (curReason == L["RAIDCOMPLETIONBONUS"]) then MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["CompletionBonus"])); MonDKP.ConfigTab2.BossKilledDropdown:Hide()
+		elseif (curReason == L["RAIDCOMPLETIONBONUS"]) then MonDKP.ConfigTab2.addDKP:SetNumber(MonDKP_DB.DKPBonus.CompletionBonus); MonDKP.ConfigTab2.BossKilledDropdown:Hide()
 		elseif (curReason == L["NEWBOSSKILLBONUS"]) then
-			MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["NewBossKillBonus"]));
+			MonDKP.ConfigTab2.addDKP:SetNumber(MonDKP_DB.DKPBonus.NewBossKillBonus);
 			MonDKP.ConfigTab2.BossKilledDropdown:Show()
 			UIDropDownMenu_SetText(MonDKP.ConfigTab2.BossKilledDropdown, core.CurrentRaidZone..": "..core.LastKilledBoss)
-		elseif (curReason == L["UNEXCUSEDABSENCE"]) then MonDKP.ConfigTab2.addDKP:SetNumber(tonumber(DKPSettings["UnexcusedAbsence"])); MonDKP.ConfigTab2.BossKilledDropdown:Hide()
+		elseif (curReason == L["UNEXCUSEDABSENCE"]) then MonDKP.ConfigTab2.addDKP:SetNumber(MonDKP_DB.DKPBonus.UnexcusedAbsence); MonDKP.ConfigTab2.BossKilledDropdown:Hide()
 		else MonDKP.ConfigTab2.addDKP:SetText(""); MonDKP.ConfigTab2.BossKilledDropdown:Hide() end
 
 		if (curReason == L["OTHER"]) then

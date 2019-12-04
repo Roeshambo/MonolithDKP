@@ -160,8 +160,6 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 								elseif (mode ~= "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType ~= "Static") and Bids_Submitted[i] and Bids_Submitted[i].player == name and Bids_Submitted[i].bid >= cmd then
 									SendChatMessage(L["BIDEQUALORLESS"], "WHISPER", nil, name)
 									return
-								else
-									return
 								end
 							end
 							if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
@@ -433,7 +431,7 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 
 	 		core.BiddingWindow.cost:SetText(MonDKP_round(minBid, MonDKP_DB.modes.rounding))
 	 		core.BiddingWindow.itemName:SetText(itemName)
-	 		core.BiddingWindow.bidTimer:SetText(core.settings["DKPBonus"]["BidTimer"])
+	 		core.BiddingWindow.bidTimer:SetText(MonDKP_DB.DKPBonus.BidTimer)
 	 		core.BiddingWindow.boss:SetText(core.LastKilledBoss)
 	 		UpdateBidWindow()
 	 		core.BiddingWindow.ItemTooltipButton:SetSize(core.BiddingWindow.itemIcon:GetWidth() + core.BiddingWindow.item:GetStringWidth() + 10, core.BiddingWindow.item:GetHeight());

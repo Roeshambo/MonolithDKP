@@ -33,6 +33,11 @@ function MonDKP_InitMeta_Handler(meta)		-- creates table to be sent during a Syn
 		end
 	end
 
+	if core.IsOfficer and tonumber(MonDKP_Meta.DKP[UnitName("player")].current) and tonumber(MonDKP_Meta.Loot[UnitName("player")].current) then
+		tempMeta.OffDKP = MonDKP_Meta.DKP[UnitName("player")].current
+		tempMeta.OffLoot = MonDKP_Meta.Loot[UnitName("player")].current
+	end
+
 	if next(tempMeta) == nil then 	--if entire table is empty, replaces with false preventing anything from being returned (means all values are identical to initiating officer)
 		tempMeta = false
 	end
@@ -100,7 +105,6 @@ function MonDKP_OffMetaCount_Handler(meta) -- returns number of entries officer 
 end
 --[[function MonDKP_OffMetaCount_Handler(meta) -- returns number of entries officer has over initiating officer to determine who should update them
 	local count = 0
-
 	for k1,v1 in pairs(MonDKP_Meta) do
 		for k2,v2 in pairs(v1) do
 			if meta[k1][k2] and MonDKP_Meta[k1][k2].current > meta[k1][k2].current then
@@ -110,6 +114,5 @@ end
 			end
 		end
 	end
-
 	return count
 end--]]
