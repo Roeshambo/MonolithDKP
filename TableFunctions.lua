@@ -235,6 +235,13 @@ function MonDKP:ViewLimited(raid, standby, raiders)
 		
 		if (not IsInGroup() and not IsInRaid()) and raid then
 			MonDKP:Print(L["NOPARTYORRAID"])
+			core.WorkingTable = CopyTable(MonDKP_DKPTable)
+			core.CurView = "all"
+			core.CurSubView = "all"
+			for i=1, 9 do
+				MonDKP.ConfigTab1.checkBtn[i]:SetChecked(true)
+			end
+			MonDKP:FilterDKPTable(core.currentSort, "reset");
 			return;
 		end
 
@@ -392,9 +399,6 @@ local function RightClickMenu(self)
 		{ text = " ", notCheckable = true, disabled = true}, --12
 		{ text = L["RESETPREVIOUS"], notCheckable = true, func = function()
 			for i=1, #core.SelectedData do
-				print(#core.SelectedData)
-				print(i)
-				print(i, " -> ", core.SelectedData[i].player)
 				MonDKP:reset_prev_dkp(core.SelectedData[i].player)
 			end
 			MonDKP:FilterDKPTable(core.currentSort)
@@ -767,6 +771,24 @@ function DKPTable_Update()
 			row:Hide()
 		end
 	end
+
+	if #core.WorkingTable == 0 then  		-- Displays "No Entries Returned" if the result of filter combinations yields an empty table
+		--MonDKP_RestoreFilterOptions()
+		MonDKP.DKPTable.Rows[1].DKPInfo[1].rowCounter:SetText("")
+		MonDKP.DKPTable.Rows[1].DKPInfo[1]:SetText("")
+		MonDKP.DKPTable.Rows[1].DKPInfo[2]:SetText("|cffff6060"..L["NOENTRIESRETURNED"].."|r")
+		MonDKP.DKPTable.Rows[1].DKPInfo[3]:SetText("")
+		MonDKP.DKPTable.Rows[1].DKPInfo[3].adjusted:SetText("")
+		MonDKP.DKPTable.Rows[1].DKPInfo[3].adjustedArrow:SetTexture(nil)
+		if MonDKP.DKPTable.Rows[1].DKPInfo[3].rollrange then MonDKP.DKPTable.Rows[1].DKPInfo[3].rollrange:SetText("") end
+		MonDKP.DKPTable.Rows[1]:SetScript("OnEnter", nil)
+		MonDKP.DKPTable.Rows[1]:SetScript("OnMouseDown", nil)
+		MonDKP.DKPTable.Rows[1]:SetScript("OnClick", function()
+			MonDKP_RestoreFilterOptions() 		-- restores filter selections to default on click.
+		end)
+		MonDKP.DKPTable.Rows[1]:Show()
+	end
+
 	MonDKP.DKPTable.counter.t:SetText(#core.WorkingTable.." "..L["ENTRIESSHOWN"]);    -- updates "Entries Shown" at bottom of DKPTable
 	MonDKP.DKPTable.counter.t:SetFontObject("MonDKPSmallLeft")
 

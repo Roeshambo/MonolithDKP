@@ -512,7 +512,11 @@ function MonDKP:DKPHistory_Update(reset)
 					MonDKP.ConfigTab6.loadMoreBtn:SetText(L["LOAD"].." "..btnText.." "..L["MORE"].."...")
 					MonDKP.ConfigTab6.loadMoreBtn:SetPoint("TOP", MonDKP.ConfigTab6.history[currentRow], "BOTTOM", 0, -10)
 					self:Hide()
-					C_Timer.After(3, function() self:Show() end)
+					C_Timer.After(3, function()
+						MonDKP.ConfigTab6.loadMoreBtn:SetPoint("TOP", MonDKP.ConfigTab6.history[currentRow], "BOTTOM", 0, -10)
+						print(currentRow, currentLength, #DKPHistory)
+						self:Show()
+					end)
 				end)
 			end
 

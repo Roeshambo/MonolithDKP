@@ -59,7 +59,7 @@ MonDKP.Commands = {
 		if not core.Migrated then MonDKP:MigrationFrame() end
 	end,
 	["test"] = function() 			-- test new features
-		print("core.Errant: "..#core.Errant)
+		print("Errant Count: "..#MonDKP_Errant)
 		print("DKP Hist Count: "..#MonDKP_DKPHistory)
 		print("Loot Hist Count: "..#MonDKP_Loot)
 	end,
@@ -544,6 +544,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_Archive_Meta then MonDKP_Archive_Meta = { DKP={}, Loot={} } end;
 		if not MonDKP_Meta_Remote or not MonDKP_Meta_Remote.DKP or not MonDKP_Meta_Remote.Loot then MonDKP_Meta_Remote = { DKP={}, Loot={} } end
 		if not MonDKP_DB.defaults.CurrentGuild then MonDKP_DB.defaults.CurrentGuild = {} end
+		if not MonDKP_Errant then MonDKP_Errant = {} end
 
 		MonDKP:ErrantCheck(true)  -- begins errant check (finds entries missing between lowest and current) and executes sync
 

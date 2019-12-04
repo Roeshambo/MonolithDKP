@@ -5,6 +5,22 @@ local L = core.L;
 
 local OptionsLoaded = false;
 
+function MonDKP_RestoreFilterOptions()  		-- restores default filter selections
+	MonDKP.UIConfig.search:SetText(L["SEARCH"])
+	MonDKP.UIConfig.search:SetTextColor(0.3, 0.3, 0.3, 1)
+	MonDKP.UIConfig.search:ClearFocus()
+	core.WorkingTable = CopyTable(MonDKP_DKPTable)
+	core.CurView = "all"
+	core.CurSubView = "all"
+	for i=1, 9 do
+		MonDKP.ConfigTab1.checkBtn[i]:SetChecked(true)
+	end
+	MonDKP.ConfigTab1.checkBtn[10]:SetChecked(false)
+	MonDKP.ConfigTab1.checkBtn[11]:SetChecked(false)
+	MonDKP.ConfigTab1.checkBtn[12]:SetChecked(false)
+	MonDKP:FilterDKPTable(core.currentSort, "reset");
+end
+
 function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, the entire addon window
 	core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();
 	core.MonDKPUI:SetShown(not core.MonDKPUI:IsShown())
@@ -138,6 +154,12 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
 			end
 		end
 		InRaid = false;
+	end
+
+	if #core.WorkingTable == 0 then  		-- removes all filter settings if the filter combination results in an empty table
+		--MonDKP_RestoreFilterOptions()
+		MonDKP.DKPTable.Rows[1].DKPInfo[1]:SetText("|cffff0000No Entries Returned.|r")
+		MonDKP.DKPTable.Rows[1]:Show()
 	end
 	MonDKP:SortDKPTable(sort, reset);
 end

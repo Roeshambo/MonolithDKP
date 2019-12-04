@@ -88,7 +88,6 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.Errant = {}
 core.MonVersion = "v2.0.2 beta 2";
 core.BuildNumber = 20002.02;
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
@@ -545,9 +544,9 @@ function MonDKP:StatusVerify_Update(sync)
 		local records = {};
 		core.OOD = false
 
-		if #core.Errant > 0 then
-			for i=1, #core.Errant do
-				local curOfficer, curIndex = strsplit("-", core.Errant[i])
+		if #MonDKP_Errant > 0 then
+			for i=1, #MonDKP_Errant do
+				local curOfficer, curIndex = strsplit("-", MonDKP_Errant[i])
 				local tab, curOfficer = strsplit(",", curOfficer)
 
 				if not records[curOfficer] then

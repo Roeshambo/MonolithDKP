@@ -127,6 +127,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 				cmd = nil;
 			end
 			if cmd == "cancel" and MonDKP_DB.modes.mode ~= "Roll Based Bidding" then
+				local flagCanceled = false
 				for i=1, #Bids_Submitted do 					-- !bid cancel will cancel their bid
 					if Bids_Submitted[i] and Bids_Submitted[i].player == name then
 						table.remove(Bids_Submitted, i)
@@ -135,11 +136,12 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 						end
 						BidScrollFrame_Update()
 						response = L["BIDCANCELLED"]
+						flagCanceled = true
 						--SendChatMessage(response, "WHISPER", nil, name)
 						--return;
 					end
 				end
-				if not response then
+				if not flagCanceled then
 					response = L["NOTSUBMITTEDBID"]
 				end
 			elseif cmd == "cancel" and MonDKP_DB.modes.mode == "Roll Based Bidding" then

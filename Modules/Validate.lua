@@ -35,6 +35,31 @@ end
 
 function MonDKP:ErrantCheck(req) -- param = request sync when completed
 	local CheckCount = 0
+	local i = 1
+
+	if #MonDKP_Errant > 0 then
+		while i <= #MonDKP_Errant do
+			local loc, index = strsplit(",", MonDKP_Errant[i])
+			
+			if loc == "DKP" then
+				local search = MonDKP:Table_Search(MonDKP_DKPHistory, index, "index")
+
+				if search then
+					table.remove(MonDKP_Errant, i)
+				else
+					i=i+1
+				end
+			elseif loc == "Loot" then
+				local search = MonDKP:Table_Search(MonDKP_Loot, index, "index")
+
+				if search then
+					table.remove(MonDKP_Errant, i)
+				else
+					i=i+1
+				end
+			end
+		end
+	end
 
 	for k,v in pairs(MonDKP_Meta.DKP) do
 		local i=v.lowest
@@ -50,9 +75,9 @@ function MonDKP:ErrantCheck(req) -- param = request sync when completed
 				local search = MonDKP:Table_Search(MonDKP_DKPHistory, k.."-"..i, "index")
 				
 				if not search and i > 0 and ((core.ArchiveActive and i > MonDKP_Archive_Meta.DKP[k]) or not core.ArchiveActive) then
-					local search2 = MonDKP:Table_Search(core.Errant, "DKP,"..k.."-"..i)
+					local search2 = MonDKP:Table_Search(MonDKP_Errant, "DKP,"..k.."-"..i)
 					if not search2 then
-						table.insert(core.Errant,"DKP,"..k.."-"..i)
+						table.insert(MonDKP_Errant,"DKP,"..k.."-"..i)
 					end
 				end
 				processing = false
@@ -85,9 +110,9 @@ function MonDKP:ErrantCheck(req) -- param = request sync when completed
 				local search = MonDKP:Table_Search(MonDKP_Loot, k.."-"..i, "index")
 				
 				if not search and i > 0 and ((core.ArchiveActive and i > MonDKP_Archive_Meta.Loot[k]) or not core.ArchiveActive) then
-					local search2 = MonDKP:Table_Search(core.Errant, "Loot,"..k.."-"..i)
+					local search2 = MonDKP:Table_Search(MonDKP_Errant, "Loot,"..k.."-"..i)
 					if not search2 then
-						table.insert(core.Errant,"Loot,"..k.."-"..i)
+						table.insert(MonDKP_Errant,"Loot,"..k.."-"..i)
 					end
 				end
 				processing = false

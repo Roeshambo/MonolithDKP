@@ -80,11 +80,11 @@ local function RequestErrant()
 	local ErrantTimer = ErrantTimer or CreateFrame("StatusBar", nil, UIParent)
 	ErrantTimer:SetScript("OnUpdate", function(self, elapsed)
 		timer = timer + elapsed
-		if timer > 0.3 and i <= #core.Errant then
-			MonDKP.Sync:SendData("MDKPErrantReq", core.Errant[i]) 
+		if timer > 0.3 and i <= #MonDKP_Errant then
+			MonDKP.Sync:SendData("MDKPErrantReq", MonDKP_Errant[i]) 
 			i=i+1
 			timer = 0
-		elseif i > #core.Errant then
+		elseif i > #MonDKP_Errant then
 			ErrantTimer:SetScript("OnUpdate", nil)
 		end
 	end)
@@ -377,10 +377,10 @@ local function SyncOffMeta()
 end
 
 local function SyncOffErrant()
-	if #core.Errant > 0 then
+	if #MonDKP_Errant > 0 then
 		local MaxTime = 5
-		if #core.Errant > 200 then MaxTime = MaxTime + ((#core.Errant/100) * 2) end
-		MonDKP.Sync:SendData("MDKPErrantOff", core.Errant)
+		if #MonDKP_Errant > 200 then MaxTime = MaxTime + ((#MonDKP_Errant/100) * 2) end
+		MonDKP.Sync:SendData("MDKPErrantOff", MonDKP_Errant)
 		MonDKP.SyncTimer = MonDKP.SyncTimer or CreateFrame("StatusBar", nil, UIParent) 		-- 5 second timer, pushed back 1 second if timer is above 1 and a broadcast is received
 		MonDKP.SyncTimer:SetScript("OnUpdate", function(self, elapsed)						-- every time the timer reaches 3 seconds it resets to 0 and kicks off the next Sync phase
 			SyncTimer = SyncTimer + elapsed
@@ -546,7 +546,7 @@ function MonDKP.Sync:OnEnable()
 end
 
 function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
-	if not core.Initialized then return end
+	if not core.Initialized or core.IsOfficer == "" then return end
 	if prefix == "MDKPMigrated" and not core.Migrated and core.IsOfficer then
 		C_Timer.After(2, function()
 			MonDKP:MigrationFrame()
@@ -692,7 +692,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 							end
 						end)
 					elseif deserialized == "end" then			-- requests errant entries (IE: have Roeshambo-10 and Roeshambo-12, missing Roeshambo-11)
-						if #core.Errant > 0 and UnitName("player") ~= sender then
+						if #MonDKP_Errant > 0 and UnitName("player") ~= sender then
 							RequestErrant()
 						else
 							MonDKP:FilterDKPTable(core.currentSort, "reset")
@@ -739,8 +739,8 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						local newLoot = tonumber(deserialized.OffLoot)
 						local newDKP = tonumber(deserialized.OffDKP)
 
-						if not MonDKP_Meta_Remote.DKP[sender] or newDKP < MonDKP_Meta_Remote.DKP[sender] then
-							oldDKP = MonDKP_Meta_Remote.DKP[sender]
+						if MonDKP_Meta_Remote.DKP[sender] and newDKP < MonDKP_Meta_Remote.DKP[sender] then
+							oldDKP = MonDKP_Meta_Remote.DKP[sender] or 0
 							MonDKP_Meta_Remote.DKP[sender] = newDKP
 
 							if newDKP < oldDKP then
@@ -753,10 +753,12 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 									end
 								end
 							end
+						elseif not MonDKP_Meta_Remote.DKP[sender] then
+							MonDKP_Meta_Remote.DKP[sender] = newDKP
 						end
 
-						if not MonDKP_Meta_Remote.Loot[sender] or newLoot <  MonDKP_Meta_Remote.Loot[sender] then
-							oldLoot = MonDKP_Meta_Remote.Loot[sender]
+						if MonDKP_Meta_Remote.Loot[sender] and newLoot <  MonDKP_Meta_Remote.Loot[sender] then
+							oldLoot = MonDKP_Meta_Remote.Loot[sender] or 0
 							MonDKP_Meta_Remote.Loot[sender] = newLoot
 
 							if newLoot < oldLoot then
@@ -769,6 +771,8 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 									end
 								end
 							end
+						elseif not MonDKP_Meta_Remote.Loot[sender] then
+							MonDKP_Meta_Remote.Loot[sender] = newDKP
 						end
 						if flag then
 							MonDKP:Print(L["PLEASEVALIDATE"])
@@ -846,11 +850,11 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 
 						if core.ArchiveActive and MonDKP_Archive_Meta.DKP[officer] and MonDKP_Archive_Meta.DKP[officer] >= index then return end -- ignores if this entry is already archived
 
-						if #core.Errant > 0 then
-							local rem_errant = MonDKP:Table_Search(core.Errant, "DKP,"..deserialized.index)
+						if #MonDKP_Errant > 0 then
+							local rem_errant = MonDKP:Table_Search(MonDKP_Errant, "DKP,"..deserialized.index)
 
 							if rem_errant then
-								table.remove(core.Errant, rem_errant[1])
+								table.remove(MonDKP_Errant, rem_errant[1])
 							end
 						end
 
@@ -935,11 +939,11 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 
 						if core.ArchiveActive and MonDKP_Archive_Meta.Loot[officer] and MonDKP_Archive_Meta.Loot[officer] >= index then return end -- ignores if this entry is already archived
 
-						if #core.Errant > 0 then
-							local rem_errant = MonDKP:Table_Search(core.Errant, "Loot,"..deserialized.index)
+						if #MonDKP_Errant > 0 then
+							local rem_errant = MonDKP:Table_Search(MonDKP_Errant, "Loot,"..deserialized.index)
 
 							if rem_errant then
-								table.remove(core.Errant, rem_errant[1])
+								table.remove(MonDKP_Errant, rem_errant[1])
 							end
 						end
 
@@ -1024,11 +1028,11 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 							MonDKP_Meta.DKP[officer] = {current=0, lowest=0}
 						end
 
-						if #core.Errant > 0 then
-							local rem_errant = MonDKP:Table_Search(core.Errant, "DKP,"..deserialized.index)
+						if #MonDKP_Errant > 0 then
+							local rem_errant = MonDKP:Table_Search(MonDKP_Errant, "DKP,"..deserialized.index)
 
 							if rem_errant then
-								table.remove(core.Errant, rem_errant[1])
+								table.remove(MonDKP_Errant, rem_errant[1])
 							end
 						end
 						
@@ -1111,11 +1115,11 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 							MonDKP_Meta.Loot[officer] = {current=0, lowest=0}
 						end
 
-						if #core.Errant > 0 then
-							local rem_errant = MonDKP:Table_Search(core.Errant, "Loot,"..deserialized.index)
+						if #MonDKP_Errant > 0 then
+							local rem_errant = MonDKP:Table_Search(MonDKP_Errant, "Loot,"..deserialized.index)
 
 							if rem_errant then
-								table.remove(core.Errant, rem_errant[1])
+								table.remove(MonDKP_Errant, rem_errant[1])
 							end
 						end
 						
@@ -1428,7 +1432,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 							MonDKP.BidTimer:Hide()
 							core.BiddingInProgress = false;
 						end
-						if #core.BidInterface.LootTableButtons > 0 then
+						if core.BidInterface and #core.BidInterface.LootTableButtons > 0 then
 							for i=1, #core.BidInterface.LootTableButtons do
 								ActionButton_HideOverlayGlow(core.BidInterface.LootTableButtons[i])
 							end

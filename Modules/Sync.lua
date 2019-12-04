@@ -33,7 +33,7 @@ function MonDKP_InitMeta_Handler(meta)		-- creates table to be sent during a Syn
 		end
 	end
 
-	if core.IsOfficer and tonumber(MonDKP_Meta.DKP[UnitName("player")].current) and tonumber(MonDKP_Meta.Loot[UnitName("player")].current) then
+	if core.IsOfficer == true and tonumber(MonDKP_Meta.DKP[UnitName("player")].current) and tonumber(MonDKP_Meta.Loot[UnitName("player")].current) then
 		tempMeta.OffDKP = MonDKP_Meta.DKP[UnitName("player")].current
 		tempMeta.OffLoot = MonDKP_Meta.Loot[UnitName("player")].current
 	end

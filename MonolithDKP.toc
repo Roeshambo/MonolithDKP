@@ -4,7 +4,7 @@
 ## Notes: Comprehensive DKP and raid management utility.
 ## Version: 2.0.2
 ## DefaultState: enabled
-## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_DKPHistory, MonDKP_MinBids, MonDKP_Whitelist, MonDKP_Standby, MonDKP_Meta, MonDKP_Meta_Remote, MonDKP_Archive, MonDKP_Archive_Meta
+## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_DKPHistory, MonDKP_MinBids, MonDKP_Whitelist, MonDKP_Standby, MonDKP_Meta, MonDKP_Meta_Remote, MonDKP_Archive, MonDKP_Archive_Meta, MonDKP_Errant
 
 Localization\Localization.en.lua
 Localization\Localization.cn.lua
