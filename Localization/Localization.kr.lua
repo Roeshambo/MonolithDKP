@@ -706,6 +706,7 @@ if GetLocale() == "koKR" then
     RECOMMENDRELOAD       = "DKP 설정이 변경되었습니다. 오류가 발생하지 않도록 인터페이스를 다시로드하는 것이 좋습니다.",
     SYNCCOMPLETE2         = "동기화 완료. 모든 플레이어는 최신 상태입니다.",
     BEGINSYNC             = "DKP 테이블 동기화",
+    PLEASEVALIDATE        = "유효하지 않은 항목이 제거되었습니다. 테이블을 확인하십시오. (DKP 테이블의 오른쪽 클릭 컨텍스트 메뉴)",
 
     CHANGELOG1            = "- 여기에 너무 많습니다. CurseForge 또는 WoWInterface의 변경 로그에서 새로 추가 된 모든 내용을보십시오.",
     CHANGELOG2            = "https://www.curseforge.com/wow/addons/monolith-dkp",

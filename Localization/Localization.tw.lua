@@ -707,6 +707,7 @@ if GetLocale() == "zhTW" then
     RECOMMENDRELOAD       = "DKP設置已更改。 建議您重新加載接口以確保沒有錯誤發生。",
     SYNCCOMPLETE2         = "同步完成。 所有玩家都是最新的。",
     BEGINSYNC             = "同步DKP表",
+    PLEASEVALIDATE        = "無效的條目已被刪除。 請驗證您的表格。 （在DKP表的右鍵單擊上下文菜單中）",
 
     CHANGELOG1            = "- 這裡太多了。 在CurseForge或WoWInterface的更改日誌中查看所有新添加的內容。",
     CHANGELOG2            = "https://www.curseforge.com/wow/addons/monolith-dkp",

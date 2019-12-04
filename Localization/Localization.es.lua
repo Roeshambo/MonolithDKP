@@ -705,6 +705,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     RECOMMENDRELOAD       = "La configuración de DKP ha cambiado. Se recomienda que vuelva a cargar su interfaz para asegurarse de que no se produzcan errores.",
     SYNCCOMPLETE2         = "Sincronización completada. Todos los jugadores están al día.",
     BEGINSYNC             = "Sincronización de tablas DKP",
+    PLEASEVALIDATE        = "Las entradas inválidas fueron eliminadas. Por favor valide sus tablas. (En el menú contextual del botón derecho en la tabla DKP)",
 
     CHANGELOG1            = "- Demasiados para enumerar aquí. Ver todas las nuevas incorporaciones en el registro de cambios en CurseForge o WoWInterface.",
     CHANGELOG2            = "https://www.curseforge.com/wow/addons/monolith-dkp",
