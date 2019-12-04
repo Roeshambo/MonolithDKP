@@ -706,6 +706,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     SYNCCOMPLETE2         = "Sincronización completada. Todos los jugadores están al día.",
     BEGINSYNC             = "Sincronización de tablas DKP",
     PLEASEVALIDATE        = "Las entradas inválidas fueron eliminadas. Por favor valide sus tablas. (En el menú contextual del botón derecho en la tabla DKP)",
+    NOENTRIESRETURNED     = "No hay perfiles devueltos",
 
     CHANGELOG1            = "- Demasiados para enumerar aquí. Ver todas las nuevas incorporaciones en el registro de cambios en CurseForge o WoWInterface.",
     CHANGELOG2            = "https://www.curseforge.com/wow/addons/monolith-dkp",

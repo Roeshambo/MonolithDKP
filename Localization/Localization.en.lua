@@ -704,7 +704,7 @@ core.L = {
   SYNCCOMPLETE2         = "Sync Complete. All players are up to date.",
   BEGINSYNC             = "Synchronizing DKP Tables",
   PLEASEVALIDATE        = "Invalid entries were removed. Please validate your tables. (In the right click context menu on the DKP table)",
-  NOENTRIESRETURNED     = "No Entries Returned.",
+  NOENTRIESRETURNED     = "No Profiles Returned",
 
   CHANGELOG1            = "- Too many to list here. View all new additions in the ChangeLog at CurseForge or WoWInterface.",
   CHANGELOG2            = "https://www.curseforge.com/wow/addons/monolith-dkp",
