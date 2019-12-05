@@ -710,6 +710,7 @@ if GetLocale() == "deDE" then
     BEGINSYNC             = "DKP-Tabellen synchronisieren",
     PLEASEVALIDATE        = "Ungültige Einträge wurden entfernt. Bitte validieren Sie Ihre Tabellen. (Klicken Sie mit der rechten Maustaste auf das Kontextmenü der DKP-Tabelle.)",
     NOENTRIESRETURNED     = "Keine Profile zurückgegeben",
+    ERRANTINPROGRESS      = "Fehler beim Einchecken. Warten Sie mal...",
 
     CHANGELOG1            = "- Zu viele, um sie hier aufzulisten. Zeigen Sie alle neuen Ergänzungen im Änderungsprotokoll von CurseForge oder WoWInterface an.",
     CHANGELOG2            = "https://www.curseforge.com/wow/addons/monolith-dkp",

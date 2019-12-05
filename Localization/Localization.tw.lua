@@ -709,6 +709,7 @@ if GetLocale() == "zhTW" then
     BEGINSYNC             = "同步DKP表",
     PLEASEVALIDATE        = "無效的條目已被刪除。 請驗證您的表格。 （在DKP表的右鍵單擊上下文菜單中）",
     NOENTRIESRETURNED     = "沒有返回配置文件",
+    ERRANTINPROGRESS      = "正在進行錯誤輸入檢查。 請稍候...",
 
     CHANGELOG1            = "- 這裡太多了。 在CurseForge或WoWInterface的更改日誌中查看所有新添加的內容。",
     CHANGELOG2            = "https://www.curseforge.com/wow/addons/monolith-dkp",

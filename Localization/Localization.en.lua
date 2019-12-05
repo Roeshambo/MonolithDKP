@@ -678,7 +678,7 @@ core.L = {
   DKPAWARDHELP          = "Manually Award Item (Officers Only)",
   AWARDWARNING          = "The award command has been changed to /dkp award [item link].",
   REASSIGNED            = "Reassigned",
-  NOOFFICERSONLINE      = "There are currently no officers online to sync with.",
+  NOOFFICERSONLINE      = "There are currently no officers available to sync with. (Offline, In Combat or Recently Synced)",
   SYNCALREADY           = "There is already a sync currently in progress.",
   SYNCCOMPLETE          = "Sync Complete",
   REASSIGNSELECTED      = "Edit Entry",
@@ -702,9 +702,10 @@ core.L = {
   RECOMMENDRELOAD       = "DKP Settings have been changed. It is recommended you reload your interface to ensure no errors occur.",
 
   SYNCCOMPLETE2         = "Sync Complete. All players are up to date.",
-  BEGINSYNC             = "Synchronizing DKP Tables",
+  BEGINSYNC             = "Synchronizing DKP Tables...",
   PLEASEVALIDATE        = "Invalid entries were removed. Please validate your tables. (In the right click context menu on the DKP table)",
   NOENTRIESRETURNED     = "No Profiles Returned",
+  ERRANTINPROGRESS      = "Errant entry check in progress. Please Wait...",
 
   CHANGELOG1            = "- Too many to list here. View all new additions in the ChangeLog at CurseForge or WoWInterface.",
   CHANGELOG2            = "https://www.curseforge.com/wow/addons/monolith-dkp",

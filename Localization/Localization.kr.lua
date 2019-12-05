@@ -708,6 +708,7 @@ if GetLocale() == "koKR" then
     BEGINSYNC             = "DKP 테이블 동기화",
     PLEASEVALIDATE        = "유효하지 않은 항목이 제거되었습니다. 테이블을 확인하십시오. (DKP 테이블의 오른쪽 클릭 컨텍스트 메뉴)",
     NOENTRIESRETURNED     = "반환 된 프로필이 없습니다",
+    ERRANTINPROGRESS      = "잘못된 입력 확인이 진행 중입니다. 기다려주세요 ...",
 
     CHANGELOG1            = "- 여기에 너무 많습니다. CurseForge 또는 WoWInterface의 변경 로그에서 새로 추가 된 모든 내용을보십시오.",
     CHANGELOG2            = "https://www.curseforge.com/wow/addons/monolith-dkp",
