@@ -280,6 +280,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 						MonDKP:StatusVerify_Update(true)
 					end)
 				end
+				MonDKP:ErrantCheck(true)  -- begins errant check (finds entries missing between lowest and current) and executes sync
 			end)
 		end
 
@@ -546,8 +547,6 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_DB.defaults.CurrentGuild then MonDKP_DB.defaults.CurrentGuild = {} end
 		if not MonDKP_Errant then MonDKP_Errant = {} end
 
-		MonDKP:ErrantCheck(true)  -- begins errant check (finds entries missing between lowest and current) and executes sync
-
 		------------------------------------
 	    --	Validate Tables - Rebuilds DKPTable based off of DKP History, Loot History, and archived data. (This is manually triggered now)
 	    ------------------------------------
@@ -585,7 +584,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		for k1,v1 in pairs(MonDKP_Archive_Meta) do 		-- flags the archive active if any entries contain a value above 0
 			for k2,v2 in pairs(v1) do
 				if v2 and v2 > 0 then
-					core.ArchiveActive = true
+					core.ArchiveActive = true 			-- flag is used to identify if lowest entry should be 1. No archive means an index of 1 must exist
 				end
 			end
 		end

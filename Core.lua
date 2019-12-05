@@ -111,6 +111,7 @@ core.LastVerCheck = 0
 core.CenterSort = "class";
 core.OOD = false
 core.Migrated = false
+core.ErrantInProgress = false
 
 function MonDKP:GetCColors(class)
 	if core.CColors then 
@@ -589,6 +590,10 @@ function MonDKP:StatusVerify_Update(sync)
 			GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
 			GameTooltip:AddLine(L["ONETABLEOOD"].." |cffff0000"..L["OUTOFDATE"].."|r.", 1.0, 1.0, 1.0, false);
 			GameTooltip:AddLine(" ")
+			if core.ErrantInProgress then
+				GameTooltip:AddLine("Errant entry check in progress. Please Wait...", 1.0, 1.0, 1.0, false);
+				GameTooltip:AddLine(" ")
+			end
 			GameTooltip:AddLine("Missing Entries:", 0.25, 0.75, 0.90, 1, true);
 			for k,v in pairs(records) do
 				local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
@@ -601,14 +606,26 @@ function MonDKP:StatusVerify_Update(sync)
 				GameTooltip:AddLine("|cff"..c.hex..k.."|r: "..v, 1.0, 1.0, 1.0, false);
 			end
 			GameTooltip:AddLine(" ")
-			GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
+			if SyncInProgress_Get() then
+				GameTooltip:AddLine("|cffff0000"..L["BEGINSYNC"].."|r", 1.0, 1.0, 1.0, true);
+			else
+				GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
+			end
 			GameTooltip:Show()
 		elseif GameTooltip:IsShown() and not core.OOD and tooltipShown then
 			GameTooltip:ClearLines()
 			GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
 			GameTooltip:AddLine(L["ALLTABLES"].." |cff00ff00"..L["UPTODATE"].."|r.", 1.0, 1.0, 1.0, false);
 			GameTooltip:AddLine(" ")
-			GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
+			if core.ErrantInProgress then
+				GameTooltip:AddLine("Errant entry check in progress. Please Wait...", 1.0, 1.0, 1.0, false);
+				GameTooltip:AddLine(" ")
+			end
+			if SyncInProgress_Get() then
+				GameTooltip:AddLine("|cffff0000"..L["BEGINSYNC"].."|r", 1.0, 1.0, 1.0, true);
+			else
+				GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
+			end
 			GameTooltip:Show()
 		end
 
@@ -620,7 +637,15 @@ function MonDKP:StatusVerify_Update(sync)
 				GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
 				GameTooltip:AddLine(L["ALLTABLES"].." |cff00ff00"..L["UPTODATE"].."|r.", 1.0, 1.0, 1.0, false);
 				GameTooltip:AddLine(" ")
-				GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
+				if core.ErrantInProgress then
+					GameTooltip:AddLine("Errant entry check in progress. Please Wait...", 1.0, 1.0, 1.0, false);
+					GameTooltip:AddLine(" ")
+				end
+				if SyncInProgress_Get() then
+					GameTooltip:AddLine("|cffff0000"..L["BEGINSYNC"].."|r", 1.0, 1.0, 1.0, true);
+				else
+					GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
+				end
 				GameTooltip:Show()
 			end)
 			MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function(self)
@@ -637,6 +662,10 @@ function MonDKP:StatusVerify_Update(sync)
 				GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
 				GameTooltip:AddLine(L["ONETABLEOOD"].." |cffff0000"..L["OUTOFDATE"].."|r.", 1.0, 1.0, 1.0, false);
 				GameTooltip:AddLine(" ")
+				if core.ErrantInProgress then
+					GameTooltip:AddLine("Errant entry check in progress. Please Wait...", 1.0, 1.0, 1.0, false);
+					GameTooltip:AddLine(" ")
+				end
 				GameTooltip:AddLine("Missing Entries:", 0.25, 0.75, 0.90, 1, true);
 				for k,v in pairs(records) do
 					local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
@@ -649,7 +678,11 @@ function MonDKP:StatusVerify_Update(sync)
 					GameTooltip:AddLine("|cff"..c.hex..k.."|r: "..v, 1.0, 1.0, 1.0, false);
 				end
 				GameTooltip:AddLine(" ")
-				GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
+				if SyncInProgress_Get() then
+					GameTooltip:AddLine("|cffff0000"..L["BEGINSYNC"].."|r", 1.0, 1.0, 1.0, true);
+				else
+					GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
+				end
 				GameTooltip:Show()
 			end)
 			MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function(self)

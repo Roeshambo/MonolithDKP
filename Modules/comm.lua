@@ -27,6 +27,11 @@ local OfficerSync = {}								-- stores officer with highets number of entries a
 local OfficerTempMeta = {}							-- temporarily stores syncing officers meta until they decide which officer should update them
 local RecentlySynced = false 						-- flags player as recently synced. blocks meta requests until 60 second timer expires to prevent flooding
 local OnlineOfficers = {} 							-- stores list of Online officers
+local FirstSyncReady = false
+
+function SyncInProgress_Get()
+	return SyncInProgress
+end
 
 function MonDKP:ValidateSender(sender)								-- returns true if "sender" has permission to write officer notes. false if not or not found.
 	if MonDKP:GetGuildRankIndex(sender) == 1 then       			-- automatically gives permissions above all settings if player is guild leader
@@ -116,82 +121,48 @@ local function SyncDeleted()
 		end
 	end
 
+	PlayerProfiles_Send()
+
 	if #deleted > 0 then
-		PlayerProfiles_Send()
 		MonDKP.Sync:SendData("MDKPDelUsers", deleted)
-		MonDKP.SyncTimer = MonDKP.SyncTimer or CreateFrame("StatusBar", nil, UIParent)
-		MonDKP.SyncTimer:SetScript("OnUpdate", function(self, elapsed)
-			SyncTimer = SyncTimer + elapsed
-			if SyncTimer > 3 then
-				MonDKP.SyncTimer:SetScript("OnUpdate", nil)
-				SyncTimer = 0
-				
-				if SyncMessage then
-					if MetasReceived == 0 then
-						MonDKP:Print(L["SYNCCOMPLETE2"])
-					else
-						MonDKP:Print(L["SYNCCOMPLETE"])
-					end
-				end
-
-				SyncMessage = false
-				SyncInProgress = false
-				InitiatingOfficer = false
-				MetasReceived = 0
-
-				Meta_Remote_Temp = { DKP={}, Loot={} }
-				FlagValidation = false
-				Errant = {}
-				OfficerErrant = {}
-				OfficerErrantCount = {}
-				OfficerSync = {}
-				OfficerTempMeta = {}
-				RecentlySynced = false
-				OnlineOfficers = {}
-				collectgarbage("collect")
-
-				MonDKP.Sync:SendData("MDKPSyncFlag", "End") 			-- flags all receiving players as "In Progress" to prevent additional sync attempts
-				-- end sync for sending officer
-			end
-		end)
-	else
-		PlayerProfiles_Send()
-		MonDKP.SyncTimer = MonDKP.SyncTimer or CreateFrame("StatusBar", nil, UIParent)
-		MonDKP.SyncTimer:SetScript("OnUpdate", function(self, elapsed)
-			SyncTimer = SyncTimer + elapsed
-			if SyncTimer > 3 then
-				MonDKP.SyncTimer:SetScript("OnUpdate", nil)
-				SyncTimer = 0
-				
-				if SyncMessage then
-					if MetasReceived == 0 then
-						MonDKP:Print(L["SYNCCOMPLETE2"])
-					else
-						MonDKP:Print(L["SYNCCOMPLETE"])
-					end
-				end
-
-				SyncMessage = false
-				SyncInProgress = false
-				InitiatingOfficer = false
-				MetasReceived = 0
-
-				Meta_Remote_Temp = { DKP={}, Loot={} }
-				FlagValidation = false
-				Errant = {}
-				OfficerErrant = {}
-				OfficerErrantCount = {}
-				OfficerSync = {}
-				OfficerTempMeta = {}
-				RecentlySynced = false
-				OnlineOfficers = {}
-				collectgarbage("collect")
-
-				MonDKP.Sync:SendData("MDKPSyncFlag", "End") 			-- flags all receiving players as "In Progress" to prevent additional sync attempts
-				-- end sync for sending officer
-			end
-		end)
 	end
+
+	MonDKP.SyncTimer = MonDKP.SyncTimer or CreateFrame("StatusBar", nil, UIParent)
+	MonDKP.SyncTimer:SetScript("OnUpdate", function(self, elapsed)
+		SyncTimer = SyncTimer + elapsed
+		if SyncTimer > 3 then
+			MonDKP.SyncTimer:SetScript("OnUpdate", nil)
+			SyncTimer = 0
+			
+			if SyncMessage then
+				if MetasReceived == 0 then
+					MonDKP:Print(L["SYNCCOMPLETE2"])
+				else
+					MonDKP:Print(L["SYNCCOMPLETE"])
+					MonDKP:ErrantCheck()
+				end
+			end
+
+			SyncMessage = false
+			SyncInProgress = false
+			InitiatingOfficer = false
+			MetasReceived = 0
+
+			Meta_Remote_Temp = { DKP={}, Loot={} }
+			FlagValidation = false
+			Errant = {}
+			OfficerErrant = {}
+			OfficerErrantCount = {}
+			OfficerSync = {}
+			OfficerTempMeta = {}
+			RecentlySynced = false
+			OnlineOfficers = {}
+			collectgarbage("collect")
+
+			MonDKP.Sync:SendData("MDKPSyncFlag", "End") 			-- flags all receiving players as "In Progress" to prevent additional sync attempts
+			-- end sync for sending officer
+		end
+	end)
 end
 
 local function SyncFinalize()
@@ -460,11 +431,13 @@ function MonDKP:RequestSync(init)
 							end
 							InitCount = InitCount + 1
 							InitTimerElapsed = 0
+							MonDKP:StatusVerify_Update()
 						elseif InitCount > NumOnline then
 							InitTimer:SetScript("OnUpdate", nil)
 							InitTimerElapsed = 0
 							InitCount = 1
 							SyncInProgress = false
+							MonDKP:StatusVerify_Update()
 						end
 					end)
 					if not init then
@@ -559,11 +532,27 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 		if prefix == "MDKPSyncFlag" then
 			if message == "Start" then
 				SyncInProgress = true
+				if #MonDKP_DKPHistory == 0 and #MonDKP_Loot == 0 then FirstSyncReady = true end  -- allows players to receive entries if first sync (prevents receiving entries if logged in mid sync)
+				MonDKP:StatusVerify_Update()
 			elseif message == "End" then
 				SyncInProgress = false
+				if SyncMessage then
+					MonDKP:Print(L["SYNCCOMPLETE"])
+					MonDKP:ErrantCheck()
+				end
+
+				if FlagValidation then
+					FlagValidation = false
+					MonDKP:ValidateLootTable()
+				end
+
+				SyncMessage = false
+				SyncInProgress = false
+				collectgarbage("collect")
 				MonDKP:StatusVerify_Update()
 				MonDKP:ClassGraph_Update()
 				MonDKP:FilterDKPTable(core.currentSort, "reset")
+				-- end sync for all receiving players
 			end
 			return
 		elseif prefix == "MDKPSyncOff" then				-- syncs up all officers
@@ -658,6 +647,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 					SyncInProgress = true
 					if type(deserialized) == "table" and sender ~= UnitName("player") and not RecentlySynced then
 						local response = MonDKP_InitMeta_Handler(deserialized) -- processes meta received and creates a table with relevant information (Only meta values lower than received meta) or false if no update is needed
+
 						MonDKP:StatusVerify_Update()
 						if response then
 							MonDKP.Sync:SendData("MDKPSyncReq", response) -- sends table with local "current" values, if they differ from the initiating officers table.
@@ -670,25 +660,15 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						MonDKP.SyncTimer = MonDKP.SyncTimer or CreateFrame("StatusBar", nil, UIParent)
 						MonDKP.SyncTimer:SetScript("OnUpdate", function(self, elapsed)
 							SyncTimer = SyncTimer + elapsed
-							if SyncTimer > 10 then
+							if SyncTimer > 30 then
 								MonDKP.SyncTimer:SetScript("OnUpdate", nil)
 								SyncTimer = 0
-
-								if SyncMessage then
-									MonDKP:Print(L["SYNCCOMPLETE"])
-								end
-
-								if FlagValidation then
-									FlagValidation = false
-									MonDKP:ValidateLootTable()
-								end
-
-								SyncMessage = false
 								SyncInProgress = false
+								SyncMessage = false
+								MonDKP:StatusVerify_Update()
 								MonDKP:ClassGraph_Update()
 								MonDKP:FilterDKPTable(core.currentSort, "reset")
 								collectgarbage("collect")
-								-- end sync for all receiving players
 							end
 						end)
 					elseif deserialized == "end" then			-- requests errant entries (IE: have Roeshambo-10 and Roeshambo-12, missing Roeshambo-11)
@@ -836,6 +816,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								SyncTimer = 0
 								if SyncMessage then
 									MonDKP:Print(L["SYNCCOMPLETE"])
+									MonDKP:ErrantCheck()
 								end
 								SyncInProgress = false
 								SyncMessage = false
@@ -843,6 +824,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 							end
 						end)
 					end
+
+					if #MonDKP_DKPHistory == 0 and #MonDKP_Loot == 0 and not FirstSyncReady then return end
+
 					if prefix == "MDKPSyncDKP" then
 						local search = MonDKP:Table_Search(MonDKP_DKPHistory, deserialized.index, "index")
 						local officer, index = strsplit("-", deserialized.index)
@@ -1001,6 +985,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				decoded = LibDeflate:DecompressDeflate(LibDeflate:DecodeForWoWAddonChannel(message))
 				local success, deserialized = LibAceSerializer:Deserialize(decoded);
 				if success then
+					SyncInProgress = true
 					if not MonDKP.SyncTimer and SyncTimer == 0 then  		-- initiates sync timer if player logs in mid sync
 						MonDKP.SyncTimer = MonDKP.SyncTimer or CreateFrame("StatusBar", nil, UIParent)
 						MonDKP.SyncTimer:SetScript("OnUpdate", function(self, elapsed)
@@ -1010,6 +995,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								SyncTimer = 0
 								if SyncMessage then
 									MonDKP:Print(L["SYNCCOMPLETE"])
+									MonDKP:ErrantCheck()
 								end
 								SyncInProgress = false
 								SyncMessage = false
@@ -1017,6 +1003,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 							end
 						end)
 					end
+
+					if #MonDKP_DKPHistory == 0 and #MonDKP_Loot == 0 and not FirstSyncReady then return end
+
 					if prefix == "MDKPOffDKP" then
 						local search = MonDKP:Table_Search(MonDKP_DKPHistory, deserialized.index, "index")
 						local officer, index = strsplit("-", deserialized.index)
