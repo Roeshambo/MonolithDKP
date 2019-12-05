@@ -284,7 +284,7 @@ function MonDKP:DKPHistory_Update(reset)
 				table.insert(DKPHistory, MonDKP_DKPHistory[i])
 			end
 		end
-	else
+	elseif not filter then
 		for i=1, #MonDKP_DKPHistory do
 			if not MonDKP_DKPHistory[i].deletes and not MonDKP_DKPHistory[i].hidden and not MonDKP_DKPHistory[i].deletedby then
 				table.insert(DKPHistory, MonDKP_DKPHistory[i])
@@ -511,18 +511,13 @@ function MonDKP:DKPHistory_Update(reset)
 					MonDKP:DKPHistory_Update()
 					MonDKP.ConfigTab6.loadMoreBtn:SetText(L["LOAD"].." "..btnText.." "..L["MORE"].."...")
 					MonDKP.ConfigTab6.loadMoreBtn:SetPoint("TOP", MonDKP.ConfigTab6.history[currentRow], "BOTTOM", 0, -10)
-					self:Hide()
-					C_Timer.After(3, function()
-						MonDKP.ConfigTab6.loadMoreBtn:SetPoint("TOP", MonDKP.ConfigTab6.history[currentRow], "BOTTOM", 0, -10)
-						print(currentRow, currentLength, #DKPHistory)
-						self:Show()
-					end)
 				end)
 			end
 
 			if MonDKP.ConfigTab6.loadMoreBtn and currentRow == #DKPHistory then 
 				MonDKP.ConfigTab6.loadMoreBtn:Hide();
 			elseif MonDKP.ConfigTab6.loadMoreBtn and currentRow < #DKPHistory then
+				if (#DKPHistory - currentRow) < btnText then btnText = (#DKPHistory - currentRow) end
 				MonDKP.ConfigTab6.loadMoreBtn:SetText(string.format(L["LOAD50MORE"], btnText).."...")
 				MonDKP.ConfigTab6.loadMoreBtn:SetPoint("TOP", MonDKP.ConfigTab6.history[currentRow], "BOTTOM", 0, -10);
 				MonDKP.ConfigTab6.loadMoreBtn:Show()

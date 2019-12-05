@@ -782,11 +782,20 @@ function DKPTable_Update()
 		MonDKP.DKPTable.Rows[1].DKPInfo[3].adjustedArrow:SetTexture(nil)
 		if MonDKP.DKPTable.Rows[1].DKPInfo[3].rollrange then MonDKP.DKPTable.Rows[1].DKPInfo[3].rollrange:SetText("") end
 		MonDKP.DKPTable.Rows[1]:SetScript("OnEnter", nil)
-		MonDKP.DKPTable.Rows[1]:SetScript("OnMouseDown", nil)
+		MonDKP.DKPTable.Rows[1]:SetScript("OnMouseDown", function()
+			MonDKP_RestoreFilterOptions() 		-- restores filter selections to default on click.
+		end)
 		MonDKP.DKPTable.Rows[1]:SetScript("OnClick", function()
 			MonDKP_RestoreFilterOptions() 		-- restores filter selections to default on click.
 		end)
 		MonDKP.DKPTable.Rows[1]:Show()
+	else
+		MonDKP.DKPTable.Rows[1]:SetScript("OnMouseDown", function(self, button)
+			if button == "RightButton" then
+				RightClickMenu(self)
+			end
+		end)
+		MonDKP.DKPTable.Rows[1]:SetScript("OnClick", DKPTable_OnClick)
 	end
 
 	MonDKP.DKPTable.counter.t:SetText(#core.WorkingTable.." "..L["ENTRIESSHOWN"]);    -- updates "Entries Shown" at bottom of DKPTable

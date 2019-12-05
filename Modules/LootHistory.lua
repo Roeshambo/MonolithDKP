@@ -488,6 +488,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		    MonDKP.ConfigTab5.lootFrame[i]:SetScript("OnLeave", function()
 		    	tooltip:Hide()
 		    end)
+			MonDKP.ConfigTab5.LoadHistory:SetPoint("TOP", MonDKP.ConfigTab5.lootFrame[i], "BOTTOM", 110, -15)
 		    CurrentPosition = CurrentPosition + 1;
 		    MonDKP.ConfigTab5.lootFrame[i]:Show();
 		    processing = false
@@ -496,9 +497,21 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		elseif j > CurrentLimit then
 			LootHistTimer:SetScript("OnUpdate", nil)
 			LootTimer = 0
+			if MonDKP.ConfigTab5.LoadHistory then
+				MonDKP.ConfigTab5.LoadHistory:ClearAllPoints();
+				MonDKP.ConfigTab5.LoadHistory:SetPoint("TOP", MonDKP.ConfigTab5.lootFrame[CurrentLimit], "BOTTOM", 110, -15)
+				if (#LootTable - CurrentPosition) < 25 then
+					ButtonText = #LootTable - CurrentPosition;
+				end
+				MonDKP.ConfigTab5.LoadHistory:SetText(string.format(L["LOAD50MORE"], ButtonText).."...")
+
+				if CurrentLimit >= #LootTable then
+					MonDKP.ConfigTab5.LoadHistory:Hide();
+				end
+			end
 		end
  	end)
- 	if CurrentLimit < #LootTable and not MonDKP.ConfigTab5.LoadHistory then
+	if CurrentLimit < #LootTable and not MonDKP.ConfigTab5.LoadHistory then
 	 	-- Load More History Button
 		MonDKP.ConfigTab5.LoadHistory = self:CreateButton("TOP", MonDKP.ConfigTab5.lootFrame[CurrentLimit], "BOTTOM", 110, 0, string.format(L["LOAD50MORE"].."...", ButtonText));
 		MonDKP.ConfigTab5.LoadHistory:SetSize(110,25)
@@ -508,21 +521,6 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 				CurrentLimit = #LootTable
 			end
 			MonDKP:LootHistory_Update()
-			self:Hide()
-			C_Timer.After(1, function() self:Show() end)
 		end)
-	end
-	if MonDKP.ConfigTab5.LoadHistory then
-		MonDKP.ConfigTab5.LoadHistory:ClearAllPoints();
-		MonDKP.ConfigTab5.LoadHistory:SetPoint("TOP", MonDKP.ConfigTab5.lootFrame[CurrentLimit], "BOTTOM", 110, -15)
-		if (#LootTable - CurrentPosition) < 25 then
-			ButtonText = #LootTable - CurrentPosition;
-		end
-		MonDKP.ConfigTab5.LoadHistory:SetText(string.format(L["LOAD50MORE"], ButtonText).."...")
-		if CurrentLimit >= #LootTable then
-			MonDKP.ConfigTab5.LoadHistory:Hide();
-		else
-			MonDKP.ConfigTab5.LoadHistory:Show();
-		end
 	end
 end
