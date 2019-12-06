@@ -207,7 +207,7 @@ function MonDKP:BidInterface_Toggle()
 	if core.BidInterface:IsShown() then core.BidInterface:Hide(); end
 
 	if MonDKP_DB.modes.BroadcastBids and not core.BiddingWindow then
-		core.BidInterface:SetHeight(500);
+		core.BidInterface:SetHeight(504);
 		core.BidInterface.bidTable:Show();
 		for k, v in pairs(f.headerButtons) do
 			v:SetHighlightTexture("Interface\\BUTTONS\\BlueGrad64_faded.blp");
@@ -280,10 +280,10 @@ function MonDKP:BidInterface_Toggle()
 	end
 
 	if not MonDKP_DB.modes.BroadcastBids or core.BiddingWindow then
-		core.BidInterface:SetHeight(210);
+		core.BidInterface:SetHeight(231);
 		core.BidInterface.bidTable:Hide();
 	else
-		core.BidInterface:SetHeight(500);
+		core.BidInterface:SetHeight(504);
 		core.BidInterface.bidTable:Show();
 	end	
 
@@ -360,10 +360,10 @@ function MonDKP:CurrItem_Set(item, value, icon, BidHost)
 	end
 
 	if not MonDKP_DB.modes.BroadcastBids or core.BidInProgress then
-		core.BidInterface:SetHeight(210);
+		core.BidInterface:SetHeight(231);
 		core.BidInterface.bidTable:Hide();
 	else
-		core.BidInterface:SetHeight(500);
+		core.BidInterface:SetHeight(504);
 		core.BidInterface.bidTable:Show();
 	end
 end
@@ -396,7 +396,7 @@ function MonDKP:BidInterface_Create()
 	local f = CreateFrame("Frame", "MonDKP_BidderWindow", UIParent, "ShadowOverlaySmallTemplate");
 
 	f:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 700, -200);
-	f:SetSize(400, 500);
+	f:SetSize(400, 504);
 	f:SetClampedToScreen(true)
 	f:SetBackdrop( {
 		bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
@@ -443,30 +443,6 @@ function MonDKP:BidInterface_Create()
 
 	f.closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton")
 	f.closeBtn:SetPoint("CENTER", f.closeContainer, "TOPRIGHT", -14, -14)
-
-	if MonDKP_DB.defaults.AutoOpenBid == nil then
-		MonDKP_DB.defaults.AutoOpenBid = true
-	end
-
-	f.AutoOpenCheckbox = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
-	f.AutoOpenCheckbox:SetChecked(MonDKP_DB.defaults.AutoOpenBid)
-	f.AutoOpenCheckbox:SetScale(0.6);
-	f.AutoOpenCheckbox.text:SetText("|cff5151de"..L["AUTOOPEN"].."|r");
-	f.AutoOpenCheckbox.text:SetScale(1.4);
-	f.AutoOpenCheckbox.text:SetFontObject("MonDKPSmallLeft")
-	f.AutoOpenCheckbox:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -10);
-	f.AutoOpenCheckbox:SetScript("OnClick", function(self)
-		MonDKP_DB.defaults.AutoOpenBid = self:GetChecked()
-	end)
-	f.AutoOpenCheckbox:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_LEFT");
-		GameTooltip:SetText(L["AUTOOPEN"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["AUTOOPENTTDESC"], 1.0, 1.0, 1.0, true);
-		GameTooltip:Show();
-	end)
-	f.AutoOpenCheckbox:SetScript("OnLeave", function(self)
-		GameTooltip:Hide()
-	end)
 
 	f.LootTableIcons = {}
 	f.LootTableButtons = {}
@@ -565,6 +541,23 @@ function MonDKP:BidInterface_Create()
 		f.Bid:SetNumber(f.Bid:GetNumber() + 5);
 	end)
 
+	f.BidMax = CreateFrame("Button", nil, f.BidPlusOne, "MonolithDKPButtonTemplate")
+	f.BidMax:SetPoint("TOPLEFT", f.BidPlusOne, "BOTTOMLEFT", 0, -4);
+	f.BidMax:SetSize(70,20)
+	f.BidMax:SetText("MAX");
+	f.BidMax:GetFontString():SetTextColor(1, 1, 1, 1)
+	f.BidMax:SetNormalFontObject("MonDKPSmallCenter");
+	f.BidMax:SetHighlightFontObject("MonDKPSmallCenter");
+	f.BidMax:SetScript("OnClick", function()
+		local search = MonDKP:Table_Search(MonDKP_DKPTable, UnitName("player"), "player")
+
+		if search then
+			f.Bid:SetNumber(MonDKP_DKPTable[search[1][1]].dkp);
+		else
+			f.Bid:SetNumber(0);
+		end
+	end)
+
     f.SubmitBid = CreateFrame("Button", nil, f, "MonolithDKPButtonTemplate")
 	f.SubmitBid:SetPoint("LEFT", f.Bid, "RIGHT", 8, 0);
 	f.SubmitBid:SetSize(90,25)
@@ -583,6 +576,32 @@ function MonDKP:BidInterface_Create()
 	f.CancelBid:SetScript("OnClick", function()
 		--CancelBid()
 		f.Bid:ClearFocus();
+	end)
+
+	if MonDKP_DB.defaults.AutoOpenBid == nil then
+		MonDKP_DB.defaults.AutoOpenBid = true
+	end
+
+	f.AutoOpenCheckbox = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
+	f.AutoOpenCheckbox:SetChecked(MonDKP_DB.defaults.AutoOpenBid)
+	f.AutoOpenCheckbox:SetScale(0.6);
+	f.AutoOpenCheckbox.text:SetText("|cff5151de"..L["AUTOOPEN"].."|r");
+	f.AutoOpenCheckbox.text:SetScale(1.4);
+	f.AutoOpenCheckbox.text:ClearAllPoints()
+	f.AutoOpenCheckbox.text:SetPoint("RIGHT", f.AutoOpenCheckbox, "LEFT", -2, 0)
+	f.AutoOpenCheckbox.text:SetFontObject("MonDKPSmallLeft")
+	f.AutoOpenCheckbox:SetPoint("TOP", f.CancelBid, "BOTTOMRIGHT", 5, -53)
+	f.AutoOpenCheckbox:SetScript("OnClick", function(self)
+		MonDKP_DB.defaults.AutoOpenBid = self:GetChecked()
+	end)
+	f.AutoOpenCheckbox:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_LEFT");
+		GameTooltip:SetText(L["AUTOOPEN"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["AUTOOPENTTDESC"], 1.0, 1.0, 1.0, true);
+		GameTooltip:Show();
+	end)
+	f.AutoOpenCheckbox:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
 	end)
 
 	--------------------------------------------------
@@ -655,7 +674,7 @@ function MonDKP:BidInterface_Create()
 
 	if not MonDKP_DB.modes.BroadcastBids then
 		f.bidTable:Hide();
-		f:SetHeight(210);
+		f:SetHeight(231);
 	end; 		--hides table if broadcasting is set to false.
 
 	f:Hide();

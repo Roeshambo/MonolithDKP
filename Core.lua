@@ -93,7 +93,7 @@ core.BuildNumber = 20002.02;
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
-core.IsOfficer = "";
+core.IsOfficer = nil;
 core.ShowState = false;
 core.StandbyActive = false;
 core.currentSort = "class"		-- stores current sort selection
@@ -179,7 +179,7 @@ end
 
 function MonDKP:CheckOfficer()      -- checks if user is an officer IF core.IsOfficer is empty. Use before checks against core.IsOfficer
 	if not core.Initialized then return end
-	if core.IsOfficer == "" then      -- used as a redundency as it should be set on load in init.lua GUILD_ROSTER_UPDATE event
+	if core.IsOfficer == nil then      -- used as a redundency as it should be set on load in init.lua GUILD_ROSTER_UPDATE event
 		if MonDKP:GetGuildRankIndex(UnitName("player")) == 1 then       -- automatically gives permissions above all settings if player is guild leader
 			core.IsOfficer = true
 			MonDKP.ConfigTab3.WhitelistContainer:Show()

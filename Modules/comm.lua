@@ -519,7 +519,7 @@ function MonDKP.Sync:OnEnable()
 end
 
 function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
-	if not core.Initialized or core.IsOfficer == "" then return end
+	if not core.Initialized or core.IsOfficer == nil then return end
 	if prefix == "MDKPMigrated" and not core.Migrated and core.IsOfficer then
 		C_Timer.After(2, function()
 			MonDKP:MigrationFrame()
@@ -1426,11 +1426,16 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								ActionButton_HideOverlayGlow(core.BidInterface.LootTableButtons[i])
 							end
 						end
+						C_Timer.After(2, function()
+							if core.BidInterface and core.BidInterface:IsShown() and not core.BiddingInProgress then
+								core.BidInterface:Hide()
+							end
+						end)
 					elseif command == "BidInfo" then
 						if not core.BidInterface then
 							core.BidInterface = core.BidInterface or MonDKP:BidInterface_Create()	-- initiates bid window if it hasn't been created
 						end
-						if MonDKP_DB.defaults.AutoOpenBid then	-- toggles bid window if option is set to
+						if MonDKP_DB.defaults.AutoOpenBid and not core.BidInterface:IsShown() then	-- toggles bid window if option is set to
 							MonDKP:BidInterface_Toggle()
 						end
 						MonDKP:CurrItem_Set(arg1, arg2, arg3, sender)	-- populates bid window

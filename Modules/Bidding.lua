@@ -846,6 +846,11 @@ function MonDKP:StartBidTimer(seconds, title, itemIcon)
 					ActionButton_HideOverlayGlow(core.BidInterface.LootTableButtons[i])
 				end
 			end
+			C_Timer.After(2, function()
+				if core.BidInterface and core.BidInterface:IsShown() then
+					core.BidInterface:Hide()
+				end
+			end)
 		end
 	end)
 end

@@ -59,9 +59,7 @@ MonDKP.Commands = {
 		if not core.Migrated then MonDKP:MigrationFrame() end
 	end,
 	["test"] = function() 			-- test new features
-		print("Errant Count: "..#MonDKP_Errant)
-		print("DKP Hist Count: "..#MonDKP_DKPHistory)
-		print("Loot Hist Count: "..#MonDKP_Loot)
+		MonDKP.Toggle()
 	end,
 	["award"] = function (name, ...)
 		if core.IsOfficer and core.Initialized then
@@ -492,7 +490,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
     if(event == "ADDON_LOADED") then
     	core.Initialized = false
     	core.InitStart = false
-    	core.IsOfficer = ""
+    	core.IsOfficer = nil
 		C_Timer.After(5, function ()
 			core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();		-- creates main menu after 5 seconds (trying to initialize after raid frames are loaded)
 		end)
