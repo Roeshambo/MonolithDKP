@@ -27,11 +27,14 @@ local function ZeroSumDistribution()
 		end		
 
 		for i=1, 40 do
-			local tempName = GetRaidRosterInfo(i)
+			local tempName, _rank, _subgroup, _level, _class, _fileName, zone, online = GetRaidRosterInfo(i)
 			local search = MonDKP:Table_Search(VerifyTable, tempName)
 			local search2 = MonDKP:Table_Search(MonDKP_DKPTable, tempName)
+			local OnlineOnly = MonDKP_DB.modes.OnlineOnly
+			local limitToZone = MonDKP_DB.modes.SameZoneOnly
+			local isSameZone = zone == GetRealZoneText()
 
-			if not search and search2 then
+			if not search and search2 and (not OnlineOnly or online) and (not limitToZone or isSameZone) then
 				tinsert(VerifyTable, tempName)
 			end
 		end

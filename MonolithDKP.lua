@@ -47,7 +47,7 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
 		OptionsLoaded = true;
 	end
 
-	if #MonDKP_Whitelist > 0 then
+	if #MonDKP_Whitelist > 0 and core.IsOfficer then
 		MonDKP.Sync:SendData("MDKPWhitelist", MonDKP_Whitelist)   -- broadcasts whitelist any time the window is opened if one exists (help ensure everyone has the information even if they were offline when it was created)
 	end
 

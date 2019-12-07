@@ -541,6 +541,9 @@ end
 local tooltipShown = false  -- only updates tooltip if moused over status icon
 
 function MonDKP:StatusVerify_Update(sync)
+	if not MonDKP.UIConfig:IsShown() and not sync then     -- blocks update if dkp window is closed. Updated when window is opened anyway
+		return;
+	end
 	if IsInGuild() and core.Initialized then
 		local records = {};
 		core.OOD = false
@@ -581,6 +584,10 @@ function MonDKP:StatusVerify_Update(sync)
 			end
 		end
 
+		if #MonDKP_Loot == 0 and #MonDKP_DKPHistory == 0 then
+			core.OOD = true
+		end
+
 		if sync then
 			MonDKP:RequestSync("init")
 		end
@@ -588,26 +595,49 @@ function MonDKP:StatusVerify_Update(sync)
 		if GameTooltip:IsShown() and core.OOD and tooltipShown then
 			GameTooltip:ClearLines()
 			GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
-			GameTooltip:AddLine(L["ONETABLEOOD"].." |cffff0000"..L["OUTOFDATE"].."|r.", 1.0, 1.0, 1.0, false);
+			if #MonDKP_Loot == 0 and #MonDKP_DKPHistory == 0 then
+				GameTooltip:AddLine(L["TABLESAREEMPTY"], 1.0, 1.0, 1.0, false);
+			else
+				GameTooltip:AddLine(L["ONETABLEOOD"].." |cffff0000"..L["OUTOFDATE"].."|r.", 1.0, 1.0, 1.0, false);
+			end
 			GameTooltip:AddLine(" ")
 			if core.ErrantInProgress then
 				GameTooltip:AddLine("Errant entry check in progress. Please Wait...", 1.0, 1.0, 1.0, false);
 				GameTooltip:AddLine(" ")
 			end
-			GameTooltip:AddLine("Missing Entries:", 0.25, 0.75, 0.90, 1, true);
-			for k,v in pairs(records) do
-				local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
+			
+			if next(records) ~= nil then
+				GameTooltip:AddLine("Missing Entries:", 0.25, 0.75, 0.90, 1, true);
+				for k,v in pairs(records) do
+					local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
 
-				if classSearch then
-					c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
-				else
-					c = { hex="ffffff" }
+					if classSearch then
+						c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+					else
+						c = { hex="ffffff" }
+					end
+					GameTooltip:AddLine("|cff"..c.hex..k.."|r: "..v, 1.0, 1.0, 1.0, false);
 				end
-				GameTooltip:AddLine("|cff"..c.hex..k.."|r: "..v, 1.0, 1.0, 1.0, false);
+				GameTooltip:AddLine(" ")
 			end
-			GameTooltip:AddLine(" ")
-			if SyncInProgress_Get() then
+			if MonDKP_SyncInProgress_Get() then
 				GameTooltip:AddLine("|cffff0000"..L["BEGINSYNC"].."|r", 1.0, 1.0, 1.0, true);
+				local players = MonDKP_SyncingPlayers_Get()
+				
+				if #players > 0 and core.IsOfficer then
+					local playerString = L["UPDATING"]
+					for i=1, #players do
+						local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
+
+						if classSearch then
+							c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+						else
+							c = { hex="cccccc" }
+						end
+						playerString = playerString.."|cff"..c.hex..players[i].."|r,"
+					end
+					GameTooltip:AddLine(strsub(playerString, 1, -2), 1.0, 1.0, 1.0, true);
+				end
 			else
 				GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
 			end
@@ -621,8 +651,24 @@ function MonDKP:StatusVerify_Update(sync)
 				GameTooltip:AddLine("Errant entry check in progress. Please Wait...", 1.0, 1.0, 1.0, false);
 				GameTooltip:AddLine(" ")
 			end
-			if SyncInProgress_Get() then
+			if MonDKP_SyncInProgress_Get() then
 				GameTooltip:AddLine("|cffff0000"..L["BEGINSYNC"].."|r", 1.0, 1.0, 1.0, true);
+				local players = MonDKP_SyncingPlayers_Get()
+				
+				if #players > 0 and core.IsOfficer then
+					local playerString = L["UPDATING"]
+					for i=1, #players do
+						local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
+
+						if classSearch then
+							c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+						else
+							c = { hex="cccccc" }
+						end
+						playerString = playerString.."|cff"..c.hex..players[i].."|r,"
+					end
+					GameTooltip:AddLine(strsub(playerString, 1, -2), 1.0, 1.0, 1.0, true);
+				end
 			else
 				GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
 			end
@@ -630,7 +676,11 @@ function MonDKP:StatusVerify_Update(sync)
 		end
 
 		if not core.OOD then
-			MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\up-to-date")
+			if core.ErrantInProgress or MonDKP_SyncInProgress_Get() then
+				MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\MonDKP-review-tables")
+			else
+				MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\up-to-date")
+			end
 			MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
 				tooltipShown = true
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
@@ -641,8 +691,24 @@ function MonDKP:StatusVerify_Update(sync)
 					GameTooltip:AddLine("Errant entry check in progress. Please Wait...", 1.0, 1.0, 1.0, false);
 					GameTooltip:AddLine(" ")
 				end
-				if SyncInProgress_Get() then
+				if MonDKP_SyncInProgress_Get() then
 					GameTooltip:AddLine("|cffff0000"..L["BEGINSYNC"].."|r", 1.0, 1.0, 1.0, true);
+					local players = MonDKP_SyncingPlayers_Get()
+					
+					if #players > 0 and core.IsOfficer then
+						local playerString = L["UPDATING"]
+						for i=1, #players do
+							local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
+
+							if classSearch then
+								c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+							else
+								c = { hex="cccccc" }
+							end
+							playerString = playerString.."|cff"..c.hex..players[i].."|r,"
+						end
+						GameTooltip:AddLine(strsub(playerString, 1, -2), 1.0, 1.0, 1.0, true);
+					end
 				else
 					GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
 				end
@@ -655,31 +721,57 @@ function MonDKP:StatusVerify_Update(sync)
 
 			return true;
 		else
-			MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\out-of-date")
+			if core.ErrantInProgress or MonDKP_SyncInProgress_Get() then
+				MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\MonDKP-review-tables")
+			else
+				MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\out-of-date")
+			end
 			MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
 				tooltipShown = true
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
 				GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
-				GameTooltip:AddLine(L["ONETABLEOOD"].." |cffff0000"..L["OUTOFDATE"].."|r.", 1.0, 1.0, 1.0, false);
+				if #MonDKP_Loot == 0 and #MonDKP_DKPHistory == 0 then
+					GameTooltip:AddLine(L["TABLESAREEMPTY"], 1.0, 1.0, 1.0, false);
+				else
+					GameTooltip:AddLine(L["ONETABLEOOD"].." |cffff0000"..L["OUTOFDATE"].."|r.", 1.0, 1.0, 1.0, false);
+				end
 				GameTooltip:AddLine(" ")
 				if core.ErrantInProgress then
 					GameTooltip:AddLine("Errant entry check in progress. Please Wait...", 1.0, 1.0, 1.0, false);
 					GameTooltip:AddLine(" ")
 				end
-				GameTooltip:AddLine("Missing Entries:", 0.25, 0.75, 0.90, 1, true);
-				for k,v in pairs(records) do
-					local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
+				if next(records) ~= nil then
+					GameTooltip:AddLine("Missing Entries:", 0.25, 0.75, 0.90, 1, true);
+					for k,v in pairs(records) do
+						local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
 
-					if classSearch then
-						c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
-					else
-						c = { hex="ffffff" }
+						if classSearch then
+							c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+						else
+							c = { hex="ffffff" }
+						end
+						GameTooltip:AddLine("|cff"..c.hex..k.."|r: "..v, 1.0, 1.0, 1.0, false);
 					end
-					GameTooltip:AddLine("|cff"..c.hex..k.."|r: "..v, 1.0, 1.0, 1.0, false);
+					GameTooltip:AddLine(" ")
 				end
-				GameTooltip:AddLine(" ")
-				if SyncInProgress_Get() then
+				if MonDKP_SyncInProgress_Get() then
 					GameTooltip:AddLine("|cffff0000"..L["BEGINSYNC"].."|r", 1.0, 1.0, 1.0, true);
+					local players = MonDKP_SyncingPlayers_Get()
+					
+					if #players > 0 and core.IsOfficer then
+						local playerString = L["UPDATING"]
+						for i=1, #players do
+							local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
+
+							if classSearch then
+								c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+							else
+								c = { hex="cccccc" }
+							end
+							playerString = playerString.."|cff"..c.hex..players[i].."|r,"
+						end
+						GameTooltip:AddLine(strsub(playerString, 1, -2), 1.0, 1.0, 1.0, true);
+					end
 				else
 					GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
 				end

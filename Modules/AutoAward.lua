@@ -4,7 +4,6 @@ local MonDKP = core.MonDKP;
 local L = core.L;
 
 function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to award (1=just raid, 2=just standby, 3=both)
-	local tempName
 	local tempList = "";
 	local tempList2 = "";
 	local curTime = time();
@@ -21,12 +20,13 @@ function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to awar
 	if MonDKP:CheckRaidLeader() then -- only allows raid leader to disseminate DKP
 		if phase == 1 or phase == 3 then
 			for i=1, 40 do
-				local tempName, tempClass, search_DKP, search_standby
+				local tempName, _rank, _subgroup, _level, _class, _fileName, zone, online = GetRaidRosterInfo(i)
+				local search_DKP = MonDKP:Table_Search(MonDKP_DKPTable, tempName)
+				local OnlineOnly = MonDKP_DB.modes.OnlineOnly
+				local limitToZone = MonDKP_DB.modes.SameZoneOnly
+				local isSameZone = zone == GetRealZoneText()
 
-				tempName = GetRaidRosterInfo(i)
-				search_DKP = MonDKP:Table_Search(MonDKP_DKPTable, tempName)
-
-				if search_DKP then
+				if search_DKP and (not OnlineOnly or online) and (not limitToZone or isSameZone) then
 					MonDKP:AwardPlayer(tempName, amount)
 					tempList = tempList..tempName..",";
 				end
@@ -47,9 +47,12 @@ function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to awar
 					tempList2 = tempList2..MonDKP_Standby[i].player..",";
 				end
 			end
-			for i=1, #MonDKP_Standby do
+			local i = 1
+			while i <= #MonDKP_Standby do
 				if MonDKP_Standby[i] and strfind(raidParty, MonDKP_Standby[i].player..",") then
 					table.remove(MonDKP_Standby, i)
+				else
+					i=i+1
 				end
 			end
 		end

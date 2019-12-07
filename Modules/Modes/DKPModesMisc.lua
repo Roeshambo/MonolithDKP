@@ -235,4 +235,55 @@ function MonDKP:DKPModes_Misc()
 		f.MiscContainer.StoreBids:SetScript("OnLeave", function(self)
 			GameTooltip:Hide()
 		end)
+
+	--DKP Award Options Container
+	f.DKPAwardContainer = MonDKP:CreateContainer(f, "DKPAwardContainer", L["DKPSETTINGS"])
+    f.DKPAwardContainer:SetPoint("TOPLEFT", f.AnnounceBidContainer, "BOTTOMLEFT", 0, -20)
+    f.DKPAwardContainer:SetSize(175, 50)
+
+    	-- Online Only Checkbox
+	    if MonDKP_DB.modes.OnlineOnly == nil then MonDKP_DB.modes.OnlineOnly = false end
+		f.DKPAwardContainer.OnlineOnly = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
+		f.DKPAwardContainer.OnlineOnly:SetChecked(MonDKP_DB.modes.OnlineOnly)
+		f.DKPAwardContainer.OnlineOnly:SetScale(0.6);
+		f.DKPAwardContainer.OnlineOnly.text:SetText("  |cff5151de"..L["ONLINEONLY"].."|r");
+		f.DKPAwardContainer.OnlineOnly.text:SetScale(1.5);
+		f.DKPAwardContainer.OnlineOnly.text:SetFontObject("MonDKPSmallLeft")
+		f.DKPAwardContainer.OnlineOnly:SetPoint("TOPLEFT", f.DKPAwardContainer, "TOPLEFT", 10, -10);
+		f.DKPAwardContainer.OnlineOnly:SetScript("OnClick", function(self)
+			MonDKP_DB.modes.OnlineOnly = self:GetChecked();
+			PlaySound(808);
+		end)
+		f.DKPAwardContainer.OnlineOnly:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText(L["ONLINEONLY"], 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine(L["ONLINEONLYTTDESC"], 1.0, 1.0, 1.0, true);
+			GameTooltip:Show();
+		end)
+		f.DKPAwardContainer.OnlineOnly:SetScript("OnLeave", function(self)
+			GameTooltip:Hide()
+		end)
+
+		-- Same Zone Only Checkbox
+	    if MonDKP_DB.modes.SameZoneOnly == nil then MonDKP_DB.modes.SameZoneOnly = false end
+		f.DKPAwardContainer.SameZoneOnly = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
+		f.DKPAwardContainer.SameZoneOnly:SetChecked(MonDKP_DB.modes.SameZoneOnly)
+		f.DKPAwardContainer.SameZoneOnly:SetScale(0.6);
+		f.DKPAwardContainer.SameZoneOnly.text:SetText("  |cff5151de"..L["INZONEONLY"].."|r");
+		f.DKPAwardContainer.SameZoneOnly.text:SetScale(1.5);
+		f.DKPAwardContainer.SameZoneOnly.text:SetFontObject("MonDKPSmallLeft")
+		f.DKPAwardContainer.SameZoneOnly:SetPoint("TOP", f.DKPAwardContainer.OnlineOnly, "BOTTOM", 0, 0);
+		f.DKPAwardContainer.SameZoneOnly:SetScript("OnClick", function(self)
+			MonDKP_DB.modes.SameZoneOnly = self:GetChecked();
+			PlaySound(808);
+		end)
+		f.DKPAwardContainer.SameZoneOnly:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText(L["INZONEONLY"], 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine(L["INZONEONLYTTDESC"], 1.0, 1.0, 1.0, true);
+			GameTooltip:Show();
+		end)
+		f.DKPAwardContainer.SameZoneOnly:SetScript("OnLeave", function(self)
+			GameTooltip:Hide()
+		end)
 end

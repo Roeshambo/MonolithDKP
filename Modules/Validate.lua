@@ -6,7 +6,7 @@ local L = core.L;
 local DKPTableTemp = {}
 local ValInProgress = false
 
-local function TableCompare(t1,t2) 		-- compares two tables. returns true if all keys and values match
+function MonDKP_TableCompare(t1,t2) 		-- compares two tables. returns true if all keys and values match
 	local ty1 = type(t1)
 	local ty2 = type(t2)
 	
@@ -36,8 +36,6 @@ end
 function MonDKP:ErrantCheck(req) -- param = request sync when completed
 	local CheckCount = 0
 	local i = 1
-
-	core.ErrantInProgress = true
 
 	for k1,v1 in pairs(MonDKP_Archive_Meta) do 		-- flags the archive active if any entries contain a value above 0
 		for k2,v2 in pairs(v1) do

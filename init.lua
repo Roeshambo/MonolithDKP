@@ -59,7 +59,9 @@ MonDKP.Commands = {
 		if not core.Migrated then MonDKP:MigrationFrame() end
 	end,
 	["test"] = function() 			-- test new features
-		MonDKP.Toggle()
+		print("Errant Count: "..#MonDKP_Errant)
+		print("DKP Hist Count: "..#MonDKP_DKPHistory)
+		print("Loot Hist Count: "..#MonDKP_Loot)
 	end,
 	["award"] = function (name, ...)
 		if core.IsOfficer and core.Initialized then
@@ -272,6 +274,16 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 					if core.IsOfficer and not MonDKP_Meta.Loot[UnitName("player")] then
 						MonDKP_Meta.Loot[UnitName("player")] = { current=0, lowest=0 }
 					end
+					for k1,v1 in pairs(MonDKP_Meta) do
+						for k2,v2 in pairs(v1) do
+							if not MonDKP:ValidateSender(k2) and v2.current == 0 and v2.lowest == 0 then
+								MonDKP_Meta[k1][k2] = nil
+								if MonDKP_Meta_Remote[k1][k2] then
+									MonDKP_Meta_Remote[k1][k2] = nil
+								end
+							end
+						end
+					end
 				end
 				if #MonDKP_Loot == 0 and #MonDKP_DKPHistory == 0 then
 					C_Timer.After(4, function()
@@ -288,29 +300,31 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			if not MonDKP_DB.defaults.CurrentGuild[UnitName("player")] and GuildName then
 				MonDKP_DB.defaults.CurrentGuild = {}
 				MonDKP_DB.defaults.CurrentGuild[UnitName("player")] = GuildName
-			elseif GuildName and MonDKP_DB.defaults.CurrentGuild[UnitName("player")] ~= GuildName then -- prompt to wipes tables if guild changes
+			elseif GuildName and MonDKP_DB.defaults.CurrentGuild[UnitName("player")] ~= GuildName then -- wipes all data when player joins a new guild
+				core.IsOfficer = false
+				MonDKP_Whitelist = nil
+				MonDKP_Whitelist = {}
+				MonDKP_DKPTable = nil
+				MonDKP_Loot = nil
+				MonDKP_DKPHistory = nil
+				MonDKP_Meta = nil
+				MonDKP_Meta_Remote = nil
+				MonDKP_Archive = nil
+				MonDKP_Whitelist = nil
+
+				MonDKP_DKPTable = {}
+				MonDKP_Loot = {}
+				MonDKP_DKPHistory = {}
+				MonDKP_Meta = {}
+				MonDKP_Meta_Remote = {}
+				MonDKP_Archive = {}
+				core.Migrated = true
+				MonDKP:FilterDKPTable(core.currentSort, "reset")
+				MonDKP_DB.defaults.CurrentGuild[UnitName("player")] = GuildName
+
 				StaticPopupDialogs["GUILD_CHANGED"] = {
 					text = L["CHANGEDGUILDS"],
-					button1 = L["YES"],
-					button2 = L["NO"],
-					OnAccept = function()
-						MonDKP_DB.defaults.CurrentGuild[UnitName("player")] = GuildName
-						MonDKP_DKPTable = nil
-						MonDKP_Loot = nil
-						MonDKP_DKPHistory = nil
-						MonDKP_Meta = nil
-						MonDKP_Meta_Remote = nil
-						MonDKP_Archive = nil
-
-						MonDKP_DKPTable = {}
-						MonDKP_Loot = {}
-						MonDKP_DKPHistory = {}
-						MonDKP_Meta = {}
-						MonDKP_Meta_Remote = {}
-						MonDKP_Archive = {}
-						core.Migrated = true
-						MonDKP:FilterDKPTable(core.currentSort, "reset")
-					end,
+					button1 = L["OK"],
 					timeout = 0,
 					whileDead = true,
 					hideOnEscape = true,

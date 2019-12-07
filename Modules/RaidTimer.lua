@@ -63,12 +63,13 @@ local function AwardRaid(amount, reason)
 	newIndex = tonumber(curIndex) + 1;
 
 	for i=1, 40 do
-		local tempName, tempClass, search_DKP, search_standby
+		local tempName, _rank, _subgroup, _level, _class, _fileName, zone, online = GetRaidRosterInfo(i)
+		local search_DKP = MonDKP:Table_Search(MonDKP_DKPTable, tempName)
+		local OnlineOnly = MonDKP_DB.modes.OnlineOnly
+		local limitToZone = MonDKP_DB.modes.SameZoneOnly
+		local isSameZone = zone == GetRealZoneText()
 
-		tempName = GetRaidRosterInfo(i)
-		search_DKP = MonDKP:Table_Search(MonDKP_DKPTable, tempName)
-
-		if search_DKP then
+		if search_DKP and (not OnlineOnly or online) and (not limitToZone or isSameZone) then
 			MonDKP:AwardPlayer(tempName, amount)
 			tempList = tempList..tempName..",";
 		end

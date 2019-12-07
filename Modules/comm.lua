@@ -27,10 +27,15 @@ local OfficerSync = {}								-- stores officer with highets number of entries a
 local OfficerTempMeta = {}							-- temporarily stores syncing officers meta until they decide which officer should update them
 local RecentlySynced = false 						-- flags player as recently synced. blocks meta requests until 60 second timer expires to prevent flooding
 local OnlineOfficers = {} 							-- stores list of Online officers
-local FirstSyncReady = false
+local FirstSyncReady = false 						-- Flags a player ready to receive first time sync. Prevents player from receiving if logging in mid sync. Allows "Full Sync" flag in case archive is needed
+local SyncingPlayers = {}							-- Stores names for display of who is receiving a sync
 
-function SyncInProgress_Get()
+function MonDKP_SyncInProgress_Get()
 	return SyncInProgress
+end
+
+function MonDKP_SyncingPlayers_Get()
+	return SyncingPlayers
 end
 
 function MonDKP:ValidateSender(sender)								-- returns true if "sender" has permission to write officer notes. false if not or not found.
@@ -157,6 +162,7 @@ local function SyncDeleted()
 			OfficerTempMeta = {}
 			RecentlySynced = false
 			OnlineOfficers = {}
+			SyncingPlayers = {}
 			collectgarbage("collect")
 
 			MonDKP.Sync:SendData("MDKPSyncFlag", "End") 			-- flags all receiving players as "In Progress" to prevent additional sync attempts
@@ -263,7 +269,8 @@ local function SyncInit()
 		if SyncTimer > 7 then
 			MonDKP.SyncTimer:SetScript("OnUpdate", nil)
 			SyncTimer = 0
-		
+			MonDKP:StatusVerify_Update()
+
 			for k1,v1 in pairs(MonDKP_Meta) do
 			    for k2,v2 in pairs(v1) do
 			    	local lowest = 0
@@ -535,7 +542,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				if #MonDKP_DKPHistory == 0 and #MonDKP_Loot == 0 then FirstSyncReady = true end  -- allows players to receive entries if first sync (prevents receiving entries if logged in mid sync)
 				MonDKP:StatusVerify_Update()
 			elseif message == "End" then
-				SyncInProgress = false
+				if MonDKP.SyncTimer then MonDKP.SyncTimer:SetScript("OnUpdate", nil) end
+				SyncTimer = 0
+
 				if SyncMessage then
 					MonDKP:Print(L["SYNCCOMPLETE"])
 					MonDKP:ErrantCheck()
@@ -547,6 +556,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				end
 
 				SyncMessage = false
+				SyncingPlayers = {}
 				SyncInProgress = false
 				collectgarbage("collect")
 				MonDKP:StatusVerify_Update()
@@ -697,6 +707,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				if InitiatingOfficer and core.IsOfficer then MetasReceived = MetasReceived + 1 end
 
 				if type(deserialized) == "table" then
+					if SyncInProgress and core.IsOfficer then
+						table.insert(SyncingPlayers, sender)
+					end
 					for k1,v1 in pairs(deserialized) do
 						if type(v1) == "table" then
 						    for k2,v2 in pairs(v1) do
@@ -761,6 +774,10 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				elseif deserialized == "Full Sync" and core.IsOfficer and InitiatingOfficer then  -- message sent by player if they have no entries rather than sending full meta (reduces traffic)
 					local archive = {}
 		        	local flag = false
+
+		        	if SyncInProgress then
+						table.insert(SyncingPlayers, sender)
+					end
 
 					for k1,v1 in pairs(MonDKP_Archive) do 		-- adds relevant archive values to table to send for full sync
 						if v1.lifetime_gained > 0 or v1.lifetime_spent > 0 or v1.dkp > 0 then
@@ -1718,10 +1735,12 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								end
 							end
 						elseif prefix == "MDKPDKPModes" then
+							if MonDKP_DB.modes.mode ~= deserialized[1].mode then
+								MonDKP:Print(L["RECOMMENDRELOAD"])
+							end
 							MonDKP_DB.modes = deserialized[1]
 							MonDKP_DB.DKPBonus = deserialized[2]
 							MonDKP_DB.raiders = deserialized[3]
-							MonDKP:Print(L["RECOMMENDRELOAD"])
 						elseif prefix == "MDKPBidShare" then
 							if core.BidInterface then
 								MonDKP:Bids_Set(deserialized)
