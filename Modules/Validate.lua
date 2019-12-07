@@ -238,7 +238,7 @@ function MonDKP:ValidateDKPTable_DKP()
 							DKPTableTemp[search[1][1]].lifetime_gained = DKPTableTemp[search[1][1]].lifetime_gained + tonumber(dkp[j])
 						end
 					else
-						if ((tonumber(dkp[j]) > 0 and not MonDKP_DKPHistory[i].deletes) or (dkp[j] < 0 and MonDKP_DKPHistory[i].deletes)) and not strfind(MonDKP_DKPHistory[i].dkp, "%-%d+%%") then
+						if ((tonumber(dkp[j]) > 0 and not MonDKP_DKPHistory[i].deletes) or (tonumber(dkp[j]) < 0 and MonDKP_DKPHistory[i].deletes)) and not strfind(MonDKP_DKPHistory[i].dkp, "%-%d+%%") then
 							table.insert(DKPTableTemp, { player=players[j], dkp=tonumber(dkp[j]), lifetime_gained=tonumber(dkp[j]), lifetime_spent=0 })
 						else
 							table.insert(DKPTableTemp, { player=players[j], dkp=tonumber(dkp[j]), lifetime_gained=0, lifetime_spent=0 })

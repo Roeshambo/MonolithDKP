@@ -303,7 +303,6 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			elseif GuildName and MonDKP_DB.defaults.CurrentGuild[UnitName("player")] ~= GuildName then -- wipes all data when player joins a new guild
 				core.IsOfficer = false
 				MonDKP_Whitelist = nil
-				MonDKP_Whitelist = {}
 				MonDKP_DKPTable = nil
 				MonDKP_Loot = nil
 				MonDKP_DKPHistory = nil
@@ -318,6 +317,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				MonDKP_Meta = {}
 				MonDKP_Meta_Remote = {}
 				MonDKP_Archive = {}
+				MonDKP_Whitelist = {}
 				core.Migrated = true
 				MonDKP:FilterDKPTable(core.currentSort, "reset")
 				MonDKP_DB.defaults.CurrentGuild[UnitName("player")] = GuildName

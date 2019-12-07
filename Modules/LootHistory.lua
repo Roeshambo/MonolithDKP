@@ -488,7 +488,9 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		    MonDKP.ConfigTab5.lootFrame[i]:SetScript("OnLeave", function()
 		    	tooltip:Hide()
 		    end)
-			MonDKP.ConfigTab5.LoadHistory:SetPoint("TOP", MonDKP.ConfigTab5.lootFrame[i], "BOTTOM", 110, -15)
+			if MonDKP.ConfigTab5.LoadHistory then
+				MonDKP.ConfigTab5.LoadHistory:SetPoint("TOP", MonDKP.ConfigTab5.lootFrame[i], "BOTTOM", 110, -15)
+			end
 		    CurrentPosition = CurrentPosition + 1;
 		    MonDKP.ConfigTab5.lootFrame[i]:Show();
 		    processing = false

@@ -959,7 +959,6 @@ function MonDKP:Options()
 
 
 	-- Position Bid Timer Button
-
 	MonDKP.ConfigTab4.moveTimer = self:CreateButton("BOTTOMRIGHT", MonDKP.ConfigTab4, "BOTTOMRIGHT", -50, 30, L["MOVEBIDTIMER"]);
 	MonDKP.ConfigTab4.moveTimer:ClearAllPoints();
 	MonDKP.ConfigTab4.moveTimer:SetPoint("LEFT", MonDKP.ConfigTab4.submitSettings, "RIGHT", 200, 0)
@@ -975,6 +974,63 @@ function MonDKP:Options()
 			MonDKP.ConfigTab4.moveTimer:SetText(L["MOVEBIDTIMER"])
 			moveTimerToggle = 0;
 		end
+	end)
+
+	-- wipe tables button
+	MonDKP.ConfigTab4.WipeTables = self:CreateButton("BOTTOMRIGHT", MonDKP.ConfigTab4, "BOTTOMRIGHT", -50, 30, L["WIPETABLES"]);
+	MonDKP.ConfigTab4.WipeTables:ClearAllPoints();
+	MonDKP.ConfigTab4.WipeTables:SetPoint("RIGHT", MonDKP.ConfigTab4.moveTimer, "LEFT", -40, 0)
+	MonDKP.ConfigTab4.WipeTables:SetSize(110,25)
+	MonDKP.ConfigTab4.WipeTables:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText(L["WIPETABLES"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["WIPETABLESTTDESC"], 1.0, 1.0, 1.0, true);
+		GameTooltip:Show();
+	end)
+	MonDKP.ConfigTab4.WipeTables:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+	MonDKP.ConfigTab4.WipeTables:SetScript("OnClick", function()
+
+		StaticPopupDialogs["WIPE_TABLES"] = {
+			text = L["WIPETABLESCONF"],
+			button1 = L["YES"],
+			button2 = L["NO"],
+			OnAccept = function()
+				MonDKP_Whitelist = nil
+				MonDKP_DKPTable = nil
+				MonDKP_Loot = nil
+				MonDKP_DKPHistory = nil
+				MonDKP_Meta = nil
+				MonDKP_Meta_Remote = nil
+				MonDKP_Archive = nil
+				MonDKP_Standby = nil
+				MonDKP_Archive_Meta = nil
+				MonDKP_Errant = nil
+				MonDKP_MinBids = nil
+
+				MonDKP_DKPTable = {}
+				MonDKP_Loot = {}
+				MonDKP_DKPHistory = {}
+				MonDKP_Meta = { DKP={}, Loot={} }
+				MonDKP_Meta_Remote = { DKP={}, Loot={} }
+				MonDKP_Archive = {}
+				MonDKP_Whitelist = {}
+				MonDKP_Standby = {}
+				MonDKP_Archive_Meta = { DKP={}, Loot={} }
+				MonDKP_Errant = {}
+				MonDKP_MinBids = {}
+				core.Migrated = true
+				MonDKP:LootHistory_Reset()
+				MonDKP:FilterDKPTable(core.currentSort, "reset")
+				MonDKP:StatusVerify_Update()
+			end,
+			timeout = 0,
+			whileDead = true,
+			hideOnEscape = true,
+			preferredIndex = 3,
+		}
+		StaticPopup_Show ("WIPE_TABLES")
 	end)
 
 	-- Options Footer (empty frame to push bottom of scrollframe down)

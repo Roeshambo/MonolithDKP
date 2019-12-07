@@ -1355,7 +1355,8 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				curClass = MonDKP_DKPTable[search[1][1]].class
 			
 				if curClass == "WARRIOR" then
-					if strfind(message, "Protection") then
+					local a,b,c = strsplit("/", message)
+					if strfind(message, "Protection") or (tonumber(c) and tonumber(strsub(c, 1, -2)) > 15) then
 						curSelection.role = L["TANK"]
 					else
 						curSelection.role = L["MELEEDPS"]
