@@ -718,6 +718,10 @@ if GetLocale() == "deDE" then
     ONLINEONLYTTDESC      = "Dies wird Raid DKP nur an Spieler vergeben, die online sind. (Zur Verwendung mit Auto Award, Raid Timer und Zero Sum Distribution)",
     INZONEONLY            = "In derselben Zone",
     INZONEONLYTTDESC      = "Dies wird nur Raid DKP an Spieler vergeben, die sich in derselben Zone wie Sie befinden. (Zur Verwendung mit Auto Award, Raid Timer und Zero Sum Distribution)",
+    UPDATING              = "Aktualisierung: ",
+    WIPETABLES            = "Tabellen abwischen ",
+    WIPETABLESCONF        = "Möchten Sie wirklich alle Tabellen löschen? Sie können alle Informationen von einem Offizier abrufen, wenn einer online ist. ",
+    WIPETABLESTTDESC      = "Löscht alle Daten einschließlich DKP-Tabelle, Beuteverlauf und DKP-Verlauf. Verwenden Sie diese Option, wenn beim Synchronisieren Probleme auftreten, um neue und vollständige Informationen von einem verfügbaren Mitarbeiter zu erhalten. ",
 
     CHANGELOG1            = "- Zu viele, um sie hier aufzulisten. Zeigen Sie alle neuen Ergänzungen im Änderungsprotokoll von CurseForge oder WoWInterface an.",
     CHANGELOG2            = "https://www.curseforge.com/wow/addons/monolith-dkp/files",

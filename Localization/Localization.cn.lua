@@ -718,6 +718,10 @@ if GetLocale() == "zhCN" then
     ONLINEONLYTTDESC      = "这只会将突袭DKP奖励给在线玩家。 （用于自动奖励，突袭计时器和零和分配）",
     INZONEONLY            = "在同一区域",
     INZONEONLYTTDESC      = "这只会将突袭DKP奖励给与您位于同一区域的玩家。 （用于自动奖励，突袭计时器和零和分配）",
+    UPDATING              = "更新中： ",
+    WIPETABLES            = "擦桌子",
+    WIPETABLESCONF        = "您确定要删除所有表格吗？ 当某人在线时，您可以从其获取所有信息。",
+    WIPETABLESTTDESC      = "擦除所有数据，包括DKP表，战利品历史记录和DKP历史记录。 如果尝试同步以从可用人员接收新的和完整的信息时发生问题，请使用此选项。",
 
     CHANGELOG1            = "- 这里太多了。 在CurseForge或WoWInterface的更改日志中查看所有新添加的内容。",
     CHANGELOG2            = "https://www.curseforge.com/wow/addons/monolith-dkp/files",

@@ -715,6 +715,10 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     ONLINEONLYTTDESC      = "Esto solo otorgará la incursión DKP a los jugadores que estén en línea. (Para usar con adjudicación automática, temporizador de incursión y distribución de suma cero)",
     INZONEONLY            = "En la misma zona",
     INZONEONLYTTDESC      = "Esto solo otorgará DKP de banda a los jugadores que estén en la misma zona que tú. (Para usar con adjudicación automática, temporizador de incursión y distribución de suma cero)",
+    UPDATING              = "Actualizando: ",
+    WIPETABLES            = "Limpiar tablas",
+    WIPETABLESCONF        = "¿Está seguro de que desea eliminar todas las tablas? Puede recuperar toda la información de un oficial cuando uno está en línea.",
+    WIPETABLESTTDESC      = "Limpia todos los datos, incluida la tabla DKP, el historial de botín y el historial de DKP. Use esto si se producen problemas al intentar sincronizar para recibir información nueva y completa de un oficial disponible.",
 
     CHANGELOG1            = "- Demasiados para enumerar aquí. Ver todas las nuevas incorporaciones en el registro de cambios en CurseForge o WoWInterface.",
     CHANGELOG2            = "https://www.curseforge.com/wow/addons/monolith-dkp/files",

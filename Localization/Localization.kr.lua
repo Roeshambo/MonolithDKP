@@ -716,6 +716,10 @@ if GetLocale() == "koKR" then
     ONLINEONLYTTDESC      = "온라인 상태 인 플레이어에게만 공격적인 DKP를 부여합니다. (자동 보너스, 레이드 타이머 및 제로섬 분배와 함께 사용)",
     INZONEONLY            = "같은 구역에서",
     INZONEONLYTTDESC      = "이것은 당신과 같은 지역에있는 플레이어에게만 공격적인 DKP를 부여합니다. (자동 보너스, 레이드 타이머 및 제로섬 분배와 함께 사용)",
+    UPDATING              = "업데이트 중 : ",
+    WIPETABLES            = "테이블 정리",
+    WIPETABLESCONF        = "모든 테이블을 삭제 하시겠습니까? 경찰관이 온라인 상태 일 때 경찰관으로부터 모든 정보를 검색 할 수 있습니다.",
+    WIPETABLESTTDESC      = "DKP 테이블, 전리품 기록 및 DKP 기록을 포함한 모든 데이터를 지 웁니다. 사용 가능한 담당자로부터 새롭고 완전한 정보를 받기 위해 동기화하는 동안 문제가 발생하는 경우이 옵션을 사용하십시오.",
 
     CHANGELOG1            = "- 여기에 너무 많습니다. CurseForge 또는 WoWInterface의 변경 로그에서 새로 추가 된 모든 내용을보십시오.",
     CHANGELOG2            = "https://www.curseforge.com/wow/addons/monolith-dkp/files",

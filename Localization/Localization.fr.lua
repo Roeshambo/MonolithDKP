@@ -716,6 +716,10 @@ if GetLocale() == "frFR" then
     ONLINEONLYTTDESC      = "Cela n'accordera le raid DKP qu'aux joueurs en ligne. (À utiliser avec attribution automatique, minuterie de raid et distribution à somme nulle)",
     INZONEONLY            = "Dans la même zone",
     INZONEONLYTTDESC      = "Cela n'accordera le raid DKP qu'aux joueurs qui se trouvent dans la même zone que vous. (À utiliser avec attribution automatique, minuterie de raid et distribution à somme nulle)",
+    UPDATING              = "Mise à jour: ",
+    WIPETABLES            = "Effacer les tables",
+    WIPETABLESCONF        = "Voulez-vous vraiment supprimer toutes les tables? Vous pouvez récupérer toutes les informations d'un agent lorsque celui-ci est en ligne.",
+    WIPETABLESTTDESC      = "Efface toutes les données, y compris la table DKP, l'historique du butin et l'historique DKP. Utilisez-le si des problèmes surviennent lors de la synchronisation pour recevoir des informations nouvelles et complètes d'un responsable disponible.",
 
     CHANGELOG1            = "- Trop nombreux pour être énumérés ici. Affichez tous les nouveaux ajouts dans le journal des modifications sur CurseForge ou WoWInterface.",
     CHANGELOG2            = "https://www.curseforge.com/wow/addons/monolith-dkp/files",

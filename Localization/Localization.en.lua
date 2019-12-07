@@ -704,14 +704,17 @@ core.L = {
   PLEASEVALIDATE        = "Invalid entries were removed. Please validate your tables. (In the right click context menu on the DKP table)",
   NOENTRIESRETURNED     = "No Profiles Returned",
   ERRANTINPROGRESS      = "Errant entry check in progress. Please Wait...",
-
   TABLESAREEMPTY        = "Your tables are currently empty.",
   DKPSETTINGS           = "DKP Award Parameters",
   ONLINEONLY            = "Online Only",
   ONLINEONLYTTDESC      = "This will only award raid DKP to players that are online. (For use with auto award, raid timer and zero sum distribution)",
   INZONEONLY            = "In Same Zone",
   INZONEONLYTTDESC      = "This will only award raid DKP to players that are in the same zone as you. (For use with auto award, raid timer and zero sum distribution)",
+  
   UPDATING              = "Updating: ",
+  WIPETABLES            = "Wipe Tables",
+  WIPETABLESCONF        = "Are you sure you'd like to delete all tables? You can retrieve all information from an officer when one is online.",
+  WIPETABLESTTDESC      = "Wipes all data including DKP table, loot history and DKP history. Use this if issues occur while trying to sync to receive new and complete information from an available officer.",
 
   CHANGELOG1            = "- Too many to list here. View all new additions in the ChangeLog at CurseForge or WoWInterface.",
   CHANGELOG2            = "https://www.curseforge.com/wow/addons/monolith-dkp/files",
