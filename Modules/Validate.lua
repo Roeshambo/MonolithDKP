@@ -234,11 +234,11 @@ function MonDKP:ValidateDKPTable_DKP()
 
 					if search then
 						DKPTableTemp[search[1][1]].dkp = DKPTableTemp[search[1][1]].dkp + tonumber(dkp[j])
-						if ((tonumber(dkp[j]) > 0 and not MonDKP_DKPHistory[i].deletes) or (tonumber(dkp[j]) < 0 and MonDKP_DKPHistory[i].deletes)) and not strfind(MonDKP_DKPHistory[i].dkp, "%-%d+%%") then
+						if ((tonumber(dkp[j]) > 0 and not MonDKP_DKPHistory[i].deletes) or (tonumber(dkp[j]) < 0 and MonDKP_DKPHistory[i].deletes)) and not strfind(MonDKP_DKPHistory[i].dkp, "%-%d*%.?%d+%%") then
 							DKPTableTemp[search[1][1]].lifetime_gained = DKPTableTemp[search[1][1]].lifetime_gained + tonumber(dkp[j])
 						end
 					else
-						if ((tonumber(dkp[j]) > 0 and not MonDKP_DKPHistory[i].deletes) or (tonumber(dkp[j]) < 0 and MonDKP_DKPHistory[i].deletes)) and not strfind(MonDKP_DKPHistory[i].dkp, "%-%d+%%") then
+						if ((tonumber(dkp[j]) > 0 and not MonDKP_DKPHistory[i].deletes) or (tonumber(dkp[j]) < 0 and MonDKP_DKPHistory[i].deletes)) and not strfind(MonDKP_DKPHistory[i].dkp, "%-%d*%.?%d+%%") then
 							table.insert(DKPTableTemp, { player=players[j], dkp=tonumber(dkp[j]), lifetime_gained=tonumber(dkp[j]), lifetime_spent=0 })
 						else
 							table.insert(DKPTableTemp, { player=players[j], dkp=tonumber(dkp[j]), lifetime_gained=0, lifetime_spent=0 })

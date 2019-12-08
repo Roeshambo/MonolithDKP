@@ -79,8 +79,8 @@ function MonDKP:MigrateTables()
 		elseif EntryTableTemp[i].reason then
 			local players = {strsplit(",", strsub(EntryTableTemp[i].players, 1, -2))}
 
-			if strfind(EntryTableTemp[i].dkp, "%-%d+%%") then -- is a decay, calculate new values
-				local f = {strfind(EntryTableTemp[i].dkp, "%-%d+%%")}
+			if strfind(EntryTableTemp[i].dkp, "%-%d*%.?%d+%%") then -- is a decay, calculate new values
+				local f = {strfind(EntryTableTemp[i].dkp, "%-%d*%.?%d+%%")}
 				local playerString = ""
 				local DKPString = ""
 				local value = tonumber(strsub(EntryTableTemp[i].dkp, f[1]+1, f[2]-1)) / 100
@@ -114,7 +114,7 @@ function MonDKP:MigrateTables()
 					MonDKP_DKPHistory[EntrySearch[1][1]].dkp = DKPString
 				end
 			else
-				local dkp = EntryTableTemp[i].dkp
+				local dkp = tonumber(EntryTableTemp[i].dkp)
 
 				for j=1, #players do
 					local search = MonDKP:Table_Search(DKPTableTemp, players[j], "player")

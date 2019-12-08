@@ -4,6 +4,7 @@ local MonDKP = core.MonDKP;
 local L = core.L;
 
 local lockouts = CreateFrame("Frame", "LockoutsFrame");
+local AllowGuildCheck = false
 
 --------------------------------------
 -- Slash Command
@@ -290,17 +291,18 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 						MonDKP:StatusVerify_Update(true)
 					end)
 				end
+				AllowGuildCheck = true
 				MonDKP:ErrantCheck(true)  -- begins errant check (finds entries missing between lowest and current) and executes sync
 			end)
 		end
 
-		if IsInGuild() then
+		if IsInGuild() and core.InitStart and core.IsOfficer ~= nil and AllowGuildCheck then
 			local GuildName = GetGuildInfo("player")
 
 			if not MonDKP_DB.defaults.CurrentGuild[UnitName("player")] and GuildName then
 				MonDKP_DB.defaults.CurrentGuild = {}
 				MonDKP_DB.defaults.CurrentGuild[UnitName("player")] = GuildName
-			elseif GuildName and MonDKP_DB.defaults.CurrentGuild[UnitName("player")] ~= GuildName then -- wipes all data when player joins a new guild
+			elseif MonDKP_DB.defaults.CurrentGuild[UnitName("player")] and GuildName and MonDKP_DB.defaults.CurrentGuild[UnitName("player")] ~= GuildName then -- wipes all data when player joins a new guild
 				core.IsOfficer = false
 				MonDKP_Whitelist = nil
 				MonDKP_DKPTable = nil

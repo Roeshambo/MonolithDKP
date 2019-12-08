@@ -787,14 +787,14 @@ function MonDKP:StatusVerify_Update(sync)
 	elseif core.Initialized then
 		MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
 			tooltipShown = true
-			DKPStatusTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
-			DKPStatusTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
-			DKPStatusTooltip:AddLine(L["CURRNOTINGUILD"], 1.0, 1.0, 1.0, true);
-			DKPStatusTooltip:Show()
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
+			GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine(L["CURRNOTINGUILD"], 1.0, 1.0, 1.0, true);
+			GameTooltip:Show()
 		end)
 		MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function(self)
 			tooltipShown = false
-			DKPStatusTooltip:Hide()
+			GameTooltip:Hide()
 		end)
 
 		return false;

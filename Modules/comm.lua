@@ -708,7 +708,10 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 
 				if type(deserialized) == "table" then
 					if SyncInProgress and core.IsOfficer then
-						table.insert(SyncingPlayers, sender)
+						local find = MonDKP:Table_Search(SyncingPlayers, sender)
+						if not find then
+							table.insert(SyncingPlayers, sender)
+						end
 					end
 					for k1,v1 in pairs(deserialized) do
 						if type(v1) == "table" then
@@ -776,7 +779,10 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 		        	local flag = false
 
 		        	if SyncInProgress then
-						table.insert(SyncingPlayers, sender)
+						local find = MonDKP:Table_Search(SyncingPlayers, sender)
+						if not find then
+							table.insert(SyncingPlayers, sender)
+						end
 					end
 
 					for k1,v1 in pairs(MonDKP_Archive) do 		-- adds relevant archive values to table to send for full sync
@@ -865,7 +871,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 
 							SyncMessage = true
 
-							if strfind(deserialized.dkp, "%-%d+%%") then
+							if strfind(deserialized.dkp, "%-%d*%.?%d+%%") then
 								dkp = {strsplit(",", deserialized.dkp)}
 							end
 
@@ -891,7 +897,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								if players[i] then
 									local findEntry = MonDKP:Table_Search(MonDKP_DKPTable, players[i], "player")
 
-									if strfind(deserialized.dkp, "%-%d+%%") then 		-- handles decay entries
+									if strfind(deserialized.dkp, "%-%d*%.?%d+%%") then 		-- handles decay entries
 										if findEntry then
 											MonDKP_DKPTable[findEntry[1][1]].dkp = MonDKP_DKPTable[findEntry[1][1]].dkp + tonumber(dkp[i])
 										else
@@ -901,16 +907,16 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 										end
 									else
 										if findEntry then
-											MonDKP_DKPTable[findEntry[1][1]].dkp = MonDKP_DKPTable[findEntry[1][1]].dkp + deserialized.dkp
-											if (deserialized.dkp > 0 and not deserialized.deletes) or (deserialized.dkp < 0 and deserialized.deletes) then		-- adjust lifetime if it's a DKP gain or deleting a DKP gain 
-												MonDKP_DKPTable[findEntry[1][1]].lifetime_gained = MonDKP_DKPTable[findEntry[1][1]].lifetime_gained + deserialized.dkp	-- NOT if it's a DKP penalty or deleteing a DKP penalty
+											MonDKP_DKPTable[findEntry[1][1]].dkp = MonDKP_DKPTable[findEntry[1][1]].dkp + tonumber(deserialized.dkp)
+											if (tonumber(deserialized.dkp) > 0 and not deserialized.deletes) or (tonumber(deserialized.dkp) < 0 and deserialized.deletes) then		-- adjust lifetime if it's a DKP gain or deleting a DKP gain 
+												MonDKP_DKPTable[findEntry[1][1]].lifetime_gained = MonDKP_DKPTable[findEntry[1][1]].lifetime_gained + tonumber(deserialized.dkp)	-- NOT if it's a DKP penalty or deleteing a DKP penalty
 											end
 										else
 											if not MonDKP_Archive[players[i]] or (MonDKP_Archive[players[i]] and MonDKP_Archive[players[i]].deleted ~= true) then
 												local class
 
-												if (deserialized.dkp > 0 and not deserialized.deletes) or (deserialized.dkp < 0 and deserialized.deletes) then
-													TempProfile_Create(players[i], deserialized.dkp, deserialized.dkp)
+												if (tonumber(deserialized.dkp) > 0 and not deserialized.deletes) or (tonumber(deserialized.dkp) < 0 and deserialized.deletes) then
+													TempProfile_Create(players[i], tonumber(deserialized.dkp), tonumber(deserialized.dkp))
 												else
 													TempProfile_Create(players[i])
 												end
@@ -1047,7 +1053,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 
 							SyncMessage = true
 
-							if strfind(deserialized.dkp, "%-%d+%%") then
+							if strfind(deserialized.dkp, "%-%d*%.?%d+%%") then
 								dkp = {strsplit(",", deserialized.dkp)}
 							end
 
@@ -1073,7 +1079,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 								if players[i] then
 									local findEntry = MonDKP:Table_Search(MonDKP_DKPTable, players[i], "player")
 
-									if strfind(deserialized.dkp, "%-%d+%%") then 		-- handles decay entries
+									if strfind(deserialized.dkp, "%-%d*%.?%d+%%") then 		-- handles decay entries
 										if findEntry then
 											MonDKP_DKPTable[findEntry[1][1]].dkp = MonDKP_DKPTable[findEntry[1][1]].dkp + tonumber(dkp[i])
 										else
@@ -1083,16 +1089,16 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 										end
 									else
 										if findEntry then
-											MonDKP_DKPTable[findEntry[1][1]].dkp = MonDKP_DKPTable[findEntry[1][1]].dkp + deserialized.dkp
-											if (deserialized.dkp > 0 and not deserialized.deletes) or (deserialized.dkp < 0 and deserialized.deletes) then -- adjust lifetime if it's a DKP gain or deleting a DKP gain 
+											MonDKP_DKPTable[findEntry[1][1]].dkp = MonDKP_DKPTable[findEntry[1][1]].dkp + tonumber(deserialized.dkp)
+											if (tonumber(deserialized.dkp) > 0 and not deserialized.deletes) or (tonumber(deserialized.dkp) < 0 and deserialized.deletes) then -- adjust lifetime if it's a DKP gain or deleting a DKP gain 
 												MonDKP_DKPTable[findEntry[1][1]].lifetime_gained = MonDKP_DKPTable[findEntry[1][1]].lifetime_gained + deserialized.dkp 	-- NOT if it's a DKP penalty or deleteing a DKP penalty
 											end
 										else
 											if not MonDKP_Archive[players[i]] or (MonDKP_Archive[players[i]] and MonDKP_Archive[players[i]].deleted ~= true) then
 												local class
 
-												if (deserialized.dkp > 0 and not deserialized.deletes) or (deserialized.dkp < 0 and deserialized.deletes) then
-													TempProfile_Create(players[i], deserialized.dkp, deserialized.dkp)
+												if (tonumber(deserialized.dkp) > 0 and not deserialized.deletes) or (tonumber(deserialized.dkp) < 0 and deserialized.deletes) then
+													TempProfile_Create(players[i], tonumber(deserialized.dkp), tonumber(deserialized.dkp))
 												else
 													TempProfile_Create(players[i])
 												end
@@ -1657,7 +1663,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 							local players = {strsplit(",", strsub(deserialized.players, 1, -2))} 	-- cuts off last "," from string to avoid creating an empty value
 							local dkp, mod;
 
-							if strfind(deserialized.dkp, "%-%d+%%") then 		-- determines if it's a mass decay
+							if strfind(deserialized.dkp, "%-%d*%.?%d+%%") then 		-- determines if it's a mass decay
 								dkp = {strsplit(",", deserialized.dkp)}
 								mod = "perc";
 							else

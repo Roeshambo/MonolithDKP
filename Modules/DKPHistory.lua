@@ -185,7 +185,7 @@ local function MonDKPDeleteDKPEntry(index, timestamp, item)  -- index = entry in
 				curIndex = MonDKP_Meta.DKP[curOfficer].current
 				newIndex = tonumber(curIndex) + 1;
 
-				if strfind(MonDKP_DKPHistory[search[1][1]].dkp, "%-%d+%%") then 		-- determines if it's a mass decay
+				if strfind(MonDKP_DKPHistory[search[1][1]].dkp, "%-%d*%.?%d+%%") then 		-- determines if it's a mass decay
 					dkp = {strsplit(",", MonDKP_DKPHistory[search[1][1]].dkp)}
 					mod = "perc";
 				else
