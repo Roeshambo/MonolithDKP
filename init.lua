@@ -110,7 +110,7 @@ MonDKP.Commands = {
 		end
 	end,
 	["help"] = function()
-		print(" ");
+		MonDKP:Print(" ");
 		MonDKP:Print(L["SLASHCOMMANDLIST"]..":")
 		MonDKP:Print("|cff00cc66/dkp|r - "..L["DKPLAUNCH"]);
 		MonDKP:Print("|cff00cc66/dkp ?|r - "..L["HELPINFO"]);
@@ -122,7 +122,7 @@ MonDKP.Commands = {
 		MonDKP:Print("|cff00cc66/dkp award [item link]|r - "..L["DKPAWARDHELP"]);
 		MonDKP:Print("|cff00cc66/dkp modes|r - "..L["DKPMODESHELP"]);
 		MonDKP:Print("|cff00cc66/dkp export|r - "..L["DKPEXPORTHELP"]);
-		print(" ");
+		MonDKP:Print(" ");
 		MonDKP:Print(L["WHISPERCMDSHELP"]);
 		MonDKP:Print("|cff00cc66!bid (or !bid <"..L["VALUE"]..">)|r - "..L["BIDHELP"]);
 		MonDKP:Print("|cff00cc66!dkp (or !dkp <"..L["PLAYERNAME"]..">)|r - "..L["DKPCMDHELP"]);
