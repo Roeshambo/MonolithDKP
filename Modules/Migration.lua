@@ -28,17 +28,15 @@ function MonDKP:MigrateTables()
 		end
 	end
 
+	MonDKP_Meta.Loot[UnitName("player")] = {current=0, lowest=0}
+	MonDKP_Meta.DKP[UnitName("player")] = {current=0, lowest=0}
+
 	for i=1, #MonDKP_Loot do
 		table.sort(MonDKP_Loot, function(a,b)   	-- inverts tables; oldest to newest
 			return a["date"] < b["date"]
 		end)
-		
-		if not MonDKP_Meta.Loot[UnitName("player")] then
-			MonDKP_Meta.Loot[UnitName("player")] = {current=1, lowest=1}
-		else
-			MonDKP_Meta.Loot[UnitName("player")].current = MonDKP_Meta.Loot[UnitName("player")].current + 1
-		end
 
+		MonDKP_Meta.Loot[UnitName("player")].current = MonDKP_Meta.Loot[UnitName("player")].current + 1
 		MonDKP_Loot[i].index = UnitName("player").."-"..MonDKP_Meta.Loot[UnitName("player")].current
 
 		if tonumber(MonDKP_Loot[i].cost) > 0 then
@@ -52,14 +50,8 @@ function MonDKP:MigrateTables()
 			return a["date"] < b["date"]
 		end)
 
-		if not MonDKP_Meta.DKP[UnitName("player")] then
-			MonDKP_Meta.DKP[UnitName("player")] = {current=1, lowest=1}
-		else
-			MonDKP_Meta.DKP[UnitName("player")].current = MonDKP_Meta.DKP[UnitName("player")].current + 1
-		end
-
+		MonDKP_Meta.DKP[UnitName("player")].current = MonDKP_Meta.DKP[UnitName("player")].current + 1
 		MonDKP_DKPHistory[i].index = UnitName("player").."-"..MonDKP_Meta.DKP[UnitName("player")].current
-
 		table.insert(EntryTableTemp, MonDKP_DKPHistory[i])
 	end
 
