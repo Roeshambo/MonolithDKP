@@ -43,6 +43,10 @@ function MonDKP:MigrateTables()
 	end)
 
 	for i=1, #MonDKP_Loot do
+		if MonDKP_Meta.Loot[UnitName("player")].lowest == 0 then
+			MonDKP_Meta.Loot[UnitName("player")].lowest = 1
+		end
+
 		MonDKP_Meta.Loot[UnitName("player")].current = MonDKP_Meta.Loot[UnitName("player")].current + 1
 		MonDKP_Loot[i].index = UnitName("player").."-"..MonDKP_Meta.Loot[UnitName("player")].current
 
@@ -53,6 +57,10 @@ function MonDKP:MigrateTables()
 	end
 
 	for i=1, #MonDKP_DKPHistory do
+		if MonDKP_Meta.DKP[UnitName("player")].lowest == 0 then
+			MonDKP_Meta.DKP[UnitName("player")].lowest = 1
+		end
+
 		MonDKP_Meta.DKP[UnitName("player")].current = MonDKP_Meta.DKP[UnitName("player")].current + 1
 		MonDKP_DKPHistory[i].index = UnitName("player").."-"..MonDKP_Meta.DKP[UnitName("player")].current
 		table.insert(EntryTableTemp, MonDKP_DKPHistory[i])
@@ -61,7 +69,7 @@ function MonDKP:MigrateTables()
 	table.sort(EntryTableTemp, function(a,b)   	-- inverts tables; oldest to newest
 		return a["date"] < b["date"]
 	end)
-	
+
 	for i=1, #EntryTableTemp do   -- attempt to recreate a timeline to apply decays, if they exist
 		if EntryTableTemp[i].loot then
 			local search = MonDKP:Table_Search(DKPTableTemp, EntryTableTemp[i].player, "player")
