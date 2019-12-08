@@ -709,7 +709,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 				if type(deserialized) == "table" then
 					if SyncInProgress and core.IsOfficer then
 						local find = MonDKP:Table_Search(SyncingPlayers, sender)
-						if not find then
+						if not find and UnitName("player") ~= sender then
 							table.insert(SyncingPlayers, sender)
 						end
 					end
@@ -780,7 +780,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 
 		        	if SyncInProgress then
 						local find = MonDKP:Table_Search(SyncingPlayers, sender)
-						if not find then
+						if not find and UnitName("player") ~= sender then
 							table.insert(SyncingPlayers, sender)
 						end
 					end

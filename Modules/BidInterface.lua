@@ -337,7 +337,7 @@ function MonDKP:CurrItem_Set(item, value, icon, BidHost)
 			local message;
 
 			if core.BidInterface.Bid:IsShown() then
-				message = "!bid "..core.BidInterface.Bid:GetNumber()
+				message = "!bid "..MonDKP_round(core.BidInterface.Bid:GetNumber(), MonDKP_DB.modes.rounding)
 			else
 				message = "!bid";
 			end
