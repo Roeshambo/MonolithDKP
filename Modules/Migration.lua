@@ -28,14 +28,21 @@ function MonDKP:MigrateTables()
 		end
 	end
 
+	MonDKP_Meta = { Loot={}, DKP= {} }
+	MonDKP_Meta_Remote = { DKP={}, Loot={} }
+
 	MonDKP_Meta.Loot[UnitName("player")] = {current=0, lowest=0}
 	MonDKP_Meta.DKP[UnitName("player")] = {current=0, lowest=0}
 
-	for i=1, #MonDKP_Loot do
-		table.sort(MonDKP_Loot, function(a,b)   	-- inverts tables; oldest to newest
-			return a["date"] < b["date"]
-		end)
+	table.sort(MonDKP_Loot, function(a,b)   	-- inverts tables; oldest to newest
+		return a["date"] < b["date"]
+	end)
 
+	table.sort(MonDKP_DKPHistory, function(a,b)  -- inverts tables; oldest to newest
+		return a["date"] < b["date"]
+	end)
+
+	for i=1, #MonDKP_Loot do
 		MonDKP_Meta.Loot[UnitName("player")].current = MonDKP_Meta.Loot[UnitName("player")].current + 1
 		MonDKP_Loot[i].index = UnitName("player").."-"..MonDKP_Meta.Loot[UnitName("player")].current
 
@@ -46,20 +53,16 @@ function MonDKP:MigrateTables()
 	end
 
 	for i=1, #MonDKP_DKPHistory do
-		table.sort(MonDKP_DKPHistory, function(a,b)  -- inverts tables; oldest to newest
-			return a["date"] < b["date"]
-		end)
-
 		MonDKP_Meta.DKP[UnitName("player")].current = MonDKP_Meta.DKP[UnitName("player")].current + 1
 		MonDKP_DKPHistory[i].index = UnitName("player").."-"..MonDKP_Meta.DKP[UnitName("player")].current
 		table.insert(EntryTableTemp, MonDKP_DKPHistory[i])
 	end
 
+	table.sort(EntryTableTemp, function(a,b)   	-- inverts tables; oldest to newest
+		return a["date"] < b["date"]
+	end)
+	
 	for i=1, #EntryTableTemp do   -- attempt to recreate a timeline to apply decays, if they exist
-		table.sort(EntryTableTemp, function(a,b)   	-- inverts tables; oldest to newest
-			return a["date"] < b["date"]
-		end)
-
 		if EntryTableTemp[i].loot then
 			local search = MonDKP:Table_Search(DKPTableTemp, EntryTableTemp[i].player, "player")
 
