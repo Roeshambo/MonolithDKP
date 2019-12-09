@@ -65,6 +65,8 @@ function MonDKP:MigrateTables()
 
 		if tonumber(MonDKP_Loot[i].cost) > 0 then
 			MonDKP_Loot[i].cost = tonumber(MonDKP_Loot[i].cost) * -1
+		else
+			MonDKP_Loot[i].cost = tonumber(MonDKP_Loot[i].cost)
 		end
 		table.insert(EntryTableTemp, MonDKP_Loot[i])
 	end
@@ -152,7 +154,7 @@ function MonDKP:MigrateTables()
 		if search then
 			if MonDKP_DKPTable[i].dkp ~= DKPTableTemp[search[1][1]].dkp then
 				local val = MonDKP_DKPTable[i].dkp - DKPTableTemp[search[1][1]].dkp
-
+				val = MonDKP_round(val, MonDKP_DB.modes.rounding)
 				PlayerStringTemp = PlayerStringTemp..MonDKP_DKPTable[i].player..","
 				DKPStringTemp = DKPStringTemp..val..","
 			end

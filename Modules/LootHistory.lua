@@ -337,7 +337,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		     	c = { hex="444444" }
 		    end
 
-		    if LootTable[i].cost < 0 then lootCost = LootTable[i].cost * -1 else lootCost = LootTable[i].cost end
+		    if tonumber(LootTable[i].cost) < 0 then lootCost = tonumber(LootTable[i].cost) * -1 else lootCost = tonumber(LootTable[i].cost) end
 
 		    if strtrim(strsub(thedate, 1, 8), " ") ~= curDate or LootTable[i]["zone"] ~= curZone then
 		    	if strtrim(strsub(thedate, 1, 8), " ") ~= curDate then

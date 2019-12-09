@@ -275,6 +275,10 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 					if core.IsOfficer and not MonDKP_Meta.Loot[UnitName("player")] then
 						MonDKP_Meta.Loot[UnitName("player")] = { current=0, lowest=0 }
 					end
+					if core.IsOfficer then
+						MonDKP_Meta_Remote.Loot[UnitName("player")] = MonDKP_Meta.Loot[UnitName("player")].current
+						MonDKP_Meta_Remote.DKP[UnitName("player")] = MonDKP_Meta.DKP[UnitName("player")].current
+					end
 					for k1,v1 in pairs(MonDKP_Meta) do
 						for k2,v2 in pairs(v1) do
 							if not MonDKP:ValidateSender(k2) and v2.current == 0 and v2.lowest == 0 then
@@ -299,8 +303,8 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		if IsInGuild() and core.InitStart and core.IsOfficer ~= nil and AllowGuildCheck then
 			local GuildName = GetGuildInfo("player")
 
+			if not MonDKP_DB.defaults.CurrentGuild then MonDKP_DB.defaults.CurrentGuild = {} end
 			if not MonDKP_DB.defaults.CurrentGuild[UnitName("player")] and GuildName then
-				MonDKP_DB.defaults.CurrentGuild = {}
 				MonDKP_DB.defaults.CurrentGuild[UnitName("player")] = GuildName
 			elseif MonDKP_DB.defaults.CurrentGuild[UnitName("player")] and GuildName and MonDKP_DB.defaults.CurrentGuild[UnitName("player")] ~= GuildName then -- wipes all data when player joins a new guild
 				core.IsOfficer = false

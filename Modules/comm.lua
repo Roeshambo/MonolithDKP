@@ -719,7 +719,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						    	if not MonDKP_Meta[k1][k2] then
 						    		MonDKP_Meta[k1][k2] = { current=0, lowest=0 }
 						    	end
-						    	if not MonDKP_Meta_Remote[k1][k2] or deserialized[k1][k2] > MonDKP_Meta_Remote[k1][k2] then -- updates highest known entry for each off. in Meta_Remote
+						    	if (not MonDKP_Meta_Remote[k1][k2] or deserialized[k1][k2] > MonDKP_Meta_Remote[k1][k2]) and k2 ~= UnitName("player") then -- updates highest known entry for each off. in Meta_Remote
 						            MonDKP_Meta_Remote[k1][k2] = deserialized[k1][k2]
 						        end
 						        if (not Meta_Remote_Temp[k1][k2] or Meta_Remote_Temp[k1][k2] == 0 or Meta_Remote_Temp[k1][k2] > deserialized[k1][k2]) and core.IsOfficer and InitiatingOfficer then	-- updates temp meta with lowest known value for broadcasting
