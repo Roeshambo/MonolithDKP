@@ -302,11 +302,13 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 
 		if IsInGuild() and core.InitStart and core.IsOfficer ~= nil and AllowGuildCheck then
 			local GuildName = GetGuildInfo("player")
-
+			local player = UnitName("player")
+			local server = GetRealmName()
+			player = player.."-"..server
 			if not MonDKP_DB.defaults.CurrentGuild then MonDKP_DB.defaults.CurrentGuild = {} end
-			if not MonDKP_DB.defaults.CurrentGuild[UnitName("player")] and GuildName then
-				MonDKP_DB.defaults.CurrentGuild[UnitName("player")] = GuildName
-			elseif MonDKP_DB.defaults.CurrentGuild[UnitName("player")] and GuildName and MonDKP_DB.defaults.CurrentGuild[UnitName("player")] ~= GuildName then -- wipes all data when player joins a new guild
+			if not MonDKP_DB.defaults.CurrentGuild[player] and GuildName then
+				MonDKP_DB.defaults.CurrentGuild[player] = GuildName
+			elseif MonDKP_DB.defaults.CurrentGuild[player] and GuildName and MonDKP_DB.defaults.CurrentGuild[player] ~= GuildName then -- wipes all data when player joins a new guild
 				core.IsOfficer = false
 				MonDKP_Whitelist = nil
 				MonDKP_DKPTable = nil
@@ -316,19 +318,17 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				MonDKP_Meta_Remote = nil
 				MonDKP_Archive = nil
 				MonDKP_Whitelist = nil
-				MonDKP_Archive_Meta = nil
 
 				MonDKP_DKPTable = {}
 				MonDKP_Loot = {}
 				MonDKP_DKPHistory = {}
-				MonDKP_Meta = { DKP={}, Loot={} }
-				MonDKP_Meta_Remote = { DKP={}, Loot={} }
-				MonDKP_Archive_Meta = { DKP={}, Loot={} }
+				MonDKP_Meta = {}
+				MonDKP_Meta_Remote = {}
 				MonDKP_Archive = {}
 				MonDKP_Whitelist = {}
 				core.Migrated = true
 				MonDKP:FilterDKPTable(core.currentSort, "reset")
-				MonDKP_DB.defaults.CurrentGuild[UnitName("player")] = GuildName
+				MonDKP_DB.defaults.CurrentGuild[player] = GuildName
 
 				StaticPopupDialogs["GUILD_CHANGED"] = {
 					text = L["CHANGEDGUILDS"],
