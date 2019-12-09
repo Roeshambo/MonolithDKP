@@ -316,12 +316,14 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				MonDKP_Meta_Remote = nil
 				MonDKP_Archive = nil
 				MonDKP_Whitelist = nil
+				MonDKP_Archive_Meta = nil
 
 				MonDKP_DKPTable = {}
 				MonDKP_Loot = {}
 				MonDKP_DKPHistory = {}
-				MonDKP_Meta = {}
-				MonDKP_Meta_Remote = {}
+				MonDKP_Meta = { DKP={}, Loot={} }
+				MonDKP_Meta_Remote = { DKP={}, Loot={} }
+				MonDKP_Archive_Meta = { DKP={}, Loot={} }
 				MonDKP_Archive = {}
 				MonDKP_Whitelist = {}
 				core.Migrated = true
