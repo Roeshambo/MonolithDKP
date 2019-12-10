@@ -109,7 +109,7 @@ local function DisplayUserHistory(self, player)
 	local PlayerTable = {}
 	local c, PlayerSearch, PlayerSearch2, LifetimeSearch, RowCount, curDate;
 
-	PlayerSearch = MonDKP:TableStrFind(MonDKP_DKPHistory, player..",", "players")
+	PlayerSearch = MonDKP:TableStrFind(MonDKP_DKPHistory, player, "players")
 	PlayerSearch2 = MonDKP:Table_Search(MonDKP_Loot, player, "player")
 	LifetimeSearch = MonDKP:Table_Search(MonDKP_DKPTable, player, "player")
 

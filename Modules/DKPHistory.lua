@@ -274,7 +274,7 @@ function MonDKP:DKPHistory_Update(reset)
 
 	if filter and filter ~= L["DELETEDENTRY"] then
 		for i=1, #MonDKP_DKPHistory do
-			if not MonDKP_DKPHistory[i].deletes and not MonDKP_DKPHistory[i].deletedby and strfind(MonDKP_DKPHistory[i].players, filter..",") then
+			if not MonDKP_DKPHistory[i].deletes and not MonDKP_DKPHistory[i].deletedby and (strfind(MonDKP_DKPHistory[i].players, ","..filter..",") or strfind(MonDKP_DKPHistory[i].players, filter..",") == 1) then
 				table.insert(DKPHistory, MonDKP_DKPHistory[i])
 			end
 		end

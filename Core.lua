@@ -916,7 +916,7 @@ function MonDKP:TableStrFind(tar, val, field)              -- same function as a
 						if(type(v) == "table") then
 							local temp3 = k
 							for k,v in pairs(v) do
-								if strfind(string.upper(tostring(v)), value) then
+								if (field ~= "players" and field ~= "player" and strfind(string.upper(tostring(v)), value)) or ((field == "players" or field == "player") and (strfind(string.upper(tostring(v)), ","..value..",") or strfind(string.upper(tostring(v)), value..",") == 1)) then
 									if field then
 										if k == field then
 											tinsert(location, {temp1, temp2, temp3, k} )
@@ -927,7 +927,7 @@ function MonDKP:TableStrFind(tar, val, field)              -- same function as a
 								end;
 							end
 						end
-						if strfind(string.upper(tostring(v)), value) then
+						if (field ~= "players" and field ~= "player" and strfind(string.upper(tostring(v)), value)) or ((field == "players" or field == "player") and (strfind(string.upper(tostring(v)), ","..value..",") or strfind(string.upper(tostring(v)), value..",") == 1)) then
 							if field then
 								if k == field then
 									tinsert(location, {temp1, temp2, k} )
@@ -938,7 +938,7 @@ function MonDKP:TableStrFind(tar, val, field)              -- same function as a
 						end;
 					end
 				end
-				if strfind(string.upper(tostring(v)), value) then
+				if (field ~= "players" and field ~= "player" and strfind(string.upper(tostring(v)), value)) or ((field == "players" or field == "player") and (strfind(string.upper(tostring(v)), ","..value..",") or strfind(string.upper(tostring(v)), value..",") == 1)) then
 					if field then
 						if k == field then
 							tinsert(location, {temp1, k} )
@@ -949,7 +949,7 @@ function MonDKP:TableStrFind(tar, val, field)              -- same function as a
 				end;
 			end
 		end
-		if strfind(string.upper(tostring(v)), value) then
+		if (field ~= "players" and field ~= "player" and strfind(string.upper(tostring(v)), value)) or ((field == "players" or field == "player") and (strfind(string.upper(tostring(v)), ","..value..",") or strfind(string.upper(tostring(v)), value..",") == 1)) then
 			if field then
 				if k == field then
 					tinsert(location, k)

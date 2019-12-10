@@ -41,6 +41,19 @@ function MonDKP:MigrateTables()
 		end
 	end
 
+	delCount = 1
+	while delCount <= #MonDKP_Loot do  	-- deletes duplicate entries (some kind of bug that appeared to have occurred in far earlier versions with the raid timer?)
+		local search = MonDKP:Table_Search(MonDKP_Loot, MonDKP_Loot[delCount].date, "date")
+
+		if search and #search > 1 then
+			for j=2, #search do
+				table.remove(MonDKP_Loot, search[j][1])
+			end
+		else
+			delCount = delCount + 1
+		end
+	end
+
 	MonDKP_Meta = { Loot={}, DKP= {} }
 	MonDKP_Meta_Remote = { DKP={}, Loot={} }
 

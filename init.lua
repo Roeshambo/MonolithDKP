@@ -290,11 +290,6 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 						end
 					end
 				end
-				if #MonDKP_Loot == 0 and #MonDKP_DKPHistory == 0 then
-					C_Timer.After(4, function()
-						MonDKP:StatusVerify_Update(true)
-					end)
-				end
 				AllowGuildCheck = true
 				MonDKP:ErrantCheck(true)  -- begins errant check (finds entries missing between lowest and current) and executes sync
 			end)
@@ -316,16 +311,24 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				MonDKP_DKPHistory = nil
 				MonDKP_Meta = nil
 				MonDKP_Meta_Remote = nil
+				MonDKP_Archive_Meta = nil
 				MonDKP_Archive = nil
 				MonDKP_Whitelist = nil
+				MonDKP_Errant = nil
+				MonDKP_MinBids = nil
+				MonDKP_Standby = nil
 
 				MonDKP_DKPTable = {}
 				MonDKP_Loot = {}
 				MonDKP_DKPHistory = {}
-				MonDKP_Meta = {}
-				MonDKP_Meta_Remote = {}
+				MonDKP_Meta = { DKP={}, Loot={} }
+				MonDKP_Meta_Remote = { DKP={}, Loot={} }
 				MonDKP_Archive = {}
+				MonDKP_Archive_Meta = { DKP={}, Loot={} }
 				MonDKP_Whitelist = {}
+				MonDKP_Errant = {}
+				MonDKP_MinBids = {}
+				MonDKP_Standby = {}
 				core.Migrated = true
 				MonDKP:FilterDKPTable(core.currentSort, "reset")
 				MonDKP_DB.defaults.CurrentGuild[player] = GuildName

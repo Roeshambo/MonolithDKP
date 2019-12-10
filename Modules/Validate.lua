@@ -113,7 +113,8 @@ function MonDKP:ErrantCheck(req) -- param = request sync when completed
 				CheckCount = CheckCount - 1
 				if CheckCount == 0 then
 					core.ErrantInProgress = false
-					if req then
+					MonDKP:CheckOfficer()
+					if req and core.IsOfficer then
 						MonDKP:StatusVerify_Update(true)
 					else
 						MonDKP:StatusVerify_Update()
@@ -154,7 +155,8 @@ function MonDKP:ErrantCheck(req) -- param = request sync when completed
 				
 				if CheckCount == 0 then
 					core.ErrantInProgress = false
-					if req then
+					MonDKP:CheckOfficer()
+					if req and core.IsOfficer then
 						MonDKP:StatusVerify_Update(true)
 					else
 						MonDKP:StatusVerify_Update()

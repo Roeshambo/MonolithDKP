@@ -42,14 +42,14 @@ function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to awar
 				end
 			end
 			for i=1, #MonDKP_Standby do
-				if not strfind(raidParty, MonDKP_Standby[i].player..",") then
+				if strfind(raidParty, MonDKP_Standby[i].player..",") ~= 1 and not strfind(raidParty, ","..MonDKP_Standby[i].player..",") then
 					MonDKP:AwardPlayer(MonDKP_Standby[i].player, amount)
 					tempList2 = tempList2..MonDKP_Standby[i].player..",";
 				end
 			end
 			local i = 1
 			while i <= #MonDKP_Standby do
-				if MonDKP_Standby[i] and strfind(raidParty, MonDKP_Standby[i].player..",") then
+				if MonDKP_Standby[i] and (strfind(raidParty, MonDKP_Standby[i].player..",") == 1 or strfind(raidParty, ","..MonDKP_Standby[i].player..",")) then
 					table.remove(MonDKP_Standby, i)
 				else
 					i=i+1

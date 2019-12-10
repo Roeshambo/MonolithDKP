@@ -18,7 +18,7 @@ local function Remove_Entries()
 			local path = MonDKP_DKPTable[search[1][1]]
 
 			for i=1, #MonDKP_DKPHistory do
-				if strfind(MonDKP_DKPHistory[i].players, path.player..",") then
+				if strfind(MonDKP_DKPHistory[i].players, ","..path.player..",") or strfind(MonDKP_DKPHistory[i].players, path.player..",") == 1 then
 					flag = true
 				end
 			end
@@ -589,7 +589,7 @@ function MonDKP:ManageEntries()
 				local i = 1;
 
 				while i <= #MonDKP_DKPTable do
-					local search = MonDKP:TableStrFind(MonDKP_DKPHistory, MonDKP_DKPTable[i].player..",")
+					local search = MonDKP:TableStrFind(MonDKP_DKPHistory, MonDKP_DKPTable[i].player, "players")
 
 					if MonDKP_DKPTable[i].dkp == 0 and not search then
 						c = MonDKP:GetCColors(MonDKP_DKPTable[i].class)
