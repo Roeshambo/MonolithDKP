@@ -129,7 +129,7 @@ local function DecayDKP(amount, deductionType, GetSelections)
 					deducted = dkp * amount
 					dkp = (deducted - dkp) * -1
 					value["dkp"] = MonDKP_round(tonumber(dkp), MonDKP_DB.modes.rounding)
-					dkpString = dkpString.."-"..MonDKP_round(deducted, MonDKP_DB.modes.rounding)..",";
+					dkpString = dkpString..MonDKP_round(-deducted, MonDKP_DB.modes.rounding)..",";
 					playerString = playerString..player..",";
 				elseif deductionType == "points" then
 					-- do stuff for flat point deductions
