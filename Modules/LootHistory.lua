@@ -220,7 +220,7 @@ end
 
 local LootHistTimer = LootHistTimer or CreateFrame("StatusBar", nil, UIParent)
 function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call, runs set assigned for when a filter is selected in dropdown.
-	if not core.Migrated or not MonDKP.UIConfig:IsShown() then return end
+	if not MonDKP.UIConfig:IsShown() then return end
 
 	local thedate;
 	local linesToUse = 1;

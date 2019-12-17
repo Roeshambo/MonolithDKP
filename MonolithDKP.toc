@@ -43,5 +43,4 @@ Modules\exportDKP.lua
 Modules\Repair.lua
 Modules\RaidTimer.lua
 Modules\ZeroSumBank.lua
-Modules\Migration.lua
 Modules\Validate.lua

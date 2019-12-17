@@ -73,7 +73,7 @@ end
 
 function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 	if not core.Initialized or core.IsOfficer == nil then return end
-	if prefix and core.Migrated then
+	if prefix then
 		--if prefix ~= "MDKPProfile" then print("|cffff0000Received: "..prefix.." from "..sender.."|r") end
 		if prefix == "MonDKPQuery" then
 			-- set remote seed

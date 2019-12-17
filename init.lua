@@ -265,7 +265,6 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				if #MonDKP_DKPHistory > 0 and #MonDKP_Loot > 0 then
 					local off1 = strsplit("-", MonDKP_DKPHistory[1].index)
 					local off2 = strsplit("-", MonDKP_Loot[1].index)
-					local flag1, flag2 = false, false
 					
 					if MonDKP:ValidateSender(off1) and MonDKP:ValidateSender(off2) then
 						seed = MonDKP_DKPHistory[1].index..","..MonDKP_Loot[1].index

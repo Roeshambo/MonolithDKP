@@ -1012,7 +1012,6 @@ function MonDKP:Options()
 				MonDKP_Whitelist = {}
 				MonDKP_Standby = {}
 				MonDKP_MinBids = {}
-				core.Migrated = true
 				MonDKP:LootHistory_Reset()
 				MonDKP:FilterDKPTable(core.currentSort, "reset")
 				MonDKP:StatusVerify_Update()

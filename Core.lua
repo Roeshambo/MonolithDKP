@@ -110,8 +110,6 @@ core.CurSubView = "all"
 core.LastVerCheck = 0
 core.CenterSort = "class";
 core.OOD = false
-core.Migrated = false
-core.ErrantInProgress = false
 
 function MonDKP:GetCColors(class)
 	if core.CColors then 
@@ -242,63 +240,6 @@ function MonDKP:GetThemeColor()
 	local c = {defaults.theme, defaults.theme2};
 	return c;
 end
-
---[[
-NO LONGER IN USE
-
-function MonDKP:GenerateSeed()
-	local seed = tonumber(date("!%y%m%d%H%M%S")) -- using utc times instead of time()
-	return seed
-end
-
-function MonDKP:RosterSeedUpdate(index)
-	local oldseed, note = MonDKP:RosterSeedExtract(index)
-	local newseed = MonDKP:GenerateSeed()
-	local textseed = "{MonDKP=" .. tostring(newseed) .. "}"
-	if oldseed > 0 then
-			note = string.gsub(note, "{MonDKP=(%d+)}", textseed)
-	else
-			note = note .. " " .. textseed
-	end
-
-	if strlen(note) > 31 then   -- validates note length. If it's too long for the public note, truncates it to fit the seed.
-		note = strsub(note, 1, 9)
-		note = note .. " " .. textseed
-
-		StaticPopupDialogs["SEED_VALIDATE"] = {
-			text = L["NOTETOOLONG"],
-			button1 = "Ok",
-			timeout = 0,
-			whileDead = true,
-			hideOnEscape = true,
-			preferredIndex = 3,
-		}
-		StaticPopup_Show ("SEED_VALIDATE")
-	end
-
-	GuildRosterSetPublicNote(index, note)
-	return newseed
-end
-
-function MonDKP:RosterSeedExtract(index)
-	local seed, note
-	_,_,_,_,_,_,note = GetGuildRosterInfo(index)
-	seed = string.match(note, "{MonDKP=(%d+)}")
-	if not seed then
-			seed = 0
-		end
-	return tonumber(seed), note
-end
-
-function MonDKP:UpdateSeeds()		-- updates seeds on leaders note as well as all 3 tables
-	local leader = MonDKP:GetGuildRankGroup(1)
-	local seed = MonDKP:RosterSeedUpdate(leader[1].index)
-	
-	MonDKP_DKPTable.seed = seed
-	MonDKP_DKPHistory.seed = seed
-	MonDKP_Loot.seed = seed
-end
---]]
 
 function MonDKP:GetPlayerDKP(player)
 	local search = MonDKP:Table_Search(MonDKP_DKPTable, player)

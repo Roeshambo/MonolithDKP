@@ -255,7 +255,6 @@ local function RightClickDKPMenu(self, index, timestamp, item)
 end
 
 function MonDKP:DKPHistory_Update(reset)
-	if not core.Migrated then return end
 	local DKPHistory = {}
 	MonDKP:SortDKPHistoryTable()
 
