@@ -1,10 +1,10 @@
-## Interface: 11302
+## Interface: 11303
 ## Title: M|cffaeaeddonolith|r |cffff0000DKP|r
 ## Author: Roeshambo-Stalagg
 ## Notes: Comprehensive DKP and raid management utility.
-## Version: 2.0.5
+## Version: 2.1.0
 ## DefaultState: enabled
-## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_DKPHistory, MonDKP_MinBids, MonDKP_Whitelist, MonDKP_Standby, MonDKP_Meta, MonDKP_Meta_Remote, MonDKP_Archive, MonDKP_Archive_Meta, MonDKP_Errant
+## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_DKPHistory, MonDKP_MinBids, MonDKP_Whitelist, MonDKP_Standby, MonDKP_Archive
 
 Localization\Localization.en.lua
 Localization\Localization.cn.lua
@@ -40,6 +40,7 @@ Modules\Modes\DKPModesMain.lua
 Modules\Modes\DKPModesMisc.lua
 Modules\BidInterface.lua
 Modules\exportDKP.lua
+Modules\Repair.lua
 Modules\RaidTimer.lua
 Modules\ZeroSumBank.lua
 Modules\Migration.lua

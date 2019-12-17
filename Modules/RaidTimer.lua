@@ -53,14 +53,6 @@ local function AwardRaid(amount, reason)
 	local tempList = "";
 	local curTime = time();
 	local curOfficer = UnitName("player")
-	local curIndex, newIndex
-
-	if not MonDKP_Meta.DKP[curOfficer] then
-		MonDKP_Meta.DKP[curOfficer] = { current=0, lowest=0 }
-	end
-
-	curIndex = MonDKP_Meta.DKP[curOfficer].current
-	newIndex = tonumber(curIndex) + 1;
 
 	for i=1, 40 do
 		local tempName, _rank, _subgroup, _level, _class, _fileName, zone, online = GetRaidRosterInfo(i)
@@ -90,17 +82,17 @@ local function AwardRaid(amount, reason)
 	end
 
 	if tempList ~= "" then
-		tinsert(MonDKP_DKPHistory, 1, {players=tempList, dkp=amount, reason=reason, date=curTime, index=curOfficer.."-"..newIndex})
-		MonDKP_Meta.DKP[curOfficer].current = newIndex;
+		local newIndex = curOfficer.."-"..curTime
+		tinsert(MonDKP_DKPHistory, 1, {players=tempList, dkp=amount, reason=reason, date=curTime, index=newIndex})
 
 		if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
 			MonDKP:DKPHistory_Update(true)
 		end
 		DKPTable_Update()
 
-		MonDKP.Sync:SendData("MDKPDKPDist", MonDKP_DKPHistory[1])
+		MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP_DKPHistory[1])
 
-		MonDKP.Sync:SendData("MDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..amount.." "..L["FORREASON"]..": "..reason)
+		MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..amount.." "..L["FORREASON"]..": "..reason)
 		MonDKP:Print(L["RAIDDKPADJUSTBY"].." "..amount.." "..L["FORREASON"]..": "..reason)
 	end
 end
@@ -233,11 +225,11 @@ function MonDKP:StartRaidTimer(pause, syncTimer, syncSecondCount, syncMinuteCoun
 		if SecondCount >= 60 then						-- counds minutes past toward interval
 			SecondCount = 0;
 			MinuteCount = MinuteCount + 1;
-			MonDKP.Sync:SendData("MDKPRaidTime", "sync "..timer.." "..SecondCount.." "..MinuteCount.." "..totalAwarded)
+			MonDKP.Sync:SendData("MonDKPRaidTime", "sync "..timer.." "..SecondCount.." "..MinuteCount.." "..totalAwarded)
 			--print("Minute has passed!!!!")
 		end
 
-		if MinuteCount >= increment then				-- apply bonus once increment value has been met
+		if MinuteCount >= increment and increment > 0 then				-- apply bonus once increment value has been met
 			MinuteCount = 0;
 			totalAwarded = totalAwarded + tonumber(MonDKP_DB.DKPBonus.IntervalBonus)
 			MonDKP.ConfigTab2.RaidTimerContainer.BonusHeader:Show();

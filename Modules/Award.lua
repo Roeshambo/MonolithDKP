@@ -13,21 +13,12 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 	local BidsEntry = {};
 	local mode = MonDKP_DB.modes.mode;
 	local curOfficer = UnitName("player")
-	local curIndex;
 	local bids;
-	local newIndex;
 	local search_reassign;
 
 	MonDKP:StatusVerify_Update()
 
 	if core.IsOfficer then
-		if not MonDKP_Meta.Loot[curOfficer] then
-			MonDKP_Meta.Loot[curOfficer] = { current=0, lowest=0 }
-		end
-
-		curIndex = MonDKP_Meta.Loot[curOfficer].current
-		newIndex = tonumber(curIndex) + 1;
-		
 		if MonDKP_DB.modes.costvalue == "Percent" then
 			local search = MonDKP:Table_Search(MonDKP_DKPTable, winner);
 
@@ -56,25 +47,25 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 			if search_reassign then
 				local deleted = CopyTable(MonDKP_Loot[search_reassign[1][1]])
 				local reimburse = MonDKP:Table_Search(MonDKP_DKPTable, deleted.player, "player")
-
+				local newIndex = curOfficer.."-"..curTime-3
 				deleted.cost = deleted.cost * -1
 				deleted.deletes = reassign
-				deleted.index = curOfficer.."-"..newIndex
+				deleted.index = newIndex
 				deleted.date = curTime-3
 				if deleted.bids then
 					bids = CopyTable(deleted.bids);
 					deleted.bids = nil;
 				end
-				MonDKP_Loot[search_reassign[1][1]].deletedby = curOfficer.."-"..newIndex
+				MonDKP_Loot[search_reassign[1][1]].deletedby = newIndex
 				MonDKP_DKPTable[reimburse[1][1]].dkp = MonDKP_DKPTable[reimburse[1][1]].dkp + deleted.cost
 				table.insert(MonDKP_Loot, 1, deleted)
-				MonDKP.Sync:SendData("MDKPDelLoot", MonDKP_Loot[1])
-				newIndex = newIndex + 1
+				MonDKP.Sync:SendData("MonDKPDelLoot", MonDKP_Loot[1])
 			end
 		end
 
 		if MonDKP_DB.modes.StoreBids and not reassign then
 			local Bids_Submitted = MonDKP:BidsSubmitted_Get();
+			local newIndex = curOfficer.."-"..curTime
 
 			for i=1, #Bids_Submitted do
 				if Bids_Submitted[i].bid then
@@ -87,26 +78,27 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 			end
 			if Bids_Submitted[1] then
 				if Bids_Submitted[1].bid then
-					tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=curOfficer.."-"..newIndex, bids={ }})
+					tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=newIndex, bids={ }})
 					for k,v in pairs(BidsEntry) do
 						table.insert(MonDKP_Loot[1].bids, {bidder=k, bid=v});
 					end
 				elseif Bids_Submitted[1].dkp then
-					tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=curOfficer.."-"..newIndex, dkp={ }})
+					tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=newIndex, dkp={ }})
 					for k,v in pairs(BidsEntry) do
 						table.insert(MonDKP_Loot[1].dkp, {bidder=k, dkp=v});
 					end
 				elseif Bids_Submitted[1].roll then
-					tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=curOfficer.."-"..newIndex, rolls={ }})
+					tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=newIndex, rolls={ }})
 					for k,v in pairs(BidsEntry) do
 						table.insert(MonDKP_Loot[1].rolls, {bidder=k, roll=v});
 					end
 				end
 			else
-				tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=curOfficer.."-"..newIndex})
+				tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=newIndex})
 			end
 		else
-			tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=curOfficer.."-"..newIndex})
+			local newIndex = curOfficer.."-"..curTime
+			tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=newIndex})
 			if reassign then
 				local search = MonDKP:Table_Search(MonDKP_Loot, reassign, "index")
 
@@ -120,8 +112,7 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 		end
 		
 		MonDKP:BidsSubmitted_Clear()
-		MonDKP.Sync:SendData("MDKPLootDist", MonDKP_Loot[1])
-		MonDKP_Meta.Loot[curOfficer].current = newIndex;		-- updates current index
+		MonDKP.Sync:SendData("MonDKPLootDist", MonDKP_Loot[1])
 		MonDKP:DKPTable_Set(winner, "dkp", MonDKP_round(cost, MonDKP_DB.modes.rounding), true)
 		MonDKP:LootHistory_Reset();
 		MonDKP:LootHistory_Update(L["NOFILTER"])
@@ -170,7 +161,7 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 				MonDKP_DB.modes.ZeroSumBank.balance = MonDKP_DB.modes.ZeroSumBank.balance + -tonumber(cost)
 				table.insert(MonDKP_DB.modes.ZeroSumBank, { loot = loot, cost = -tonumber(cost) })
 				MonDKP:ZeroSumBank_Update()
-				MonDKP.Sync:SendData("MDKPZeroSumBank", MonDKP_DB.modes.ZeroSumBank)
+				MonDKP.Sync:SendData("MonDKPZSumBank", MonDKP_DB.modes.ZeroSumBank)
 			end
 			core.BiddingWindow:Hide()
 			ClearBidWindow()

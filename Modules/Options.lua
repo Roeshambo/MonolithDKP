@@ -466,7 +466,7 @@ function MonDKP:Options()
 						local temptable = {}
 						table.insert(temptable, MonDKP_DB.MinBidBySlot)
 						table.insert(temptable, MonDKP_MinBids)
-						MonDKP.Sync:SendData("MDKPMinBid", temptable)
+						MonDKP.Sync:SendData("MonDKPMinBid", temptable)
 						MonDKP:Print(L["MINBIDVALUESSENT"])
 					end,
 					timeout = 0,
@@ -1001,24 +1001,16 @@ function MonDKP:Options()
 				MonDKP_DKPTable = nil
 				MonDKP_Loot = nil
 				MonDKP_DKPHistory = nil
-				MonDKP_Meta = nil
-				MonDKP_Meta_Remote = nil
 				MonDKP_Archive = nil
 				MonDKP_Standby = nil
-				MonDKP_Archive_Meta = nil
-				MonDKP_Errant = nil
 				MonDKP_MinBids = nil
 
 				MonDKP_DKPTable = {}
 				MonDKP_Loot = {}
 				MonDKP_DKPHistory = {}
-				MonDKP_Meta = { DKP={}, Loot={} }
-				MonDKP_Meta_Remote = { DKP={}, Loot={} }
 				MonDKP_Archive = {}
 				MonDKP_Whitelist = {}
 				MonDKP_Standby = {}
-				MonDKP_Archive_Meta = { DKP={}, Loot={} }
-				MonDKP_Errant = {}
 				MonDKP_MinBids = {}
 				core.Migrated = true
 				MonDKP:LootHistory_Reset()

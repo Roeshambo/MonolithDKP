@@ -35,8 +35,10 @@ end
 local function DeleteLootHistoryEntry(index)
 	local search = MonDKP:Table_Search(MonDKP_Loot, index, "index");
 	local search_player = MonDKP:Table_Search(MonDKP_DKPTable, MonDKP_Loot[search[1][1]].player);
+	local curTime = time()
 	local curOfficer = UnitName("player")
-	local newIndex = tonumber(MonDKP_Meta.Loot[curOfficer].current) + 1
+	local newIndex = curOfficer.."-"..curTime
+
 	
 	MonDKP:StatusVerify_Update()
 	MonDKP:LootHistory_Reset()
@@ -48,7 +50,7 @@ local function DeleteLootHistoryEntry(index)
 		date = time(),
 		boss = MonDKP_Loot[search[1][1]].boss,
 		cost = -MonDKP_Loot[search[1][1]].cost,
-		index = curOfficer.."-"..newIndex,
+		index = newIndex,
 		deletes = MonDKP_Loot[search[1][1]].index
 	}
 
@@ -57,11 +59,10 @@ local function DeleteLootHistoryEntry(index)
 		MonDKP_DKPTable[search_player[1][1]].lifetime_spent = MonDKP_DKPTable[search_player[1][1]].lifetime_spent + tempTable.cost 		-- remove from lifetime_spent
 	end
 
-	MonDKP_Loot[search[1][1]].deletedby = curOfficer.."-"..newIndex
+	MonDKP_Loot[search[1][1]].deletedby = newIndex
 
-	table.insert(MonDKP_Loot, tempTable)
-	MonDKP:CurrentIndex_Set("Loot", curOfficer.."-"..newIndex)
-	MonDKP.Sync:SendData("MDKPDelLoot", tempTable)
+	table.insert(MonDKP_Loot, 1, tempTable)
+	MonDKP.Sync:SendData("MonDKPDelLoot", tempTable)
 	MonDKP:SortLootTable()
 	DKPTable_Update()
 	MonDKP:LootHistory_Update(L["NOFILTER"]);
@@ -515,7 +516,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
  	end)
 	if CurrentLimit < #LootTable and not MonDKP.ConfigTab5.LoadHistory then
 	 	-- Load More History Button
-		MonDKP.ConfigTab5.LoadHistory = self:CreateButton("TOP", MonDKP.ConfigTab5.lootFrame[CurrentLimit], "BOTTOM", 110, 0, string.format(L["LOAD50MORE"].."...", ButtonText));
+		MonDKP.ConfigTab5.LoadHistory = self:CreateButton("TOP", MonDKP.ConfigTab5, "BOTTOM", 110, 0, string.format(L["LOAD50MORE"].."...", ButtonText));
 		MonDKP.ConfigTab5.LoadHistory:SetSize(110,25)
 		MonDKP.ConfigTab5.LoadHistory:SetScript("OnClick", function(self)
 			CurrentLimit = CurrentLimit + 25

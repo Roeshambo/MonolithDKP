@@ -88,8 +88,8 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v2.0.5";
-core.BuildNumber = 20005;
+core.MonVersion = "v2.1.0";
+core.BuildNumber = 20100;
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
@@ -178,7 +178,7 @@ function MonDKP:GetGuildRankIndex(player)
 end
 
 function MonDKP:CheckOfficer()      -- checks if user is an officer IF core.IsOfficer is empty. Use before checks against core.IsOfficer
-	if not core.Initialized then return end
+	if not core.InitStart then return end
 	if core.IsOfficer == nil then      -- used as a redundency as it should be set on load in init.lua GUILD_ROSTER_UPDATE event
 		if MonDKP:GetGuildRankIndex(UnitName("player")) == 1 then       -- automatically gives permissions above all settings if player is guild leader
 			core.IsOfficer = true
@@ -316,9 +316,6 @@ function MonDKP:PurgeLootHistory()     -- cleans old loot history beyond history
 	if #MonDKP_Loot > limit then
 		while #MonDKP_Loot > limit do
 			MonDKP:SortLootTable()
-			local curOfficer, curIndex = strsplit("-", MonDKP_Loot[#MonDKP_Loot].index)
-			curIndex = tonumber(curIndex)
-			local newLowest = curIndex + 1
 			local path = MonDKP_Loot[#MonDKP_Loot]
 
 			if not MonDKP_Archive[path.player] then
@@ -326,14 +323,6 @@ function MonDKP:PurgeLootHistory()     -- cleans old loot history beyond history
 			else
 				MonDKP_Archive[path.player].dkp = MonDKP_Archive[path.player].dkp + path.cost
 				MonDKP_Archive[path.player].lifetime_spent = MonDKP_Archive[path.player].lifetime_spent + path.cost
-			end
-
-			if not MonDKP_Archive_Meta.Loot[curOfficer] or MonDKP_Archive_Meta.Loot[curOfficer] < curIndex then
-				MonDKP_Archive_Meta.Loot[curOfficer] = curIndex
-			end
-
-			if newLowest > MonDKP_Meta.Loot[curOfficer].lowest then
-				MonDKP_Meta.Loot[curOfficer].lowest = newLowest
 			end
 
 			tremove(MonDKP_Loot, #MonDKP_Loot)
@@ -350,9 +339,6 @@ function MonDKP:PurgeDKPHistory()     -- purges old entries and stores relevant 
 			local path = MonDKP_DKPHistory[#MonDKP_DKPHistory]
 			local players = {strsplit(",", strsub(path.players, 1, -2))}
 			local dkp = {strsplit(",", path.dkp)}
-			local curOfficer, curIndex = strsplit("-", path.index)
-			curIndex = tonumber(curIndex)
-			local newLowest = curIndex + 1
 
 			if #dkp == 1 then
 				for i=1, #players do
@@ -377,14 +363,6 @@ function MonDKP:PurgeDKPHistory()     -- purges old entries and stores relevant 
 						MonDKP_Archive[players[i]].lifetime_gained = MonDKP_Archive[players[i]].lifetime_gained + path.dkp 				--or is NOT a decay
 					end
 				end
-			end
-
-			if not MonDKP_Archive_Meta.DKP[curOfficer] or MonDKP_Archive_Meta.DKP[curOfficer] < curIndex then
-				MonDKP_Archive_Meta.DKP[curOfficer] = curIndex
-			end
-
-			if newLowest > MonDKP_Meta.DKP[curOfficer].lowest then
-				MonDKP_Meta.DKP[curOfficer].lowest = newLowest
 			end
 
 			tremove(MonDKP_DKPHistory, #MonDKP_DKPHistory)
@@ -433,7 +411,7 @@ function MonDKP:BroadcastTimer(seconds, ...)       -- broadcasts timer and start
 			return;
 		end
 		MonDKP:StartTimer(seconds, ...)
-		MonDKP.Sync:SendData("MDKPCommand", "StartTimer,"..seconds..","..title)
+		MonDKP.Sync:SendData("MonDKPCommand", "StartTimer,"..seconds..","..title)
 	end
 end
 
@@ -538,178 +516,45 @@ function MonDKP:StartTimer(seconds, ...)
 	end)
 end
 
-local tooltipShown = false  -- only updates tooltip if moused over status icon
-
-function MonDKP:StatusVerify_Update(sync)
-	if not MonDKP.UIConfig:IsShown() and not sync then     -- blocks update if dkp window is closed. Updated when window is opened anyway
+function MonDKP:StatusVerify_Update()
+	if (MonDKP.UIConfig and not MonDKP.UIConfig:IsShown()) or #MonDKP_DKPHistory == 0 or #MonDKP_Loot == 0 then     -- blocks update if dkp window is closed. Updated when window is opened anyway
 		return;
 	end
+
 	if IsInGuild() and core.Initialized then
-		local records = {};
 		core.OOD = false
 
-		if #MonDKP_Errant > 0 then
-			for i=1, #MonDKP_Errant do
-				local curOfficer, curIndex = strsplit("-", MonDKP_Errant[i])
-				local tab, curOfficer = strsplit(",", curOfficer)
+		local missing = {}
 
-				if not records[curOfficer] then
-					records[curOfficer] = 1
-				else
-					records[curOfficer] = records[curOfficer] + 1
-				end
-			end
-			core.OOD = true;
-		end
+		if strfind(MonDKP_Loot.seed, "-") and strfind(MonDKP_Loot.seed, "-") then
+			local search_dkp = MonDKP:Table_Search(MonDKP_DKPHistory, MonDKP_DKPHistory.seed, "index")
+			local search_loot = MonDKP:Table_Search(MonDKP_Loot, MonDKP_Loot.seed, "index")
 
-		for k,v in pairs(MonDKP_Meta_Remote) do
-		    local tempTable = k
-			for k,v in pairs(v) do
-				if MonDKP_Meta[tempTable][k] and v > MonDKP_Meta[tempTable][k].current then
-					core.OOD = true;
-					if not records[k] then
-						records[k] = v - MonDKP_Meta[tempTable][k].current
-					else
-						records[k] = records[k] + (v - MonDKP_Meta[tempTable][k].current)
-					end
-				elseif not MonDKP_Meta[tempTable][k] and v > 0 then
-					core.OOD = true
-					MonDKP_Meta[tempTable][k] = { current=0, lowest=0 }
-					if not records[k] then
-						records[k] = v
-					else
-						records[k] = records[k] + v
-					end
-				end
+			if not search_dkp then
+				core.OOD = true
+				local officer1, date1 = strsplit("-", MonDKP_DKPHistory.seed)
+				if date1 and tonumber(date1) < (time() - 1209600) then core.OOD = false end
+				date1 = date("%m/%d/%y %H:%M:%S", tonumber(date1))
+				missing[officer1] = date1 			-- if both missing seeds identify the same officer, it'll only list once
 			end
-		end
 
-		if #MonDKP_Loot == 0 and #MonDKP_DKPHistory == 0 then
-			core.OOD = true
-		end
-
-		if sync then
-			MonDKP:RequestSync("init")
-		end
-
-		if GameTooltip:IsShown() and core.OOD and tooltipShown then
-			GameTooltip:ClearLines()
-			GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
-			if #MonDKP_Loot == 0 and #MonDKP_DKPHistory == 0 then
-				GameTooltip:AddLine(L["TABLESAREEMPTY"], 1.0, 1.0, 1.0, false);
-			else
-				GameTooltip:AddLine(L["ONETABLEOOD"].." |cffff0000"..L["OUTOFDATE"].."|r.", 1.0, 1.0, 1.0, false);
+			if not search_loot then
+				core.OOD = true
+				local officer2, date2 = strsplit("-", MonDKP_Loot.seed)
+				if date2 and tonumber(date2) < (time() - 1209600) then core.OOD = false end
+				date2 = date("%m/%d/%y %H:%M:%S", tonumber(date2))
+				missing[officer2] = date2
 			end
-			GameTooltip:AddLine(" ")
-			if core.ErrantInProgress then
-				GameTooltip:AddLine("Errant entry check in progress. Please Wait...", 1.0, 1.0, 1.0, false);
-				GameTooltip:AddLine(" ")
-			end
-			
-			if next(records) ~= nil then
-				GameTooltip:AddLine("Missing Entries:", 0.25, 0.75, 0.90, 1, true);
-				for k,v in pairs(records) do
-					local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
-
-					if classSearch then
-						c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
-					else
-						c = { hex="ffffff" }
-					end
-					GameTooltip:AddLine("|cff"..c.hex..k.."|r: "..v, 1.0, 1.0, 1.0, false);
-				end
-				GameTooltip:AddLine(" ")
-			end
-			if MonDKP_SyncInProgress_Get() then
-				GameTooltip:AddLine("|cffff0000"..L["BEGINSYNC"].."|r", 1.0, 1.0, 1.0, true);
-				local players = MonDKP_SyncingPlayers_Get()
-				
-				if #players > 0 and core.IsOfficer then
-					local playerString = L["UPDATING"]
-					for i=1, #players do
-						local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
-
-						if classSearch then
-							c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
-						else
-							c = { hex="cccccc" }
-						end
-						playerString = playerString.."|cff"..c.hex..players[i].."|r,"
-					end
-					GameTooltip:AddLine(strsub(playerString, 1, -2), 1.0, 1.0, 1.0, true);
-				end
-			else
-				GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
-			end
-			GameTooltip:Show()
-		elseif GameTooltip:IsShown() and not core.OOD and tooltipShown then
-			GameTooltip:ClearLines()
-			GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
-			GameTooltip:AddLine(L["ALLTABLES"].." |cff00ff00"..L["UPTODATE"].."|r.", 1.0, 1.0, 1.0, false);
-			GameTooltip:AddLine(" ")
-			if core.ErrantInProgress then
-				GameTooltip:AddLine("Errant entry check in progress. Please Wait...", 1.0, 1.0, 1.0, false);
-				GameTooltip:AddLine(" ")
-			end
-			if MonDKP_SyncInProgress_Get() then
-				GameTooltip:AddLine("|cffff0000"..L["BEGINSYNC"].."|r", 1.0, 1.0, 1.0, true);
-				local players = MonDKP_SyncingPlayers_Get()
-				
-				if #players > 0 and core.IsOfficer then
-					local playerString = L["UPDATING"]
-					for i=1, #players do
-						local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
-
-						if classSearch then
-							c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
-						else
-							c = { hex="cccccc" }
-						end
-						playerString = playerString.."|cff"..c.hex..players[i].."|r,"
-					end
-					GameTooltip:AddLine(strsub(playerString, 1, -2), 1.0, 1.0, 1.0, true);
-				end
-			else
-				GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
-			end
-			GameTooltip:Show()
 		end
 
 		if not core.OOD then
-			if core.ErrantInProgress or MonDKP_SyncInProgress_Get() then
-				MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\MonDKP-review-tables")
-			else
-				MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\up-to-date")
-			end
+			MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\up-to-date")
 			MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
-				tooltipShown = true
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
 				GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
 				GameTooltip:AddLine(L["ALLTABLES"].." |cff00ff00"..L["UPTODATE"].."|r.", 1.0, 1.0, 1.0, false);
-				GameTooltip:AddLine(" ")
-				if core.ErrantInProgress then
-					GameTooltip:AddLine("Errant entry check in progress. Please Wait...", 1.0, 1.0, 1.0, false);
+				if core.IsOfficer then
 					GameTooltip:AddLine(" ")
-				end
-				if MonDKP_SyncInProgress_Get() then
-					GameTooltip:AddLine("|cffff0000"..L["BEGINSYNC"].."|r", 1.0, 1.0, 1.0, true);
-					local players = MonDKP_SyncingPlayers_Get()
-					
-					if #players > 0 and core.IsOfficer then
-						local playerString = L["UPDATING"]
-						for i=1, #players do
-							local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
-
-							if classSearch then
-								c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
-							else
-								c = { hex="cccccc" }
-							end
-							playerString = playerString.."|cff"..c.hex..players[i].."|r,"
-						end
-						GameTooltip:AddLine(strsub(playerString, 1, -2), 1.0, 1.0, 1.0, true);
-					end
-				else
 					GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
 				end
 				GameTooltip:Show()
@@ -721,11 +566,7 @@ function MonDKP:StatusVerify_Update(sync)
 
 			return true;
 		else
-			if core.ErrantInProgress or MonDKP_SyncInProgress_Get() then
-				MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\MonDKP-review-tables")
-			else
-				MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\out-of-date")
-			end
+			MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\out-of-date")
 			MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
 				tooltipShown = true
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
@@ -736,43 +577,21 @@ function MonDKP:StatusVerify_Update(sync)
 					GameTooltip:AddLine(L["ONETABLEOOD"].." |cffff0000"..L["OUTOFDATE"].."|r.", 1.0, 1.0, 1.0, false);
 				end
 				GameTooltip:AddLine(" ")
-				if core.ErrantInProgress then
-					GameTooltip:AddLine("Errant entry check in progress. Please Wait...", 1.0, 1.0, 1.0, false);
-					GameTooltip:AddLine(" ")
-				end
-				if next(records) ~= nil then
-					GameTooltip:AddLine("Missing Entries:", 0.25, 0.75, 0.90, 1, true);
-					for k,v in pairs(records) do
-						local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
+				GameTooltip:AddLine(L["MISSINGENT"]..":", 0.25, 0.75, 0.90, 1, true);
+				GameTooltip:AddLine(" ")
+				GameTooltip:AddDoubleLine(L["PLAYER"], L["CREATED"],1,1,1,1,1,1)
+				for k,v in pairs(missing) do
+					local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
 
-						if classSearch then
-							c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
-						else
-							c = { hex="ffffff" }
-						end
-						GameTooltip:AddLine("|cff"..c.hex..k.."|r: "..v, 1.0, 1.0, 1.0, false);
+					if classSearch then
+						c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+					else
+						c = { hex="ffffff" }
 					end
-					GameTooltip:AddLine(" ")
+					GameTooltip:AddDoubleLine("|cff"..c.hex..k.."|r",v,1,1,1,1,1,1);
 				end
-				if MonDKP_SyncInProgress_Get() then
-					GameTooltip:AddLine("|cffff0000"..L["BEGINSYNC"].."|r", 1.0, 1.0, 1.0, true);
-					local players = MonDKP_SyncingPlayers_Get()
-					
-					if #players > 0 and core.IsOfficer then
-						local playerString = L["UPDATING"]
-						for i=1, #players do
-							local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
-
-							if classSearch then
-								c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
-							else
-								c = { hex="cccccc" }
-							end
-							playerString = playerString.."|cff"..c.hex..players[i].."|r,"
-						end
-						GameTooltip:AddLine(strsub(playerString, 1, -2), 1.0, 1.0, 1.0, true);
-					end
-				else
+				if core.IsOfficer then
+					GameTooltip:AddLine(" ")
 					GameTooltip:AddLine("|cffff0000"..L["CLICKQUERYGUILD"].."|r", 1.0, 1.0, 1.0, true);
 				end
 				GameTooltip:Show()
@@ -798,37 +617,6 @@ function MonDKP:StatusVerify_Update(sync)
 		end)
 
 		return false;
-	end
-end
-
-function MonDKP:CurrentIndex_Set(t, index)
-	local curOfficer, curIndex = strsplit("-", index)
-	curIndex = tonumber(curIndex);
-
-	if t == "DKP" then
-		if not MonDKP_Meta.DKP[curOfficer] then
-			MonDKP_Meta.DKP[curOfficer] = { current=0, lowest=0 }
-		end
-
-		if curIndex > MonDKP_Meta.DKP[curOfficer].current then
-			MonDKP_Meta.DKP[curOfficer].current = curIndex
-		end
-
-		if curIndex < MonDKP_Meta.DKP[curOfficer].lowest or MonDKP_Meta.DKP[curOfficer].lowest == 0 then
-			MonDKP_Meta.DKP[curOfficer].lowest = curIndex
-		end
-	elseif t == "Loot" then
-		if not MonDKP_Meta.Loot[curOfficer] then
-			MonDKP_Meta.Loot[curOfficer] = { current=0, lowest=0 }
-		end
-
-		if curIndex > MonDKP_Meta.Loot[curOfficer].current then
-			MonDKP_Meta.Loot[curOfficer].current = curIndex
-		end
-
-		if curIndex < MonDKP_Meta.Loot[curOfficer].lowest or MonDKP_Meta.Loot[curOfficer].lowest == 0 then
-			MonDKP_Meta.Loot[curOfficer].lowest = curIndex
-		end
 	end
 end
 

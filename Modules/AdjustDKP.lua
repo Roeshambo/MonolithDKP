@@ -10,15 +10,6 @@ function MonDKP:AdjustDKP(value)
 	local curTime = time()
 	local c;
 	local curOfficer = UnitName("player")
-	local curIndex;
-	local newIndex;
-
-	if not MonDKP_Meta.DKP[curOfficer] then
-		MonDKP_Meta.DKP[curOfficer] = { current=0, lowest=0 }
-	end
-
-	curIndex = MonDKP_Meta.DKP[curOfficer].current
-	newIndex = tonumber(curIndex) + 1;
 
 	if not IsInRaid() then
 		c = MonDKP:GetCColors();
@@ -50,20 +41,20 @@ function MonDKP:AdjustDKP(value)
 					end
 				end
 			end
-			tinsert(MonDKP_DKPHistory, 1, {players=dkpHistoryString, dkp=value, reason=adjustReason, date=curTime, index=curOfficer.."-"..newIndex})
-			MonDKP.Sync:SendData("MDKPDKPDist", MonDKP_DKPHistory[1])
-			MonDKP_Meta.DKP[curOfficer].current = newIndex
+			local newIndex = curOfficer.."-"..curTime
+			tinsert(MonDKP_DKPHistory, 1, {players=dkpHistoryString, dkp=value, reason=adjustReason, date=curTime, index=newIndex})
+			MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP_DKPHistory[1])
 
 			if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
 				MonDKP:DKPHistory_Update(true)
 			end
 			DKPTable_Update()
 			if IsInRaid() then
-				MonDKP.Sync:SendData("MDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..value.." "..L["FORREASON"]..": "..adjustReason)
+				MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..value.." "..L["FORREASON"]..": "..adjustReason)
 			else
-				MonDKP.Sync:SendData("MDKPBCastMsg", L["DKPADJUSTBY"].." "..value.." "..L["FORPLAYERS"]..": ")
-				MonDKP.Sync:SendData("MDKPBCastMsg", tempString)
-				MonDKP.Sync:SendData("MDKPBCastMsg", L["REASON"]..": "..adjustReason)
+				MonDKP.Sync:SendData("MonDKPBCastMsg", L["DKPADJUSTBY"].." "..value.." "..L["FORPLAYERS"]..": ")
+				MonDKP.Sync:SendData("MonDKPBCastMsg", tempString)
+				MonDKP.Sync:SendData("MonDKPBCastMsg", L["REASON"]..": "..adjustReason)
 			end
 		end
 	else
@@ -93,15 +84,6 @@ local function DecayDKP(amount, deductionType, GetSelections)
 	local dkpString = "";
 	local curTime = time()
 	local curOfficer = UnitName("player")
-	local curIndex;
-	local newIndex;
-
-	if not MonDKP_Meta.DKP[curOfficer] then
-		MonDKP_Meta.DKP[curOfficer] = { current=0, lowest=0 }
-	end
-
-	curIndex = MonDKP_Meta.DKP[curOfficer].current
-	newIndex = tonumber(curIndex) + 1;
 
 	for key, value in ipairs(MonDKP_DKPTable) do
 		local dkp = tonumber(value["dkp"])
@@ -141,9 +123,9 @@ local function DecayDKP(amount, deductionType, GetSelections)
 
 	if tonumber(amount) < 0 then amount = amount * -1 end		-- flips value to positive if officer accidently used a negative number
 
-	MonDKP_Meta.DKP[curOfficer].current = newIndex; 		-- updates current index
-	tinsert(MonDKP_DKPHistory, 1, {players=playerString, dkp=dkpString, reason=L["WEEKLYDECAY"], date=curTime, index=curOfficer.."-"..newIndex})
-	MonDKP.Sync:SendData("MDKPDecay", MonDKP_DKPHistory[1])
+	local newIndex = curOfficer.."-"..curTime
+	tinsert(MonDKP_DKPHistory, 1, {players=playerString, dkp=dkpString, reason=L["WEEKLYDECAY"], date=curTime, index=newIndex})
+	MonDKP.Sync:SendData("MonDKPDecay", MonDKP_DKPHistory[1])
 	if MonDKP.ConfigTab6.history then
 		MonDKP:DKPHistory_Update(true)
 	end
@@ -731,11 +713,11 @@ function MonDKP:AdjustDKPTab_Create()
 							local setOnTime = tostring(MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:GetChecked());
 							local setGiveEnd = tostring(MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:GetChecked());
 							local setStandby = tostring(MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:GetChecked());
-							MonDKP.Sync:SendData("MDKPRaidTime", "start,false "..setInterval.. " "..setBonus.." "..setOnTime.." "..setGiveEnd.." "..setStandby)
+							MonDKP.Sync:SendData("MonDKPRaidTime", "start,false "..setInterval.. " "..setBonus.." "..setOnTime.." "..setGiveEnd.." "..setStandby)
 							if MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:GetText() == L["CONTINUERAID"] then
-								MonDKP.Sync:SendData("MDKPBCastMsg", L["RAIDRESUME"])
+								MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDRESUME"])
 							else
-								MonDKP.Sync:SendData("MDKPBCastMsg", L["RAIDSTART"])
+								MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDSTART"])
 								MonDKP.ConfigTab2.RaidTimerContainer.Output:SetText("|cff00ff0000|r")
 							end
 							MonDKP:StartRaidTimer(false)
@@ -752,11 +734,11 @@ function MonDKP:AdjustDKPTab_Create()
 					local setOnTime = tostring(MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:GetChecked());
 					local setGiveEnd = tostring(MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:GetChecked());
 					local setStandby = tostring(MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:GetChecked());
-					MonDKP.Sync:SendData("MDKPRaidTime", "start,false "..setInterval.. " "..setBonus.." "..setOnTime.." "..setGiveEnd.." "..setStandby)
+					MonDKP.Sync:SendData("MonDKPRaidTime", "start,false "..setInterval.. " "..setBonus.." "..setOnTime.." "..setGiveEnd.." "..setStandby)
 					if MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:GetText() == L["CONTINUERAID"] then
-						MonDKP.Sync:SendData("MDKPBCastMsg", L["RAIDRESUME"])
+						MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDRESUME"])
 					else
-						MonDKP.Sync:SendData("MDKPBCastMsg", L["RAIDSTART"])
+						MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDSTART"])
 						MonDKP.ConfigTab2.RaidTimerContainer.Output:SetText("|cff00ff0000|r")
 					end
 					MonDKP:StartRaidTimer(false)
@@ -767,8 +749,8 @@ function MonDKP:AdjustDKPTab_Create()
 					button1 = L["YES"],
 					button2 = L["NO"],
 					OnAccept = function()
-						MonDKP.Sync:SendData("MDKPBCastMsg", L["RAIDTIMERCONCLUDE"].." "..MonDKP.ConfigTab2.RaidTimerContainer.Output:GetText().."!")
-						MonDKP.Sync:SendData("MDKPRaidTime", "stop")
+						MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDTIMERCONCLUDE"].." "..MonDKP.ConfigTab2.RaidTimerContainer.Output:GetText().."!")
+						MonDKP.Sync:SendData("MonDKPRaidTime", "stop")
 						MonDKP:StopRaidTimer()
 					end,
 					timeout = 0,
@@ -802,8 +784,8 @@ function MonDKP:AdjustDKPTab_Create()
 				local setGiveEnd = tostring(MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:GetChecked());
 				local setStandby = tostring(MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:GetChecked());
 
-				MonDKP.Sync:SendData("MDKPRaidTime", "start,true "..setInterval.. " "..setBonus.." "..setOnTime.." "..setGiveEnd.." "..setStandby)
-				MonDKP.Sync:SendData("MDKPBCastMsg", L["RAIDPAUSE"].." "..MonDKP.ConfigTab2.RaidTimerContainer.Output:GetText().."!")
+				MonDKP.Sync:SendData("MonDKPRaidTime", "start,true "..setInterval.. " "..setBonus.." "..setOnTime.." "..setGiveEnd.." "..setStandby)
+				MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDPAUSE"].." "..MonDKP.ConfigTab2.RaidTimerContainer.Output:GetText().."!")
 				MonDKP:StartRaidTimer(true)
 			end
 		end)

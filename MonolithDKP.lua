@@ -48,7 +48,7 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
 	end
 
 	if #MonDKP_Whitelist > 0 and core.IsOfficer then
-		MonDKP.Sync:SendData("MDKPWhitelist", MonDKP_Whitelist)   -- broadcasts whitelist any time the window is opened if one exists (help ensure everyone has the information even if they were offline when it was created)
+		MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP_Whitelist)   -- broadcasts whitelist any time the window is opened if one exists (help ensure everyone has the information even if they were offline when it was created)
 	end
 
 	if core.CurSubView == "raid" then
@@ -482,7 +482,7 @@ function MonDKP:CreateMenu()
 	---------------------------------------
 	-- CHANGE LOG WINDOW
 	---------------------------------------
-	 if MonDKP_DB.defaults.HideChangeLogs < core.BuildNumber then
+	--[[ if MonDKP_DB.defaults.HideChangeLogs < core.BuildNumber then
 		MonDKP.ChangeLogDisplay = CreateFrame("Frame", "MonDKP_ChangeLogDisplay", UIParent, "ShadowOverlaySmallTemplate");
 
 		MonDKP.ChangeLogDisplay:SetPoint("TOP", UIParent, "TOP", 0, -200);
@@ -566,7 +566,7 @@ function MonDKP:CreateMenu()
 
 		local logHeight = MonDKP.ChangeLogDisplay.ChangeLogHeader:GetHeight() + MonDKP.ChangeLogDisplay.Notes:GetHeight() + MonDKP.ChangeLogDisplay.VerNumber:GetHeight() + MonDKP.ChangeLogDisplay.ChangeLogText:GetHeight();
 		MonDKP.ChangeLogDisplay:SetSize(800, logHeight);  -- resize container
-	end
+	end--]]
 
 	---------------------------------------
 	-- VERSION IDENTIFIER

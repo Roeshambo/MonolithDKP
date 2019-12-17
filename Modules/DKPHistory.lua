@@ -171,19 +171,15 @@ local function MonDKPDeleteDKPEntry(index, timestamp, item)  -- index = entry in
 
 		-- add new entry and add "delted_by" field to entry being "deleted". make new entry exact opposite of "deleted" entry
 		-- new entry gets "deletes", old entry gets "deleted_by", deletes = deleted_by index. and vice versa
-			local search = MonDKP:Table_Search(MonDKP_DKPHistory, index)
+			local search = MonDKP:Table_Search(MonDKP_DKPHistory, index, "index")
 
 			if search then
 				local players = {strsplit(",", strsub(MonDKP_DKPHistory[search[1][1]].players, 1, -2))} 	-- cuts off last "," from string to avoid creating an empty value
 				local dkp, mod;
 				local dkpString = "";
 				local curOfficer = UnitName("player")
-				local curIndex;
-				local newIndex;
 				local curTime = time()
-
-				curIndex = MonDKP_Meta.DKP[curOfficer].current
-				newIndex = tonumber(curIndex) + 1;
+				local newIndex = curOfficer.."-"..curTime
 
 				if strfind(MonDKP_DKPHistory[search[1][1]].dkp, "%-%d*%.?%d+%%") then 		-- determines if it's a mass decay
 					dkp = {strsplit(",", MonDKP_DKPHistory[search[1][1]].dkp)}
@@ -223,10 +219,9 @@ local function MonDKPDeleteDKPEntry(index, timestamp, item)  -- index = entry in
 					end
 				end
 				
-				MonDKP:CurrentIndex_Set("DKP", curOfficer.."-"..newIndex)
-				MonDKP_DKPHistory[search[1][1]].deletedby = curOfficer.."-"..newIndex
-				table.insert(MonDKP_DKPHistory, 1, { players=MonDKP_DKPHistory[search[1][1]].players, dkp=dkpString, date=curTime, reason="Delete Entry", index=curOfficer.."-"..newIndex, deletes=index })
-				MonDKP.Sync:SendData("MDKPDelSync", MonDKP_DKPHistory[1])
+				MonDKP_DKPHistory[search[1][1]].deletedby = newIndex
+				table.insert(MonDKP_DKPHistory, 1, { players=MonDKP_DKPHistory[search[1][1]].players, dkp=dkpString, date=curTime, reason="Delete Entry", index=newIndex, deletes=index })
+				MonDKP.Sync:SendData("MonDKPDelSync", MonDKP_DKPHistory[1])
 
 				if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
 					MonDKP:DKPHistory_Update(true)
@@ -442,7 +437,7 @@ function MonDKP:DKPHistory_Update(reset)
 					local decay = {strsplit(",", dkp)}
 					MonDKP.ConfigTab6.history[i].d:SetText("|cffff0000"..decay[#decay].." "..L["DKP"].."|r - |cff616ccf"..reason.."|r |cff555555("..timeofday..")|r by |cff"..c.hex..curOfficer.."|r");
 				else
-					MonDKP.ConfigTab6.history[i].d:SetText("|cffff0000"..dkp.." "..L["DKP"].."|r - |cff616ccf"..reason.."|r |cff555555"..timeofday..")|r by |cff"..c.hex..curOfficer.."|r");
+					MonDKP.ConfigTab6.history[i].d:SetText("|cffff0000"..dkp.." "..L["DKP"].."|r - |cff616ccf"..reason.."|r |cff555555("..timeofday..")|r by |cff"..c.hex..curOfficer.."|r");
 				end
 			end
 

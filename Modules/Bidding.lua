@@ -84,7 +84,7 @@ local function Roll_OnEvent(self, event, arg1, ...)
 				end
 				table.insert(Bids_Submitted, {player=name, roll=roll, range=" ("..low.."-"..high..")"})
 				if MonDKP_DB.modes.BroadcastBids then
-					MonDKP.Sync:SendData("MDKPBidShare", Bids_Submitted)
+					MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
 				end
 			else
 				if not search then
@@ -134,7 +134,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 					if Bids_Submitted[i] and Bids_Submitted[i].player == name then
 						table.remove(Bids_Submitted, i)
 						if MonDKP_DB.modes.BroadcastBids then
-							MonDKP.Sync:SendData("MDKPBidShare", Bids_Submitted)
+							MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
 						end
 						BidScrollFrame_Update()
 						response = L["BIDCANCELLED"]
@@ -181,7 +181,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 									response = L["YOURBIDOF"].." "..cmd.." "..L["DKPWASACCEPTED"].."."
 								end
 								if MonDKP_DB.modes.BroadcastBids then
-									MonDKP.Sync:SendData("MDKPBidShare", Bids_Submitted)
+									MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
 								end
 								if Timer ~= 0 and Timer > (core.BiddingWindow.bidTimer:GetText() - 10) and MonDKP_DB.modes.AntiSnipe > 0 then
 									MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText().."{"..MonDKP_DB.modes.AntiSnipe, core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), core.BiddingWindow.itemIcon:GetTexture());
@@ -196,7 +196,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 								end
 								table.insert(Bids_Submitted, {player=name, dkp=dkp})
 								if MonDKP_DB.modes.BroadcastBids then
-									MonDKP.Sync:SendData("MDKPBidShare", Bids_Submitted)
+									MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
 								end
 								response = L["BIDWASACCEPTED"]
 								if Timer ~= 0 and Timer > (core.BiddingWindow.bidTimer:GetText() - 10) and MonDKP_DB.modes.AntiSnipe > 0 then
@@ -395,7 +395,7 @@ function MonDKP:ToggleBidWindow(loot, lootIcon, itemName)
 	 	if loot then
 	 		Bids_Submitted = {}
 	 		if MonDKP_DB.modes.BroadcastBids then
-				MonDKP.Sync:SendData("MDKPBidShare", Bids_Submitted)
+				MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
 			end
 	 		local search = MonDKP:Table_Search(MonDKP_MinBids, itemName)
 
@@ -468,7 +468,7 @@ local function StartBidding()
 	if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
 		core.BiddingWindow.cost:SetNumber(MonDKP_round(core.BiddingWindow.minBid:GetNumber(), MonDKP_DB.modes.rounding))
 		MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), CurrItemIcon)
-		MonDKP.Sync:SendData("MDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.minBid:GetText()..","..CurrItemIcon)
+		MonDKP.Sync:SendData("MonDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.minBid:GetText()..","..CurrItemIcon)
 		MonDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.minBid:GetText(), CurrItemIcon, UnitName("player"))
 
 		if MonDKP_DB.defaults.AutoOpenBid then	-- toggles bid window if option is set to
@@ -497,7 +497,7 @@ local function StartBidding()
 	else
 		if MonDKP_DB.modes.costvalue == "Percent" then perc = "%" else perc = " DKP" end;
 		MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Cost: "..core.BiddingWindow.cost:GetNumber()..perc, CurrItemIcon)
-		MonDKP.Sync:SendData("MDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.cost:GetText()..perc..","..CurrItemIcon)
+		MonDKP.Sync:SendData("MonDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.cost:GetText()..perc..","..CurrItemIcon)
 		MonDKP:BidInterface_Toggle()
 		MonDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.cost:GetText()..perc, CurrItemIcon, UnitName("player"))
 	end
@@ -570,7 +570,7 @@ function ClearBidWindow()
 	Bids_Submitted = {}
 	SelectedBidder = {}
 	if MonDKP_DB.modes.BroadcastBids then
-		MonDKP.Sync:SendData("MDKPBidShare", Bids_Submitted)
+		MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
 	end
 	core.BiddingWindow.cost:SetText("")
 	core.BiddingWindow.CustomMinBid:Hide();
@@ -618,7 +618,7 @@ end
 
 function MonDKP:BroadcastBidTimer(seconds, title, itemIcon)       -- broadcasts timer and starts it natively
 	local title = title;
-	MonDKP.Sync:SendData("MDKPCommand", "StartBidTimer,"..seconds..","..title..","..itemIcon)
+	MonDKP.Sync:SendData("MonDKPCommand", "StartBidTimer,"..seconds..","..title..","..itemIcon)
 	MonDKP:StartBidTimer(seconds, title, itemIcon)
 
 	if strfind(seconds, "{") then
@@ -629,7 +629,7 @@ end
 function MonDKP:BroadcastStopBidTimer()
 	MonDKP.BidTimer:SetScript("OnUpdate", nil)
 	MonDKP.BidTimer:Hide()
-	MonDKP.Sync:SendData("MDKPCommand", "StopBidTimer")
+	MonDKP.Sync:SendData("MonDKPCommand", "StopBidTimer")
 end
 
 function MonDKP_Register_ShiftClickLootWindowHook()			-- hook function into LootFrame window (BREAKS if more than 4 loot slots... trying to fix)
@@ -941,6 +941,7 @@ local function BidRow_OnClick(self)
 	    else
 	    	SelectedBidder = {player=strsub(self.Strings[1]:GetText(), 1, strfind(self.Strings[1]:GetText(), " ")-1), bid=tonumber(self.Strings[2]:GetText())}
 	    end
+	    print(SelectedBidder.player)
     end
 end
 
@@ -956,7 +957,7 @@ local function RightClickMenu(self)
 			end
 			table.remove(Bids_Submitted, self.index)
 			if MonDKP_DB.modes.BroadcastBids then
-				MonDKP.Sync:SendData("MDKPBidShare", Bids_Submitted)
+				MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
 			end
 			SelectedBidder = {}
 			for i=1, #core.BiddingWindow.bidTable.Rows do
@@ -986,11 +987,16 @@ local function BidWindowCreateRow(parent, id) -- Create 3 buttons for each row i
         	f.Strings[i]:SetFontObject("MonDKPNormalCenter");
         end
     end
+    f.Strings[1].rowCounter = f:CreateFontString(nil, "OVERLAY");
+	f.Strings[1].rowCounter:SetFontObject("MonDKPSmallOutlineLeft")
+	f.Strings[1].rowCounter:SetTextColor(1, 1, 1, 0.3);
+	f.Strings[1].rowCounter:SetPoint("LEFT", f, "LEFT", 3, -1);
+
     f.Strings[1]:SetWidth((width/2)-10)
     f.Strings[2]:SetWidth(width/4)
     f.Strings[3]:SetWidth(width/4)
-    f.Strings[1]:SetPoint("LEFT", f, "LEFT", 10, 0)
-    f.Strings[2]:SetPoint("LEFT", f.Strings[1], "RIGHT", 0, 0)
+    f.Strings[1]:SetPoint("LEFT", f, "LEFT", 20, 0)
+    f.Strings[2]:SetPoint("LEFT", f.Strings[1], "RIGHT", -9, 0)
     f.Strings[3]:SetPoint("RIGHT", 0, 0)
 
     f:SetScript("OnMouseDown", function(self, button)
@@ -1020,13 +1026,18 @@ function BidScrollFrame_Update()
 	local index, row
     local offset = FauxScrollFrame_GetOffset(core.BiddingWindow.bidTable) or 0
     local rank;
+    local showRows = #Bids_Submitted
+
+    if #Bids_Submitted > numrows then
+    	showRows = numrows
+    end
 
     SortBidTable()
     for i=1, numrows do
     	row = core.BiddingWindow.bidTable.Rows[i]
     	row:Hide()
     end
-    for i=1, #Bids_Submitted do
+    for i=1, showRows do
         row = core.BiddingWindow.bidTable.Rows[i]
         index = offset + i
         local dkp_total = MonDKP:Table_Search(MonDKP_DKPTable, Bids_Submitted[i].player)
@@ -1037,6 +1048,7 @@ function BidScrollFrame_Update()
             row.index = index
             row.Strings[1]:SetText(Bids_Submitted[i].player.." |cff666666("..rank..")|r")
             row.Strings[1]:SetTextColor(c.r, c.g, c.b, 1)
+            row.Strings[1].rowCounter:SetText(index)
             if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
             	row.Strings[2]:SetText(Bids_Submitted[i].bid)
             	row.Strings[3]:SetText(MonDKP_round(MonDKP_DKPTable[dkp_total[1][1]].dkp, MonDKP_DB.modes.rounding))
@@ -1079,7 +1091,7 @@ function BidScrollFrame_Update()
 	    	core.BiddingWindow.cost:SetText(Bids_Submitted[2].bid)
 	    end
 	end
-    FauxScrollFrame_Update(core.BiddingWindow.bidTable, numOptions, numrows, height, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding
+    --FauxScrollFrame_Update(core.BiddingWindow.bidTable, numOptions, numrows, height, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding
 end
 
 function MonDKP:CreateBidWindow()

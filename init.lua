@@ -4,7 +4,6 @@ local MonDKP = core.MonDKP;
 local L = core.L;
 
 local lockouts = CreateFrame("Frame", "LockoutsFrame");
-local AllowGuildCheck = false
 
 --------------------------------------
 -- Slash Command
@@ -56,13 +55,15 @@ MonDKP.Commands = {
 			MonDKP:Print("Monolith DKP has not completed initialization.")
 		end 
 	end,
-	["migrate"] = function()
-		if not core.Migrated then MonDKP:MigrationFrame() end
-	end,
-	["test"] = function() 			-- test new features
-		print("Errant Count: "..#MonDKP_Errant)
-		print("DKP Hist Count: "..#MonDKP_DKPHistory)
-		print("Loot Hist Count: "..#MonDKP_Loot)
+	["repairtables"] = function(...) 			-- test new features
+		local cmd = ...
+		if core.IsOfficer then
+			if cmd == "true" then
+				MonDKP:RepairTables(cmd)
+			else
+				MonDKP:RepairTables()
+			end
+		end
 	end,
 	["award"] = function (name, ...)
 		if core.IsOfficer and core.Initialized then
@@ -249,100 +250,34 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			-- Prints info after all addons have loaded. Circumvents addons that load saved chat messages pushing info out of view.
 			C_Timer.After(3, function ()
 				MonDKP:CheckOfficer()
+				MonDKP:SortLootTable()
+				MonDKP:SortDKPHistoryTable()
 				MonDKP:Print(L["VERSION"].." "..core.MonVersion..", "..L["CREATEDMAINTAIN"].." Roeshambo@Stalagg-PvP");
 				MonDKP:Print(L["LOADED"].." "..#MonDKP_DKPTable.." "..L["PLAYERRECORDS"]..", "..#MonDKP_Loot.." "..L["LOOTHISTRECORDS"].." "..#MonDKP_DKPHistory.." "..L["DKPHISTRECORDS"]..".");
 				MonDKP:Print(L["USE"].." /dkp ? "..L["SUBMITBUGS"].." @ https://github.com/Roeshambo/MonolithDKP/issues");
-				MonDKP.Sync:SendData("MDKPBuild", tostring(core.BuildNumber)) -- broadcasts build number to guild to check if a newer version is available
-				MonDKP.Sync:SendData("MDKPQuery", "start") -- requests role and spec data
+				MonDKP.Sync:SendData("MonDKPBuild", tostring(core.BuildNumber)) -- broadcasts build number to guild to check if a newer version is available
 
-				if not core.Migrated and core.IsOfficer then  	-- prompts for migration (if officer and not migrated)
-					-- initiate migration setup
-					MonDKP:MigrationFrame()
-				elseif not core.Migrated and not core.IsOfficer then -- wipes tables if non officer
-					MonDKP_DKPTable = nil
-					MonDKP_Loot = nil
-					MonDKP_DKPHistory = nil
-					MonDKP_DKPTable = {}
-					MonDKP_Loot = {}
-					MonDKP_DKPHistory = {}
-					core.Migrated = true
-					MonDKP:FilterDKPTable(core.currentSort, "reset")
-					MonDKP:RequestSync()
-				else
-					if core.IsOfficer and not MonDKP_Meta.DKP[UnitName("player")] then
-						MonDKP_Meta.DKP[UnitName("player")] = { current=0, lowest=0 }
-					end
-					if core.IsOfficer and not MonDKP_Meta.Loot[UnitName("player")] then
-						MonDKP_Meta.Loot[UnitName("player")] = { current=0, lowest=0 }
-					end
-					if core.IsOfficer then
-						MonDKP_Meta_Remote.Loot[UnitName("player")] = MonDKP_Meta.Loot[UnitName("player")].current
-						MonDKP_Meta_Remote.DKP[UnitName("player")] = MonDKP_Meta.DKP[UnitName("player")].current
-					end
-					for k1,v1 in pairs(MonDKP_Meta) do
-						for k2,v2 in pairs(v1) do
-							if not MonDKP:ValidateSender(k2) and v2.current == 0 and v2.lowest == 0 then
-								MonDKP_Meta[k1][k2] = nil
-								if MonDKP_Meta_Remote[k1][k2] then
-									MonDKP_Meta_Remote[k1][k2] = nil
-								end
-							end
-						end
-					end
+				if not MonDKP_DB.defaults.installed then
+					MonDKP_DB.defaults.installed = time(); -- identifies when 2.1.0 was installed to block earlier posts from broadcasting in sync
 				end
-				AllowGuildCheck = true
-				MonDKP:ErrantCheck(true)  -- begins errant check (finds entries missing between lowest and current) and executes sync
+
+				local seed
+				if #MonDKP_DKPHistory > 0 and #MonDKP_Loot > 0 then
+					local off1 = strsplit("-", MonDKP_DKPHistory[1].index)
+					local off2 = strsplit("-", MonDKP_Loot[1].index)
+					local flag1, flag2 = false, false
+					
+					if MonDKP:ValidateSender(off1) and MonDKP:ValidateSender(off2) then
+						seed = MonDKP_DKPHistory[1].index..","..MonDKP_Loot[1].index
+					else
+						seed = "start"
+					end
+				else
+					seed = "start"
+				end
+
+				MonDKP.Sync:SendData("MonDKPQuery", seed) -- requests role and spec data and sends current seeds
 			end)
-		end
-
-		if IsInGuild() and core.InitStart and core.IsOfficer ~= nil and AllowGuildCheck then
-			local GuildName = GetGuildInfo("player")
-			local player = UnitName("player")
-			local server = GetRealmName()
-			player = player.."-"..server
-			if not MonDKP_DB.defaults.CurrentGuild then MonDKP_DB.defaults.CurrentGuild = {} end
-			if not MonDKP_DB.defaults.CurrentGuild[player] and GuildName then
-				MonDKP_DB.defaults.CurrentGuild[player] = GuildName
-			elseif MonDKP_DB.defaults.CurrentGuild[player] and GuildName and MonDKP_DB.defaults.CurrentGuild[player] ~= GuildName then -- wipes all data when player joins a new guild
-				core.IsOfficer = false
-				MonDKP_Whitelist = nil
-				MonDKP_DKPTable = nil
-				MonDKP_Loot = nil
-				MonDKP_DKPHistory = nil
-				MonDKP_Meta = nil
-				MonDKP_Meta_Remote = nil
-				MonDKP_Archive_Meta = nil
-				MonDKP_Archive = nil
-				MonDKP_Whitelist = nil
-				MonDKP_Errant = nil
-				MonDKP_MinBids = nil
-				MonDKP_Standby = nil
-
-				MonDKP_DKPTable = {}
-				MonDKP_Loot = {}
-				MonDKP_DKPHistory = {}
-				MonDKP_Meta = { DKP={}, Loot={} }
-				MonDKP_Meta_Remote = { DKP={}, Loot={} }
-				MonDKP_Archive = {}
-				MonDKP_Archive_Meta = { DKP={}, Loot={} }
-				MonDKP_Whitelist = {}
-				MonDKP_Errant = {}
-				MonDKP_MinBids = {}
-				MonDKP_Standby = {}
-				core.Migrated = true
-				MonDKP:FilterDKPTable(core.currentSort, "reset")
-				MonDKP_DB.defaults.CurrentGuild[player] = GuildName
-
-				StaticPopupDialogs["GUILD_CHANGED"] = {
-					text = L["CHANGEDGUILDS"],
-					button1 = L["OK"],
-					timeout = 0,
-					whileDead = true,
-					hideOnEscape = true,
-					preferredIndex = 3,
-				}
-				StaticPopup_Show ("GUILD_CHANGED")
-			end
 		end
 	elseif event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" then
 		MonDKP:CheckOfficer()
@@ -473,7 +408,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				end
 			end
 			lootTable.boss=core.LastKilledBoss
-			MonDKP.Sync:SendData("MDKPBossLoot", lootTable)
+			MonDKP.Sync:SendData("MonDKPBossLoot", lootTable)
 
 			for i=1, #lootTable do
 				local item = Item:CreateFromItemLink(lootTable[i]);
@@ -527,7 +462,6 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_Standby then MonDKP_Standby = {} end;
 		if not MonDKP_Archive then MonDKP_Archive = {} end;
 		if not MonDKP_DB then MonDKP_DB = {} end
-		if ((#MonDKP_Loot == 0 or MonDKP_Loot[1].index) and (#MonDKP_DKPHistory == 0 or MonDKP_DKPHistory[1].index)) then core.Migrated = true end;  -- determines if migration is necessary
 		if not MonDKP_DB.DKPBonus or not MonDKP_DB.DKPBonus.OnTimeBonus then
 			MonDKP_DB.DKPBonus = {
     			OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, DecayPercentage = 20, GiveRaidStart = false, IncStandby = false,
@@ -564,22 +498,13 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_DB.bossargs.RecentZones then MonDKP_DB.bossargs.RecentZones = {} end
 		if not MonDKP_DB.defaults.HideChangeLogs then MonDKP_DB.defaults.HideChangeLogs = 0 end
 		if not MonDKP_DB.modes.AntiSnipe then MonDKP_DB.modes.AntiSnipe = 0 end
-		if not MonDKP_Meta then MonDKP_Meta = { DKP={}, Loot={} } end
-		if not MonDKP_Archive_Meta then MonDKP_Archive_Meta = { DKP={}, Loot={} } end;
-		if not MonDKP_Meta_Remote or not MonDKP_Meta_Remote.DKP or not MonDKP_Meta_Remote.Loot then MonDKP_Meta_Remote = { DKP={}, Loot={} } end
 		if not MonDKP_DB.defaults.CurrentGuild then MonDKP_DB.defaults.CurrentGuild = {} end
-		if not MonDKP_Errant then MonDKP_Errant = {} end
+		if MonDKP_DKPTable.seed then MonDKP_DKPTable.seed = nil end
+		if MonDKP_Meta then MonDKP_Meta = nil end
+		if MonDKP_Meta_Remote then MonDKP_Meta_Remote = nil end
+		if MonDKP_Archive_Meta then MonDKP_Archive_Meta = nil end
+		if MonDKP_Errant then MonDKP_Errant = nil end
 
-		------------------------------------
-	    --	Validate Tables - Rebuilds DKPTable based off of DKP History, Loot History, and archived data. (This is manually triggered now)
-	    ------------------------------------
-	    --[[if core.Migrated then 		-- only allow this to fire if the migration has already occurred.
-			MonDKP:ValidateLootTable()  		-- clears duplicate entries in loot table
-			MonDKP:ValidateDKPHistory()			-- clears duplicate entries in dkp history table
-			MonDKP:ValidateDKPTable_Loot()		-- adds up all entries in the loot table
-			MonDKP:ValidateDKPTable_DKP()		-- adds up all entries in DKP table
-			MonDKP:ValidateDKPTable_Final()		-- rectifies incorrect DKPTable data based off of the above 2 functions
-		end--]]
 	    ------------------------------------
 	    --	Import SavedVariables
 	    ------------------------------------
@@ -602,14 +527,6 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		end
 		if #MonDKP_DKPHistory > MonDKP_DB.defaults.DKPHistoryLimit then
 			MonDKP:PurgeDKPHistory()									-- purges DKP History entries that exceed the "DKPHistoryLimit" option variable (oldest entries) and populates MonDKP_Archive with deleted values
-		end
-
-		for k1,v1 in pairs(MonDKP_Archive_Meta) do 		-- flags the archive active if any entries contain a value above 0
-			for k2,v2 in pairs(v1) do
-				if v2 and v2 > 0 then
-					core.ArchiveActive = true 			-- flag is used to identify if lowest entry should be 1. No archive means an index of 1 must exist
-				end
-			end
 		end
 	end
 end

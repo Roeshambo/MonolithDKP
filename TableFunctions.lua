@@ -8,7 +8,6 @@ local menuFrame = CreateFrame("Frame", "MonDKPDKPTableMenuFrame", UIParent, "UID
 local ConvToRaidEvent = CreateFrame("Frame", "MonDKPConvToRaidEventsFrame");
 local InvCount;
 local LastSelection = 0;
-local CooldownTimer = 0
 
 function MonDKPSelectionCount_Update()
 	if #core.SelectedData == 0 then
@@ -155,9 +154,9 @@ local function DisplayUserHistory(self, player)
 					local decay = {strsplit(",", PlayerTable[i].dkp)}
 					GameTooltip:AddDoubleLine("  "..PlayerTable[i].reason, "|cffff0000"..decay[#decay].." DKP|r", 1.0, 0, 0);
 				elseif tonumber(PlayerTable[i].dkp) < 0 then
-					GameTooltip:AddDoubleLine("  "..PlayerTable[i].reason, "|cffff0000"..PlayerTable[i].dkp.." DKP|r", 1.0, 0, 0);
+					GameTooltip:AddDoubleLine("  "..PlayerTable[i].reason, "|cffff0000"..MonDKP_round(PlayerTable[i].dkp, MonDKP_DB.modes.rounding).." DKP|r", 1.0, 0, 0);
 				else
-					GameTooltip:AddDoubleLine("  "..PlayerTable[i].reason, "|cff00ff00"..PlayerTable[i].dkp.." DKP|r", 0, 1.0, 0);
+					GameTooltip:AddDoubleLine("  "..PlayerTable[i].reason, "|cff00ff00"..MonDKP_round(PlayerTable[i].dkp, MonDKP_DB.modes.rounding).." DKP|r", 0, 1.0, 0);
 				end
 			elseif PlayerTable[i].cost then
 				GameTooltip:AddDoubleLine("  "..PlayerTable[i].zone..": |cffff0000"..PlayerTable[i].boss.."|r", PlayerTable[i].loot.." |cffff0000("..PlayerTable[i].cost.." DKP)|r", 1.0, 1.0, 1.0);
@@ -210,13 +209,13 @@ local function EditStandbyList(row, arg1)
 				end
 			end
 		end
-		MonDKP.Sync:SendData("MDKPStand", MonDKP_Standby)
+		MonDKP.Sync:SendData("MonDKPStand", MonDKP_Standby)
 		DKPTable_Update()
 	else
 		table.wipe(MonDKP_Standby)
 		core.WorkingTable = {}
 		DKPTable_Update()
-		MonDKP.Sync:SendData("MDKPStand", MonDKP_Standby)
+		MonDKP.Sync:SendData("MonDKPStand", MonDKP_Standby)
 	end
 	if #core.WorkingTable == 0 then
 		core.WorkingTable = CopyTable(MonDKP_DKPTable);
@@ -837,14 +836,13 @@ function MonDKP:DKPTable_Create()
 	MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function(self)
 		GameTooltip:Hide()
 	end)
-	MonDKP.DKPTable.SeedVerify:SetScript("OnMouseDown", function()
-		if CooldownTimer == 0 then
-			MonDKP:UpdateQuery()
-			CountDown(30)
-		else
-			MonDKP:Print(L["YOUMUSTWAIT"].." "..CooldownTimer.." "..L["MORESECONDSTO"])
+	MonDKP.DKPTable.SeedVerify:SetScript("OnMouseDown", function()  -- broadcast button
+		if core.IsOfficer then	
+			local seed
+			if #MonDKP_DKPHistory > 0 and #MonDKP_Loot > 0 then seed = MonDKP_DKPHistory[1].index..","..MonDKP_Loot[1].index else seed = "start" end
+			MonDKP.Sync:SendData("MonDKPQuery", seed) 	-- requests role and spec data and sets current seeds
+			MonDKP_BroadcastFull_Init()
 		end
-
 	end)
 
 	MonDKP.DKPTable.SeedVerifyIcon = MonDKP.DKPTable:CreateTexture(nil, "OVERLAY", nil)             -- seed verify (bottom left) indicator

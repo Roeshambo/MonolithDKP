@@ -133,6 +133,11 @@ function BidInterface_Update()
 	local index, row
     local offset = FauxScrollFrame_GetOffset(core.BidInterface.bidTable) or 0
     local rank;
+    local showRows = #Bids_Submitted
+
+    if #Bids_Submitted > numrows then
+    	showRows = numrows
+    end
 
 	if not core.BidInterface.bidTable:IsShown() then return end
 
@@ -144,15 +149,28 @@ function BidInterface_Update()
 	if Bids_Submitted[1] and Bids_Submitted[1].bid and core.BidInterface.bidTable:IsShown() then
 		core.BidInterface.Bid:SetNumber(Bids_Submitted[1].bid)
 	end
-    for i=1, #Bids_Submitted do
+    for i=1, showRows do
         row = core.BidInterface.bidTable.Rows[i]
         index = offset + i
         local dkp_total = MonDKP:Table_Search(MonDKP_DKPTable, Bids_Submitted[i].player)
-        local c = MonDKP:GetCColors(MonDKP_DKPTable[dkp_total[1][1]].class)
+        local c
+        if dkp_total then
+        	c = MonDKP:GetCColors(MonDKP_DKPTable[dkp_total[1][1]].class)
+        else
+        	local createProfile = MonDKP_Profile_Create(Bids_Submitted[i].player)
+
+        	if createProfile then
+	        	dkp_total = MonDKP:Table_Search(MonDKP_DKPTable, Bids_Submitted[i].player)
+	        	c = MonDKP:GetCColors(MonDKP_DKPTable[dkp_total[1][1]].class)
+	        else 			-- if unable to create profile, feeds grey color
+	        	c = { r="aa", g="aa", b="aa"}
+	        end
+        end
         rank = MonDKP:GetGuildRank(Bids_Submitted[i].player)
         if Bids_Submitted[index] then
             row:Show()
             row.index = index
+            row.Strings[1].rowCounter:SetText(index)
             row.Strings[1]:SetText(Bids_Submitted[i].player.." |cff666666("..rank..")|r")
             row.Strings[1]:SetTextColor(c.r, c.g, c.b, 1)
             if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
@@ -306,11 +324,17 @@ local function BidWindowCreateRow(parent, id) -- Create 3 buttons for each row i
         	f.Strings[i]:SetFontObject("MonDKPNormalCenter");
         end
     end
+
+    f.Strings[1].rowCounter = f:CreateFontString(nil, "OVERLAY");
+	f.Strings[1].rowCounter:SetFontObject("MonDKPSmallOutlineLeft")
+	f.Strings[1].rowCounter:SetTextColor(1, 1, 1, 0.3);
+	f.Strings[1].rowCounter:SetPoint("LEFT", f, "LEFT", 3, -1);
+
     f.Strings[1]:SetWidth((width/2)-10)
     f.Strings[2]:SetWidth(width/4)
     f.Strings[3]:SetWidth(width/4)
-    f.Strings[1]:SetPoint("LEFT", f, "LEFT", 10, 0)
-    f.Strings[2]:SetPoint("LEFT", f.Strings[1], "RIGHT", 0, 0)
+    f.Strings[1]:SetPoint("LEFT", f, "LEFT", 20, 0)
+    f.Strings[2]:SetPoint("LEFT", f.Strings[1], "RIGHT", -9, 0)
     f.Strings[3]:SetPoint("RIGHT", 0, 0)
 
     return f
@@ -341,13 +365,13 @@ function MonDKP:CurrItem_Set(item, value, icon, BidHost)
 			else
 				message = "!bid";
 			end
-			MonDKP.Sync:SendData("MDKPBidder", tostring(message))
+			MonDKP.Sync:SendData("MonDKPBidder", tostring(message))
 			--SendChatMessage(message, "WHISPER", nil, BidHost)
 			core.BidInterface.Bid:ClearFocus();
 		end)
 
 		core.BidInterface.CancelBid:SetScript("OnClick", function()
-			MonDKP.Sync:SendData("MDKPBidder", "!bid cancel")
+			MonDKP.Sync:SendData("MonDKPBidder", "!bid cancel")
 			--SendChatMessage("!bid cancel", "WHISPER", nil, BidHost)
 			core.BidInterface.Bid:ClearFocus();
 		end)
@@ -431,7 +455,7 @@ function MonDKP:BidInterface_Create()
 	tinsert(UISpecialFrames, f:GetName()); -- Sets frame to close on "Escape"
 
 	  -- Close Button
-	f.closeContainer = CreateFrame("Frame", "MDKPBidderWindowCloseButtonContainer", f)
+	f.closeContainer = CreateFrame("Frame", "MonDKPBidderWindowCloseButtonContainer", f)
 	f.closeContainer:SetPoint("CENTER", f, "TOPRIGHT", -4, 0)
 	f.closeContainer:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
@@ -460,7 +484,7 @@ function MonDKP:BidInterface_Create()
 		f.LootTableIcons[i]:SetColorTexture(0, 0, 0, 1)
 		f.LootTableIcons[i]:SetSize(35, 35);
 		f.LootTableIcons[i]:Hide();
-		f.LootTableButtons[i] = CreateFrame("Button", "MDKPBidderLootTableButton", f)
+		f.LootTableButtons[i] = CreateFrame("Button", "MonDKPBidderLootTableButton", f)
 		f.LootTableButtons[i]:SetPoint("TOPLEFT", f.LootTableIcons[i], "TOPLEFT", 0, 0);
 		f.LootTableButtons[i]:SetSize(35, 35);
 		f.LootTableButtons[i]:Hide()
@@ -636,7 +660,7 @@ function MonDKP:BidInterface_Create()
 	f.headerButtons = {}
 	mode = MonDKP_DB.modes.mode;
 
-	f.BidTable_Headers = CreateFrame("Frame", "MDKPBidderTableHeaders", f.bidTable)
+	f.BidTable_Headers = CreateFrame("Frame", "MonDKPBidderTableHeaders", f.bidTable)
 	f.BidTable_Headers:SetSize(370, 22)
 	f.BidTable_Headers:SetPoint("BOTTOMLEFT", f.bidTable, "TOPLEFT", 0, 1)
 	f.BidTable_Headers:SetBackdrop({

@@ -8,14 +8,6 @@ function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to awar
 	local tempList2 = "";
 	local curTime = time();
 	local curOfficer = UnitName("player")
-	local curIndex, newIndex
-
-	if not MonDKP_Meta.DKP[curOfficer] then
-		MonDKP_Meta.DKP[curOfficer] = { current=0, lowest=0 }
-	end
-
-	curIndex = MonDKP_Meta.DKP[curOfficer].current
-	newIndex = tonumber(curIndex) + 1;
 
 	if MonDKP:CheckRaidLeader() then -- only allows raid leader to disseminate DKP
 		if phase == 1 or phase == 3 then
@@ -59,20 +51,16 @@ function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to awar
 
 		if tempList ~= "" or tempList2 ~= "" then
 			if (phase == 1 or phase == 3) and tempList ~= "" then
-				tinsert(MonDKP_DKPHistory, 1, {players=tempList, dkp=amount, reason=reason, date=curTime, index=curOfficer.."-"..newIndex})
-				MonDKP.Sync:SendData("MDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..amount.." "..L["FORREASON"]..": "..reason)
-				MonDKP.Sync:SendData("MDKPDKPDist", MonDKP_DKPHistory[1])
-				MonDKP_Meta.DKP[curOfficer].current = newIndex
+				local newIndex = curOfficer.."-"..curTime
+				tinsert(MonDKP_DKPHistory, 1, {players=tempList, dkp=amount, reason=reason, date=curTime, index=newIndex})
+				MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..amount.." "..L["FORREASON"]..": "..reason)
+				MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP_DKPHistory[1])
 			end
 			if (phase == 2 or phase == 3) and tempList2 ~= "" then
-				tinsert(MonDKP_DKPHistory, 1, {players=tempList2, dkp=amount, reason=reason.." (Standby)", date=curTime+1, index=curOfficer.."-"..newIndex})
-				MonDKP.Sync:SendData("MDKPBCastMsg", L["STANDBYADJUSTBY"].." "..amount.." "..L["FORREASON"]..": "..reason)
-				MonDKP.Sync:SendData("MDKPDKPDist", MonDKP_DKPHistory[1])
-				if phase == 3 then
-					MonDKP_Meta.DKP[curOfficer].current = newIndex+1
-				else
-					MonDKP_Meta.DKP[curOfficer].current = newIndex
-				end
+				local newIndex = curOfficer.."-"..curTime+1
+				tinsert(MonDKP_DKPHistory, 1, {players=tempList2, dkp=amount, reason=reason.." (Standby)", date=curTime+1, index=newIndex})
+				MonDKP.Sync:SendData("MonDKPBCastMsg", L["STANDBYADJUSTBY"].." "..amount.." "..L["FORREASON"]..": "..reason)
+				MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP_DKPHistory[1])
 			end
 
 			if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
