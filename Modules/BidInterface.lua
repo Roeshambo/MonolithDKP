@@ -544,7 +544,7 @@ function MonDKP:BidInterface_Create()
     end)
 
     f.BidPlusOne = CreateFrame("Button", nil, f.Bid, "MonolithDKPButtonTemplate")
-	f.BidPlusOne:SetPoint("TOPLEFT", f.Bid, "BOTTOMLEFT", 0, -2);
+   	f.BidPlusOne:SetPoint("TOPLEFT", f.Bid, "BOTTOMLEFT", 0, -2);
 	f.BidPlusOne:SetSize(33,20)
 	f.BidPlusOne:SetText("+1");
 	f.BidPlusOne:GetFontString():SetTextColor(1, 1, 1, 1)
@@ -565,9 +565,9 @@ function MonDKP:BidInterface_Create()
 		f.Bid:SetNumber(f.Bid:GetNumber() + 5);
 	end)
 
-	f.BidMax = CreateFrame("Button", nil, f.BidPlusOne, "MonolithDKPButtonTemplate")
-	f.BidMax:SetPoint("TOPLEFT", f.BidPlusOne, "BOTTOMLEFT", 0, -4);
-	f.BidMax:SetSize(70,20)
+	f.BidMax = CreateFrame("Button", nil, f.BidPlusFive, "MonolithDKPButtonTemplate")
+	f.BidMax:SetPoint("TOPLEFT", f.BidPlusFive, "BOTTOMLEFT", 0, -2);
+	f.BidMax:SetSize(33,20)
 	f.BidMax:SetText("MAX");
 	f.BidMax:GetFontString():SetTextColor(1, 1, 1, 1)
 	f.BidMax:SetNormalFontObject("MonDKPSmallCenter");
@@ -582,6 +582,23 @@ function MonDKP:BidInterface_Create()
 		end
 	end)
 
+	f.BidHalf = CreateFrame("Button", nil, f.BidPlusOne, "MonolithDKPButtonTemplate")
+	f.BidHalf:SetPoint("TOPLEFT", f.BidPlusOne, "BOTTOMLEFT", 0, -2);
+	f.BidHalf:SetSize(33,20)
+	f.BidHalf:SetText("HALF");
+	f.BidHalf:GetFontString():SetTextColor(1, 1, 1, 1)
+	f.BidHalf:SetNormalFontObject("MonDKPSmallCenter");
+	f.BidHalf:SetHighlightFontObject("MonDKPSmallCenter");
+	f.BidHalf:SetScript("OnClick", function()
+		local search = MonDKP:Table_Search(MonDKP_DKPTable, UnitName("player"), "player")
+
+		if search then
+			f.Bid:SetNumber(MonDKP_DKPTable[search[1][1]].dkp/2);
+		else
+			f.Bid:SetNumber(0);
+		end
+	end)
+	
     f.SubmitBid = CreateFrame("Button", nil, f, "MonolithDKPButtonTemplate")
 	f.SubmitBid:SetPoint("LEFT", f.Bid, "RIGHT", 8, 0);
 	f.SubmitBid:SetSize(90,25)
