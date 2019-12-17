@@ -499,6 +499,8 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_DB.modes.AntiSnipe then MonDKP_DB.modes.AntiSnipe = 0 end
 		if not MonDKP_DB.defaults.CurrentGuild then MonDKP_DB.defaults.CurrentGuild = {} end
 		if MonDKP_DKPTable.seed then MonDKP_DKPTable.seed = nil end
+		if not MonDKP_DKPHistory.seed then MonDKP_DKPHistory.seed = 0 end
+		if not MonDKP_Loot.seed then MonDKP_Loot.seed = 0 end
 		if MonDKP_Meta then MonDKP_Meta = nil end
 		if MonDKP_Meta_Remote then MonDKP_Meta_Remote = nil end
 		if MonDKP_Archive_Meta then MonDKP_Archive_Meta = nil end
