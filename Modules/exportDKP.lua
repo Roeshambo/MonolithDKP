@@ -83,11 +83,11 @@ local function GenerateDKPTables(table, format)
 			for i=1, numrows do
 				local PlayerString = strsub(MonDKP_DKPHistory[i].players, 1, -2)
 
-					if i == numrows then
-						ExportString = ExportString.."\""..PlayerString.."\""..","..MonDKP_DKPHistory[i].dkp..","..MonDKP_DKPHistory[i].date..",".."\""..MonDKP_DKPHistory[i].reason.."\"";
-					else
-						ExportString = ExportString.."\""..PlayerString.."\""..","..MonDKP_DKPHistory[i].dkp..","..MonDKP_DKPHistory[i].date..",".."\""..MonDKP_DKPHistory[i].reason.."\"".."\n";
-					end
+				if i == numrows then
+					ExportString = ExportString.."\""..PlayerString.."\""..","..MonDKP_DKPHistory[i].dkp..","..MonDKP_DKPHistory[i].date..",".."\""..MonDKP_DKPHistory[i].reason.."\"";
+				else
+					ExportString = ExportString.."\""..PlayerString.."\""..","..MonDKP_DKPHistory[i].dkp..","..MonDKP_DKPHistory[i].date..",".."\""..MonDKP_DKPHistory[i].reason.."\"".."\n";
+				end
 			end
 		elseif table == MonDKP_Loot then
 			local numrows;
