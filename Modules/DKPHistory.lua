@@ -268,7 +268,7 @@ function MonDKP:DKPHistory_Update(reset)
 
 	if filter and filter ~= L["DELETEDENTRY"] then
 		for i=1, #MonDKP_DKPHistory do
-			if not MonDKP_DKPHistory[i].deletes and not MonDKP_DKPHistory[i].deletedby and (strfind(MonDKP_DKPHistory[i].players, ","..filter..",") or strfind(MonDKP_DKPHistory[i].players, filter..",") == 1) then
+			if not MonDKP_DKPHistory[i].deletes and not MonDKP_DKPHistory[i].deletedby and MonDKP_DKPHistory[i].reason ~= "Migration Correction" and (strfind(MonDKP_DKPHistory[i].players, ","..filter..",") or strfind(MonDKP_DKPHistory[i].players, filter..",") == 1) then
 				table.insert(DKPHistory, MonDKP_DKPHistory[i])
 			end
 		end
@@ -304,7 +304,13 @@ function MonDKP:DKPHistory_Update(reset)
 				MonDKP.ConfigTab6.loadMoreBtn:Hide()
 			end
 
-			local curOfficer, curIndex = strsplit("-", DKPHistory[i].index)
+			local curOfficer, curIndex
+
+			if DKPHistory[i].index then
+				curOfficer, curIndex = strsplit("-", DKPHistory[i].index)
+			else
+				curOfficer = "Unknown"
+			end
 
 			if not MonDKP.ConfigTab6.history[i] then
 				if i==1 then

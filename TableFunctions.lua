@@ -228,6 +228,7 @@ function MonDKP:ViewLimited(raid, standby, raiders)
 	if #MonDKP_Standby == 0 and standby and not raid and not raiders then
 		MonDKP:Print(L["NOPLAYERINSTANDBY"])
 		core.CurView = "all"
+		core.CurSubView = "all"
 	elseif raid or standby or raiders then
 		local tempTable = {}
 		local GroupType = "none"
@@ -308,7 +309,7 @@ function MonDKP:ViewLimited(raid, standby, raiders)
 		for i=1, 9 do
 			MonDKP.ConfigTab1.checkBtn[i]:SetChecked(true)
 		end
-		MonDKP:FilterDKPTable(core.currentSort, "reset");
+		MonDKPFilterChecks(MonDKP.ConfigTab1.checkBtn[1])
 	end
 end
 
@@ -400,11 +401,23 @@ local function RightClickMenu(self)
 			for i=1, #core.SelectedData do
 				MonDKP:reset_prev_dkp(core.SelectedData[i].player)
 			end
-			MonDKP:FilterDKPTable(core.currentSort)
+			MonDKP:FilterDKPTable(core.currentSort, "reset")
 		end 
 		}, --13
-		{ text = L["VALIDATETABLES"], notCheckable = true, func = function()
-			MonDKP:ValidateLootTable()
+		{ text = L["VALIDATETABLES"], notCheckable = true, disabled = not core.IsOfficer, func = function()
+			StaticPopupDialogs["VALIDATE_WARN"] = {
+				text = "|CFFFF0000"..L["WARNING"].."|r: "..L["VALIDATEWARN"],
+				button1 = L["YES"],
+				button2 = L["NO"],
+				OnAccept = function()
+					MonDKP:ValidateLootTable()
+				end,
+				timeout = 0,
+				whileDead = true,
+				hideOnEscape = true,
+				preferredIndex = 3,
+			}
+			StaticPopup_Show ("VALIDATE_WARN")
 		end 
 		}, --14
 	}

@@ -76,6 +76,9 @@ function MonDKP:Options()
 			MonDKP.ConfigTab4.default[i] = CreateFrame("EditBox", nil, MonDKP.ConfigTab4)
 			MonDKP.ConfigTab4.default[i]:SetAutoFocus(false)
 			MonDKP.ConfigTab4.default[i]:SetMultiLine(false)
+			if i~=5 then
+				MonDKP.ConfigTab4.default[i]:SetNumeric(true)
+			end
 			MonDKP.ConfigTab4.default[i]:SetSize(80, 24)
 			MonDKP.ConfigTab4.default[i]:SetBackdrop({
 				bgFile   = "Textures\\white.blp", tile = true,
@@ -173,6 +176,7 @@ function MonDKP:Options()
 		MonDKP.ConfigTab4.default[4].tooltipDescription = L["NEWBOSSKILLTTDESC"]
 
 		MonDKP.ConfigTab4.default[5]:SetText(MonDKP_DB.DKPBonus.UnexcusedAbsence)
+		MonDKP.ConfigTab4.default[5]:SetNumeric(false)
 		MonDKP.ConfigTab4.default[5].tooltipText = L["UNEXCUSEDABSENCE"]
 		MonDKP.ConfigTab4.default[5].tooltipDescription = L["UNEXCUSEDTTDESC"]
 		MonDKP.ConfigTab4.default[5].tooltipWarning = L["UNEXCUSEDTTWARN"]
@@ -241,6 +245,7 @@ function MonDKP:Options()
 				MonDKP.ConfigTab4.DefaultMinBids.SlotBox[i] = CreateFrame("EditBox", nil, MonDKP.ConfigTab4)
 				MonDKP.ConfigTab4.DefaultMinBids.SlotBox[i]:SetAutoFocus(false)
 				MonDKP.ConfigTab4.DefaultMinBids.SlotBox[i]:SetMultiLine(false)
+				MonDKP.ConfigTab4.DefaultMinBids.SlotBox[i]:SetNumeric(true)
 				MonDKP.ConfigTab4.DefaultMinBids.SlotBox[i]:SetSize(60, 24)
 				MonDKP.ConfigTab4.DefaultMinBids.SlotBox[i]:SetBackdrop({
 					bgFile   = "Textures\\white.blp", tile = true,
@@ -510,6 +515,7 @@ function MonDKP:Options()
 		MonDKP.ConfigTab4.bidTimer = CreateFrame("EditBox", nil, MonDKP.ConfigTab4)
 		MonDKP.ConfigTab4.bidTimer:SetAutoFocus(false)
 		MonDKP.ConfigTab4.bidTimer:SetMultiLine(false)
+		MonDKP.ConfigTab4.bidTimer:SetNumeric(true)
 		MonDKP.ConfigTab4.bidTimer:SetSize(50, 18)
 		MonDKP.ConfigTab4.bidTimer:SetBackdrop({
 			bgFile   = "Textures\\white.blp", tile = true,
@@ -561,6 +567,7 @@ function MonDKP:Options()
 	MonDKP.ConfigTab4.TooltipHistory = CreateFrame("EditBox", nil, MonDKP.ConfigTab4)
 	MonDKP.ConfigTab4.TooltipHistory:SetAutoFocus(false)
 	MonDKP.ConfigTab4.TooltipHistory:SetMultiLine(false)
+	MonDKP.ConfigTab4.TooltipHistory:SetNumeric(true)
 	MonDKP.ConfigTab4.TooltipHistory:SetSize(50, 18)
 	MonDKP.ConfigTab4.TooltipHistory:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
@@ -613,6 +620,7 @@ function MonDKP:Options()
 	MonDKP.ConfigTab4.history = CreateFrame("EditBox", nil, MonDKP.ConfigTab4)
 	MonDKP.ConfigTab4.history:SetAutoFocus(false)
 	MonDKP.ConfigTab4.history:SetMultiLine(false)
+	MonDKP.ConfigTab4.history:SetNumeric(true)
 	MonDKP.ConfigTab4.history:SetSize(50, 18)
 	MonDKP.ConfigTab4.history:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
@@ -660,6 +668,7 @@ function MonDKP:Options()
 	MonDKP.ConfigTab4.DKPHistory = CreateFrame("EditBox", nil, MonDKP.ConfigTab4)
 	MonDKP.ConfigTab4.DKPHistory:SetAutoFocus(false)
 	MonDKP.ConfigTab4.DKPHistory:SetMultiLine(false)
+	MonDKP.ConfigTab4.DKPHistory:SetNumeric(true)
 	MonDKP.ConfigTab4.DKPHistory:SetSize(50, 18)
 	MonDKP.ConfigTab4.DKPHistory:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
@@ -709,6 +718,7 @@ function MonDKP:Options()
 	MonDKP.ConfigTab4.TimerSize = CreateFrame("EditBox", nil, MonDKP.ConfigTab4)
 	MonDKP.ConfigTab4.TimerSize:SetAutoFocus(false)
 	MonDKP.ConfigTab4.TimerSize:SetMultiLine(false)
+	MonDKP.ConfigTab4.TimerSize:SetNumeric(true)
 	MonDKP.ConfigTab4.TimerSize:SetSize(50, 18)
 	MonDKP.ConfigTab4.TimerSize:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
@@ -757,6 +767,7 @@ function MonDKP:Options()
 	MonDKP.ConfigTab4.UIScaleSize = CreateFrame("EditBox", nil, MonDKP.ConfigTab4)
 	MonDKP.ConfigTab4.UIScaleSize:SetAutoFocus(false)
 	MonDKP.ConfigTab4.UIScaleSize:SetMultiLine(false)
+	MonDKP.ConfigTab4.UIScaleSize:SetNumeric(true)
 	MonDKP.ConfigTab4.UIScaleSize:SetSize(50, 18)
 	MonDKP.ConfigTab4.UIScaleSize:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,

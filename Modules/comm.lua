@@ -77,16 +77,21 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 		--if prefix ~= "MDKPProfile" then print("|cffff0000Received: "..prefix.." from "..sender.."|r") end
 		if prefix == "MonDKPQuery" then
 			-- set remote seed
-			if sender ~= UnitName("player") and message ~= "start" then 
+			if sender ~= UnitName("player") and message ~= "start" then  -- logs seed. Used to determine if the officer has entries required.
 				local DKP, Loot = strsplit(",", message)
-				local search1 = MonDKP:Table_Search(MonDKP_DKPHistory, DKP, "index")
-				local search2 = MonDKP:Table_Search(MonDKP_Loot, Loot, "index")
-				
-				if not search1 then
-					MonDKP_DKPHistory.seed = DKP
-				end
-				if not search2 then
-					MonDKP_Loot.seed = Loot
+				local off1,date1 = strsplit("-", DKP)
+				local off2,date2 = strsplit("-", Loot)
+
+				if MonDKP:ValidateSender(off1) and MonDKP:ValidateSender(off2) and tonumber(date1) > MonDKP_DB.defaults.installed210 and tonumber(date2) > MonDKP_DB.defaults.installed210 then  -- send only if posting officer validates and the post was made after 2.1s installation
+					local search1 = MonDKP:Table_Search(MonDKP_DKPHistory, DKP, "index")
+					local search2 = MonDKP:Table_Search(MonDKP_Loot, Loot, "index")
+					
+					if not search1 then
+						MonDKP_DKPHistory.seed = DKP
+					end
+					if not search2 then
+						MonDKP_Loot.seed = Loot
+					end
 				end
 			end
 			-- talents check
@@ -282,30 +287,65 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 					local success, deserialized = LibAceSerializer:Deserialize(decoded);
 					if success then
 						if prefix == "MonDKPAllTabs" then   -- receives full table broadcast
-							MonDKP_DKPTable = deserialized.DKPTable
-							MonDKP_DKPHistory = deserialized.DKP
-							MonDKP_Loot = deserialized.Loot
-							
-							for k, v in pairs(deserialized.Archive) do
-								if not MonDKP_Archive[k] or MonDKP_Archive[k].edited < deserialized.Archive[k].edited then
-									MonDKP_Archive[k] = deserialized.Archive[k]
-								end
-							end
+							table.sort(deserialized.Loot, function(a, b)
+								return a["date"] > b["date"]
+							end)
+							table.sort(deserialized.DKP, function(a, b)
+								return a["date"] > b["date"]
+							end)
 
-							if MonDKP.ConfigTab6 and MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
-								MonDKP:DKPHistory_Update(true)
-							elseif MonDKP.ConfigTab5 and MonDKP.ConfigTab5:IsShown() then
-								MonDKP:LootHistory_Reset()
-								MonDKP:LootHistory_Update(L["NOFILTER"]);
+							if (#MonDKP_DKPHistory > 0 and #MonDKP_Loot > 0) and (deserialized.DKP[1].date < MonDKP_DKPHistory[1].date or deserialized.Loot[1].date < MonDKP_Loot) then
+								local entry1 = "Loot: "..deserialized.Loot[1].loot.." |cff616ccf"..L["WONBY"].." "..deserialized.Loot[1].player.." ("..date("%b %d @ %H:%M:%S", deserialized.Loot[1].date)..") by "..strsub(deserialized.Loot[1].index, 1, strfind(deserialized.Loot[1].index, "-")-1).."|r"
+								local entry2 = "DKP: |cff616ccf"..deserialized.DKP[1].reason.." ("..date("%b %d @ %H:%M:%S", deserialized.DKP[1].date)..") - "..strsub(deserialized.DKP[1].index, 1, strfind(deserialized.DKP[1].index, "-")-1).."|r"
+
+								StaticPopupDialogs["FULL_TABS_ALERT"] = {
+									text = "|CFFFF0000"..L["WARNING"].."|r: "..string.format(L["NEWERTABS1"], sender).."\n\n"..entry1.."\n\n"..entry2.."\n\n"..L["NEWERTABS2"],
+									button1 = L["YES"],
+									button2 = L["NO"],
+									OnAccept = function()
+										MonDKP_DKPTable = deserialized.DKPTable
+										MonDKP_DKPHistory = deserialized.DKP
+										MonDKP_Loot = deserialized.Loot
+										
+										MonDKP_Archive = deserialized.Archive
+										
+										if MonDKP.ConfigTab6 and MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
+											MonDKP:DKPHistory_Update(true)
+										elseif MonDKP.ConfigTab5 and MonDKP.ConfigTab5:IsShown() then
+											MonDKP:LootHistory_Reset()
+											MonDKP:LootHistory_Update(L["NOFILTER"]);
+										end
+										MonDKP:FilterDKPTable(core.currentSort, "reset")
+										MonDKP:StatusVerify_Update()
+									end,
+									timeout = 0,
+									whileDead = true,
+									hideOnEscape = true,
+									preferredIndex = 3,
+								}
+								StaticPopup_Show ("FULL_TABS_ALERT")
+							else
+								MonDKP_DKPTable = deserialized.DKPTable
+								MonDKP_DKPHistory = deserialized.DKP
+								MonDKP_Loot = deserialized.Loot
+								
+								MonDKP_Archive = deserialized.Archive
+								
+								if MonDKP.ConfigTab6 and MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
+									MonDKP:DKPHistory_Update(true)
+								elseif MonDKP.ConfigTab5 and MonDKP.ConfigTab5:IsShown() then
+									MonDKP:LootHistory_Reset()
+									MonDKP:LootHistory_Update(L["NOFILTER"]);
+								end
+								MonDKP:FilterDKPTable(core.currentSort, "reset")
+								MonDKP:StatusVerify_Update()
 							end
-							MonDKP:FilterDKPTable(core.currentSort, "reset")
-							MonDKP:StatusVerify_Update()
 							return
 						elseif prefix == "MonDKPMerge" then
 							for i=1, #deserialized.DKP do
 								local search = MonDKP:Table_Search(MonDKP_DKPHistory, deserialized.DKP[i].index, "index")
 
-								if not search then
+								if not search and ((MonDKP_Archive.DKPMeta and MonDKP_Archive.DKPMeta < deserialized.DKP[i].date) or (not MonDKP_Archive.DKPMeta)) then   -- prevents adding entry if this entry has already been archived
 									local players = {strsplit(",", strsub(deserialized.DKP[i].players, 1, -2))}
 									local dkp
 
@@ -374,7 +414,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 							for i=1, #deserialized.Loot do
 								local search = MonDKP:Table_Search(MonDKP_Loot, deserialized.Loot[i].index, "index")
 
-								if not search then
+								if not search and ((MonDKP_Archive.LootMeta and MonDKP_Archive.LootMeta < deserialized.DKP[i].date) or (not MonDKP_Archive.LootMeta)) then -- prevents adding entry if this entry has already been archived
 									if deserialized.Loot[i].deletes then
 										local search_del = MonDKP:Table_Search(MonDKP_Loot, deserialized.Loot[i].deletes, "index")
 
@@ -402,6 +442,16 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 										if not MonDKP_Archive[deserialized.Loot[i].player] or (MonDKP_Archive[deserialized.Loot[i].player] and MonDKP_Archive[deserialized.Loot[i].player].deleted ~= true) then
 											MonDKP_Profile_Create(deserialized.Loot[i].player, deserialized.Loot[i].cost, 0, deserialized.Loot[i].cost)
 										end
+									end
+								end
+							end
+
+							for i=1, #MonDKP_DKPTable do
+								if MonDKP_DKPTable[i].class == "NONE" then
+									local search = MonDKP:Table_Search(deserialized.Profiles, MonDKP_DKPTable[i].player, "player")
+
+									if search then
+										MonDKP_DKPTable[i].class = deserialized.Profiles[search[1][1]].class
 									end
 								end
 							end
@@ -610,7 +660,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 									end
 								end
 							end
-						elseif prefix == "MonDKPWhitelist" then
+						elseif prefix == "MonDKPWhitelist" and MonDKP:GetGuildRankIndex(UnitName("player")) > 1 then -- only applies if not GM
 							MonDKP_Whitelist = deserialized;
 						elseif prefix == "MonDKPStand" then
 							MonDKP_Standby = deserialized;

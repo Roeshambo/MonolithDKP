@@ -257,17 +257,19 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				MonDKP:Print(L["USE"].." /dkp ? "..L["SUBMITBUGS"].." @ https://github.com/Roeshambo/MonolithDKP/issues");
 				MonDKP.Sync:SendData("MonDKPBuild", tostring(core.BuildNumber)) -- broadcasts build number to guild to check if a newer version is available
 
-				if not MonDKP_DB.defaults.installed then
-					MonDKP_DB.defaults.installed = time(); -- identifies when 2.1.0 was installed to block earlier posts from broadcasting in sync
+				if not MonDKP_DB.defaults.installed210 then
+					MonDKP_DB.defaults.installed210 = time(); -- identifies when 2.1.0 was installed to block earlier posts from broadcasting in sync (for now)
+					MonDKP_ReindexTables() 					-- reindexes all entries created prior to 2.1 installation in "GuildMaster-EntryDate" format for consistency.
+					MonDKP_DB.defaults.installed = nil
 				end
 
 				local seed
-				if #MonDKP_DKPHistory > 0 and #MonDKP_Loot > 0 then
-					local off1 = strsplit("-", MonDKP_DKPHistory[1].index)
-					local off2 = strsplit("-", MonDKP_Loot[1].index)
+				if #MonDKP_DKPHistory > 0 and #MonDKP_Loot > 0 and strfind(MonDKP_DKPHistory[1].index, "-") and strfind(MonDKP_Loot[1].index, "-") then
+					local off1,date1 = strsplit("-", MonDKP_DKPHistory[1].index)
+					local off2,date2 = strsplit("-", MonDKP_Loot[1].index)
 					
-					if MonDKP:ValidateSender(off1) and MonDKP:ValidateSender(off2) then
-						seed = MonDKP_DKPHistory[1].index..","..MonDKP_Loot[1].index
+					if MonDKP:ValidateSender(off1) and MonDKP:ValidateSender(off2) and tonumber(date1) > MonDKP_DB.defaults.installed210 and tonumber(date2) > MonDKP_DB.defaults.installed210 then
+						seed = MonDKP_DKPHistory[1].index..","..MonDKP_Loot[1].index  -- seed is only sent if the seed dates are post 2.1 installation and the posting officer is an officer in the current guild
 					else
 						seed = "start"
 					end
@@ -275,7 +277,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 					seed = "start"
 				end
 
-				MonDKP.Sync:SendData("MonDKPQuery", seed) -- requests role and spec data and sends current seeds
+				MonDKP.Sync:SendData("MonDKPQuery", seed) -- requests role and spec data and sends current seeds (index of newest DKP and Loot entries)
 			end)
 		end
 	elseif event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" then
@@ -393,8 +395,13 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			end
 		end--]]
 	elseif event == "LOOT_OPENED" then
-		if core.IsOfficer and IsInRaid() then
-			MonDKP_Register_ShiftClickLootWindowHook()
+		MonDKP:CheckOfficer();
+		if core.IsOfficer then
+			if not IsInRaid() and arg1 == false then  -- only fires hook when autoloot is not active if not in a raid to prevent nil value error
+				MonDKP_Register_ShiftClickLootWindowHook()
+			elseif IsInRaid() then
+				MonDKP_Register_ShiftClickLootWindowHook()
+			end
 			local lootTable = {}
 			local lootList = {};
 
@@ -406,7 +413,13 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 					end
 				end
 			end
-			lootTable.boss=core.LastKilledBoss
+			local name
+			if not UnitIsFriend("player", "target") and UnitIsDead("target") then
+				name = UnitName("target")  -- sets bidding window name to current target
+			else
+				name = core.LastKilledBoss  -- sets name to last killed boss if no target is available (chests)
+			end
+			lootTable.boss=name
 			MonDKP.Sync:SendData("MonDKPBossLoot", lootTable)
 
 			for i=1, #lootTable do
@@ -498,9 +511,9 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_DB.defaults.HideChangeLogs then MonDKP_DB.defaults.HideChangeLogs = 0 end
 		if not MonDKP_DB.modes.AntiSnipe then MonDKP_DB.modes.AntiSnipe = 0 end
 		if not MonDKP_DB.defaults.CurrentGuild then MonDKP_DB.defaults.CurrentGuild = {} end
-		if MonDKP_DKPTable.seed then MonDKP_DKPTable.seed = nil end
 		if not MonDKP_DKPHistory.seed then MonDKP_DKPHistory.seed = 0 end
 		if not MonDKP_Loot.seed then MonDKP_Loot.seed = 0 end
+		if MonDKP_DKPTable.seed then MonDKP_DKPTable.seed = nil end
 		if MonDKP_Meta then MonDKP_Meta = nil end
 		if MonDKP_Meta_Remote then MonDKP_Meta_Remote = nil end
 		if MonDKP_Archive_Meta then MonDKP_Archive_Meta = nil end

@@ -52,13 +52,17 @@ function MonDKP_Profile_Create(player, dkp, gained, spent)
 		end
 	end
 
+	if not created then
+		tinsert(MonDKP_DKPTable, { player=player, class=class, dkp=dkp, previous_dkp=0, lifetime_gained=gained, lifetime_spent=spent, rank=10, rankName="None", spec=L["NOSPECREPORTED"], role=L["NOROLEDETECTED"], })
+	end
+
 	return created
 end
 
 local function MonDKP_BroadcastFull_Status_Create()
 	local f = CreateFrame("Frame", "MonDKP_FullBroadcastStatus", UIParent, "ShadowOverlaySmallTemplate");
 
-	f:SetPoint("TOP", UIParent, "TOP", 0, -200);
+	f:SetPoint("TOP", UIParent, "TOP", 0, -10);
 	f:SetSize(300, 85);
 	f:SetClampedToScreen(true)
 	f:SetBackdrop( {
@@ -147,18 +151,16 @@ function MonDKP_BroadcastFull_Init()
 	local curSelected = 0
 	local player
 
-	for i=1, #MonDKP_DKPTable do
-		for j=1, GetNumGuildMembers() do
-			tempName,_,_,_,_,_,_,_,online = GetGuildRosterInfo(j)
-			tempName = strsub(tempName, 1, string.find(tempName, "-")-1)
-			if tempName == MonDKP_DKPTable[i].player and online then
-				table.insert(PlayerList, MonDKP_DKPTable[i].player)
-				break
-			end
+	for j=1, GetNumGuildMembers() do
+		tempName,_,_,_,_,_,_,_,online,_,class = GetGuildRosterInfo(j)
+		tempName = strsub(tempName, 1, string.find(tempName, "-")-1)
+		if online and tempName ~= UnitName("player") then
+			table.insert(PlayerList, { player=tempName, class=class })
 		end
 	end
+
 	table.sort(PlayerList, function(a, b)
-		return a < b
+		return a["player"] < b["player"]
 	end)
 
 	core.Broadcast = core.Broadcast or MonDKP_BroadcastFull_Create()
@@ -179,7 +181,7 @@ function MonDKP_BroadcastFull_Init()
 			for i=1, numSubs do
 				local max = i*20;
 				if max > #PlayerList then max = #PlayerList end
-				filterName.text, filterName.checked, filterName.menuList, filterName.hasArrow = strsub(PlayerList[((i*20)-19)], 1, 1).."-"..strsub(PlayerList[max], 1, 1), curSelected >= (i*20)-19 and curSelected <= i*20, i, true
+				filterName.text, filterName.checked, filterName.menuList, filterName.hasArrow = strsub(PlayerList[((i*20)-19)].player, 1, 1).."-"..strsub(PlayerList[max].player, 1, 1), curSelected >= (i*20)-19 and curSelected <= i*20, i, true
 				UIDropDownMenu_AddButton(filterName)
 			end
 			
@@ -187,15 +189,9 @@ function MonDKP_BroadcastFull_Init()
 			filterName.func = self.SetValue
 			for i=ranges[menuList], ranges[menuList]+19 do
 				if PlayerList[i] then
-					local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, PlayerList[i])
-				    local c;
+					local c = MonDKP:GetCColors(PlayerList[i].class)
 
-				    if classSearch then
-				     	c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
-				    else
-				     	c = { hex="444444" }
-				    end
-					filterName.text, filterName.arg1, filterName.arg2, filterName.checked, filterName.isNotRadio = "|cff"..c.hex..PlayerList[i].."|r", PlayerList[i], "|cff"..c.hex..PlayerList[i].."|r", PlayerList[i] == player, true
+					filterName.text, filterName.arg1, filterName.arg2, filterName.checked, filterName.isNotRadio = "|cff"..c.hex..PlayerList[i].player.."|r", PlayerList[i].player, "|cff"..c.hex..PlayerList[i].player.."|r", PlayerList[i].player == player, true
 					UIDropDownMenu_AddButton(filterName, level)
 				end
 			end
@@ -232,21 +228,52 @@ function MonDKP_BroadcastFull_Init()
 			if core.Broadcast.mergeCheckbox:GetChecked() == true then
 			 	MonDKP.Sync:SendData("MonDKPMerge", tempTable, player)
 			 	MonDKP_SyncDeleted()
+				core.Broadcast:Hide()
+				MonDKP_BroadcastFull_Status()
 			elseif core.Broadcast.fullCheckbox:GetChecked() == true then
-				MonDKP.Sync:SendData("MonDKPAllTabs", tempTable, player)
+				StaticPopupDialogs["FULL_TABS_ALERT"] = {
+					text = "|CFFFF0000"..L["WARNING"].."|r: "..L["OVERWRITETABLES"],
+					button1 = L["YES"],
+					button2 = L["NO"],
+					OnAccept = function()
+						MonDKP.Sync:SendData("MonDKPAllTabs", tempTable, player)
+						core.Broadcast:Hide()
+						MonDKP_DKPHistory.seed = 0
+						MonDKP_Loot.seed = 0
+						MonDKP_BroadcastFull_Status()
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopup_Show ("FULL_TABS_ALERT")
 			end
-			core.Broadcast:Hide()
-			MonDKP_BroadcastFull_Status()
 		elseif core.Broadcast.guildCheckbox:GetChecked() == true then
 			if core.Broadcast.mergeCheckbox:GetChecked() == true then
 				MonDKP.Sync:SendData("MonDKPMerge", tempTable)
 				MonDKP_SyncDeleted()
+				core.Broadcast:Hide()
+				MonDKP_BroadcastFull_Status()
 			elseif core.Broadcast.fullCheckbox:GetChecked() == true then
-				MonDKP.Sync:SendData("MonDKPAllTabs", tempTable)
+				StaticPopupDialogs["FULL_TABS_ALERT"] = {
+					text = "|CFFFF0000"..L["WARNING"].."|r: "..L["OVERWRITETABLES"],
+					button1 = L["YES"],
+					button2 = L["NO"],
+					OnAccept = function()
+						MonDKP.Sync:SendData("MonDKPAllTabs", tempTable, player)
+						core.Broadcast:Hide()
+						MonDKP_DKPHistory.seed = 0
+						MonDKP_Loot.seed = 0
+						MonDKP_BroadcastFull_Status()
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopup_Show ("FULL_TABS_ALERT")
 			end
-
-			core.Broadcast:Hide()
-			MonDKP_BroadcastFull_Status()
 		end
 	end)
 
@@ -341,7 +368,7 @@ function MonDKP_BroadcastFull_Create()
 		end)
 
 		f.player = CreateFrame("FRAME", "MonDKPAwardConfirmPlayerDropDown", f, "MonolithDKPUIDropDownMenuTemplate")
-		f.player:SetPoint("LEFT", f.playerHeader, "RIGHT", -15, 0)
+		f.player:SetPoint("TOPRIGHT", f.tocontainer, "TOPRIGHT", 5, -7)
 		UIDropDownMenu_SetWidth(f.player, 150)
 		UIDropDownMenu_JustifyText(f.player, "LEFT")
 		f.player:Hide()
@@ -452,9 +479,10 @@ end
 function MonDKP_MergeTable_Create()
 	local tempDKP = {}
 	local tempLoot = {}
+	local profiles = {}
 
 	for i=1, #MonDKP_DKPHistory do
-		if MonDKP_DKPHistory[i].date > (time() - 1209600) and MonDKP_DKPHistory[i].date > MonDKP_DB.defaults.installed then
+		if MonDKP_DKPHistory[i].date > (time() - 1209600) and MonDKP_DKPHistory[i].date > MonDKP_DB.defaults.installed210 then
 			table.insert(tempDKP, MonDKP_DKPHistory[i])
 		else
 			break
@@ -462,13 +490,17 @@ function MonDKP_MergeTable_Create()
 	end
 
 	for i=1, #MonDKP_Loot do
-		if MonDKP_Loot[i].date > (time() - 1209600) and MonDKP_Loot[i].date > MonDKP_DB.defaults.installed then
+		if MonDKP_Loot[i].date > (time() - 1209600) and MonDKP_Loot[i].date > MonDKP_DB.defaults.installed210 then
 			table.insert(tempLoot, MonDKP_Loot[i])
 		else
 			break
 		end
 	end
 
-	local tempTable = { DKP=tempDKP, Loot=tempLoot }
+	for i=1, #MonDKP_DKPTable do
+		table.insert(profiles, { player=MonDKP_DKPTable[i].player, class=MonDKP_DKPTable[i].class })
+	end
+
+	local tempTable = { DKP=tempDKP, Loot=tempLoot, Profiles=profiles }
 	return tempTable
 end

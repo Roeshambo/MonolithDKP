@@ -18,7 +18,7 @@ function MonDKP_RestoreFilterOptions()  		-- restores default filter selections
 	MonDKP.ConfigTab1.checkBtn[10]:SetChecked(false)
 	MonDKP.ConfigTab1.checkBtn[11]:SetChecked(false)
 	MonDKP.ConfigTab1.checkBtn[12]:SetChecked(false)
-	MonDKP:FilterDKPTable(core.currentSort, "reset");
+	MonDKPFilterChecks(MonDKP.ConfigTab1.checkBtn[1])
 end
 
 function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, the entire addon window
@@ -102,7 +102,7 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
 	end
 
 	core.WorkingTable = {}
-	for k,v in ipairs(parentTable) do        -- sort and reset are used to pass along to MonDKP:SortDKPTable()
+	for k,v in ipairs(parentTable) do
 		local IsOnline = false;
 		local name;
 		local InRaid = false;
@@ -482,7 +482,7 @@ function MonDKP:CreateMenu()
 	---------------------------------------
 	-- CHANGE LOG WINDOW
 	---------------------------------------
-	--[[ if MonDKP_DB.defaults.HideChangeLogs < core.BuildNumber then
+	if MonDKP_DB.defaults.HideChangeLogs < core.BuildNumber then
 		MonDKP.ChangeLogDisplay = CreateFrame("Frame", "MonDKP_ChangeLogDisplay", UIParent, "ShadowOverlaySmallTemplate");
 
 		MonDKP.ChangeLogDisplay:SetPoint("TOP", UIParent, "TOP", 0, -200);
@@ -566,7 +566,7 @@ function MonDKP:CreateMenu()
 
 		local logHeight = MonDKP.ChangeLogDisplay.ChangeLogHeader:GetHeight() + MonDKP.ChangeLogDisplay.Notes:GetHeight() + MonDKP.ChangeLogDisplay.VerNumber:GetHeight() + MonDKP.ChangeLogDisplay.ChangeLogText:GetHeight();
 		MonDKP.ChangeLogDisplay:SetSize(800, logHeight);  -- resize container
-	end--]]
+	end
 
 	---------------------------------------
 	-- VERSION IDENTIFIER
@@ -581,7 +581,7 @@ function MonDKP:CreateMenu()
 	MonDKP.UIConfig.Version:SetText(core.MonVersion); 
 
 	MonDKP.UIConfig:Hide(); -- hide menu after creation until called.
-	MonDKP:FilterDKPTable(core.currentSort, "reset")   -- initial sort and populates data values in DKPTable.Rows{} MonDKP:FilterDKPTable() -> MonDKP:SortDKPTable() -> DKPTable_Update()
+	MonDKP:FilterDKPTable(core.currentSort)   -- initial sort and populates data values in DKPTable.Rows{} MonDKP:FilterDKPTable() -> MonDKP:SortDKPTable() -> DKPTable_Update()
 	core.Initialized = true
 	
 	return MonDKP.UIConfig;

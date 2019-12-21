@@ -113,7 +113,7 @@ local function ConsolidateTables(keepDKP)
 				if DKPStringTemp ~= "" and PlayerStringTemp ~= "" then
 					local insert = {
 						players = PlayerStringTemp,
-						index 	= UnitName("player").."-"..MonDKP_DB.defaults.installed-10,
+						index 	= UnitName("player").."-"..MonDKP_DB.defaults.installed210-10,
 						dkp 	= DKPStringTemp.."-1%",
 						date 	= time(),
 						reason	= "Migration Correction",

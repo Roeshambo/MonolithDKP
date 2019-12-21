@@ -263,3 +263,41 @@ function MonDKP:ValidateLootTable()  -- validation starts here
 		end
 	end)
 end
+
+function MonDKP_ReindexTables()
+	local GM
+	local i = 1
+
+	for i=1, GetNumGuildMembers() do
+		local name,_,rank = GetGuildRosterInfo(i)
+		if rank == 0 then
+			name = strsub(name, 1, string.find(name, "-")-1)
+			GM = name; 
+			break
+		end
+	end
+
+	i=1
+	while i <= #MonDKP_DKPHistory do
+		if MonDKP_DKPHistory[i].deletes or MonDKP_DKPHistory[i].deletedby or MonDKP_DKPHistory[i].reason == "Migration Correction" then
+			table.remove(MonDKP_DKPHistory, i)
+		else
+			if (MonDKP_DB.defaults.installed and MonDKP_DKPHistory[i].date < MonDKP_DB.defaults.installed) or (not MonDKP_DB.defaults.installed and MonDKP_DKPHistory[i].date < MonDKP_DB.defaults.installed210) then
+				MonDKP_DKPHistory[i].index = GM.."-"..MonDKP_DKPHistory[i].date  	-- reindexes under GMs name if the entry was created prior to 2.1 (for uniformity)
+			end
+			i=i+1
+		end
+	end
+
+	i=1
+	while i <= #MonDKP_Loot do
+		if MonDKP_Loot[i].deletes or MonDKP_Loot[i].deletedby then
+			table.remove(MonDKP_Loot, i)
+		else
+			if (MonDKP_DB.defaults.installed and MonDKP_Loot[i].date < MonDKP_DB.defaults.installed) or (not MonDKP_DB.defaults.installed and MonDKP_Loot[i].date < MonDKP_DB.defaults.installed210) then
+				MonDKP_Loot[i].index = GM.."-"..MonDKP_Loot[i].date 				-- reindexes under GMs name if the entry was created prior to 2.1 (for uniformity)
+			end
+			i=i+1
+		end
+	end
+end

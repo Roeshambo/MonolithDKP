@@ -632,7 +632,7 @@ function MonDKP:BroadcastStopBidTimer()
 	MonDKP.Sync:SendData("MonDKPCommand", "StopBidTimer")
 end
 
-function MonDKP_Register_ShiftClickLootWindowHook()			-- hook function into LootFrame window (BREAKS if more than 4 loot slots... trying to fix)
+function MonDKP_Register_ShiftClickLootWindowHook()			-- hook function into LootFrame window. All slots on ElvUI. But only first 4 in default UI.
 	local num = GetNumLootItems();
 	
 	if getglobal("ElvLootSlot1") then 			-- fixes hook for ElvUI loot frame
@@ -643,7 +643,6 @@ function MonDKP_Register_ShiftClickLootWindowHook()			-- hook function into Loot
 				getglobal("ElvLootSlot"..i):HookScript("OnClick", function()
 			        if ( IsShiftKeyDown() and IsAltKeyDown() ) then
 			        	local pass, err = pcall(function()
-			        		MonDKP:CheckOfficer();
 			        		lootIcon, itemName, _, _, _ = GetLootSlotInfo(i)
 			        		itemLink = GetLootSlotLink(i)
 				            MonDKP:ToggleBidWindow(itemLink, lootIcon, itemName)
@@ -681,7 +680,6 @@ function MonDKP_Register_ShiftClickLootWindowHook()			-- hook function into Loot
 				getglobal("LootButton"..i):HookScript("OnClick", function()
 			        if ( IsShiftKeyDown() and IsAltKeyDown() ) then
 			        	local pass, err = pcall(function()
-			        		MonDKP:CheckOfficer();
 			        		lootIcon, itemName, _, _, _ = GetLootSlotInfo(i)
 			        		itemLink = GetLootSlotLink(i)
 				            MonDKP:ToggleBidWindow(itemLink, lootIcon, itemName)
@@ -941,7 +939,6 @@ local function BidRow_OnClick(self)
 	    else
 	    	SelectedBidder = {player=strsub(self.Strings[1]:GetText(), 1, strfind(self.Strings[1]:GetText(), " ")-1), bid=tonumber(self.Strings[2]:GetText())}
 	    end
-	    print(SelectedBidder.player)
     end
 end
 

@@ -88,8 +88,8 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v2.1.0";
-core.BuildNumber = 20100;
+core.MonVersion = "v2.1.1";
+core.BuildNumber = 20101;
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
@@ -265,6 +265,9 @@ function MonDKP:PurgeLootHistory()     -- cleans old loot history beyond history
 				MonDKP_Archive[path.player].dkp = MonDKP_Archive[path.player].dkp + path.cost
 				MonDKP_Archive[path.player].lifetime_spent = MonDKP_Archive[path.player].lifetime_spent + path.cost
 			end
+			if not MonDKP_Archive.LootMeta or MonDKP_Archive.LootMeta < path.date then
+				MonDKP_Archive.LootMeta = path.date
+			end
 
 			tremove(MonDKP_Loot, #MonDKP_Loot)
 		end
@@ -304,6 +307,9 @@ function MonDKP:PurgeDKPHistory()     -- purges old entries and stores relevant 
 						MonDKP_Archive[players[i]].lifetime_gained = MonDKP_Archive[players[i]].lifetime_gained + path.dkp 				--or is NOT a decay
 					end
 				end
+			end
+			if not MonDKP_Archive.DKPMeta or MonDKP_Archive.DKPMeta < path.date then
+				MonDKP_Archive.DKPMeta = path.date
 			end
 
 			tremove(MonDKP_DKPHistory, #MonDKP_DKPHistory)
@@ -458,7 +464,7 @@ function MonDKP:StartTimer(seconds, ...)
 end
 
 function MonDKP:StatusVerify_Update()
-	if (MonDKP.UIConfig and not MonDKP.UIConfig:IsShown()) or #MonDKP_DKPHistory == 0 or #MonDKP_Loot == 0 then     -- blocks update if dkp window is closed. Updated when window is opened anyway
+	if (MonDKP.UIConfig and not MonDKP.UIConfig:IsShown()) or (#MonDKP_DKPHistory == 0 and #MonDKP_Loot == 0) then     -- blocks update if dkp window is closed. Updated when window is opened anyway
 		return;
 	end
 
@@ -467,24 +473,30 @@ function MonDKP:StatusVerify_Update()
 
 		local missing = {}
 
-		if strfind(MonDKP_Loot.seed, "-") and strfind(MonDKP_Loot.seed, "-") then
+		if MonDKP_Loot.seed and MonDKP_DKPHistory.seed and strfind(MonDKP_Loot.seed, "-") and strfind(MonDKP_DKPHistory.seed, "-") then
 			local search_dkp = MonDKP:Table_Search(MonDKP_DKPHistory, MonDKP_DKPHistory.seed, "index")
 			local search_loot = MonDKP:Table_Search(MonDKP_Loot, MonDKP_Loot.seed, "index")
 
 			if not search_dkp then
 				core.OOD = true
 				local officer1, date1 = strsplit("-", MonDKP_DKPHistory.seed)
-				if date1 and tonumber(date1) < (time() - 1209600) then core.OOD = false end
-				date1 = date("%m/%d/%y %H:%M:%S", tonumber(date1))
-				missing[officer1] = date1 			-- if both missing seeds identify the same officer, it'll only list once
+				if (date1 and tonumber(date1) < (time() - 1209600)) or not MonDKP:ValidateSender(officer1) then   -- does not consider if claimed entry was made more than two weeks ago or name is not an officer
+					core.OOD = false
+				else
+					date1 = date("%m/%d/%y %H:%M:%S", tonumber(date1))
+					missing[officer1] = date1 			-- if both missing seeds identify the same officer, it'll only list once
+				end
 			end
 
 			if not search_loot then
 				core.OOD = true
 				local officer2, date2 = strsplit("-", MonDKP_Loot.seed)
-				if date2 and tonumber(date2) < (time() - 1209600) then core.OOD = false end
-				date2 = date("%m/%d/%y %H:%M:%S", tonumber(date2))
-				missing[officer2] = date2
+				if (date2 and tonumber(date2) < (time() - 1209600)) or not MonDKP:ValidateSender(officer2) then   -- does not consider if claimed entry was made more than two weeks ago or name is not an officer
+					core.OOD = false
+				else
+					date2 = date("%m/%d/%y %H:%M:%S", tonumber(date2))
+					missing[officer2] = date2
+				end
 			end
 		end
 
@@ -501,7 +513,6 @@ function MonDKP:StatusVerify_Update()
 				GameTooltip:Show()
 			end)
 			MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function(self)
-				tooltipShown = false
 				GameTooltip:Hide()
 			end)
 
@@ -509,7 +520,6 @@ function MonDKP:StatusVerify_Update()
 		else
 			MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\out-of-date")
 			MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
-				tooltipShown = true
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
 				GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
 				if #MonDKP_Loot == 0 and #MonDKP_DKPHistory == 0 then
@@ -538,7 +548,6 @@ function MonDKP:StatusVerify_Update()
 				GameTooltip:Show()
 			end)
 			MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function(self)
-				tooltipShown = false
 				GameTooltip:Hide()
 			end)
 
@@ -546,14 +555,12 @@ function MonDKP:StatusVerify_Update()
 		end
 	elseif core.Initialized then
 		MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
-			tooltipShown = true
 			GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
 			GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
 			GameTooltip:AddLine(L["CURRNOTINGUILD"], 1.0, 1.0, 1.0, true);
 			GameTooltip:Show()
 		end)
 		MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function(self)
-			tooltipShown = false
 			GameTooltip:Hide()
 		end)
 
