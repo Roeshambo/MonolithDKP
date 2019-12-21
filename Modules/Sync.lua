@@ -151,6 +151,7 @@ function MonDKP_BroadcastFull_Init()
 	local curSelected = 0
 	local player
 
+	GuildRoster()  -- requests new guild roster data for dropdown
 	for j=1, GetNumGuildMembers() do
 		tempName,_,_,_,_,_,_,_,online,_,class = GetGuildRosterInfo(j)
 		tempName = strsub(tempName, 1, string.find(tempName, "-")-1)

@@ -337,6 +337,11 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 									MonDKP:LootHistory_Reset()
 									MonDKP:LootHistory_Update(L["NOFILTER"]);
 								end
+								if core.ClassGraph then
+									MonDKP:ClassGraph_Update()
+								else
+									MonDKP:ClassGraph()
+								end
 								MonDKP:FilterDKPTable(core.currentSort, "reset")
 								MonDKP:StatusVerify_Update()
 							end
