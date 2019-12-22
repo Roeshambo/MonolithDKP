@@ -1555,7 +1555,7 @@ function MonDKP:CreateBidWindow()
 					return;
 				end
 				
-				MonDKP:AwardConfirm(SelectedBidder["player"], f.cost:GetNumber(), f.boss:GetText(), MonDKP_DB.bossargs.CurrentRaidZone, CurrItemForBid)				
+				MonDKP:AwardConfirm(SelectedBidder["player"], tonumber(f.cost:GetText()), f.boss:GetText(), MonDKP_DB.bossargs.CurrentRaidZone, CurrItemForBid)				
 			else
 				local selected = L["PLAYERVALIDATE"];
 

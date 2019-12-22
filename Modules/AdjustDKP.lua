@@ -493,7 +493,6 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.decayDKP:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab2, "BOTTOMLEFT", 21, 70)     
 	MonDKP.ConfigTab2.decayDKP:SetAutoFocus(false)
 	MonDKP.ConfigTab2.decayDKP:SetMultiLine(false)
-	MonDKP.ConfigTab2.decayDKP:SetNumeric(true)
 	MonDKP.ConfigTab2.decayDKP:SetSize(100, 24)
 	MonDKP.ConfigTab2.decayDKP:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,

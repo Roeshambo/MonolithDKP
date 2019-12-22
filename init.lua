@@ -245,7 +245,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		if IsInGuild() and not core.InitStart then
 			GuildRoster()
 			core.InitStart = true
-			--self:UnregisterEvent("GUILD_ROSTER_UPDATE")
+			self:UnregisterEvent("GUILD_ROSTER_UPDATE")
 
 			-- Prints info after all addons have loaded. Circumvents addons that load saved chat messages pushing info out of view.
 			C_Timer.After(3, function ()
