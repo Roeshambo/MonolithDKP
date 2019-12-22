@@ -300,4 +300,6 @@ function MonDKP_ReindexTables()
 			i=i+1
 		end
 	end
+	MonDKP_DKPHistory.seed = 0
+	MonDKP_Loot.seed = 0
 end
