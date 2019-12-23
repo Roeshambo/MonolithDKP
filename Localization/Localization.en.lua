@@ -737,6 +737,7 @@ core.L = {
   NEWERTABS2            = "Your current history has newer entries that don't exist in this broadcast. Accepting will overwrite your data. Would you like to continue?",
   OVERWRITETABLES       = "A full broadcast will overwrite all of the receivng parties data with exact duplicates of yours. If they have data you do not it will be overwritten. If you wish to simply send data they are missing, use the \"Merge Last 2 Weeks\" option. Do you wish to continue?",
   VALIDATEWARN          = "This will recalculate all players dkp, lifetime earned and lifetime spent based on their complete history. Make sure to back up your saved variables file in the event the result is improper due to missing history entries. You should reset previous dkp (context menu > select all > reset previous dkp) for all players prior to running so you can see how much they changed. Would you like to continue?",
+  PASS                  = "Pass",
 
   CHANGELOG1            = "- Improved broadcast system with interface accessible by clicking the status indicator icon in the lower left corner of main DKP interface.",
   CHANGELOG2            = "  - Full Broadcast option will broadcast all data and overwrite the recipients tables with identical copies of yours. Any data they had that you did not will be lost (Works the same as the broadcast button in 1.6 and earlier).",
