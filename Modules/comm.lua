@@ -113,8 +113,13 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 			return;
 		elseif prefix == "MonDKPBidder" then
 			if core.BidInProgress and core.IsOfficer then
-				MonDKP_CHAT_MSG_WHISPER(message, sender)
-				return
+				if message == "pass" then
+					MonDKP:Print(sender.." has passed.")
+					return
+				else
+					MonDKP_CHAT_MSG_WHISPER(message, sender)
+					return
+				end
 			else
 				return
 			end
@@ -236,7 +241,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 						if MonDKP_DB.defaults.AutoOpenBid and not core.BidInterface:IsShown() then	-- toggles bid window if option is set to
 							MonDKP:BidInterface_Toggle()
 						end
-						MonDKP:CurrItem_Set(arg1, arg2, arg3, sender)	-- populates bid window
+						MonDKP:CurrItem_Set(arg1, arg2, arg3)	-- populates bid window
 					end
 				end
 			elseif prefix == "MonDKPRaidTime" and sender ~= UnitName("player") and core.IsOfficer and MonDKP.ConfigTab2 then
@@ -406,7 +411,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 														if (tonumber(deserialized.DKP[i].dkp) > 0 and not deserialized.DKP[i].deletes) or (tonumber(deserialized.DKP[i].dkp) < 0 and deserialized.DKP[i].deletes) then
 															MonDKP_Profile_Create(players[j], tonumber(deserialized.DKP[i].dkp), tonumber(deserialized.DKP[i].dkp))
 														else
-															MonDKP_Profile_Create(players[j])
+															MonDKP_Profile_Create(players[j], tonumber(deserialized.DKP[i].dkp))
 														end
 													end
 												end
@@ -419,7 +424,6 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 							if MonDKP.ConfigTab6 and MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
 								MonDKP:DKPHistory_Update(true)
 							end
-							MonDKP:FilterDKPTable(core.currentSort, "reset")
 
 							for i=1, #deserialized.Loot do
 								local search = MonDKP:Table_Search(MonDKP_Loot, deserialized.Loot[i].index, "index")
@@ -503,7 +507,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 									end
 								else
 									if not MonDKP_Archive[players[i]] or (MonDKP_Archive[players[i]] and MonDKP_Archive[players[i]].deleted ~= true) then
-										MonDKP_Profile_Create(players[i], tonumber(dkp));	-- creates temp profile for data and requests additional data from online officers (hidden until data received)
+										MonDKP_Profile_Create(players[i], tonumber(dkp), tonumber(dkp));	-- creates temp profile for data and requests additional data from online officers (hidden until data received)
 									end
 								end
 							end

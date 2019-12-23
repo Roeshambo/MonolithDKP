@@ -469,7 +469,7 @@ local function StartBidding()
 		core.BiddingWindow.cost:SetNumber(MonDKP_round(core.BiddingWindow.minBid:GetNumber(), MonDKP_DB.modes.rounding))
 		MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), CurrItemIcon)
 		MonDKP.Sync:SendData("MonDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.minBid:GetText()..","..CurrItemIcon)
-		MonDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.minBid:GetText(), CurrItemIcon, UnitName("player"))
+		MonDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.minBid:GetText(), CurrItemIcon)
 
 		if MonDKP_DB.defaults.AutoOpenBid then	-- toggles bid window if option is set to
 			MonDKP:BidInterface_Toggle()
@@ -499,7 +499,7 @@ local function StartBidding()
 		MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Cost: "..core.BiddingWindow.cost:GetNumber()..perc, CurrItemIcon)
 		MonDKP.Sync:SendData("MonDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.cost:GetText()..perc..","..CurrItemIcon)
 		MonDKP:BidInterface_Toggle()
-		MonDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.cost:GetText()..perc, CurrItemIcon, UnitName("player"))
+		MonDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.cost:GetText()..perc, CurrItemIcon)
 	end
 
 	if mode == "Roll Based Bidding" then
@@ -730,6 +730,7 @@ function MonDKP:StartBidTimer(seconds, title, itemIcon)
 
 	MonDKP.BidTimer = MonDKP.BidTimer or MonDKP:CreateTimer();		-- recycles bid timer frame so multiple instances aren't created
 	if not extend then MonDKP.BidTimer:SetShown(not MonDKP.BidTimer:IsShown()); end					-- shows if not shown
+	if core.BidInterface and core.BidInterface:IsShown() == false then MonDKP.BidTimer.OpenBid:Show() end
 	MonDKP.BidTimer:SetMinMaxValues(0, duration or 20)
 	MonDKP.BidTimer.timerTitle:SetText(title)
 	MonDKP.BidTimer.itemIcon:SetTexture(itemIcon)
@@ -915,6 +916,19 @@ function MonDKP:CreateTimer()
 	f.itemIcon:SetPoint("RIGHT", f, "LEFT", 0, 0);
 	f.itemIcon:SetColorTexture(0, 0, 0, 1)
 	f.itemIcon:SetSize(25, 25);
+
+	f.OpenBid = CreateFrame("Button", nil, f, "MonolithDKPButtonTemplate")
+	f.OpenBid:SetPoint("RIGHT", f.itemIcon, "LEFT", -5, 0);
+	f.OpenBid:SetSize(40,25)
+	f.OpenBid:SetText(L["BID"]);
+	f.OpenBid:GetFontString():SetTextColor(1, 1, 1, 1)
+	f.OpenBid:SetNormalFontObject("MonDKPSmallCenter");
+	f.OpenBid:SetHighlightFontObject("MonDKPSmallCenter");
+	f.OpenBid:SetScript("OnClick", function()
+		f.OpenBid:Hide()
+		MonDKP:BidInterface_Toggle()
+	end)
+	f.OpenBid:Show()
 
 	return f;
 end

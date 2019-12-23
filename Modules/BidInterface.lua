@@ -109,18 +109,21 @@ local function UpdateBidderWindow()
 		core.BidInterface.SubmitBid:SetText(L["SUBMITBID"])
 		core.BidInterface.Bid:Show();
 		core.BidInterface.CancelBid:Show();
+		core.BidInterface.Pass:Show();
 	elseif mode == "Roll Based Bidding" then
 		core.BidInterface.MinBidHeader:SetText(L["ITEMCOST"]..":")
 		core.BidInterface.SubmitBid:SetPoint("LEFT", core.BidInterface.BidHeader, "RIGHT", 8, 0)
 		core.BidInterface.SubmitBid:SetText(L["ROLL"])
 		core.BidInterface.Bid:Hide();
 		core.BidInterface.CancelBid:Hide();
+		core.BidInterface.Pass:Hide();
 	else
 		core.BidInterface.MinBidHeader:SetText(L["ITEMCOST"]..":")
 		core.BidInterface.SubmitBid:SetPoint("LEFT", core.BidInterface.BidHeader, "RIGHT", 8, 0)
 		core.BidInterface.SubmitBid:SetText(L["SUBMITBID"])
 		core.BidInterface.Bid:Hide();
 		core.BidInterface.CancelBid:Show();
+		core.BidInterface.Pass:Show();
 	end
 
 
@@ -223,7 +226,7 @@ function MonDKP:BidInterface_Toggle()
 	end
 
 	if core.BidInterface:IsShown() then core.BidInterface:Hide(); end
-
+	if MonDKP.BidTimer.OpenBid and MonDKP.BidTimer.OpenBid:IsShown() then MonDKP.BidTimer.OpenBid:Hide() end
 	if MonDKP_DB.modes.BroadcastBids and not core.BiddingWindow then
 		core.BidInterface:SetHeight(504);
 		core.BidInterface.bidTable:Show();
@@ -340,7 +343,7 @@ local function BidWindowCreateRow(parent, id) -- Create 3 buttons for each row i
     return f
 end
 
-function MonDKP:CurrItem_Set(item, value, icon, BidHost)
+function MonDKP:CurrItem_Set(item, value, icon)
 	CurrItemForBid = item;
 	CurrItemIcon = icon;
 
@@ -356,7 +359,7 @@ function MonDKP:CurrItem_Set(item, value, icon, BidHost)
 		core.BidInterface.Bid:SetNumber(value);
 	end
 
-	if BidHost and MonDKP_DB.modes.mode ~= "Roll Based Bidding" then
+	if MonDKP_DB.modes.mode ~= "Roll Based Bidding" then
 		core.BidInterface.SubmitBid:SetScript("OnClick", function()
 			local message;
 
@@ -366,13 +369,11 @@ function MonDKP:CurrItem_Set(item, value, icon, BidHost)
 				message = "!bid";
 			end
 			MonDKP.Sync:SendData("MonDKPBidder", tostring(message))
-			--SendChatMessage(message, "WHISPER", nil, BidHost)
 			core.BidInterface.Bid:ClearFocus();
 		end)
 
 		core.BidInterface.CancelBid:SetScript("OnClick", function()
 			MonDKP.Sync:SendData("MonDKPBidder", "!bid cancel")
-			--SendChatMessage("!bid cancel", "WHISPER", nil, BidHost)
 			core.BidInterface.Bid:ClearFocus();
 		end)
 	elseif MonDKP_DB.modes.mode == "Roll Based Bidding" then
@@ -544,7 +545,7 @@ function MonDKP:BidInterface_Create()
     end)
 
     f.BidPlusOne = CreateFrame("Button", nil, f.Bid, "MonolithDKPButtonTemplate")
-   	f.BidPlusOne:SetPoint("TOPLEFT", f.Bid, "BOTTOMLEFT", 0, -2);
+	f.BidPlusOne:SetPoint("TOPLEFT", f.Bid, "BOTTOMLEFT", 0, -2);
 	f.BidPlusOne:SetSize(33,20)
 	f.BidPlusOne:SetText("+1");
 	f.BidPlusOne:GetFontString():SetTextColor(1, 1, 1, 1)
@@ -598,7 +599,7 @@ function MonDKP:BidInterface_Create()
 			f.Bid:SetNumber(0);
 		end
 	end)
-	
+
     f.SubmitBid = CreateFrame("Button", nil, f, "MonolithDKPButtonTemplate")
 	f.SubmitBid:SetPoint("LEFT", f.Bid, "RIGHT", 8, 0);
 	f.SubmitBid:SetSize(90,25)
@@ -617,6 +618,19 @@ function MonDKP:BidInterface_Create()
 	f.CancelBid:SetScript("OnClick", function()
 		--CancelBid()
 		f.Bid:ClearFocus();
+	end)
+
+	f.Pass = CreateFrame("Button", nil, f, "MonolithDKPButtonTemplate")
+	f.Pass:SetPoint("TOPLEFT", f.SubmitBid, "BOTTOM", 5, -5);
+	f.Pass:SetSize(90,25)
+	f.Pass:SetText(L["PASS"]);
+	f.Pass:GetFontString():SetTextColor(1, 1, 1, 1)
+	f.Pass:SetNormalFontObject("MonDKPSmallCenter");
+	f.Pass:SetHighlightFontObject("MonDKPSmallCenter");
+	f.Pass:SetScript("OnClick", function()
+		f.Bid:ClearFocus();
+		MonDKP.Sync:SendData("MonDKPBidder", "pass")
+		core.BidInterface:Hide()
 	end)
 
 	if MonDKP_DB.defaults.AutoOpenBid == nil then
@@ -723,6 +737,9 @@ function MonDKP:BidInterface_Create()
 	f:SetScript("OnHide", function ()
 		if core.BiddingInProgress then
 			MonDKP:Print(L["CLOSEDBIDINPROGRESS"])
+		end
+		if MonDKP.BidTimer:IsShown() then
+			MonDKP.BidTimer.OpenBid:Show()
 		end
 	end)
 
