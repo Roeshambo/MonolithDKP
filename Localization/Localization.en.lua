@@ -749,4 +749,6 @@ core.L = {
   CHANGELOG8            = "- Validate Tables option available to officers in the context menu. This will rebuild all players DKP tables (dkp, lifetime earned and spent) based on their history. Recommended you back up your saved variables file before running as it can return incorrect values if you are missing any history entries. Resetting all previous DKP values for players (context menu > select all > reset previous dkp) will allow you to see exactly how much each players DKP changed from the validation.",
   CHANGELOG9            = "",
   CHANGELOG10           = "",
+  HYBRIDBIDHEAD         = "Hybrid Bid",
+  HYBRIDBIDDESCRIPTION  = "In this mode all items have min and max value. One can bid any value between <min, max>. If all players bid values < max then system works as Minimum Bid Values. If any player bids max value system works as Static Item Value."
 }

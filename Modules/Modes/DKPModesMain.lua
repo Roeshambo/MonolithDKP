@@ -20,6 +20,7 @@ function MonDKP:DKPModes_Main()
 	local StaticDescription = L["STATICDESCRIPTION"]
 	local RollDescription = L["ROLLDESCRIPTION"]
 	local ZeroSumDescription = L["ZEROSUMDESCRIPTION"];
+  local HybridBidDescription = L["HYBRIDBIDDESCRIPTION"];
 
 	if MonDKP_DB.modes.mode == "Minimum Bid Values" then
 		f.DKPModesMain.ModeDescriptionHeader:SetText(L["MINBIDVALUESHEAD"])
@@ -33,6 +34,9 @@ function MonDKP:DKPModes_Main()
 	elseif MonDKP_DB.modes.mode == "Zero Sum" then
 		f.DKPModesMain.ModeDescriptionHeader:SetText(L["ZEROSUMHEAD"])
 		f.DKPModesMain.ModeDescription:SetText(ZeroSumDescription)
+	elseif MonDKP_DB.modes.mode == "Hybrid Bid" then
+		f.DKPModesMain.ModeDescriptionHeader:SetText(L["HYBRIDBIDHEAD"])
+		f.DKPModesMain.ModeDescription:SetText(HybridBidDescription)
 	end
 
 	-- Mode DROPDOWN box 
@@ -47,6 +51,8 @@ function MonDKP:DKPModes_Main()
 		LocalMode = L["ROLLBIDDINGHEAD"]
 	elseif CurMode == "Zero Sum" then
 		LocalMode = L["ZEROSUMHEAD"]
+	elseif CurMode == "Hybrid Bid" then
+		LocalMode = L["HYBRIDBIDHEAD"]
 	end
 
 
@@ -64,6 +70,8 @@ function MonDKP:DKPModes_Main()
 		DKPMode.text, DKPMode.arg1, DKPMode.checked, DKPMode.isNotRadio = L["ROLLBIDDINGHEAD"], "Roll Based Bidding", "Roll Based Bidding" == CurMode, false
 		UIDropDownMenu_AddButton(DKPMode)
 		DKPMode.text, DKPMode.arg1, DKPMode.checked, DKPMode.isNotRadio = L["ZEROSUMHEAD"], "Zero Sum", "Zero Sum" == CurMode, false
+    UIDropDownMenu_AddButton(DKPMode)
+		DKPMode.text, DKPMode.arg1, DKPMode.checked, DKPMode.isNotRadio = L["HYBRIDBIDHEAD"], "Hybrid Bid", "Hybrid Bid" == CurMode, false
 		UIDropDownMenu_AddButton(DKPMode)
 	end)
 
