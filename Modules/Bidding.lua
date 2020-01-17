@@ -535,12 +535,21 @@ local function StartBidding()
 			end
 		end
 
+		local msg = L["TOBIDUSE"].." "..channelText.." "..L["TOSEND"].." !bid"
+		local cancelmsg = L["OR"].." !bid cancel "..L["TOWITHDRAWBID"]
 		if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
 			SendChatMessage(L["TAKINGBIDSON"].." "..core.BiddingWindow.item:GetText().." ("..core.BiddingWindow.minBid:GetText().." "..L["DKPMINBID"]..")", "RAID_WARNING")
-			SendChatMessage(L["TOBIDUSE"].." "..channelText.." "..L["TOSEND"].." !bid <"..L["VALUE"].."> (ex: !bid "..core.BiddingWindow.minBid:GetText().."). "..L["OR"].." !bid cancel "..L["TOWITHDRAWBID"], "RAID_WARNING")
+			msg = msg.." <"..L["VALUE"].."> (ex: !bid "..core.BiddingWindow.minBid:GetText()..")"
+			if MonDKP_DB.modes.CancelBid then
+				msg = msg.." "..cancelmsg
+			end
+			SendChatMessage(msg, "RAID_WARNING")
 		elseif mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
 			SendChatMessage(L["TAKINGBIDSON"].." "..core.BiddingWindow.item:GetText().." ("..core.BiddingWindow.cost:GetText()..perc..")", "RAID_WARNING")
-			SendChatMessage(L["TOBIDUSE"].." "..channelText.." "..L["TOSEND"].." !bid. "..L["OR"].." !bid cancel "..L["TOWITHDRAWBID"], "RAID_WARNING")
+			if MonDKP_DB.modes.CancelBid then
+				msg = msg.." "..cancelmsg
+			end
+			SendChatMessage(msg, "RAID_WARNING")
 		elseif mode == "Roll Based Bidding" then
 			SendChatMessage(L["ROLLFOR"].." "..core.BiddingWindow.item:GetText().." ("..core.BiddingWindow.cost:GetText()..perc..")", "RAID_WARNING")
 			SendChatMessage(L["TOBIDROLLRANGE"].." "..channelText.." "..L["WITH"].." !dkp", "RAID_WARNING")
