@@ -165,6 +165,7 @@ if GetLocale() == "ruRU" then
     BROADCASTWHICHDATA = "Пожалуйста, укажите какие данные Вы хотите синхронизировать.",
     CANCEL = "Отмена",
     CANCELBID = "Отменить ставку",
+	CANCELBIDTTDESC = "Allow Canceling Bid",
     CANTCANCELROLL = "У Вас нет прав чтобы отменить roll.",
     CASTERDPS = "Кастер",
     CHANGEDGUILDS = "Похоже, Вы присоединились в новую гильдию. Все записи из Вашей предыдущей таблицы были удалены, чтобы предотвратить повреждение данных.",

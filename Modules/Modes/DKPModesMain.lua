@@ -99,6 +99,8 @@ function MonDKP:DKPModes_Main()
 			f.DKPModesMain.CostSelectionHeader:Show();
 			f.DKPModesMain.Inflation:Hide()
     		f.DKPModesMain.Inflation.Header:Hide()
+			f.DKPModesMain.CancelBid:Show()
+
 		elseif newValue == "Static Item Values" then
 			MonDKP_DB.modes.mode = "Static Item Values"
 			f.DKPModesMain.ModeDescription:SetText(StaticDescription)
@@ -113,6 +115,7 @@ function MonDKP:DKPModes_Main()
 			f.DKPModesMain.CostSelectionHeader:Hide();
 			f.DKPModesMain.Inflation:Hide()
     		f.DKPModesMain.Inflation.Header:Hide()
+			f.DKPModesMain.CancelBid:Show()
 
 			if MonDKP_DB.modes.costvalue == "Integer" then
 				f.DKPModesMain.SubZeroBidding:Show()
@@ -137,6 +140,7 @@ function MonDKP:DKPModes_Main()
 			f.DKPModesMain.CostSelectionHeader:Hide()
 			f.DKPModesMain.Inflation:Hide()
     		f.DKPModesMain.Inflation.Header:Hide()
+			f.DKPModesMain.CancelBid:Hide()
 
 			if MonDKP_DB.modes.costvalue == "Integer" then
 				f.DKPModesMain.SubZeroBidding:Show()
@@ -162,6 +166,7 @@ function MonDKP:DKPModes_Main()
 			MonDKP_DB.modes.SubZeroBidding = true
 			f.DKPModesMain.Inflation:Show()
     		f.DKPModesMain.Inflation.Header:Show()
+			f.DKPModesMain.CancelBid:Show()
 
 			if MonDKP_DB.modes.ZeroSumBidType == "Static" then
 				f.DKPModesMain.MaxBid:Hide();
@@ -310,6 +315,39 @@ function MonDKP:DKPModes_Main()
     f.DKPModesMain.AntiSnipe.Header:SetFontObject("MonDKPNormalLeft");
     f.DKPModesMain.AntiSnipe.Header:SetPoint("BOTTOMLEFT", f.DKPModesMain.AntiSnipe, "TOPLEFT", 0, 2);
     f.DKPModesMain.AntiSnipe.Header:SetText(L["ANTISNIPE"])
+
+	-- Cancel Bid Checkbox
+	f.DKPModesMain.CancelBid = CreateFrame("CheckButton", nil, f.DKPModesMain, "UICheckButtonTemplate");
+	f.DKPModesMain.CancelBid:SetChecked(MonDKP_DB.modes.CancelBid)
+	f.DKPModesMain.CancelBid:SetScale(0.6);
+	f.DKPModesMain.CancelBid.text:SetText("  |cff5151de"..L["CANCELBID"].."|r");
+	f.DKPModesMain.CancelBid.text:SetScale(1.5);
+	f.DKPModesMain.CancelBid.text:SetFontObject("MonDKPSmallLeft")
+	f.DKPModesMain.CancelBid:SetPoint("TOP", f.DKPModesMain.AntiSnipe, "BOTTOMLEFT", 25, -10);
+	f.DKPModesMain.CancelBid:SetScript("OnClick", function(self)
+		if self:GetChecked() == true then
+			MonDKP_DB.modes.CancelBid = true;
+			MonDKP:Print("Allow Cancel Bid |cff00ff00"..L["ENABLED"].."|r")
+		else
+			MonDKP_DB.modes.CancelBid = false;
+			MonDKP:Print("Allow Cancel Bid |cffff0000"..L["DISABLED"].."|r")
+		end
+		PlaySound(808);
+	end)
+	f.DKPModesMain.CancelBid:SetScript("OnEnter", function(self)
+		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+		GameTooltip:SetText(L["CANCELBID"], 0.25, 0.75, 0.90, 1, true);
+		GameTooltip:AddLine(L["CANCELBIDTTDESC"], 1.0, 1.0, 1.0, true);
+		GameTooltip:Show();
+	end)
+	f.DKPModesMain.CancelBid:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+	if MonDKP_DB.modes.mode == "Roll Based Bidding" then
+		f.DKPModesMain.CancelBid:Hide()
+	else
+		f.DKPModesMain.CancelBid:Show()
+	end
 
 	-- Channels DROPDOWN box 
 	f.DKPModesMain.ChannelsDropDown = CreateFrame("FRAME", "MonDKPModeSelectDropDown", f.DKPModesMain, "MonolithDKPUIDropDownMenuTemplate")

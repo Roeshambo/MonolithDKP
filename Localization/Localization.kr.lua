@@ -161,6 +161,7 @@ if GetLocale() == "koKR" then
     BROADCASTSETTTDESC = "위의 DKP 모드 매개 변수와 항목 값 및 보너스 값 (옵션에서 설정)을 포함하여 모든 DKP 관련 설정을 브로드 캐스트합니다.",
     CANCEL = "취소",
     CANCELBID = "입찰 취소",
+	CANCELBIDTTDESC = "Allow Canceling Bid",
     CANTCANCELROLL = "롤을 취소 할 권한이 없습니다.",
     CASTERDPS = "캐스터 DPS",
     CHANGEDGUILDS = "새로운 길드에 가입 한 것 같습니다. 데이터가 손상되지 않도록 이전 길드의 모든 데이터가 지워졌습니다.",

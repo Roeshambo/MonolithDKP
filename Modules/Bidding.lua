@@ -128,26 +128,32 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 			if (mode == "Static Item Values" and cmd ~= "cancel") or (mode == "Zero Sum" and cmd ~= "cancel" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
 				cmd = nil;
 			end
-			if cmd == "cancel" and MonDKP_DB.modes.mode ~= "Roll Based Bidding" then
-				local flagCanceled = false
-				for i=1, #Bids_Submitted do 					-- !bid cancel will cancel their bid
-					if Bids_Submitted[i] and Bids_Submitted[i].player == name then
-						table.remove(Bids_Submitted, i)
-						if MonDKP_DB.modes.BroadcastBids then
-							MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
+			if cmd == "cancel" then
+				if MonDKP_DB.modes.mode ~= "Roll Based Bidding" then
+					if MonDKP_DB.modes.CancelBid then
+						local flagCanceled = false
+						for i=1, #Bids_Submitted do 					-- !bid cancel will cancel their bid
+							if Bids_Submitted[i] and Bids_Submitted[i].player == name then
+								table.remove(Bids_Submitted, i)
+								if MonDKP_DB.modes.BroadcastBids then
+									MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
+								end
+								BidScrollFrame_Update()
+								response = L["BIDCANCELLED"]
+								flagCanceled = true
+								--SendChatMessage(response, "WHISPER", nil, name)
+								--return;
+							end
 						end
-						BidScrollFrame_Update()
-						response = L["BIDCANCELLED"]
-						flagCanceled = true
-						--SendChatMessage(response, "WHISPER", nil, name)
-						--return;
+						if not flagCanceled then
+							response = L["NOTSUBMITTEDBID"]
+						end
+					else
+						response = L["CANCELBID"].." "..L["MANUALLYDENIED"]
 					end
+				elseif MonDKP_DB.modes.mode == "Roll Based Bidding" then
+					response = L["CANTCANCELROLL"]
 				end
-				if not flagCanceled then
-					response = L["NOTSUBMITTEDBID"]
-				end
-			elseif cmd == "cancel" and MonDKP_DB.modes.mode == "Roll Based Bidding" then
-				response = L["CANTCANCELROLL"]
 			end
 			dkp = tonumber(MonDKP:GetPlayerDKP(name))
 			if not dkp then		-- exits function if player is not on the DKP list

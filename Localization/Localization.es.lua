@@ -161,6 +161,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     BROADCASTSETTTDESC = "Emite todas las configuraciones relacionadas con DKP, incluidos los parámetros del modo DKP anteriores, así como los valores de los elementos y los valores de bonificación (establecidos en Opciones).",
     CANCEL = "Cancelar",
     CANCELBID = "Cancelar oferta",
+	CANCELBIDTTDESC = "Allow Canceling Bid",
     CANTCANCELROLL = "No tienes permiso para cancelar un rollo.",
     CASTERDPS = "Caster DPS",
     CHANGEDGUILDS = "arece que te has unido a un nuevo gremio. Todos los datos de tu gremio anterior se han eliminado para evitar la corrupción de datos.",

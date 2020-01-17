@@ -648,6 +648,7 @@ core.L = {
   NEWHIGHBIDDER         = "New highest bidder is",
   SUBMITBID             = "Submit Bid",
   CANCELBID             = "Cancel Bid",
+  CANCELBIDTTDESC		= "Allow Canceling Bid",
   CANTCANCELROLL        = "You don't have permission to cancel a roll.",
   ROLL                  = "Roll",
   MUSTRELOADUI          = "Your DKP Modes settings have changed and can not run that until your UI is reloaded. Can we reload to complete that?",

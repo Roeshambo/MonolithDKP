@@ -108,7 +108,11 @@ local function UpdateBidderWindow()
 		core.BidInterface.SubmitBid:SetPoint("LEFT", core.BidInterface.Bid, "RIGHT", 8, 0)
 		core.BidInterface.SubmitBid:SetText(L["SUBMITBID"])
 		core.BidInterface.Bid:Show();
-		core.BidInterface.CancelBid:Show();
+		if MonDKP_DB.modes.CancelBid then
+			core.BidInterface.CancelBid:Show();
+		else
+			core.BidInterface.CancelBid:Hide();
+		end
 		core.BidInterface.Pass:Show();
 	elseif mode == "Roll Based Bidding" then
 		core.BidInterface.MinBidHeader:SetText(L["ITEMCOST"]..":")
@@ -122,7 +126,11 @@ local function UpdateBidderWindow()
 		core.BidInterface.SubmitBid:SetPoint("LEFT", core.BidInterface.BidHeader, "RIGHT", 8, 0)
 		core.BidInterface.SubmitBid:SetText(L["SUBMITBID"])
 		core.BidInterface.Bid:Hide();
-		core.BidInterface.CancelBid:Show();
+		if MonDKP_DB.modes.CancelBid then
+			core.BidInterface.CancelBid:Show();
+		else
+			core.BidInterface.CancelBid:Hide();
+		end
 		core.BidInterface.Pass:Show();
 	end
 

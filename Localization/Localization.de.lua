@@ -165,6 +165,7 @@ if GetLocale() == "deDE" then
     BROADCASTWHICHDATA = "Bitte wählen, welche Daten übertragen werden sollen.",
     CANCEL = "Stornieren",
     CANCELBID = "Gebot stornieren",
+	CANCELBIDTTDESC = "Gebot stornieren erlauben",
     CANTCANCELROLL = "Sie haben keine Berechtigung, eine Rolle abzubrechen.",
     CASTERDPS = "Caster DPS",
     CHANGEDGUILDS = "Anscheinend bist du einer neuen Gilde beigetreten. Alle Daten Ihrer vorherigen Gilde wurden gelöscht, um Datenkorruption zu verhindern.",

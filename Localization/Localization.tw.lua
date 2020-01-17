@@ -161,6 +161,7 @@ if GetLocale() == "zhTW" then
     BROADCASTSETTTDESC = "廣播所有與DKP相關的設置，包括上述DKP模式參數以及項目值和獎勵值（在選項中設置）。",
     CANCEL = "取消",
     CANCELBID = "取消競標",
+	CANCELBIDTTDESC = "Allow Canceling Bid",
     CANTCANCELROLL = "您無權取消名冊。",
     CASTERDPS = "腳輪DPS",
     CHANGEDGUILDS = "看來您已經加入了新的公會。 先前公會中的所有數據已被擦除，以防止數據損壞。",

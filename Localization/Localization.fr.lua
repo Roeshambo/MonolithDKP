@@ -161,6 +161,7 @@ if GetLocale() == "frFR" then
     BROADCASTSETTTDESC = "Diffuse tous les paramètres liés à DKP, y compris les paramètres de mode DKP ci-dessus, ainsi que les valeurs d’objet et les valeurs de bonus (définies dans Options).",
     CANCEL = "Annuler",
     CANCELBID = "Annuler l'enchère",
+	CANCELBIDTTDESC = "Allow Canceling Bid",
     CANTCANCELROLL = "Vous n'êtes pas autorisé à annuler un résultat.",
     CASTERDPS = "Roulette DPS",
     CHANGEDGUILDS = "Il semble que vous ayez rejoint une nouvelle guilde. Toutes les données de votre guilde précédente ont été effacées pour éviter la corruption des données.",

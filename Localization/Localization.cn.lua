@@ -161,6 +161,7 @@ if GetLocale() == "zhCN" then
     BROADCASTSETTTDESC = "广播所有与DKP相关的设置，包括上述DKP模式参数以及项目值和奖励值（在选项中设置）。",
     CANCEL = "取消",
     CANCELBID = "取消竞标",
+	CANCELBIDTTDESC = "Allow Canceling Bid",
     CANTCANCELROLL = "您无权取消名册。",
     CASTERDPS = "脚轮DPS",
     CHANGEDGUILDS = "看来您已经加入了新的公会。 先前公会中的所有数据已被擦除，以防止数据损坏。",
