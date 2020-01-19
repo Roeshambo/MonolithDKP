@@ -154,7 +154,11 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 				SendChatMessage(L["INVALIDPLAYER"], "WHISPER", nil, name)
 				return
 			end
-			if (tonumber(cmd) and (MonDKP_DB.modes.MaximumBid == nil or tonumber(cmd) <= MonDKP_DB.modes.MaximumBid or MonDKP_DB.modes.MaximumBid == 0)) or ((mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static")) and not cmd) then
+      
+      if core.BiddingWindow.minBid == nil then SendChatMessage("MIN BID NULL", "GUILD") end
+      if core.BiddingWindow.maxBid == nil then SendChatMessage("MAX BID NULL", "GUILD") end
+      
+			if (tonumber(cmd) and (core.BiddingWindow.maxBid == nil or tonumber(cmd) <= core.BiddingWindow.maxBid:GetNumber() or core.BiddingWindow.maxBid:GetNumber() == 0)) or ((mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static")) and not cmd) then
 				if dkp then
 					if (cmd and cmd <= dkp) or (MonDKP_DB.modes.SubZeroBidding == true and dkp >= 0) or (MonDKP_DB.modes.SubZeroBidding == true and MonDKP_DB.modes.AllowNegativeBidders == true) or (mode == "Static Item Values" and dkp > 0 and (dkp > core.BiddingWindow.cost:GetNumber() or MonDKP_DB.modes.SubZeroBidding == true or MonDKP_DB.modes.costvalue == "Percent")) or ((mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") and not cmd) then
 						if (cmd and core.BiddingWindow.minBid and tonumber(core.BiddingWindow.minBid:GetNumber()) <= cmd) or mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid" and cmd >= core.BiddingWindow.minBid:GetNumber()) then
@@ -216,8 +220,8 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
 				end
 			elseif not cmd and (mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid")) then
 				response = L["BIDDENIEDNOVALUE"]
-			elseif cmd ~= "cancel" and (tonumber(cmd) and tonumber(cmd) > MonDKP_DB.modes.MaximumBid) then
-				response = L["BIDDENIEDEXCEEDMAX"].." "..MonDKP_DB.modes.MaximumBid.." "..L["DKP"].."."
+			elseif cmd ~= "cancel" and (tonumber(cmd) and tonumber(cmd) > core.BiddingWindow.maxBid:GetNumber()) then
+				response = L["BIDDENIEDEXCEEDMAX"].." "..core.BiddingWindow.maxBid:GetNumber().." "..L["DKP"].."."
 			else
 				if cmd ~= "cancel" then
 					response = L["BIDDENIEDINVALID"]
