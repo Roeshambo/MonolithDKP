@@ -355,10 +355,10 @@ local function BidWindowCreateRow(parent, id) -- Create 3 buttons for each row i
     return f
 end
 
-function MonDKP:CurrItem_Set(item, value, icon)
+function MonDKP:CurrItem_Set(item, value, value2, icon)
 	CurrItemForBid = item;
 	CurrItemIcon = icon;
-
+  
 	UpdateBidderWindow()
 
 	if not strfind(value, "%%") and not strfind(value, "DKP") then
@@ -366,7 +366,15 @@ function MonDKP:CurrItem_Set(item, value, icon)
 	else
 		core.BidInterface.MinBid:SetText(value);
 	end
-
+  
+  if core.BidInterface.MaxBid then
+    if not strfind(value2, "%%") and not strfind(value2, "DKP") then
+      core.BidInterface.MaxBid:SetText(value2.." DKP");
+    else
+      core.BidInterface.MaxBid:SetText(value2);
+    end
+  end
+  
 	if core.BidInterface.Bid:IsShown() then
 		core.BidInterface.Bid:SetNumber(value);
 	end

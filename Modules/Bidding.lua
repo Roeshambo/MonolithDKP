@@ -540,9 +540,13 @@ local function StartBidding()
 
 	if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
 		core.BiddingWindow.cost:SetNumber(MonDKP_round(core.BiddingWindow.minBid:GetNumber(), MonDKP_DB.modes.rounding))
-		MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), CurrItemIcon)
-		MonDKP.Sync:SendData("MonDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.minBid:GetText()..","..CurrItemIcon)
-		MonDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.minBid:GetText(), CurrItemIcon)
+		if core.BiddingWindow.maxBid:GetNumber() ~= 0 then
+      MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText().." Max Bid: "..core.BiddingWindow.maxBid:GetText(), CurrItemIcon)
+    else
+      MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), CurrItemIcon)
+    end
+		MonDKP.Sync:SendData("MonDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.minBid:GetText()..","..core.BiddingWindow.maxBid:GetText()..","..CurrItemIcon)
+		MonDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.minBid:GetText(), core.BiddingWindow.maxBid:GetText(), CurrItemIcon)
 
 		if MonDKP_DB.defaults.AutoOpenBid then	-- toggles bid window if option is set to
 			MonDKP:BidInterface_Toggle()
@@ -591,7 +595,7 @@ local function StartBidding()
 	else
 		if MonDKP_DB.modes.costvalue == "Percent" then perc = "%" else perc = " DKP" end;
 		MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Cost: "..core.BiddingWindow.cost:GetNumber()..perc, CurrItemIcon)
-		MonDKP.Sync:SendData("MonDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.cost:GetText()..perc..","..CurrItemIcon)
+		MonDKP.Sync:SendData("MonDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.cost:GetText()..perc..",0,"..CurrItemIcon)
 		MonDKP:BidInterface_Toggle()
 		MonDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.cost:GetText()..perc, CurrItemIcon)
 	end
@@ -624,7 +628,11 @@ local function StartBidding()
 		end
 
 		if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
-			SendChatMessage(L["TAKINGBIDSON"].." "..core.BiddingWindow.item:GetText().." ("..core.BiddingWindow.minBid:GetText().." "..L["DKPMINBID"]..")", "RAID_WARNING")
+			if core.BiddingWindow.maxBid:GetNumber() ~= 0 then
+        SendChatMessage(L["TAKINGBIDSON"].." "..core.BiddingWindow.item:GetText().." ("..core.BiddingWindow.minBid:GetText().." "..L["DKPMINBID"].." "..core.BiddingWindow.maxBid:GetText().." "..L["DKPMAXBID"]..")", "RAID_WARNING")
+      else
+        SendChatMessage(L["TAKINGBIDSON"].." "..core.BiddingWindow.item:GetText().." ("..core.BiddingWindow.minBid:GetText().." "..L["DKPMINBID"]..")", "RAID_WARNING")
+      end
 			SendChatMessage(L["TOBIDUSE"].." "..channelText.." "..L["TOSEND"].." !bid <"..L["VALUE"].."> (ex: !bid "..core.BiddingWindow.minBid:GetText().."). "..L["OR"].." !bid cancel "..L["TOWITHDRAWBID"], "RAID_WARNING")
 		elseif mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
 			SendChatMessage(L["TAKINGBIDSON"].." "..core.BiddingWindow.item:GetText().." ("..core.BiddingWindow.cost:GetText()..perc..")", "RAID_WARNING")
@@ -641,7 +649,8 @@ local function ToggleTimerBtn(self)
 
 	if timerToggle == 0 then
 		--if not IsInRaid() then MonDKP:Print("You are not in a raid.") return false end
-		if (mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid")) and (not core.BiddingWindow.item:GetText() or core.BiddingWindow.minBid:GetText() == "") then MonDKP:Print(L["NOMINBIDORITEM"]) return false end
+		if (mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid")) and (not core.BiddingWindow.item:GetText() or core.BiddingWindow.minBid:GetText() == "" or core.BiddingWindow.maxBid:GetText() == "") then MonDKP:Print(L["NOMINBIDORITEM"]) return false end
+    if (mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid")) and ((core.BiddingWindow.maxBid:GetNumber() ~= 0) and (core.BiddingWindow.minBid:GetNumber() > core.BiddingWindow.maxBid:GetNumber())) then MonDKP:Print(L["MAXGTMIN"]) return false end
 		if (mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static")) and (not core.BiddingWindow.item:GetText() or core.BiddingWindow.cost:GetText() == "") then MonDKP:Print(L["NOITEMORITEMCOST"]) return false end
 		if mode == "Roll Based Bidding" and (not core.BiddingWindow.item:GetText() or core.BiddingWindow.cost:GetText() == "") then MonDKP:Print(L["NOITEMORITEMCOST"]) return false end
 
@@ -668,6 +677,7 @@ function ClearBidWindow()
 	end
 	core.BiddingWindow.cost:SetText("")
 	core.BiddingWindow.CustomMinBid:Hide();
+
 	core.BiddingWindow.ItemTooltipButton:SetSize(0,0)
 	BidScrollFrame_Update()
 	UpdateBidWindow()
@@ -704,6 +714,9 @@ function ClearBidWindow()
 	timerToggle = 0;
 	if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
 		core.BiddingWindow.minBid:SetText("")
+    core.BiddingWindow.CustomMaxBid:Hide();
+    core.BiddingWindow.maxBid:ClearFocus();
+    core.BiddingWindow.maxBid:SetText("")
 	end
 	for i=1, numrows do
 		core.BiddingWindow.bidTable.Rows[i]:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
