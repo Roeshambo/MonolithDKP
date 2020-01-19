@@ -20,7 +20,6 @@ function MonDKP:DKPModes_Main()
 	local StaticDescription = L["STATICDESCRIPTION"]
 	local RollDescription = L["ROLLDESCRIPTION"]
 	local ZeroSumDescription = L["ZEROSUMDESCRIPTION"];
-  local HybridBidDescription = L["HYBRIDBIDDESCRIPTION"];
 
 	if MonDKP_DB.modes.mode == "Minimum Bid Values" then
 		f.DKPModesMain.ModeDescriptionHeader:SetText(L["MINBIDVALUESHEAD"])
@@ -34,9 +33,6 @@ function MonDKP:DKPModes_Main()
 	elseif MonDKP_DB.modes.mode == "Zero Sum" then
 		f.DKPModesMain.ModeDescriptionHeader:SetText(L["ZEROSUMHEAD"])
 		f.DKPModesMain.ModeDescription:SetText(ZeroSumDescription)
-	elseif MonDKP_DB.modes.mode == "Hybrid Bid" then
-		f.DKPModesMain.ModeDescriptionHeader:SetText(L["HYBRIDBIDHEAD"])
-		f.DKPModesMain.ModeDescription:SetText(HybridBidDescription)
 	end
 
 	-- Mode DROPDOWN box 
@@ -51,8 +47,6 @@ function MonDKP:DKPModes_Main()
 		LocalMode = L["ROLLBIDDINGHEAD"]
 	elseif CurMode == "Zero Sum" then
 		LocalMode = L["ZEROSUMHEAD"]
-	elseif CurMode == "Hybrid Bid" then
-		LocalMode = L["HYBRIDBIDHEAD"]
 	end
 
 
@@ -71,8 +65,6 @@ function MonDKP:DKPModes_Main()
 		UIDropDownMenu_AddButton(DKPMode)
 		DKPMode.text, DKPMode.arg1, DKPMode.checked, DKPMode.isNotRadio = L["ZEROSUMHEAD"], "Zero Sum", "Zero Sum" == CurMode, false
     UIDropDownMenu_AddButton(DKPMode)
-		DKPMode.text, DKPMode.arg1, DKPMode.checked, DKPMode.isNotRadio = L["HYBRIDBIDHEAD"], "Hybrid Bid", "Hybrid Bid" == CurMode, false
-		UIDropDownMenu_AddButton(DKPMode)
 	end)
 
 	f.DKPModesMain.ModesDropDown:SetPoint("TOPLEFT", f.DKPModesMain, "TOPLEFT", 10, -200)
@@ -90,8 +82,8 @@ function MonDKP:DKPModes_Main()
 			f.DKPModesMain.ModeDescription:SetText(MinBidDescription)
 			f.DKPModesMain.ItemCostDropDown:Hide();
 			f.DKPModesMain.ItemCostHeader:Hide();
-			f.DKPModesMain.MaxBid:Show();
-			f.DKPModesMain.MaxBid.Header:Show();
+			f.DKPModesMain.MaxBid:Hide();
+			f.DKPModesMain.MaxBid.Header:Hide();
 			MonDKP_DB.modes.costvalue = "Integer";
 			UIDropDownMenu_SetText(f.DKPModesMain.ItemCostDropDown, "Integer")
 			f.DKPModesMain.SubZeroBidding:Show();
@@ -177,8 +169,8 @@ function MonDKP:DKPModes_Main()
 				f.DKPModesMain.CostSelection:Hide()
 				f.DKPModesMain.CostSelectionHeader:Hide()
 			else
-				f.DKPModesMain.MaxBid:Show()
-				f.DKPModesMain.MaxBid.Header:Show();
+				f.DKPModesMain.MaxBid:Hide()
+				f.DKPModesMain.MaxBid.Header:Hide();
 				f.DKPModesMain.CostSelection:Show()
 				f.DKPModesMain.CostSelectionHeader:Show()
 				f.DKPModesMain.SubZeroBidding:Show()
@@ -663,17 +655,12 @@ function MonDKP:DKPModes_Main()
 	    end
     end)
 
-    -- Min Roll Header
+    -- Max Bid Header
     f.DKPModesMain.MaxBid.Header = f.DKPModesMain.MaxBid:CreateFontString(nil, "OVERLAY")
     f.DKPModesMain.MaxBid.Header:SetFontObject("MonDKPNormalLeft");
     f.DKPModesMain.MaxBid.Header:SetPoint("BOTTOM", f.DKPModesMain.MaxBid, "TOP", -8, 2);
     f.DKPModesMain.MaxBid.Header:SetText(L["MAXIMUMBID"])
 
-
-    if MonDKP_DB.modes.mode == "Minimum Bid Values" or (MonDKP_DB.modes.mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
-		f.DKPModesMain.MaxBid:Show();
-		f.DKPModesMain.MaxBid.Header:Show();
-	end
 
 	-- Sub Zero Bidding Checkbox
 	f.DKPModesMain.SubZeroBidding = CreateFrame("CheckButton", nil, f.DKPModesMain, "UICheckButtonTemplate");
@@ -1003,6 +990,10 @@ function MonDKP:DKPModes_Main()
 	            table.insert(temptable2, MonDKP_DB.MinBidBySlot)
 	            table.insert(temptable2, MonDKP_MinBids)
 	            MonDKP.Sync:SendData("MonDKPMinBid", temptable2)
+        local temptable3 = {}
+	            table.insert(temptable3, MonDKP_DB.MaxBidBySlot)
+	            table.insert(temptable3, MonDKP_MaxBids)
+	            MonDKP.Sync:SendData("MonDKPMaxBid", temptable3)
 			end,
 			timeout = 0,
 			whileDead = true,

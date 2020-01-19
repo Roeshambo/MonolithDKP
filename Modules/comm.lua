@@ -52,6 +52,7 @@ function MonDKP.Sync:OnEnable()
 	MonDKP.Sync:RegisterComm("MonDKPDelSync", MonDKP.Sync:OnCommReceived())			-- broadcasts deleated DKP history entries
 	MonDKP.Sync:RegisterComm("MonDKPDKPDist", MonDKP.Sync:OnCommReceived())			-- broadcasts individual DKP award to DKP history table
 	MonDKP.Sync:RegisterComm("MonDKPMinBid", MonDKP.Sync:OnCommReceived())			-- broadcasts minimum dkp values (set in Options tab or custom values in bid window)
+  MonDKP.Sync:RegisterComm("MonDKPMaxBid", MonDKP.Sync:OnCommReceived())			-- broadcasts maximum dkp values (set in Options tab or custom values in bid window)
 	MonDKP.Sync:RegisterComm("MonDKPWhitelist", MonDKP.Sync:OnCommReceived())			-- broadcasts whitelist
 	MonDKP.Sync:RegisterComm("MonDKPDKPModes", MonDKP.Sync:OnCommReceived())			-- broadcasts DKP Mode settings
 	MonDKP.Sync:RegisterComm("MonDKPStand", MonDKP.Sync:OnCommReceived())				-- broadcasts standby list
@@ -671,6 +672,19 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 										MonDKP_MinBids[search[1][1]].minbid = deserialized[2][i].minbid
 									else
 										table.insert(MonDKP_MinBids, deserialized[2][i])
+									end
+								end
+							end
+            elseif prefix == "MonDKPMaxBid" then
+							if core.IsOfficer then
+								MonDKP_DB.MaxBidBySlot = deserialized[1]
+
+								for i=1, #deserialized[2] do
+									local search = MonDKP:Table_Search(MonDKP_MaxBids, deserialized[2][i].item)
+									if search then
+										MonDKP_MaxBids[search[1][1]].maxbid = deserialized[2][i].maxbid
+									else
+										table.insert(MonDKP_MaxBids, deserialized[2][i])
 									end
 								end
 							end

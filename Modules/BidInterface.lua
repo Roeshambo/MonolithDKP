@@ -228,7 +228,11 @@ function MonDKP:BidInterface_Toggle()
 	if core.BidInterface:IsShown() then core.BidInterface:Hide(); end
 	if MonDKP.BidTimer.OpenBid and MonDKP.BidTimer.OpenBid:IsShown() then MonDKP.BidTimer.OpenBid:Hide() end
 	if MonDKP_DB.modes.BroadcastBids and not core.BiddingWindow then
-		core.BidInterface:SetHeight(504);
+    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+      core.BidInterface:SetHeight(532);
+    else
+      core.BidInterface:SetHeight(504);
+    end
 		core.BidInterface.bidTable:Show();
 		for k, v in pairs(f.headerButtons) do
 			v:SetHighlightTexture("Interface\\BUTTONS\\BlueGrad64_faded.blp");
@@ -301,10 +305,18 @@ function MonDKP:BidInterface_Toggle()
 	end
 
 	if not MonDKP_DB.modes.BroadcastBids or core.BiddingWindow then
-		core.BidInterface:SetHeight(231);
+    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+      core.BidInterface:SetHeight(259);
+    else
+      core.BidInterface:SetHeight(231);
+    end
 		core.BidInterface.bidTable:Hide();
 	else
-		core.BidInterface:SetHeight(504);
+    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+      core.BidInterface:SetHeight(532);
+    else
+      core.BidInterface:SetHeight(504);
+    end
 		core.BidInterface.bidTable:Show();
 	end	
 
@@ -385,10 +397,18 @@ function MonDKP:CurrItem_Set(item, value, icon)
 	end
 
 	if not MonDKP_DB.modes.BroadcastBids or core.BidInProgress then
-		core.BidInterface:SetHeight(231);
+    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+      core.BidInterface:SetHeight(259);
+    else
+      core.BidInterface:SetHeight(231);
+    end
 		core.BidInterface.bidTable:Hide();
 	else
-		core.BidInterface:SetHeight(504);
+    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+      core.BidInterface:SetHeight(532);
+    else
+      core.BidInterface:SetHeight(504);
+    end
 		core.BidInterface.bidTable:Show();
 	end
 end
@@ -419,9 +439,13 @@ end
 
 function MonDKP:BidInterface_Create()
 	local f = CreateFrame("Frame", "MonDKP_BidderWindow", UIParent, "ShadowOverlaySmallTemplate");
-
+  local mode = MonDKP_DB.modes.mode;
 	f:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 700, -200);
-	f:SetSize(400, 504);
+  if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+    f:SetSize(400, 532);
+  else
+    f:SetSize(400, 504);
+  end
 	f:SetClampedToScreen(true)
 	f:SetBackdrop( {
 		bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
@@ -437,16 +461,16 @@ function MonDKP:BidInterface_Create()
 	f:RegisterForDrag("LeftButton");
 	f:SetScript("OnDragStart", f.StartMoving);
 	f:SetScript("OnDragStop", function()
-		f:StopMovingOrSizing();
-		local point, relativeTo, relativePoint ,xOff,yOff = f:GetPoint(1)
-		if not MonDKP_DB.bidintpos then
-			MonDKP_DB.bidintpos = {}
-		end
-		MonDKP_DB.bidintpos.point = point;
-		MonDKP_DB.bidintpos.relativeTo = relativeTo;
-		MonDKP_DB.bidintpos.relativePoint = relativePoint;
-		MonDKP_DB.bidintpos.x = xOff;
-		MonDKP_DB.bidintpos.y = yOff;
+    f:StopMovingOrSizing();
+    local point, relativeTo, relativePoint, xOff, yOff = f:GetPoint(1)
+    if not MonDKP_DB.bidintpos then
+      MonDKP_DB.bidintpos = {}
+    end
+    MonDKP_DB.bidintpos.point = point;
+    MonDKP_DB.bidintpos.relativeTo = relativeTo;
+    MonDKP_DB.bidintpos.relativePoint = relativePoint;
+    MonDKP_DB.bidintpos.x = xOff;
+    MonDKP_DB.bidintpos.y = yOff;
 	end);
 	f:SetScript("OnMouseDown", function(self)
 		self:SetFrameLevel(10)
@@ -519,11 +543,28 @@ function MonDKP:BidInterface_Create()
 	f.MinBid:SetPoint("LEFT", f.MinBidHeader, "RIGHT", 8, 0);
 	f.MinBid:SetSize(200, 28)
 
-    f.BidHeader = f:CreateFontString(nil, "OVERLAY")
+  if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+    f.MaxBidHeader = f:CreateFontString(nil, "OVERLAY")
+    f.MaxBidHeader:SetFontObject("MonDKPLargeRight");
+    f.MaxBidHeader:SetScale(0.7)
+    f.MaxBidHeader:SetPoint("TOPRIGHT", f.MinBidHeader, "BOTTOMRIGHT", 0, -20);
+    f.MaxBidHeader:SetText(L["MAXIMUMBID"]..":")
+
+    f.MaxBid = f:CreateFontString(nil, "OVERLAY")
+    f.MaxBid:SetFontObject("MonDKPNormalLeft");
+    f.MaxBid:SetPoint("LEFT", f.MaxBidHeader, "RIGHT", 8, 0);
+    f.MaxBid:SetSize(200, 28)
+  end
+
+  f.BidHeader = f:CreateFontString(nil, "OVERLAY")
 	f.BidHeader:SetFontObject("MonDKPLargeRight");
 	f.BidHeader:SetScale(0.7)
 	f.BidHeader:SetText(L["BID"]..":")
-	f.BidHeader:SetPoint("TOPRIGHT", f.MinBidHeader, "BOTTOMRIGHT", 0, -20);
+  if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+    f.BidHeader:SetPoint("TOPRIGHT", f.MaxBidHeader, "BOTTOMRIGHT", 0, -20);
+  else
+    f.BidHeader:SetPoint("TOPRIGHT", f.MinBidHeader, "BOTTOMRIGHT", 0, -20);
+  end
 
 	f.Bid = CreateFrame("EditBox", nil, f)
 	f.Bid:SetPoint("LEFT", f.BidHeader, "RIGHT", 8, 0)   
@@ -729,7 +770,11 @@ function MonDKP:BidInterface_Create()
 
 	if not MonDKP_DB.modes.BroadcastBids then
 		f.bidTable:Hide();
-		f:SetHeight(231);
+    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+      core.BidInterface:SetHeight(259);
+    else
+      core.BidInterface:SetHeight(231);
+    end
 	end; 		--hides table if broadcasting is set to false.
 
 	f:Hide();

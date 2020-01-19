@@ -451,35 +451,36 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	SlashCmdList.MonolithDKP = HandleSlashCommands;
 
 	--[[SLASH_RELOADUI1 = "/rl"; -- new slash command for reloading UI 				-- for debugging
-	SlashCmdList.RELOADUI = ReloadUI;
+	SlashCmdList.RELOADUI = ReloadUI;--]]
 
 	SLASH_FRAMESTK1 = "/fs"; -- new slash command for showing framestack tool
 	SlashCmdList.FRAMESTK = function()
 		LoadAddOn("Blizzard_DebugTools");
 		FrameStackTooltip_Toggle();
-	end--]]
+	end
 
     if(event == "ADDON_LOADED") then
     	core.Initialized = false
     	core.InitStart = false
     	core.IsOfficer = nil
-		C_Timer.After(5, function ()
+      C_Timer.After(5, function ()
 			core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();		-- creates main menu after 5 seconds (trying to initialize after raid frames are loaded)
-		end)
+      end)
     	if not MonDKP_DKPTable then MonDKP_DKPTable = {} end;
-		if not MonDKP_Loot then MonDKP_Loot = {} end;
-		if not MonDKP_DKPHistory then MonDKP_DKPHistory = {} end;
-		if not MonDKP_MinBids then MonDKP_MinBids = {} end;
-		if not MonDKP_Whitelist then MonDKP_Whitelist = {} end;
-		if not MonDKP_Standby then MonDKP_Standby = {} end;
-		if not MonDKP_Archive then MonDKP_Archive = {} end;
-		if not MonDKP_DB then MonDKP_DB = {} end
-		if not MonDKP_DB.DKPBonus or not MonDKP_DB.DKPBonus.OnTimeBonus then
-			MonDKP_DB.DKPBonus = {
+      if not MonDKP_Loot then MonDKP_Loot = {} end;
+      if not MonDKP_DKPHistory then MonDKP_DKPHistory = {} end;
+      if not MonDKP_MinBids then MonDKP_MinBids = {} end;
+      if not MonDKP_MaxBids then MonDKP_MaxBids = {} end;
+      if not MonDKP_Whitelist then MonDKP_Whitelist = {} end;
+      if not MonDKP_Standby then MonDKP_Standby = {} end;
+      if not MonDKP_Archive then MonDKP_Archive = {} end;
+      if not MonDKP_DB then MonDKP_DB = {} end
+      if not MonDKP_DB.DKPBonus or not MonDKP_DB.DKPBonus.OnTimeBonus then
+        MonDKP_DB.DKPBonus = {
     			OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, DecayPercentage = 20, GiveRaidStart = false, IncStandby = false,
     		}
-		end
-		if not MonDKP_DB.defaults or not MonDKP_DB.defaults.HistoryLimit then
+      end
+      if not MonDKP_DB.defaults or not MonDKP_DB.defaults.HistoryLimit then
 			MonDKP_DB.defaults = {
     			HistoryLimit = 2500, DKPHistoryLimit = 2500, BidTimerSize = 1.0, MonDKPScaleSize = 1.0, supressNotifications = false, TooltipHistoryCount = 15, SupressTells = true,
     		}
@@ -497,6 +498,11 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_DB.raiders then MonDKP_DB.raiders = {} end
 		if not MonDKP_DB.MinBidBySlot or not MonDKP_DB.MinBidBySlot.Head then
 			MonDKP_DB.MinBidBySlot = {
+    			Head = 5, Neck = 5, Shoulders = 5, Cloak = 5, Chest = 5, Bracers = 5, Hands = 5, Belt = 5, Legs = 5, Boots = 5, Ring = 5, Trinket = 5, OneHanded = 5, TwoHanded = 5, OffHand = 5, Range = 5, Other = 5,
+    		}
+    	end
+		if not MonDKP_DB.MaxBidBySlot or not MonDKP_DB.MaxBidBySlot.Head then
+			MonDKP_DB.MaxBidBySlot = {
     			Head = 70, Neck = 70, Shoulders = 70, Cloak = 70, Chest = 70, Bracers = 70, Hands = 70, Belt = 70, Legs = 70, Boots = 70, Ring = 70, Trinket = 70, OneHanded = 70, TwoHanded = 70, OffHand = 70, Range = 70, Other = 70,
     		}
     	end
