@@ -285,7 +285,13 @@ function MonDKP:DKPModes_Main()
   -- Dropdown Menu Function
   function f.DKPModesMain.MaxBidBehaviorDropDown:SetValue(newValue)
     MonDKP_DB.modes.MaxBehavior = newValue;
-    UIDropDownMenu_SetText(f.DKPModesMain.MaxBidBehaviorDropDown, newValue)
+    if newValue == "Max DKP" then
+      UIDropDownMenu_SetText(f.DKPModesMain.MaxBidBehaviorDropDown, L["MAXBIDBEHAVIORMAXDKP"])
+    elseif newValue == "Max Item Value" then
+      UIDropDownMenu_SetText(f.DKPModesMain.MaxBidBehaviorDropDown, L["MAXBIDBEHAVIORMAXITEMVALUE"])
+    else
+      UIDropDownMenu_SetText(f.DKPModesMain.MaxBidBehaviorDropDown, L["MAXBIDBEHAVIORMIN"])
+    end
     CloseDropDownMenus()
   end
 
