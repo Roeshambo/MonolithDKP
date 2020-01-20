@@ -475,7 +475,7 @@ if GetLocale() == "deDE" then
     NOFILTER = "Kein Filter",
     NOGUILD = "Keine Gilde",
     NOITEMORITEMCOST = "Keine Artikelkosten und / oder Artikel zum Bieten!",
-    NOMINBIDORITEM = "Kein Mindestgebot und / oder Gegenstand zum Bieten!",
+    NOMINBIDORITEM = "Kein Mindest- / Höchstgebot und / oder Gegenstand zum Bieten!",
     NONE = "Keiner",
     NOOFFICERSONLINE = "Derzeit sind keine Offiziere für die Synchronisierung verfügbar. (Offline oder kürzlich synchronisiert)",
     NOPARTYORRAID = "Sie sind nicht in einer Partei oder in einem Überfall.",
