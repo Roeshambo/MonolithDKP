@@ -270,11 +270,11 @@ function MonDKP:DKPModes_Main()
   local MaxBehavior = UIDropDownMenu_CreateInfo()
     MaxBehavior.func = self.SetValue
     MaxBehavior.fontObject = "MonDKPSmallCenter"
-    MaxBehavior.text, MaxBehavior.arg1, MaxBehavior.checked, MaxBehavior.isNotRadio = "Max DKP", "Max DKP", "Max DKP" == MonDKP_DB.modes.MaxBehavior, false
+    MaxBehavior.text, MaxBehavior.arg1, MaxBehavior.checked, MaxBehavior.isNotRadio = L["MAXBIDBEHAVIORMAXDKP"], "Max DKP", "Max DKP" == MonDKP_DB.modes.MaxBehavior, false
     UIDropDownMenu_AddButton(MaxBehavior)
-    MaxBehavior.text, MaxBehavior.arg1, MaxBehavior.checked, MaxBehavior.isNotRadio = "Max Item Value", "Max Item Value", "Max Item Value" == MonDKP_DB.modes.MaxBehavior, false
+    MaxBehavior.text, MaxBehavior.arg1, MaxBehavior.checked, MaxBehavior.isNotRadio = L["MAXBIDBEHAVIORMAXITEMVALUE"], "Max Item Value", "Max Item Value" == MonDKP_DB.modes.MaxBehavior, false
     UIDropDownMenu_AddButton(MaxBehavior)
-    MaxBehavior.text, MaxBehavior.arg1, MaxBehavior.checked, MaxBehavior.isNotRadio = "Min(Max DKP, Max Item Value)", "Min(Max DKP, Max Item Value)", "Min(Max DKP, Max Item Value)" == MonDKP_DB.modes.MaxBehavior, false
+    MaxBehavior.text, MaxBehavior.arg1, MaxBehavior.checked, MaxBehavior.isNotRadio = L["MAXBIDBEHAVIORMIN"], "Min(Max DKP, Max Item Value)", "Min(Max DKP, Max Item Value)" == MonDKP_DB.modes.MaxBehavior, false
     UIDropDownMenu_AddButton(MaxBehavior)
   end)
 
