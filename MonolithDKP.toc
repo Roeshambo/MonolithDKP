@@ -1,9 +1,8 @@
 ## Interface: 11303
-## Title: M|cffaeaeddonolith|r |cffff0000DKP|r |c00ff0000DEVEL|r
+## Title: M|cffaeaeddonolith|r |cffff0000DKP|r
 ## Author: Roeshambo-Stalagg
-#  Contributors: Danteril-Mirage Raceway
 ## Notes: Comprehensive DKP and raid management utility.
-## Version: 2.1.3
+## Version: 2.3.0
 ## DefaultState: enabled
 ## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_DKPHistory, MonDKP_MinBids, MonDKP_MaxBids, MonDKP_Whitelist, MonDKP_Standby, MonDKP_Archive
 
