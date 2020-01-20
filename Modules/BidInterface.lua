@@ -730,28 +730,28 @@ function MonDKP:BidInterface_Create()
 	--------------------------------------------------
 	-- Bid Table
 	--------------------------------------------------
-    f.bidTable = CreateFrame("ScrollFrame", "MonDKP_BiderWindowTable", f, "FauxScrollFrameTemplate")
-    f.bidTable:SetSize(width, height*numrows+3)
+  f.bidTable = CreateFrame("ScrollFrame", "MonDKP_BiderWindowTable", f, "FauxScrollFrameTemplate")
+  f.bidTable:SetSize(width, height*numrows+3)
 	f.bidTable:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
 		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
 	});
 	f.bidTable:SetBackdropColor(0,0,0,0.2)
 	f.bidTable:SetBackdropBorderColor(1,1,1,0.4)
-    f.bidTable.ScrollBar = FauxScrollFrame_GetChildFrames(f.bidTable)
-    f.bidTable.ScrollBar:Hide()
-    f.bidTable.Rows = {}
-    for i=1, numrows do
-        f.bidTable.Rows[i] = BidWindowCreateRow(f.bidTable, i)
-        if i==1 then
-        	f.bidTable.Rows[i]:SetPoint("TOPLEFT", f.bidTable, "TOPLEFT", 0, -3)
-        else	
-        	f.bidTable.Rows[i]:SetPoint("TOPLEFT", f.bidTable.Rows[i-1], "BOTTOMLEFT")
-        end
-    end
-    f.bidTable:SetScript("OnVerticalScroll", function(self, offset)
-        FauxScrollFrame_OnVerticalScroll(self, offset, height, BidderScrollFrame_Update)
-    end)
+  f.bidTable.ScrollBar = FauxScrollFrame_GetChildFrames(f.bidTable)
+  f.bidTable.ScrollBar:Hide()
+  f.bidTable.Rows = {}
+  for i=1, numrows do
+      f.bidTable.Rows[i] = BidWindowCreateRow(f.bidTable, i)
+      if i==1 then
+      	f.bidTable.Rows[i]:SetPoint("TOPLEFT", f.bidTable, "TOPLEFT", 0, -3)
+      else	
+      	f.bidTable.Rows[i]:SetPoint("TOPLEFT", f.bidTable.Rows[i-1], "BOTTOMLEFT")
+      end
+  end
+  f.bidTable:SetScript("OnVerticalScroll", function(self, offset)
+      FauxScrollFrame_OnVerticalScroll(self, offset, height, BidderScrollFrame_Update)
+  end)
 
 	---------------------------------------
 	-- Header Buttons
@@ -798,9 +798,9 @@ function MonDKP:BidInterface_Create()
 	if not MonDKP_DB.modes.BroadcastBids then
 		f.bidTable:Hide();
     if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
-      core.BidInterface:SetHeight(259);
+      f:SetHeight(259);
     else
-      core.BidInterface:SetHeight(231);
+      f:SetHeight(231);
     end
 	end; 		--hides table if broadcasting is set to false.
 
