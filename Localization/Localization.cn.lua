@@ -403,7 +403,7 @@ if GetLocale() == "zhCN" then
     MANUALLYDENIED = "已被拒絕。",
     MAX = "最高",
     MAXBIDBEHAVIOR = "最高出价按钮行为",
-    MAXBIDBEHAVIORTTDESC = "选择在出价会话期间的最高出价按钮行为。\n\n|CFFFF0000最大DKP|r: 这会将出价值设置为当前用户DKP。\n\n|CFFFF0000最大物品价值|r: 这会将出价值设置为当前项目值。 \n\n|CFFFF0000min(最大DKP, 最大物品价值)|r: 这会将值设置为上述两个中的较小者。",
+    MAXBIDBEHAVIORTTDESC = "选择在出价会话期间的最高出价按钮行为。\n\n|CFFFF0000最大DKP|r: 这会将出价值设置为当前用户DKP。\n\n|CFFFF0000最大物品价值|r: 这会将出价值设置为当前项目值。 \n\n|CFFFF0000极少(最大DKP, 最大物品价值)|r: 这会将值设置为上述两个中的较小者。",
     MAXBIDTTDESC = "可接受的最高出价。",
     MAXBIDTTEXT = "如果输入的值不是“选项”中设置的值，则将为该特定项目存储该自定义值。",
     MAXBIDTTWARN = "可以在“选项”选项卡中设置默认值。",
