@@ -258,6 +258,12 @@ function MonDKP:BidInterface_Toggle()
         end
         
       end
+    else
+      if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+        core.BidInterface:SetHeight(259);
+      else
+        core.BidInterface:SetHeight(231);
+      end
     end
 
     if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
