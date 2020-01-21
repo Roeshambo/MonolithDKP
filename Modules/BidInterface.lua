@@ -256,13 +256,6 @@ function MonDKP:BidInterface_Toggle()
             v:Show();
           end
         end
-        
-      end
-    else
-      if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
-        core.BidInterface:SetHeight(259);
-      else
-        core.BidInterface:SetHeight(231);
       end
     end
 
@@ -285,6 +278,12 @@ function MonDKP:BidInterface_Toggle()
     elseif mode == "Roll Based Bidding" then
       f.headerButtons.dkp.t:SetText(L["EXPECTEDROLL"])
       f.headerButtons.dkp.t:Show();
+    end
+  elseif not core.BiddingWindow then
+    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+      core.BidInterface:SetHeight(259);
+    else
+      core.BidInterface:SetHeight(231);
     end
   end
 
