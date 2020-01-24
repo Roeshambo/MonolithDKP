@@ -279,12 +279,6 @@ function MonDKP:BidInterface_Toggle()
       f.headerButtons.dkp.t:SetText(L["EXPECTEDROLL"])
       f.headerButtons.dkp.t:Show();
     end
-  elseif not core.BiddingWindow then
-    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
-      core.BidInterface:SetHeight(259);
-    else
-      core.BidInterface:SetHeight(231);
-    end
   end
 
   if MonDKP_DB.modes.BroadcastBids then
@@ -310,14 +304,14 @@ function MonDKP:BidInterface_Toggle()
   end
 
   if not MonDKP_DB.modes.BroadcastBids or core.BiddingWindow then
-    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+    if MonDKP_DB.modes.mode == "Minimum Bid Values" or (MonDKP_DB.modes.mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
       core.BidInterface:SetHeight(259);
     else
       core.BidInterface:SetHeight(231);
     end
     core.BidInterface.bidTable:Hide();
   else
-    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+    if MonDKP_DB.modes.mode == "Minimum Bid Values" or (MonDKP_DB.modes.mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
       core.BidInterface:SetHeight(532);
     else
       core.BidInterface:SetHeight(504);
@@ -410,14 +404,14 @@ function MonDKP:CurrItem_Set(item, value, value2, icon)
   end
 
   if not MonDKP_DB.modes.BroadcastBids or core.BidInProgress then
-    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+    if MonDKP_DB.modes.mode == "Minimum Bid Values" or (MonDKP_DB.modes.mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
       core.BidInterface:SetHeight(259);
     else
       core.BidInterface:SetHeight(231);
     end
     core.BidInterface.bidTable:Hide();
   else
-    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+    if MonDKP_DB.modes.mode == "Minimum Bid Values" or (MonDKP_DB.modes.mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
       core.BidInterface:SetHeight(532);
     else
       core.BidInterface:SetHeight(504);
