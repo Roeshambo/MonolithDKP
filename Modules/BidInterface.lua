@@ -63,72 +63,72 @@ local function RollMinMax_Get()
 end
 
 local function UpdateBidderWindow()
-  local i = 1;
-  local mode = MonDKP_DB.modes.mode;
-  local _,_,_,_,_,_,_,_,_,icon = GetItemInfo(CurrItemForBid)
+	local i = 1;
+	local mode = MonDKP_DB.modes.mode;
+	local _,link,_,_,_,_,_,_,_,icon = GetItemInfo(CurrItemForBid)
 
-  if not core.BidInterface then
-    core.BidInterface = core.BidInterface or MonDKP:BidInterface_Create()
-  end
+	if not core.BidInterface then
+		core.BidInterface = core.BidInterface or MonDKP:BidInterface_Create()
+	end
 
-  for j=2, 10 do
-    core.BidInterface.LootTableIcons[j]:Hide()
-    core.BidInterface.LootTableButtons[j]:Hide();
-  end
-  core.BidInterface.lootContainer:SetSize(35, 35)
+	for j=2, 10 do
+		core.BidInterface.LootTableIcons[j]:Hide()
+		core.BidInterface.LootTableButtons[j]:Hide();
+	end
+	core.BidInterface.lootContainer:SetSize(35, 35)
 
-  for k,v in pairs(lootTable) do
-    core.BidInterface.LootTableIcons[i]:SetTexture(tonumber(v.icon))
-    core.BidInterface.LootTableIcons[i]:Show()
-    core.BidInterface.LootTableButtons[i]:Show();
-    core.BidInterface.LootTableButtons[i]:SetScript("OnEnter", function(self)
-      GameTooltip:SetOwner(self:GetParent(), "ANCHOR_BOTTOMRIGHT", 0, 500);
-      GameTooltip:SetHyperlink(v.link)
-    end)
-    core.BidInterface.LootTableButtons[i]:SetScript("OnLeave", function(self)
-      GameTooltip:Hide();
-    end)
-    if tonumber(v.icon) == icon then
-      ActionButton_ShowOverlayGlow(core.BidInterface.LootTableButtons[i])
-    else
-      ActionButton_HideOverlayGlow(core.BidInterface.LootTableButtons[i])
-    end
-    i = i+1
-  end
+	for k,v in pairs(lootTable) do
+		core.BidInterface.LootTableIcons[i]:SetTexture(tonumber(v.icon))
+		core.BidInterface.LootTableIcons[i]:Show()
+		core.BidInterface.LootTableButtons[i]:Show();
+		core.BidInterface.LootTableButtons[i]:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self:GetParent(), "ANCHOR_BOTTOMRIGHT", 0, 500);
+			GameTooltip:SetHyperlink(v.link)
+		end)
+		core.BidInterface.LootTableButtons[i]:SetScript("OnLeave", function(self)
+			GameTooltip:Hide();
+		end)
+		if tonumber(v.icon) == icon and v.link == link then
+			ActionButton_ShowOverlayGlow(core.BidInterface.LootTableButtons[i])
+		else
+			ActionButton_HideOverlayGlow(core.BidInterface.LootTableButtons[i])
+		end
+		i = i+1
+	end
 
-  if i==1 then
-    core.BidInterface.lootContainer:SetSize(35, 35)
-  else
-    i = i-1
-    core.BidInterface.lootContainer:SetSize(43*i, 35)
-  end
+	if i==1 then
+		core.BidInterface.lootContainer:SetSize(35, 35)
+	else
+		i = i-1
+		core.BidInterface.lootContainer:SetSize(43*i, 35)
+	end
 
-  if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
-    core.BidInterface.MinBidHeader:SetText(L["MINIMUMBID"]..":")
-    core.BidInterface.SubmitBid:SetPoint("LEFT", core.BidInterface.Bid, "RIGHT", 8, 0)
-    core.BidInterface.SubmitBid:SetText(L["SUBMITBID"])
-    core.BidInterface.Bid:Show();
-    core.BidInterface.CancelBid:Show();
-    core.BidInterface.Pass:Show();
-  elseif mode == "Roll Based Bidding" then
-    core.BidInterface.MinBidHeader:SetText(L["ITEMCOST"]..":")
-    core.BidInterface.SubmitBid:SetPoint("LEFT", core.BidInterface.BidHeader, "RIGHT", 8, 0)
-    core.BidInterface.SubmitBid:SetText(L["ROLL"])
-    core.BidInterface.Bid:Hide();
-    core.BidInterface.CancelBid:Hide();
-    core.BidInterface.Pass:Hide();
-  else
-    core.BidInterface.MinBidHeader:SetText(L["ITEMCOST"]..":")
-    core.BidInterface.SubmitBid:SetPoint("LEFT", core.BidInterface.BidHeader, "RIGHT", 8, 0)
-    core.BidInterface.SubmitBid:SetText(L["SUBMITBID"])
-    core.BidInterface.Bid:Hide();
-    core.BidInterface.CancelBid:Show();
-    core.BidInterface.Pass:Show();
-  end
+	if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+		core.BidInterface.MinBidHeader:SetText(L["MINIMUMBID"]..":")
+		core.BidInterface.SubmitBid:SetPoint("LEFT", core.BidInterface.Bid, "RIGHT", 8, 0)
+		core.BidInterface.SubmitBid:SetText(L["SUBMITBID"])
+		core.BidInterface.Bid:Show();
+		core.BidInterface.CancelBid:Show();
+		core.BidInterface.Pass:Show();
+	elseif mode == "Roll Based Bidding" then
+		core.BidInterface.MinBidHeader:SetText(L["ITEMCOST"]..":")
+		core.BidInterface.SubmitBid:SetPoint("LEFT", core.BidInterface.BidHeader, "RIGHT", 8, 0)
+		core.BidInterface.SubmitBid:SetText(L["ROLL"])
+		core.BidInterface.Bid:Hide();
+		core.BidInterface.CancelBid:Hide();
+		core.BidInterface.Pass:Hide();
+	else
+		core.BidInterface.MinBidHeader:SetText(L["ITEMCOST"]..":")
+		core.BidInterface.SubmitBid:SetPoint("LEFT", core.BidInterface.BidHeader, "RIGHT", 8, 0)
+		core.BidInterface.SubmitBid:SetText(L["SUBMITBID"])
+		core.BidInterface.Bid:Hide();
+		core.BidInterface.CancelBid:Show();
+		core.BidInterface.Pass:Show();
+	end
 
 
-  core.BidInterface.item:SetText(CurrItemForBid)
-  core.BidInterface.Boss:SetText(MonDKP_DB.bossargs.LastKilledBoss)
+	core.BidInterface.item:SetText(CurrItemForBid)
+	core.BidInterface.Boss:SetText(MonDKP_DB.bossargs.LastKilledBoss)
 end
 
 function BidInterface_Update()
