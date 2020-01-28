@@ -453,13 +453,13 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	SlashCmdList.MonolithDKP = HandleSlashCommands;
 
 	--[[SLASH_RELOADUI1 = "/rl"; -- new slash command for reloading UI 				-- for debugging
-	SlashCmdList.RELOADUI = ReloadUI;
+	SlashCmdList.RELOADUI = ReloadUI;--]]
 
 	SLASH_FRAMESTK1 = "/fs"; -- new slash command for showing framestack tool
 	SlashCmdList.FRAMESTK = function()
 		LoadAddOn("Blizzard_DebugTools");
 		FrameStackTooltip_Toggle();
-	end--]]
+	end
 
     if(event == "ADDON_LOADED") then
     	core.Initialized = false
@@ -500,6 +500,11 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_DB.MinBidBySlot or not MonDKP_DB.MinBidBySlot.Head then
 			MonDKP_DB.MinBidBySlot = {
     			Head = 70, Neck = 70, Shoulders = 70, Cloak = 70, Chest = 70, Bracers = 70, Hands = 70, Belt = 70, Legs = 70, Boots = 70, Ring = 70, Trinket = 70, OneHanded = 70, TwoHanded = 70, OffHand = 70, Range = 70, Other = 70,
+    		}
+    	end
+    	if not MonDKP_DB.MaxBidBySlot or not MonDKP_DB.MaxBidBySlot.Head then
+			MonDKP_DB.MaxBidBySlot = {
+    			Head = 0, Neck = 0, Shoulders = 0, Cloak = 0, Chest = 0, Bracers = 0, Hands = 0, Belt = 0, Legs = 0, Boots = 0, Ring = 0, Trinket = 0, OneHanded = 0, TwoHanded = 0, OffHand = 0, Range = 0, Other = 0,
     		}
     	end
 		if not MonDKP_DB.bossargs then MonDKP_DB.bossargs = { CurrentRaidZone = "Molten Core", LastKilledBoss = "Lucifron" } end
