@@ -47,8 +47,8 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
 		OptionsLoaded = true;
 	end
 
-	if #MonDKP_Whitelist > 0 and core.IsOfficer then
-		MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP_Whitelist)   -- broadcasts whitelist any time the window is opened if one exists (help ensure everyone has the information even if they were offline when it was created)
+	if #MonDKP_Whitelist > 0 and core.IsOfficer then 				-- broadcasts whitelist any time the window is opened if one exists (help ensure everyone has the information even if they were offline when it was created)
+		MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP_Whitelist)   -- Only officers propagate the whitelist, and it is only accepted by players that are NOT the GM (prevents overwriting new Whitelist set by GM, if any.)
 	end
 
 	if core.CurSubView == "raid" then
@@ -188,9 +188,33 @@ function MonDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable 
 	end
 	table.sort(core.WorkingTable, function(a, b)
 		if button.Ascend then
-			if(id == "dkp") then return a[button.Id] > b[button.Id] else return a[button.Id] < b[button.Id] end
+			if id == "dkp" then
+				return a[button.Id] > b[button.Id]
+			elseif id == "class" or id == "rank" or id == "role" or id == "spec" then
+				if a[button.Id] < b[button.Id] then
+					return true
+				elseif a[button.Id] > b[button.Id] then
+					return false
+				else
+					return a.dkp > b.dkp
+				end
+			else
+				return a[button.Id] < b[button.Id]
+			end
 		else
-			if(id == "dkp") then return a[button.Id] < b[button.Id] else return a[button.Id] > b[button.Id] end
+			if id == "dkp" then
+				return a[button.Id] < b[button.Id]
+			elseif id == "class" or id == "rank" or id == "role" or id == "spec" then
+				if a[button.Id] > b[button.Id] then
+					return true
+				elseif a[button.Id] < b[button.Id] then
+					return false
+				else
+					return a.dkp > b.dkp
+				end
+			else
+				return a[button.Id] > b[button.Id]
+			end
 		end
 	end)
 	core.currentSort = id;

@@ -65,7 +65,7 @@ end
 local function UpdateBidderWindow()
 	local i = 1;
 	local mode = MonDKP_DB.modes.mode;
-	local _,_,_,_,_,_,_,_,_,icon = GetItemInfo(CurrItemForBid)
+	local _,link,_,_,_,_,_,_,_,icon = GetItemInfo(CurrItemForBid)
 
 	if not core.BidInterface then
 		core.BidInterface = core.BidInterface or MonDKP:BidInterface_Create()
@@ -88,7 +88,7 @@ local function UpdateBidderWindow()
 		core.BidInterface.LootTableButtons[i]:SetScript("OnLeave", function(self)
 			GameTooltip:Hide();
 		end)
-		if tonumber(v.icon) == icon then
+		if tonumber(v.icon) == icon and v.link == link then
 			ActionButton_ShowOverlayGlow(core.BidInterface.LootTableButtons[i])
 		else
 			ActionButton_HideOverlayGlow(core.BidInterface.LootTableButtons[i])

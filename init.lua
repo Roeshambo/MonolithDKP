@@ -405,32 +405,34 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			local lootTable = {}
 			local lootList = {};
 
-			for i=1, GetNumLootItems() do
-				if LootSlotHasItem(i) and GetLootSlotLink(i) then
-					local _,link,quality = GetItemInfo(GetLootSlotLink(i))
-					if quality >= 4 then
-						table.insert(lootTable, link)
+			if IsInRaid() then
+				for i=1, GetNumLootItems() do
+					if LootSlotHasItem(i) and GetLootSlotLink(i) then
+						local _,link,quality = GetItemInfo(GetLootSlotLink(i))
+						if quality >= 4 then
+							table.insert(lootTable, link)
+						end
 					end
 				end
-			end
-			local name
-			if not UnitIsFriend("player", "target") and UnitIsDead("target") then
-				name = UnitName("target")  -- sets bidding window name to current target
-			else
-				name = core.LastKilledBoss  -- sets name to last killed boss if no target is available (chests)
-			end
-			lootTable.boss=name
-			MonDKP.Sync:SendData("MonDKPBossLoot", lootTable)
+				local name
+				if not UnitIsFriend("player", "target") and UnitIsDead("target") then
+					name = UnitName("target")  -- sets bidding window name to current target
+				else
+					name = core.LastKilledBoss  -- sets name to last killed boss if no target is available (chests)
+				end
+				lootTable.boss=name
+				MonDKP.Sync:SendData("MonDKPBossLoot", lootTable)
 
-			for i=1, #lootTable do
-				local item = Item:CreateFromItemLink(lootTable[i]);
-				item:ContinueOnItemLoad(function()
-					local icon = item:GetItemIcon()
-					table.insert(lootList, {icon=icon, link=item:GetItemLink()})
-				end);
-			end
+				for i=1, #lootTable do
+					local item = Item:CreateFromItemLink(lootTable[i]);
+					item:ContinueOnItemLoad(function()
+						local icon = item:GetItemIcon()
+						table.insert(lootList, {icon=icon, link=item:GetItemLink()})
+					end);
+				end
 
-			MonDKP:LootTable_Set(lootList)
+				MonDKP:LootTable_Set(lootList)
+			end
 		end
 	end
 end
@@ -439,9 +441,9 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	if (name ~= "MonolithDKP") then return end 
 
 	-- allows using left and right buttons to move through chat 'edit' box
-	for i = 1, NUM_CHAT_WINDOWS do
+	--[[for i = 1, NUM_CHAT_WINDOWS do
 		_G["ChatFrame"..i.."EditBox"]:SetAltArrowKeyMode(false);
-	end
+	end--]]
 	
 	----------------------------------
 	-- Register Slash Commands
