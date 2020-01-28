@@ -6,7 +6,7 @@ local L = core.L;
 local function ZeroSumDistribution()
 	if IsInRaid() and core.IsOfficer then
 		local curTime = time();
-		local distribution;
+		local distribution, balance;
 		local reason = MonDKP_DB.bossargs.CurrentRaidZone..": "..MonDKP_DB.bossargs.LastKilledBoss
 		local players = "";
 		local VerifyTable = {};
@@ -31,7 +31,8 @@ local function ZeroSumDistribution()
 			end
 		end
 
-		distribution = MonDKP_round(MonDKP_DB.modes.ZeroSumBank.balance / #VerifyTable, MonDKP_DB.modes.rounding) + MonDKP_DB.modes.Inflation
+		balance = tonumber(core.ZeroSumBank.Balance:GetText())
+		distribution = MonDKP_round(balance / #VerifyTable, MonDKP_DB.modes.rounding) + MonDKP_DB.modes.Inflation
 
 		for i=1, #VerifyTable do
 			local name = VerifyTable[i]
@@ -179,7 +180,7 @@ function MonDKP:ZeroSumBank_Create()
 	f.Distribute:SetNormalFontObject("MonDKPSmallCenter");
 	f.Distribute:SetHighlightFontObject("MonDKPSmallCenter");
 	f.Distribute:SetScript("OnClick", function (self)
-		if MonDKP_DB.modes.ZeroSumBank.balance > 0 then
+		if MonDKP_DB.modes.ZeroSumBank.balance > 0 or tonumber(f.Balance:GetText()) > 0 then
 			StaticPopupDialogs["CONFIRM_ADJUST1"] = {
 				text = L["DISTRIBUTEALLDKPCONF"],
 				button1 = L["YES"],

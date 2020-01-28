@@ -854,7 +854,7 @@ function MonDKP:DKPTable_Create()
 			local seed
 			if #MonDKP_DKPHistory > 0 and #MonDKP_Loot > 0 then seed = MonDKP_DKPHistory[1].index..","..MonDKP_Loot[1].index else seed = "start" end
 			MonDKP.Sync:SendData("MonDKPQuery", seed) 	-- requests role and spec data and sets current seeds
-			MonDKP_BroadcastFull_Init()
+			MonDKP_BroadcastFull_Init() 	-- launches Broadcast UI
 		end
 	end)
 
