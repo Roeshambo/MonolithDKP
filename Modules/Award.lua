@@ -47,17 +47,18 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 			if search_reassign then
 				local deleted = CopyTable(MonDKP_Loot[search_reassign[1][1]])
 				local reimburse = MonDKP:Table_Search(MonDKP_DKPTable, deleted.player, "player")
-				local newIndex = curOfficer.."-"..curTime-3
+				local newIndex = curOfficer.."-"..curTime-2
 				deleted.cost = deleted.cost * -1
 				deleted.deletes = reassign
 				deleted.index = newIndex
-				deleted.date = curTime-3
+				deleted.date = curTime-2
 				if deleted.bids then
 					bids = CopyTable(deleted.bids);
 					deleted.bids = nil;
 				end
 				MonDKP_Loot[search_reassign[1][1]].deletedby = newIndex
 				MonDKP_DKPTable[reimburse[1][1]].dkp = MonDKP_DKPTable[reimburse[1][1]].dkp + deleted.cost
+				MonDKP_DKPTable[reimburse[1][1]].lifetime_spent = MonDKP_DKPTable[reimburse[1][1]].lifetime_spent + deleted.cost
 				table.insert(MonDKP_Loot, 1, deleted)
 				MonDKP.Sync:SendData("MonDKPDelLoot", MonDKP_Loot[1])
 			end

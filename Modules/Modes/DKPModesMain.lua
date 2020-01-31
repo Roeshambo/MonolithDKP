@@ -82,8 +82,8 @@ function MonDKP:DKPModes_Main()
 			f.DKPModesMain.ModeDescription:SetText(MinBidDescription)
 			f.DKPModesMain.ItemCostDropDown:Hide();
 			f.DKPModesMain.ItemCostHeader:Hide();
-			f.DKPModesMain.MaxBid:Show();
-			f.DKPModesMain.MaxBid.Header:Show();
+      f.DKPModesMain.MaxBidBehaviorDropDown:Show();
+      f.DKPModesMain.MaxBidBehaviorHeader:Show();
 			MonDKP_DB.modes.costvalue = "Integer";
 			UIDropDownMenu_SetText(f.DKPModesMain.ItemCostDropDown, "Integer")
 			f.DKPModesMain.SubZeroBidding:Show();
@@ -106,9 +106,11 @@ function MonDKP:DKPModes_Main()
 			f.DKPModesMain.ModeDescription:SetText(StaticDescription)
 			f.DKPModesMain.ItemCostHeader:Show();
 			f.DKPModesMain.ItemCostDropDown:Show();
+      f.DKPModesMain.MaxBidBehaviorDropDown:Hide();
+      f.DKPModesMain.MaxBidBehaviorHeader:Hide();
+      MonDKP_DB.modes.MaxBehavior = "Max DKP";
+      UIDropDownMenu_SetText(f.DKPModesMain.MaxBidBehaviorDropDown, "Max DKP")
 			f.DKPModesMain.RollContainer:Hide()
-			f.DKPModesMain.MaxBid:Hide();
-			f.DKPModesMain.MaxBid.Header:Hide();
 			f.DKPModesMain.ZeroSumType:Hide()
 			f.DKPModesMain.ZeroSumTypeHeader:Hide();
 			f.DKPModesMain.CostSelection:Hide();
@@ -130,10 +132,12 @@ function MonDKP:DKPModes_Main()
 			MonDKP_DB.modes.mode = "Roll Based Bidding"
 			f.DKPModesMain.ItemCostHeader:Show();
 			f.DKPModesMain.ItemCostDropDown:Show();
+      f.DKPModesMain.MaxBidBehaviorDropDown:Hide();
+      f.DKPModesMain.MaxBidBehaviorHeader:Hide();
+      MonDKP_DB.modes.MaxBehavior = "Max DKP";
+      UIDropDownMenu_SetText(f.DKPModesMain.MaxBidBehaviorDropDown, "Max DKP")
 			f.DKPModesMain.ModeDescription:SetText(RollDescription)
 			f.DKPModesMain.RollContainer:Show()
-			f.DKPModesMain.MaxBid:Hide();
-			f.DKPModesMain.MaxBid.Header:Hide();
 			f.DKPModesMain.ZeroSumType:Hide()
 			f.DKPModesMain.ZeroSumTypeHeader:Hide();
 			f.DKPModesMain.CostSelection:Hide()
@@ -169,13 +173,15 @@ function MonDKP:DKPModes_Main()
 			f.DKPModesMain.CancelBid:Show()
 
 			if MonDKP_DB.modes.ZeroSumBidType == "Static" then
-				f.DKPModesMain.MaxBid:Hide();
-				f.DKPModesMain.MaxBid.Header:Hide();
+        f.DKPModesMain.MaxBidBehaviorDropDown:Hide();
+        f.DKPModesMain.MaxBidBehaviorHeader:Hide();
+        MonDKP_DB.modes.MaxBehavior = "Max DKP";
+        UIDropDownMenu_SetText(f.DKPModesMain.MaxBidBehaviorDropDown, "Max DKP")
 				f.DKPModesMain.CostSelection:Hide()
 				f.DKPModesMain.CostSelectionHeader:Hide()
 			else
-				f.DKPModesMain.MaxBid:Show()
-				f.DKPModesMain.MaxBid.Header:Show();
+        f.DKPModesMain.MaxBidBehaviorDropDown:Show();
+        f.DKPModesMain.MaxBidBehaviorHeader:Show();
 				f.DKPModesMain.CostSelection:Show()
 				f.DKPModesMain.CostSelectionHeader:Show()
 				f.DKPModesMain.SubZeroBidding:Show()
@@ -260,6 +266,58 @@ function MonDKP:DKPModes_Main()
 	f.DKPModesMain.RoundHeader:SetPoint("BOTTOMLEFT", f.DKPModesMain.RoundDropDown, "TOPLEFT", 25, 0);
 	f.DKPModesMain.RoundHeader:SetFontObject("MonDKPSmallLeft")
 	f.DKPModesMain.RoundHeader:SetText(L["DKPROUNDING"])
+
+  -- MAX Bid button behavior
+  f.DKPModesMain.MaxBidBehaviorDropDown = CreateFrame("FRAME", "MonDKPModeSelectDropDown", f.DKPModesMain, "MonolithDKPUIDropDownMenuTemplate")
+
+  -- Create and bind the initialization function to the dropdown menu
+  UIDropDownMenu_Initialize(f.DKPModesMain.MaxBidBehaviorDropDown, function(self, level, menuList)
+  local MaxBehavior = UIDropDownMenu_CreateInfo()
+    MaxBehavior.func = self.SetValue
+    MaxBehavior.fontObject = "MonDKPSmallCenter"
+    MaxBehavior.text, MaxBehavior.arg1, MaxBehavior.checked, MaxBehavior.isNotRadio = L["MAXBIDBEHAVIORMAXDKP"], "Max DKP", "Max DKP" == MonDKP_DB.modes.MaxBehavior, false
+    UIDropDownMenu_AddButton(MaxBehavior)
+    MaxBehavior.text, MaxBehavior.arg1, MaxBehavior.checked, MaxBehavior.isNotRadio = L["MAXBIDBEHAVIORMAXITEMVALUE"], "Max Item Value", "Max Item Value" == MonDKP_DB.modes.MaxBehavior, false
+    UIDropDownMenu_AddButton(MaxBehavior)
+    MaxBehavior.text, MaxBehavior.arg1, MaxBehavior.checked, MaxBehavior.isNotRadio = L["MAXBIDBEHAVIORMIN"], "Min(Max DKP, Max Item Value)", "Min(Max DKP, Max Item Value)" == MonDKP_DB.modes.MaxBehavior, false
+    UIDropDownMenu_AddButton(MaxBehavior)
+  end)
+
+  f.DKPModesMain.MaxBidBehaviorDropDown:SetPoint("TOPLEFT", f.DKPModesMain.ModesDropDown, "BOTTOMLEFT", 0, -50)
+  UIDropDownMenu_SetWidth(f.DKPModesMain.MaxBidBehaviorDropDown, 200)
+  UIDropDownMenu_SetText(f.DKPModesMain.MaxBidBehaviorDropDown, MonDKP_DB.modes.MaxBehavior)
+
+  -- Dropdown Menu Function
+  function f.DKPModesMain.MaxBidBehaviorDropDown:SetValue(newValue)
+    MonDKP_DB.modes.MaxBehavior = newValue;
+    if newValue == "Max DKP" then
+      UIDropDownMenu_SetText(f.DKPModesMain.MaxBidBehaviorDropDown, L["MAXBIDBEHAVIORMAXDKP"])
+    elseif newValue == "Max Item Value" then
+      UIDropDownMenu_SetText(f.DKPModesMain.MaxBidBehaviorDropDown, L["MAXBIDBEHAVIORMAXITEMVALUE"])
+    else
+      UIDropDownMenu_SetText(f.DKPModesMain.MaxBidBehaviorDropDown, L["MAXBIDBEHAVIORMIN"])
+    end
+    CloseDropDownMenus()
+  end
+
+  f.DKPModesMain.MaxBidBehaviorDropDown:SetScript("OnLeave", function(self)
+    GameTooltip:Hide()
+  end)
+
+  f.DKPModesMain.MaxBidBehaviorDropDown:SetScript("OnEnter", function(self)
+    GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+    GameTooltip:SetText(L["MAXBIDBEHAVIOR"], 0.25, 0.75, 0.90, 1, true);
+    GameTooltip:AddLine(L["MAXBIDBEHAVIORTTDESC"], 1.0, 1.0, 1.0, true);
+    GameTooltip:Show();
+  end)
+    f.DKPModesMain.MaxBidBehaviorDropDown:SetScript("OnLeave", function(self)
+      GameTooltip:Hide()
+    end)
+  
+  f.DKPModesMain.MaxBidBehaviorHeader = f.DKPModesMain:CreateFontString(nil, "OVERLAY")
+  f.DKPModesMain.MaxBidBehaviorHeader:SetPoint("BOTTOMLEFT", f.DKPModesMain.MaxBidBehaviorDropDown, "TOPLEFT", 25, 0);
+  f.DKPModesMain.MaxBidBehaviorHeader:SetFontObject("MonDKPSmallLeft")
+  f.DKPModesMain.MaxBidBehaviorHeader:SetText(L["MAXBIDBEHAVIOR"])
 
 	-- AntiSnipe Option
 	f.DKPModesMain.AntiSnipe = CreateFrame("EditBox", nil, f.DKPModesMain)
@@ -535,21 +593,22 @@ function MonDKP:DKPModes_Main()
 	function f.DKPModesMain.ZeroSumType:SetValue(newValue)
 		MonDKP_DB.modes.ZeroSumBidType = newValue;
 		if newValue == "Static" then
-			f.DKPModesMain.MaxBid:Hide();
-			f.DKPModesMain.MaxBid.Header:Hide();
 			f.DKPModesMain.CostSelection:Hide();
 			f.DKPModesMain.CostSelectionHeader:Hide();
 			newValue = L["STATIC"]
 			f.DKPModesMain.SubZeroBidding:Hide()
 			f.DKPModesMain.AllowNegativeBidders:Hide()
+      f.DKPModesMain.MaxBidBehaviorDropDown:Hide();
+      f.DKPModesMain.MaxBidBehaviorHeader:Hide();
+      MonDKP_DB.modes.MaxBehavior = "Max DKP";
 		else
-			f.DKPModesMain.MaxBid:Show();
-			f.DKPModesMain.MaxBid.Header:Show();
 			f.DKPModesMain.CostSelection:Show();
 			f.DKPModesMain.CostSelectionHeader:Show();
 			newValue = L["MINIMUMBID"]
 			f.DKPModesMain.SubZeroBidding:Show()
 			f.DKPModesMain.AllowNegativeBidders:Show()
+      f.DKPModesMain.MaxBidBehaviorDropDown:Show();
+      f.DKPModesMain.MaxBidBehaviorHeader:Show();
 		end
 
 		UIDropDownMenu_SetText(f.DKPModesMain.ZeroSumType, newValue)
@@ -635,74 +694,28 @@ function MonDKP:DKPModes_Main()
 		f.DKPModesMain.ItemCostDropDown:Hide();
 		f.DKPModesMain.ItemCostHeader:Hide();
 		MonDKP_DB.modes.costvalue = "Integer";
+    f.DKPModesMain.MaxBidBehaviorDropDown:Show();
+    f.DKPModesMain.MaxBidBehaviorHeader:Show();
+  elseif MonDKP_DB.modes.mode == "Roll Based Bidding" then
+    f.DKPModesMain.MaxBidBehaviorDropDown:Hide();
+    f.DKPModesMain.MaxBidBehaviorHeader:Hide();
+    MonDKP_DB.modes.MaxBehavior = "Max DKP";
+elseif MonDKP_DB.modes.mode == "Static Item Values" then
+    f.DKPModesMain.MaxBidBehaviorDropDown:Hide();
+    f.DKPModesMain.MaxBidBehaviorHeader:Hide();
+    MonDKP_DB.modes.MaxBehavior = "Max DKP";
 	elseif MonDKP_DB.modes.mode == "Zero Sum" then
 		f.DKPModesMain.ItemCostDropDown:Hide();
 		f.DKPModesMain.ItemCostHeader:Hide();
 		MonDKP_DB.modes.costvalue = "Integer";
-	end
-
-
-	-- Min Roll Editbox
-	if not MonDKP_DB.modes.MaximumBid then MonDKP_DB.modes.MaximumBid = 0 end
-	f.DKPModesMain.MaxBid = CreateFrame("EditBox", nil, f.DKPModesMain)
-    f.DKPModesMain.MaxBid:SetAutoFocus(false)
-    f.DKPModesMain.MaxBid:SetMultiLine(false)
-    f.DKPModesMain.MaxBid:SetPoint("TOPLEFT", f.DKPModesMain.ModesDropDown, "BOTTOMLEFT", 18, -55)
-    f.DKPModesMain.MaxBid:SetSize(100, 24)
-    f.DKPModesMain.MaxBid:SetBackdrop({
-      bgFile   = "Textures\\white.blp", tile = true,
-      edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 1, edgeSize = 2, 
-    });
-    f.DKPModesMain.MaxBid:SetBackdropColor(0,0,0,0.9)
-    f.DKPModesMain.MaxBid:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
-    f.DKPModesMain.MaxBid:SetMaxLetters(8)
-    f.DKPModesMain.MaxBid:SetTextColor(1, 1, 1, 1)
-    f.DKPModesMain.MaxBid:SetFontObject("MonDKPSmallRight")
-    f.DKPModesMain.MaxBid:SetTextInsets(10, 15, 5, 5)
-    f.DKPModesMain.MaxBid:SetText(MonDKP_DB.modes.MaximumBid)
-    f.DKPModesMain.MaxBid:Hide();
-    f.DKPModesMain.MaxBid:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
-    	MonDKP_DB.modes.MaximumBid = f.DKPModesMain.MaxBid:GetNumber()
-    	self:ClearFocus()
-    end)
-    f.DKPModesMain.MaxBid:SetScript("OnTabPressed", function(self)    -- clears focus on esc
-    	MonDKP_DB.modes.MaximumBid = f.DKPModesMain.MaxBid:GetNumber()
-    	self:ClearFocus()
-    end)
-    f.DKPModesMain.MaxBid:SetScript("OnEnterPressed", function(self)    -- clears focus on esc
-    	MonDKP_DB.modes.MaximumBid = f.DKPModesMain.MaxBid:GetNumber()
-    	self:ClearFocus()
-    end)
-    f.DKPModesMain.MaxBid:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["MAXIMUMBID"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["MAXIMUMBIDTTDESC"], 1.0, 1.0, 1.0, true);
-		GameTooltip:Show();
-	end)
-    f.DKPModesMain.MaxBid:SetScript("OnLeave", function(self)
-      GameTooltip:Hide()
-    end)
-    f.DKPModesMain.MaxBid:SetScript("OnKeyUp", function(self)    -- clears focus on esc
-    	if self:GetText():match("%a+") then
-    		self:SetNumber(self:GetNumber() or 0)
-    		if self:GetText() == "0" then
-    			self:HighlightText()
-    		end
+    if MonDKP_DB.modes.ZeroSumBidType == "Static" then
+      f.DKPModesMain.MaxBidBehaviorDropDown:Hide();
+      f.DKPModesMain.MaxBidBehaviorHeader:Hide();
+      MonDKP_DB.modes.MaxBehavior = "Max DKP";      
     	else
-	    	MonDKP_DB.modes.MaximumBid = f.DKPModesMain.MaxBid:GetNumber()
+      f.DKPModesMain.MaxBidBehaviorDropDown:Show();
+      f.DKPModesMain.MaxBidBehaviorHeader:Show();    
 	    end
-    end)
-
-    -- Min Roll Header
-    f.DKPModesMain.MaxBid.Header = f.DKPModesMain.MaxBid:CreateFontString(nil, "OVERLAY")
-    f.DKPModesMain.MaxBid.Header:SetFontObject("MonDKPNormalLeft");
-    f.DKPModesMain.MaxBid.Header:SetPoint("BOTTOM", f.DKPModesMain.MaxBid, "TOP", -8, 2);
-    f.DKPModesMain.MaxBid.Header:SetText(L["MAXIMUMBID"])
-
-
-    if MonDKP_DB.modes.mode == "Minimum Bid Values" or (MonDKP_DB.modes.mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
-		f.DKPModesMain.MaxBid:Show();
-		f.DKPModesMain.MaxBid.Header:Show();
 	end
 
 	-- Sub Zero Bidding Checkbox
@@ -1033,6 +1046,10 @@ function MonDKP:DKPModes_Main()
 	            table.insert(temptable2, MonDKP_DB.MinBidBySlot)
 	            table.insert(temptable2, MonDKP_MinBids)
 	            MonDKP.Sync:SendData("MonDKPMinBid", temptable2)
+        local temptable3 = {}
+              table.insert(temptable3, MonDKP_DB.MaxBidBySlot)
+              table.insert(temptable3, MonDKP_MaxBids)
+              MonDKP.Sync:SendData("MonDKPMaxBid", temptable3)
 			end,
 			timeout = 0,
 			whileDead = true,
