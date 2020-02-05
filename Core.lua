@@ -13,12 +13,12 @@ local MonDKP = core.MonDKP;
 local tc_colors = {
 	["Druid"] = { r = 1, g = 0.49, b = 0.04, hex = "FF7D0A" },
 	["Hunter"] = {  r = 0.67, g = 0.83, b = 0.45, hex = "ABD473" },
-	["Mage"] = { r = 0.25, g = 0.78, b = 0.92, hex = "40C7EB" },
+	["Mage"] = { r = 0.41, g = 0.80, b = 0.94, hex = "69CCF0" },
 	["Priest"] = { r = 1, g = 1, b = 1, hex = "FFFFFF" },
 	["Rogue"] = { r = 1, g = 0.96, b = 0.41, hex = "FFF569" },
-	["Shaman"] = { r = 0.96, g = 0.55, b = 0.73, hex = "F58CBA" },
+	["Shaman"] = { r = 0.0, g = 0.44, b = 0.87, hex = "0070DE" },
 	["Paladin"] = { r = 0.96, g = 0.55, b = 0.73, hex = "F58CBA" },
-	["Warlock"] = { r = 0.53, g = 0.53, b = 0.93, hex = "8787ED" },
+	["Warlock"] = { r = 0.58, g = 0.51, b = 0.79, hex = "9482C9" },
 	["Warrior"] = { r = 0.78, g = 0.61, b = 0.43, hex = "C79C6E" }
 }
 
