@@ -597,7 +597,8 @@ local function StartBidding()
     MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Cost: "..core.BiddingWindow.cost:GetNumber()..perc, CurrItemIcon)
     MonDKP.Sync:SendData("MonDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText()..","..core.BiddingWindow.cost:GetText()..perc..",0,"..CurrItemIcon)
     MonDKP:BidInterface_Toggle()
-    MonDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.cost:GetText()..perc, core.BiddingWindow.maxBid:GetText()..perc, CurrItemIcon)
+    MonDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.cost:GetText()..perc, 0, CurrItemIcon)
+
   end
 
   if mode == "Roll Based Bidding" then
