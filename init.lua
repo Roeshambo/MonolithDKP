@@ -9,158 +9,158 @@ local lockouts = CreateFrame("Frame", "LockoutsFrame");
 -- Slash Command
 --------------------------------------
 MonDKP.Commands = {
-	["config"] = function()
-		if core.Initialized then
-			local pass, err = pcall(MonDKP.Toggle)
+  ["config"] = function()
+    if core.Initialized then
+      local pass, err = pcall(MonDKP.Toggle)
 
-			if not pass then
-				MonDKP:Print(err)
-				core.MonDKPUI:SetShown(false)
-				StaticPopupDialogs["SUGGEST_RELOAD"] = {
-					text = "|CFFFF0000"..L["WARNING"].."|r: "..L["MUSTRELOADUI"],
-					button1 = L["YES"],
-					button2 = L["NO"],
-					OnAccept = function()
-						ReloadUI();
-					end,
-					timeout = 0,
-					whileDead = true,
-					hideOnEscape = true,
-					preferredIndex = 3,
-				}
-				StaticPopup_Show ("SUGGEST_RELOAD")
-			end
-		else
-			MonDKP:Print("Monolith DKP has not completed initialization.")
-		end
-	end,
-	["reset"] = MonDKP.ResetPosition,
-	["bid"] = function(...)
-		if core.Initialized then
-			local item = strjoin(" ", ...)
-			MonDKP:CheckOfficer()
-			MonDKP:StatusVerify_Update()
+      if not pass then
+        MonDKP:Print(err)
+        core.MonDKPUI:SetShown(false)
+        StaticPopupDialogs["SUGGEST_RELOAD"] = {
+          text = "|CFFFF0000"..L["WARNING"].."|r: "..L["MUSTRELOADUI"],
+          button1 = L["YES"],
+          button2 = L["NO"],
+          OnAccept = function()
+            ReloadUI();
+          end,
+          timeout = 0,
+          whileDead = true,
+          hideOnEscape = true,
+          preferredIndex = 3,
+        }
+        StaticPopup_Show ("SUGGEST_RELOAD")
+      end
+    else
+      MonDKP:Print("Monolith DKP has not completed initialization.")
+    end
+  end,
+  ["reset"] = MonDKP.ResetPosition,
+  ["bid"] = function(...)
+    if core.Initialized then
+      local item = strjoin(" ", ...)
+      MonDKP:CheckOfficer()
+      MonDKP:StatusVerify_Update()
 
-			if core.IsOfficer then	
-				if ... == nil then
-					MonDKP.ToggleBidWindow()
-				else
-					local itemName,_,_,_,_,_,_,_,_,itemIcon = GetItemInfo(item)
-					MonDKP:Print("Opening Bid Window for: ".. item)
-					MonDKP:ToggleBidWindow(item, itemIcon, itemName)
-				end
-			end
-			MonDKP:BidInterface_Toggle()
-		else
-			MonDKP:Print("Monolith DKP has not completed initialization.")
-		end 
-	end,
-	["repairtables"] = function(...) 			-- test new features
-		local cmd = ...
-		if core.IsOfficer then
-			if cmd == "true" then
-				MonDKP:RepairTables(cmd)
-			else
-				MonDKP:RepairTables()
-			end
-		end
-	end,
-	["award"] = function (name, ...)
-		if core.IsOfficer and core.Initialized then
-			MonDKP:StatusVerify_Update()
-			
-			if not name or not strfind(name, ":::::") then
-				MonDKP:Print(L["AWARDWARNING"])
-				return
-			end
-			local item = strjoin(" ", ...)
-			if not item then return end
-			item = name.." "..item;
-			
-			MonDKP:AwardConfirm(nil, 0, MonDKP_DB.bossargs.LastKilledBoss, MonDKP_DB.bossargs.CurrentRaidZone, item)
-		else
-			MonDKP:Print(L["NOPERMISSION"])
-		end
-	end,
-	["lockouts"] = function()
-		lockouts:RegisterEvent("UPDATE_INSTANCE_INFO");
-		lockouts:SetScript("OnEvent", MonDKP_OnEvent);
-		RequestRaidInfo()
-	end,
-	["timer"] = function(time, ...)
-		if time == nil then
-			MonDKP:BroadcastTimer(1, "...")
-		else
-			local title = strjoin(" ", ...)
-			MonDKP:BroadcastTimer(tonumber(time), title)
-		end
-	end,
-	["export"] = function(time, ...)
-		MonDKP:ToggleExportWindow()
-	end,
-	["modes"] = function()
-		if core.Initialized then
-			MonDKP:CheckOfficer()
-			if core.IsOfficer then
-				MonDKP:ToggleDKPModesWindow()
-			else
-				MonDKP:Print(L["NOPERMISSION"])
-			end
-		else
-			MonDKP:Print("Monolith DKP has not completed initialization.")
-		end
-	end,
-	["help"] = function()
-		MonDKP:Print(" ");
-		MonDKP:Print(L["SLASHCOMMANDLIST"]..":")
-		MonDKP:Print("|cff00cc66/dkp|r - "..L["DKPLAUNCH"]);
-		MonDKP:Print("|cff00cc66/dkp ?|r - "..L["HELPINFO"]);
-		MonDKP:Print("|cff00cc66/dkp reset|r - "..L["DKPRESETPOS"]);
-		MonDKP:Print("|cff00cc66/dkp lockouts|r - "..L["DKPLOCKOUT"]);
-		MonDKP:Print("|cff00cc66/dkp timer|r - "..L["CREATERAIDTIMER"]);
-		MonDKP:Print("|cff00cc66/dkp bid|r - "..L["OPENBIDWINDOWHELP"]);
-		MonDKP:Print("|cff00cc66/dkp bid [itemlink]|r - "..L["OPENAUCWINHELP"]);
-		MonDKP:Print("|cff00cc66/dkp award [item link]|r - "..L["DKPAWARDHELP"]);
-		MonDKP:Print("|cff00cc66/dkp modes|r - "..L["DKPMODESHELP"]);
-		MonDKP:Print("|cff00cc66/dkp export|r - "..L["DKPEXPORTHELP"]);
-		MonDKP:Print(" ");
-		MonDKP:Print(L["WHISPERCMDSHELP"]);
-		MonDKP:Print("|cff00cc66!bid (or !bid <"..L["VALUE"]..">)|r - "..L["BIDHELP"]);
-		MonDKP:Print("|cff00cc66!dkp (or !dkp <"..L["PLAYERNAME"]..">)|r - "..L["DKPCMDHELP"]);
-	end,
+      if core.IsOfficer then  
+        if ... == nil then
+          MonDKP.ToggleBidWindow()
+        else
+          local itemName,_,_,_,_,_,_,_,_,itemIcon = GetItemInfo(item)
+          MonDKP:Print("Opening Bid Window for: ".. item)
+          MonDKP:ToggleBidWindow(item, itemIcon, itemName)
+        end
+      end
+      MonDKP:BidInterface_Toggle()
+    else
+      MonDKP:Print("Monolith DKP has not completed initialization.")
+    end 
+  end,
+  ["repairtables"] = function(...)       -- test new features
+    local cmd = ...
+    if core.IsOfficer then
+      if cmd == "true" then
+        MonDKP:RepairTables(cmd)
+      else
+        MonDKP:RepairTables()
+      end
+    end
+  end,
+  ["award"] = function (name, ...)
+    if core.IsOfficer and core.Initialized then
+      MonDKP:StatusVerify_Update()
+      
+      if not name or not strfind(name, ":::::") then
+        MonDKP:Print(L["AWARDWARNING"])
+        return
+      end
+      local item = strjoin(" ", ...)
+      if not item then return end
+      item = name.." "..item;
+      
+      MonDKP:AwardConfirm(nil, 0, MonDKP_DB.bossargs.LastKilledBoss, MonDKP_DB.bossargs.CurrentRaidZone, item)
+    else
+      MonDKP:Print(L["NOPERMISSION"])
+    end
+  end,
+  ["lockouts"] = function()
+    lockouts:RegisterEvent("UPDATE_INSTANCE_INFO");
+    lockouts:SetScript("OnEvent", MonDKP_OnEvent);
+    RequestRaidInfo()
+  end,
+  ["timer"] = function(time, ...)
+    if time == nil then
+      MonDKP:BroadcastTimer(1, "...")
+    else
+      local title = strjoin(" ", ...)
+      MonDKP:BroadcastTimer(tonumber(time), title)
+    end
+  end,
+  ["export"] = function(time, ...)
+    MonDKP:ToggleExportWindow()
+  end,
+  ["modes"] = function()
+    if core.Initialized then
+      MonDKP:CheckOfficer()
+      if core.IsOfficer then
+        MonDKP:ToggleDKPModesWindow()
+      else
+        MonDKP:Print(L["NOPERMISSION"])
+      end
+    else
+      MonDKP:Print("Monolith DKP has not completed initialization.")
+    end
+  end,
+  ["help"] = function()
+    MonDKP:Print(" ");
+    MonDKP:Print(L["SLASHCOMMANDLIST"]..":")
+    MonDKP:Print("|cff00cc66/dkp|r - "..L["DKPLAUNCH"]);
+    MonDKP:Print("|cff00cc66/dkp ?|r - "..L["HELPINFO"]);
+    MonDKP:Print("|cff00cc66/dkp reset|r - "..L["DKPRESETPOS"]);
+    MonDKP:Print("|cff00cc66/dkp lockouts|r - "..L["DKPLOCKOUT"]);
+    MonDKP:Print("|cff00cc66/dkp timer|r - "..L["CREATERAIDTIMER"]);
+    MonDKP:Print("|cff00cc66/dkp bid|r - "..L["OPENBIDWINDOWHELP"]);
+    MonDKP:Print("|cff00cc66/dkp bid [itemlink]|r - "..L["OPENAUCWINHELP"]);
+    MonDKP:Print("|cff00cc66/dkp award [item link]|r - "..L["DKPAWARDHELP"]);
+    MonDKP:Print("|cff00cc66/dkp modes|r - "..L["DKPMODESHELP"]);
+    MonDKP:Print("|cff00cc66/dkp export|r - "..L["DKPEXPORTHELP"]);
+    MonDKP:Print(" ");
+    MonDKP:Print(L["WHISPERCMDSHELP"]);
+    MonDKP:Print("|cff00cc66!bid (or !bid <"..L["VALUE"]..">)|r - "..L["BIDHELP"]);
+    MonDKP:Print("|cff00cc66!dkp (or !dkp <"..L["PLAYERNAME"]..">)|r - "..L["DKPCMDHELP"]);
+  end,
 };
 
 local function HandleSlashCommands(str)
-	if (#str == 0) then
-		MonDKP.Commands.config();
-		return;
-	end	
-	
-	local args = {};
-	for _, arg in ipairs({ string.split(' ', str) }) do
-		if (#arg > 0) then
-			table.insert(args, arg);
-		end
-	end
-	
-	local path = MonDKP.Commands;
-	
-	for id, arg in ipairs(args) do
-		if (#arg > 0) then
-			arg = arg:lower();			
-			if (path[arg]) then
-				if (type(path[arg]) == "function") then
-					path[arg](select(id + 1, unpack(args))); 
-					return;					
-				elseif (type(path[arg]) == "table") then				
-					path = path[arg];
-				end
-			else
-				MonDKP.Commands.help();
-				return;
-			end
-		end
-	end
+  if (#str == 0) then
+    MonDKP.Commands.config();
+    return;
+  end  
+  
+  local args = {};
+  for _, arg in ipairs({ string.split(' ', str) }) do
+    if (#arg > 0) then
+      table.insert(args, arg);
+    end
+  end
+  
+  local path = MonDKP.Commands;
+  
+  for id, arg in ipairs(args) do
+    if (#arg > 0) then
+      arg = arg:lower();      
+      if (path[arg]) then
+        if (type(path[arg]) == "function") then
+          path[arg](select(id + 1, unpack(args))); 
+          return;          
+        elseif (type(path[arg]) == "table") then        
+          path = path[arg];
+        end
+      else
+        MonDKP.Commands.help();
+        return;
+      end
+    end
+  end
 end
 
 function MonDKP_OnEvent(self, event, arg1, ...)
@@ -405,32 +405,34 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			local lootTable = {}
 			local lootList = {};
 
-			for i=1, GetNumLootItems() do
-				if LootSlotHasItem(i) and GetLootSlotLink(i) then
-					local _,link,quality = GetItemInfo(GetLootSlotLink(i))
-					if quality >= 4 then
-						table.insert(lootTable, link)
+			if IsInRaid() then
+				for i=1, GetNumLootItems() do
+					if LootSlotHasItem(i) and GetLootSlotLink(i) then
+						local _,link,quality = GetItemInfo(GetLootSlotLink(i))
+						if quality >= 4 then
+							table.insert(lootTable, link)
+						end
 					end
 				end
-			end
-			local name
-			if not UnitIsFriend("player", "target") and UnitIsDead("target") then
-				name = UnitName("target")  -- sets bidding window name to current target
-			else
-				name = core.LastKilledBoss  -- sets name to last killed boss if no target is available (chests)
-			end
-			lootTable.boss=name
-			MonDKP.Sync:SendData("MonDKPBossLoot", lootTable)
+				local name
+				if not UnitIsFriend("player", "target") and UnitIsDead("target") then
+					name = UnitName("target")  -- sets bidding window name to current target
+				else
+					name = core.LastKilledBoss  -- sets name to last killed boss if no target is available (chests)
+				end
+				lootTable.boss=name
+				MonDKP.Sync:SendData("MonDKPBossLoot", lootTable)
 
-			for i=1, #lootTable do
-				local item = Item:CreateFromItemLink(lootTable[i]);
-				item:ContinueOnItemLoad(function()
-					local icon = item:GetItemIcon()
-					table.insert(lootList, {icon=icon, link=item:GetItemLink()})
-				end);
-			end
+				for i=1, #lootTable do
+					local item = Item:CreateFromItemLink(lootTable[i]);
+					item:ContinueOnItemLoad(function()
+						local icon = item:GetItemIcon()
+						table.insert(lootList, {icon=icon, link=item:GetItemLink()})
+					end);
+				end
 
-			MonDKP:LootTable_Set(lootList)
+				MonDKP:LootTable_Set(lootList)
+			end
 		end
 	end
 end
@@ -439,9 +441,9 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	if (name ~= "MonolithDKP") then return end 
 
 	-- allows using left and right buttons to move through chat 'edit' box
-	for i = 1, NUM_CHAT_WINDOWS do
+	--[[for i = 1, NUM_CHAT_WINDOWS do
 		_G["ChatFrame"..i.."EditBox"]:SetAltArrowKeyMode(false);
-	end
+	end--]]
 	
 	----------------------------------
 	-- Register Slash Commands
@@ -451,13 +453,13 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	SlashCmdList.MonolithDKP = HandleSlashCommands;
 
 	--[[SLASH_RELOADUI1 = "/rl"; -- new slash command for reloading UI 				-- for debugging
-	SlashCmdList.RELOADUI = ReloadUI;
+	SlashCmdList.RELOADUI = ReloadUI;--]]
 
 	SLASH_FRAMESTK1 = "/fs"; -- new slash command for showing framestack tool
 	SlashCmdList.FRAMESTK = function()
 		LoadAddOn("Blizzard_DebugTools");
 		FrameStackTooltip_Toggle();
-	end--]]
+	end
 
     if(event == "ADDON_LOADED") then
     	core.Initialized = false
@@ -470,6 +472,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_Loot then MonDKP_Loot = {} end;
 		if not MonDKP_DKPHistory then MonDKP_DKPHistory = {} end;
 		if not MonDKP_MinBids then MonDKP_MinBids = {} end;
+		if not MonDKP_MaxBids then MonDKP_MaxBids = {} end;
 		if not MonDKP_Whitelist then MonDKP_Whitelist = {} end;
 		if not MonDKP_Standby then MonDKP_Standby = {} end;
 		if not MonDKP_Archive then MonDKP_Archive = {} end;
@@ -498,6 +501,11 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_DB.MinBidBySlot or not MonDKP_DB.MinBidBySlot.Head then
 			MonDKP_DB.MinBidBySlot = {
     			Head = 70, Neck = 70, Shoulders = 70, Cloak = 70, Chest = 70, Bracers = 70, Hands = 70, Belt = 70, Legs = 70, Boots = 70, Ring = 70, Trinket = 70, OneHanded = 70, TwoHanded = 70, OffHand = 70, Range = 70, Other = 70,
+    		}
+    	end
+    	if not MonDKP_DB.MaxBidBySlot or not MonDKP_DB.MaxBidBySlot.Head then
+			MonDKP_DB.MaxBidBySlot = {
+    			Head = 0, Neck = 0, Shoulders = 0, Cloak = 0, Chest = 0, Bracers = 0, Hands = 0, Belt = 0, Legs = 0, Boots = 0, Ring = 0, Trinket = 0, OneHanded = 0, TwoHanded = 0, OffHand = 0, Range = 0, Other = 0,
     		}
     	end
 		if not MonDKP_DB.bossargs then MonDKP_DB.bossargs = { CurrentRaidZone = "Molten Core", LastKilledBoss = "Lucifron" } end
@@ -552,7 +560,7 @@ end
 local events = CreateFrame("Frame", "EventsFrame");
 events:RegisterEvent("ADDON_LOADED");
 events:RegisterEvent("GROUP_ROSTER_UPDATE");
-events:RegisterEvent("ENCOUNTER_START");  		-- FOR TESTING PURPOSES.
+events:RegisterEvent("ENCOUNTER_START");      -- FOR TESTING PURPOSES.
 events:RegisterEvent("COMBAT_LOG_EVENT_UNFILTERED") -- NPC kill event
 events:RegisterEvent("LOOT_OPENED")
 events:RegisterEvent("CHAT_MSG_RAID")

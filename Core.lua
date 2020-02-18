@@ -231,6 +231,8 @@ function MonDKP:CheckRaidLeader()
 
 		if tempName == UnitName("player") and tempRank == 2 then
 			return true
+		elseif tempName == UnitName("player") and tempRank < 2 then
+			return false
 		end
 	end
 	return false;
