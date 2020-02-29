@@ -354,7 +354,7 @@ local function BidWindowCreateRow(parent, id) -- Create 3 buttons for each row i
     return f
 end
 
-function MonDKP:CurrItem_Set(item, value, value2, icon)
+function MonDKP:CurrItem_Set(item, value, icon, value2)
   CurrItemForBid = item;
   CurrItemIcon = icon;
   
