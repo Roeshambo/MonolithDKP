@@ -5,4 +5,4 @@ This is the development repository for Monolith DKP - Essential Edition. This is
 Original repository can be found under:
 [MonolithDKP](https://github.com/Roeshambo/MonolithDKP)
 
-Instructions: Clone and remove "-master" from the addon directory. Place in "Interface\AddOns" folder.
+Instructions: Clone and remove "-essential" from the addon directory. Place in "Interface\AddOns" folder.
