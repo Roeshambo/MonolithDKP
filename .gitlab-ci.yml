@@ -1,0 +1,65 @@
+# This file is part of Group Calendar Import Data WoW Classic AddOn.
+
+# Group Calendar Import Data WoW Classic AddOn is free software: 
+# you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# Group Calendar Import Data WoW Classic AddOn is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with Group Calendar Import Data WoW Classic AddOn.
+# If not, see <https://www.gnu.org/licenses/>.
+
+variables:
+    LUA_VERSION: "5.1.4"
+    LUA_PATH: "/tmp"
+
+stages:
+    - syntax
+
+.install_lua: &install_lua |-
+    export BASE_DIR=$PWD
+    yum install -q -y epel-release
+    yum install -q -y readline-devel gcc make
+    curl https://www.lua.org/ftp/lua-$LUA_VERSION.tar.gz > $LUA_PATH/lua-$LUA_VERSION.tar.gz
+    cd $LUA_PATH
+    tar -xzf lua-$LUA_VERSION.tar.gz
+    cd lua-$LUA_VERSION
+    make linux
+    make test
+    make install INSTALL_TOP=$LUA_PATH
+    cd $BASE_DIR
+
+.centos7:
+    image: centos:7
+    only:
+      - master
+      - external_pull_requests
+
+.centos7_luac:
+    extends: .centos7
+    before_script:
+        - *install_lua
+ 
+.centos7_xmllint:
+    extends: .centos7
+
+lua:
+    extends: .centos7_luac
+    stage: syntax
+    
+    script:
+      - export LUA_STATUS=0
+      - $LUA_PATH/bin/luac -o output.luac *.lua Modules/*.lua Modules/Modes/*.lua Localization/*.lua &> lua-report.log || if [ $? -ne 0 ]; then cat lua-report.log; (exit 1) fi
+
+xml:
+    extends: .centos7_xmllint
+    stage: syntax
+    
+    script:
+        - xmllint --dropdtd *.xml
