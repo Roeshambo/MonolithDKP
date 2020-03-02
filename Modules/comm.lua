@@ -703,7 +703,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 end
               end
             elseif prefix == "MonDKPDKPModes" then
-              if MonDKP_DB.modes.mode ~= deserialized[1].mode then
+              if (MonDKP_DB.modes.mode ~= deserialized[1].mode) or (MonDKP_DB.modes.MaxBehavior ~= deserialized[1].MaxBehavior) then
                 MonDKP:Print(L["RECOMMENDRELOAD"])
               end
               MonDKP_DB.modes = deserialized[1]
