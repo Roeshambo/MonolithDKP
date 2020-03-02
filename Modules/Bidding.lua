@@ -185,7 +185,11 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
                   MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
                 end
                 if Timer ~= 0 and Timer > (core.BiddingWindow.bidTimer:GetText() - 10) and MonDKP_DB.modes.AntiSnipe > 0 then
-                  MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText().."{"..MonDKP_DB.modes.AntiSnipe, core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), core.BiddingWindow.itemIcon:GetTexture());
+                  if core.BiddingWindow.maxBid:GetNumber() ~= 0 then
+                    MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText().."{"..MonDKP_DB.modes.AntiSnipe, core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText().." Max Bid: "..core.BiddingWindow.maxBid:GetText(), core.BiddingWindow.itemIcon:GetTexture());
+                  else
+                    MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText().."{"..MonDKP_DB.modes.AntiSnipe, core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), core.BiddingWindow.itemIcon:GetTexture());
+                  end
                 end
               elseif mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
                 if MonDKP_DB.modes.AnnounceBid and ((Bids_Submitted[1] and Bids_Submitted[1].dkp < dkp) or not Bids_Submitted[1]) then
