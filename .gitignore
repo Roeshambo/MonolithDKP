@@ -1,0 +1,32 @@
+# Ignore everything
+*
+
+# Don't ignore directories
+!*/
+
+# Don't ignore LUA files
+!*.lua
+
+# Don't ignore XML files
+!*.xml
+
+# Don't ignore TOC files
+!*.toc
+
+# Don't ignore TXT and MD files
+!*.txt
+!*.md
+
+# Don't ignore yaml (CI) and git files
+!.gitignore
+!.gitmodules
+!*.yml
+!*.yaml
+
+# Don't ignore Media path
+!Media/*
+
+# Don't ignore media tga and font ttf
+!*.tga
+!*.ttf
+
