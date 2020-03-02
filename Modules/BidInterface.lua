@@ -648,7 +648,7 @@ function MonDKP:BidInterface_Create()
         f.Bid:SetNumber(itemValue);
       end
     else
-      f.Bid:SetNumber(dkp);
+      f.Bid:SetNumber(itemValue);
     end
   end)
 
@@ -686,7 +686,7 @@ function MonDKP:BidInterface_Create()
         f.Bid:SetNumber(itemValue/2);
       end
     else
-      f.Bid:SetNumber(dkp/2)
+      f.Bid:SetNumber(itemValue/2)
     end
   end)
 
