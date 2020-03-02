@@ -641,12 +641,14 @@ function MonDKP:BidInterface_Create()
       f.Bid:SetNumber(dkp);
     elseif behavior == "Max Item Value" then
       f.Bid:SetNumber(itemValue);
-    else
+    elseif behavior == "Min(Max DKP, Max Item Value)" then
       if dkp < itemValue then
         f.Bid:SetNumber(dkp)
       else
         f.Bid:SetNumber(itemValue);
       end
+    else
+      f.Bid:SetNumber(dkp);
     end
   end)
 
@@ -677,12 +679,14 @@ function MonDKP:BidInterface_Create()
       f.Bid:SetNumber(dkp/2);
     elseif behavior == "Max Item Value" then
       f.Bid:SetNumber(itemValue/2);
-    else
+    elseif behavior == "Min(Max DKP, Max Item Value)" then
       if dkp < itemValue then
         f.Bid:SetNumber(dkp/2)
       else
         f.Bid:SetNumber(itemValue/2);
       end
+    else
+      f.Bid:SetNumber(dkp/2)
     end
   end)
 
