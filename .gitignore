@@ -30,3 +30,5 @@
 !*.tga
 !*.ttf
 
+# Ignore the eclipse_compilation files
+eclipse_compilation*
