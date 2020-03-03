@@ -35,7 +35,7 @@ function MonDKP:DKPModesFrame_Create()
 	f:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 300, -200);
 	f:SetSize(473, 598);
 	f:SetBackdrop( {
-	edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
+	edgeFile = "Interface\\AddOns\\EssentialDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
 	insets = { left = 0, right = 0, top = 0, bottom = 0 }
 	});
 	f:SetBackdropColor(0,0,0,0.9);
@@ -58,7 +58,7 @@ function MonDKP:DKPModesFrame_Create()
 	f.BG:SetColorTexture(0, 0, 0, 1)
 	f.BG:SetPoint("TOPLEFT", f, "TOPLEFT", 2, -2);
 	f.BG:SetSize(475, 600);
-	f.BG:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\menu-bg");
+	f.BG:SetTexture("Interface\\AddOns\\EssentialDKP\\Media\\Textures\\menu-bg");
 
 	-- TabMenu ScrollFrame and ScrollBar
 	f.ScrollFrame = CreateFrame("ScrollFrame", nil, f);
@@ -81,7 +81,7 @@ function MonDKP:DKPModesFrame_Create()
 	f.closeContainer:SetPoint("CENTER", f, "TOPRIGHT", -4, 0)
 	f.closeContainer:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
-		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
+		edgeFile = "Interface\\AddOns\\EssentialDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
 	});
 	f.closeContainer:SetBackdropColor(0,0,0,0.9)
 	f.closeContainer:SetBackdropBorderColor(1,1,1,0.2)

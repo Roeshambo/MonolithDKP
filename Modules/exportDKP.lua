@@ -187,7 +187,7 @@ function MonDKPExportBox_Show(text)
 		f.closeContainer:SetPoint("CENTER", f, "TOPRIGHT", -4, 0)
 		f.closeContainer:SetBackdrop({
 			bgFile   = "Textures\\white.blp", tile = true,
-			edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
+			edgeFile = "Interface\\AddOns\\EssentialDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
 		});
 		f.closeContainer:SetBackdropColor(0,0,0,0.9)
 		f.closeContainer:SetBackdropBorderColor(1,1,1,0.2)

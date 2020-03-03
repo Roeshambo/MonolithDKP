@@ -134,7 +134,7 @@ function MonDKP:ResetPosition()
 	MonDKP.UIConfig:SetPoint("CENTER", UIParent, "CENTER", -250, 100);
 	MonDKP.UIConfig:SetSize(550, 590);
 	MonDKP.UIConfig.TabMenu:Hide()
-	MonDKP.UIConfig.expandtab:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\expand-arrow");
+	MonDKP.UIConfig.expandtab:SetTexture("Interface\\AddOns\\EssentialDKP\\Media\\Textures\\expand-arrow");
 	core.ShowState = false;
 	MonDKP.BidTimer:ClearAllPoints()
 	MonDKP.BidTimer:SetPoint("CENTER", UIParent)
@@ -367,7 +367,7 @@ end
 function MonDKP:CreateContainer(parent, name, header)
 	local f = CreateFrame("Frame", "MonDKP"..name, parent);
 	f:SetBackdrop( {
-		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
+		edgeFile = "Interface\\AddOns\\EssentialDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
 		insets = { left = 0, right = 0, top = 0, bottom = 0 }
 	});
 	f:SetBackdropColor(0,0,0,0.9);
@@ -503,7 +503,7 @@ function MonDKP:StatusVerify_Update()
 		end
 
 		if not core.OOD then
-			MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\up-to-date")
+			MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\EssentialDKP\\Media\\Textures\\up-to-date")
 			MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
 				GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
@@ -520,7 +520,7 @@ function MonDKP:StatusVerify_Update()
 
 			return true;
 		else
-			MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\out-of-date")
+			MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\EssentialDKP\\Media\\Textures\\out-of-date")
 			MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
 				GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);

@@ -326,7 +326,7 @@ local function BidWindowCreateRow(parent, id) -- Create 3 buttons for each row i
     local f = CreateFrame("Button", "$parentLine"..id, parent)
     f.Strings = {}
     f:SetSize(width, height)
-    f:SetHighlightTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\ListBox-Highlight");
+    f:SetHighlightTexture("Interface\\AddOns\\EssentialDKP\\Media\\Textures\\ListBox-Highlight");
     f:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
     f:GetNormalTexture():SetAlpha(0.2)
     for i=1, 3 do
@@ -456,7 +456,7 @@ function MonDKP:BidInterface_Create()
   f:SetClampedToScreen(true)
   f:SetBackdrop( {
     bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
-    edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3,  
+    edgeFile = "Interface\\AddOns\\EssentialDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3,  
     insets = { left = 0, right = 0, top = 0, bottom = 0 }
   });
   f:SetBackdropColor(0,0,0,0.9);
@@ -491,7 +491,7 @@ function MonDKP:BidInterface_Create()
   f.closeContainer:SetPoint("CENTER", f, "TOPRIGHT", -4, 0)
   f.closeContainer:SetBackdrop({
     bgFile   = "Textures\\white.blp", tile = true,
-    edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
+    edgeFile = "Interface\\AddOns\\EssentialDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
   });
   f.closeContainer:SetBackdropColor(0,0,0,0.9)
   f.closeContainer:SetBackdropBorderColor(1,1,1,0.2)
@@ -580,7 +580,7 @@ function MonDKP:BidInterface_Create()
   f.Bid:SetSize(70, 28)
   f.Bid:SetBackdrop({
     bgFile   = "Textures\\white.blp", tile = true,
-    edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile", tile = true, tileSize = 32, edgeSize = 2,
+    edgeFile = "Interface\\AddOns\\EssentialDKP\\Media\\Textures\\edgefile", tile = true, tileSize = 32, edgeSize = 2,
   });
   f.Bid:SetBackdropColor(0,0,0,0.6)
   f.Bid:SetBackdropBorderColor(1,1,1,0.6)
@@ -756,7 +756,7 @@ function MonDKP:BidInterface_Create()
   f.bidTable:SetSize(width, height*numrows+3)
   f.bidTable:SetBackdrop({
     bgFile   = "Textures\\white.blp", tile = true,
-    edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
+    edgeFile = "Interface\\AddOns\\EssentialDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
   });
   f.bidTable:SetBackdropColor(0,0,0,0.2)
   f.bidTable:SetBackdropBorderColor(1,1,1,0.4)
@@ -786,7 +786,7 @@ function MonDKP:BidInterface_Create()
   f.BidTable_Headers:SetPoint("BOTTOMLEFT", f.bidTable, "TOPLEFT", 0, 1)
   f.BidTable_Headers:SetBackdrop({
     bgFile   = "Textures\\white.blp", tile = true,
-    edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
+    edgeFile = "Interface\\AddOns\\EssentialDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
   });
   f.BidTable_Headers:SetBackdropColor(0,0,0,0.8);
   f.BidTable_Headers:SetBackdropBorderColor(1,1,1,0.5)

@@ -592,7 +592,7 @@ local function CreateRow(parent, id) -- Create 3 buttons for each row in the lis
 		local f = CreateFrame("Button", "$parentLine"..id, parent)
 		f.DKPInfo = {}
 		f:SetSize(core.TableWidth, core.TableRowHeight)
-		f:SetHighlightTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\ListBox-Highlight");
+		f:SetHighlightTexture("Interface\\AddOns\\EssentialDKP\\Media\\Textures\\ListBox-Highlight");
 		f:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
 		f:GetNormalTexture():SetAlpha(0.2)
 		f:SetScript("OnClick", DKPTable_OnClick)
@@ -720,9 +720,9 @@ function DKPTable_Update()
 			local CheckAdjusted = core.WorkingTable[index].dkp - core.WorkingTable[index].previous_dkp;
 			if(CheckAdjusted > 0) then 
 				CheckAdjusted = strjoin("", "+", CheckAdjusted) 
-				row.DKPInfo[3].adjustedArrow:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\green-up-arrow.png");
+				row.DKPInfo[3].adjustedArrow:SetTexture("Interface\\AddOns\\EssentialDKP\\Media\\Textures\\green-up-arrow.png");
 			elseif (CheckAdjusted < 0) then
-				row.DKPInfo[3].adjustedArrow:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\red-down-arrow.png");
+				row.DKPInfo[3].adjustedArrow:SetTexture("Interface\\AddOns\\EssentialDKP\\Media\\Textures\\red-down-arrow.png");
 			else
 				row.DKPInfo[3].adjustedArrow:SetTexture(nil);
 			end        
@@ -765,7 +765,7 @@ function DKPTable_Update()
 				MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
 				MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.2)
 			else
-				MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\ListBox-Highlight")
+				MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\AddOns\\EssentialDKP\\Media\\Textures\\ListBox-Highlight")
 				MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
 			end
 			if core.WorkingTable[index].player == UnitName("player") then
@@ -822,7 +822,7 @@ function MonDKP:DKPTable_Create()
 	MonDKP.DKPTable:SetPoint("LEFT", 20, 3)
 	MonDKP.DKPTable:SetBackdrop( {
 		bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
-		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,
+		edgeFile = "Interface\\AddOns\\EssentialDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,
 		insets = { left = 0, right = 0, top = 0, bottom = 0 }
 	});
 	MonDKP.DKPTable:SetBackdropColor(0,0,0,0.4);
@@ -862,5 +862,5 @@ function MonDKP:DKPTable_Create()
 	MonDKP.DKPTable.SeedVerifyIcon:SetPoint("TOPLEFT", MonDKP.DKPTable.SeedVerify, "TOPLEFT", 0, 0);
 	MonDKP.DKPTable.SeedVerifyIcon:SetColorTexture(0, 0, 0, 1)
 	MonDKP.DKPTable.SeedVerifyIcon:SetSize(18, 18);
-	MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\out-of-date")
+	MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\EssentialDKP\\Media\\Textures\\out-of-date")
 end

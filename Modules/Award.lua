@@ -178,7 +178,7 @@ local function AwardConfirm_Create()
 	f:SetClampedToScreen(true)
 	f:SetBackdrop( {
 		bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
-		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3,  
+		edgeFile = "Interface\\AddOns\\EssentialDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3,  
 		insets = { left = 0, right = 0, top = 0, bottom = 0 }
 	});
 	f:SetBackdropColor(0,0,0,0.9);
