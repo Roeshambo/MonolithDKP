@@ -2,7 +2,7 @@
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
  	<!-- Custom Highlight Template -->
- 	<Texture name="EssentialDKPButtonHighlightTexture" file="Interface\AddOns\EssentialDKP\Media\Textures\EssentialDKP-Button-Highlight" alphaMode="ADD" virtual="true">
+ 	<Texture name="MonolithDKPButtonHighlightTexture" file="Interface\AddOns\EssentialDKP\Media\Textures\MonolithDKP-Button-Highlight" alphaMode="ADD" virtual="true">
 		<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 	</Texture>
 	<!-- MonDKP Fonts -->
@@ -150,7 +150,7 @@
 	<Font name="MonDKPLargeLeft" inherits="MonDKPLarge" justifyH="LEFT" virtual="true"/>
 	<Font name="MonDKPLargeRight" inherits="MonDKPLarge" justifyH="RIGHT" virtual="true"/>
  	<!-- Button Frame Template -->
- 	<Button name="EssentialDKPUIPanelButtonNoTooltipTemplate" virtual="true">
+ 	<Button name="MonolithDKPUIPanelButtonNoTooltipTemplate" virtual="true">
 		<Size x="40" y="22"/>
 		<Layers>
 			<Layer level="BACKGROUND">
@@ -181,20 +181,20 @@
 			</Layer>
 		</Layers>
 		<Scripts>
-			<OnLoad function="EssentialDKPButton_OnLoad"/>
-			<OnMouseDown function="EssentialDKPButton_OnMouseDown"/>
-			<OnMouseUp function="EssentialDKPButton_OnMouseUp"/>
-			<OnShow function="EssentialDKPButton_OnShow"/>
-			<OnDisable function="EssentialDKPButton_OnDisable"/>
-			<OnEnable function="EssentialDKPButton_OnEnable"/>
+			<OnLoad function="MonolithDKPButton_OnLoad"/>
+			<OnMouseDown function="MonolithDKPButton_OnMouseDown"/>
+			<OnMouseUp function="MonolithDKPButton_OnMouseUp"/>
+			<OnShow function="MonolithDKPButton_OnShow"/>
+			<OnDisable function="MonolithDKPButton_OnDisable"/>
+			<OnEnable function="MonolithDKPButton_OnEnable"/>
 		</Scripts>
 		<ButtonText name="$parentText" parentKey="Text"/>
 		<NormalFont style="GameFontNormal"/>
 		<HighlightFont style="GameFontHighlight"/>
 		<DisabledFont style="GameFontDisable"/>
-		<HighlightTexture inherits="EssentialDKPButtonHighlightTexture"/>
+		<HighlightTexture inherits="MonolithDKPButtonHighlightTexture"/>
 	</Button>
-	<Button name="EssentialDKPButtonTemplate" inherits="EssentialDKPUIPanelButtonNoTooltipTemplate" virtual="true">
+	<Button name="MonolithDKPButtonTemplate" inherits="MonolithDKPUIPanelButtonNoTooltipTemplate" virtual="true">
 		<Size>
 			<AbsDimension x="144" y="21"/>
 		</Size>
@@ -204,7 +204,7 @@
 	</Button>
 	
 	<!-- Drop Down Menu Frame Template -->
-	<Frame name="EssentialDKPUIDropDownMenuTemplate" virtual="true">
+	<Frame name="MonolithDKPUIDropDownMenuTemplate" virtual="true">
 		<Size>
 			<AbsDimension x="40" y="32"/>
 		</Size>
@@ -341,7 +341,7 @@
 	</Frame>
 
 	<!-- DKP Table Drop Down Menu Frame Template -->
-	<Frame name="EssentialDKPTableHeaderDropDownMenuTemplate" virtual="true">
+	<Frame name="MonolithDKPTableHeaderDropDownMenuTemplate" virtual="true">
 		<Size>
 			<AbsDimension x="40" y="32"/>
 		</Size>
