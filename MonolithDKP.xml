@@ -2,13 +2,13 @@
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
  	<!-- Custom Highlight Template -->
- 	<Texture name="MonolithDKPButtonHighlightTexture" file="Interface\AddOns\MonolithDKP\Media\Textures\MonolithDKP-Button-Highlight" alphaMode="ADD" virtual="true">
+ 	<Texture name="EssentialDKPButtonHighlightTexture" file="Interface\AddOns\EssentialDKP\Media\Textures\EssentialDKP-Button-Highlight" alphaMode="ADD" virtual="true">
 		<TexCoords left="0" right="0.625" top="0" bottom="0.6875"/>
 	</Texture>
 	<!-- MonDKP Fonts -->
 	<FontFamily  name="MonDKPTiny" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="10"/>
+			<Font font="Interface\AddOns\EssentialDKP\Media\Fonts\homizio_bold.ttf" height="10"/>
 		</Member>
 		<Member alphabet="korean">
 			<Font font="Fonts\2002.TTF" height="10" outline="NORMAL"/>
@@ -25,7 +25,7 @@
 	</FontFamily>
 	<FontFamily  name="MonDKPTinyOutline" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="10" outline="NORMAL"/>
+			<Font font="Interface\AddOns\EssentialDKP\Media\Fonts\homizio_bold.ttf" height="10" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="korean">
 			<Font font="Fonts\2002.TTF" height="10" outline="NORMAL"/>
@@ -42,7 +42,7 @@
 	</FontFamily>
 	<FontFamily  name="MonDKPSmall" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="12"/>
+			<Font font="Interface\AddOns\EssentialDKP\Media\Fonts\homizio_bold.ttf" height="12"/>
 		</Member>
 		<Member alphabet="korean">
 			<Font font="Fonts\2002.TTF" height="12" outline="NORMAL"/>
@@ -59,7 +59,7 @@
 	</FontFamily>
 	<FontFamily  name="MonDKPSmallOutline" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="12" outline="NORMAL"/>
+			<Font font="Interface\AddOns\EssentialDKP\Media\Fonts\homizio_bold.ttf" height="12" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="korean">
 			<Font font="Fonts\2002.TTF" height="12" outline="NORMAL"/>
@@ -76,7 +76,7 @@
 	</FontFamily>
 	<FontFamily  name="MonDKPNormal" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="13"/>
+			<Font font="Interface\AddOns\EssentialDKP\Media\Fonts\homizio_bold.ttf" height="13"/>
 		</Member>
 		<Member alphabet="korean">
 			<Font font="Fonts\2002.TTF" height="13" outline="NORMAL"/>
@@ -93,7 +93,7 @@
 	</FontFamily>
 	<FontFamily  name="MonDKPNormalOutline" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\homizio_bold.ttf" height="13" outline="NORMAL"/>
+			<Font font="Interface\AddOns\EssentialDKP\Media\Fonts\homizio_bold.ttf" height="13" outline="NORMAL"/>
 		</Member>
 		<Member alphabet="korean">
 			<Font font="Fonts\2002.TTF" height="13" outline="NORMAL"/>
@@ -110,7 +110,7 @@
 	</FontFamily>
 	<FontFamily  name="MonDKPLarge" virtual="true">
 		<Member alphabet="roman">
-			<Font font="Interface\AddOns\MonolithDKP\Media\Fonts\uf_font.ttf" height="24"/>
+			<Font font="Interface\AddOns\EssentialDKP\Media\Fonts\uf_font.ttf" height="24"/>
 		</Member>
 		<Member alphabet="korean">
 			<Font font="Fonts\2002.TTF" height="24" outline="NORMAL"/>
@@ -150,7 +150,7 @@
 	<Font name="MonDKPLargeLeft" inherits="MonDKPLarge" justifyH="LEFT" virtual="true"/>
 	<Font name="MonDKPLargeRight" inherits="MonDKPLarge" justifyH="RIGHT" virtual="true"/>
  	<!-- Button Frame Template -->
- 	<Button name="MonolithDKPUIPanelButtonNoTooltipTemplate" virtual="true">
+ 	<Button name="EssentialDKPUIPanelButtonNoTooltipTemplate" virtual="true">
 		<Size x="40" y="22"/>
 		<Layers>
 			<Layer level="BACKGROUND">
@@ -181,20 +181,20 @@
 			</Layer>
 		</Layers>
 		<Scripts>
-			<OnLoad function="MonolithDKPButton_OnLoad"/>
-			<OnMouseDown function="MonolithDKPButton_OnMouseDown"/>
-			<OnMouseUp function="MonolithDKPButton_OnMouseUp"/>
-			<OnShow function="MonolithDKPButton_OnShow"/>
-			<OnDisable function="MonolithDKPButton_OnDisable"/>
-			<OnEnable function="MonolithDKPButton_OnEnable"/>
+			<OnLoad function="EssentialDKPButton_OnLoad"/>
+			<OnMouseDown function="EssentialDKPButton_OnMouseDown"/>
+			<OnMouseUp function="EssentialDKPButton_OnMouseUp"/>
+			<OnShow function="EssentialDKPButton_OnShow"/>
+			<OnDisable function="EssentialDKPButton_OnDisable"/>
+			<OnEnable function="EssentialDKPButton_OnEnable"/>
 		</Scripts>
 		<ButtonText name="$parentText" parentKey="Text"/>
 		<NormalFont style="GameFontNormal"/>
 		<HighlightFont style="GameFontHighlight"/>
 		<DisabledFont style="GameFontDisable"/>
-		<HighlightTexture inherits="MonolithDKPButtonHighlightTexture"/>
+		<HighlightTexture inherits="EssentialDKPButtonHighlightTexture"/>
 	</Button>
-	<Button name="MonolithDKPButtonTemplate" inherits="MonolithDKPUIPanelButtonNoTooltipTemplate" virtual="true">
+	<Button name="EssentialDKPButtonTemplate" inherits="EssentialDKPUIPanelButtonNoTooltipTemplate" virtual="true">
 		<Size>
 			<AbsDimension x="144" y="21"/>
 		</Size>
@@ -204,13 +204,13 @@
 	</Button>
 	
 	<!-- Drop Down Menu Frame Template -->
-	<Frame name="MonolithDKPUIDropDownMenuTemplate" virtual="true">
+	<Frame name="EssentialDKPUIDropDownMenuTemplate" virtual="true">
 		<Size>
 			<AbsDimension x="40" y="32"/>
 		</Size>
 		<Layers>
 			<Layer level="ARTWORK">
-				<Texture name="$parentLeft" parentKey="Left" file="Interface\AddOns\MonolithDKP\Media\Textures\MonDKP-Dropdown-Frame">
+				<Texture name="$parentLeft" parentKey="Left" file="Interface\AddOns\EssentialDKP\Media\Textures\MonDKP-Dropdown-Frame">
 					<Size>
 						<AbsDimension x="25" y="64"/>
 					</Size>
@@ -223,7 +223,7 @@
 					</Anchors>
 					<TexCoords left="0" right="0.1953125" top="0" bottom="1"/>
 				</Texture>
-				<Texture name="$parentMiddle" parentKey="Middle" file="Interface\AddOns\MonolithDKP\Media\Textures\MonDKP-Dropdown-Frame">
+				<Texture name="$parentMiddle" parentKey="Middle" file="Interface\AddOns\EssentialDKP\Media\Textures\MonDKP-Dropdown-Frame">
 					<Size>
 						<AbsDimension x="115" y="64"/>
 					</Size>
@@ -232,7 +232,7 @@
 					</Anchors>
 					<TexCoords left="0.1953125" right="0.8046875" top="0" bottom="1"/>
 				</Texture>
-				<Texture name="$parentRight" parentKey="Right" file="Interface\AddOns\MonolithDKP\Media\Textures\MonDKP-Dropdown-Frame">
+				<Texture name="$parentRight" parentKey="Right" file="Interface\AddOns\EssentialDKP\Media\Textures\MonDKP-Dropdown-Frame">
 					<Size>
 						<AbsDimension x="25" y="64"/>
 					</Size>
@@ -341,13 +341,13 @@
 	</Frame>
 
 	<!-- DKP Table Drop Down Menu Frame Template -->
-	<Frame name="MonolithDKPTableHeaderDropDownMenuTemplate" virtual="true">
+	<Frame name="EssentialDKPTableHeaderDropDownMenuTemplate" virtual="true">
 		<Size>
 			<AbsDimension x="40" y="32"/>
 		</Size>
 		<Layers>
 			<Layer level="ARTWORK">
-				<Texture name="$parentLeft" parentKey="Left" file="Interface\AddOns\MonolithDKP\Media\Textures\MonDKP-Dropdown-Frame-Header">
+				<Texture name="$parentLeft" parentKey="Left" file="Interface\AddOns\EssentialDKP\Media\Textures\MonDKP-Dropdown-Frame-Header">
 					<Size>
 						<AbsDimension x="25" y="64"/>
 					</Size>
@@ -360,7 +360,7 @@
 					</Anchors>
 					<TexCoords left="0" right="0.1953125" top="0" bottom="1"/>
 				</Texture>
-				<Texture name="$parentMiddle" parentKey="Middle" file="Interface\AddOns\MonolithDKP\Media\Textures\MonDKP-Dropdown-Frame-Header">
+				<Texture name="$parentMiddle" parentKey="Middle" file="Interface\AddOns\EssentialDKP\Media\Textures\MonDKP-Dropdown-Frame-Header">
 					<Size>
 						<AbsDimension x="115" y="64"/>
 					</Size>
@@ -369,7 +369,7 @@
 					</Anchors>
 					<TexCoords left="0.1953125" right="0.8046875" top="0" bottom="1"/>
 				</Texture>
-				<Texture name="$parentRight" parentKey="Right" file="Interface\AddOns\MonolithDKP\Media\Textures\MonDKP-Dropdown-Frame-Header">
+				<Texture name="$parentRight" parentKey="Right" file="Interface\AddOns\EssentialDKP\Media\Textures\MonDKP-Dropdown-Frame-Header">
 					<Size>
 						<AbsDimension x="25" y="64"/>
 					</Size>
@@ -483,7 +483,7 @@
         </Size>
         <Layers>
         	<Layer level="BACKGROUND">
-        		<Texture name="$parentLeftDisabled" file="Interface\AddOns\MonolithDKP\Media\Textures\MonDKP-Active-Tab">
+        		<Texture name="$parentLeftDisabled" file="Interface\AddOns\EssentialDKP\Media\Textures\MonDKP-Active-Tab">
         			<Size>
         				<AbsDimension x="20" y="35"/>
         			</Size>
@@ -496,7 +496,7 @@
         			</Anchors>
 					<TexCoords left="0" right="0.15625" top="0" bottom="0.546875"/>
         		</Texture>
-				<Texture name="$parentMiddleDisabled" file="Interface\AddOns\MonolithDKP\Media\Textures\MonDKP-Active-Tab">
+				<Texture name="$parentMiddleDisabled" file="Interface\AddOns\EssentialDKP\Media\Textures\MonDKP-Active-Tab">
         			<Size>
         				<AbsDimension x="88" y="35"/>
         			</Size>
@@ -505,7 +505,7 @@
         			</Anchors>
 					<TexCoords left="0.15625" right="0.84375" top="0" bottom="0.546875"/>
         		</Texture>
-				<Texture name="$parentRightDisabled" file="Interface\AddOns\MonolithDKP\Media\Textures\MonDKP-Active-Tab">
+				<Texture name="$parentRightDisabled" file="Interface\AddOns\EssentialDKP\Media\Textures\MonDKP-Active-Tab">
         			<Size>
         				<AbsDimension x="20" y="35"/>
         			</Size>
@@ -514,7 +514,7 @@
         			</Anchors>
 					<TexCoords left="0.84375" right="1.0" top="0" bottom="0.546875"/>
         		</Texture>
-				<Texture name="$parentLeft" file="Interface\AddOns\MonolithDKP\Media\Textures\MonDKP-Inactive-Tab">
+				<Texture name="$parentLeft" file="Interface\AddOns\EssentialDKP\Media\Textures\MonDKP-Inactive-Tab">
         			<Size>
         				<AbsDimension x="20" y="47"/>
         			</Size>
@@ -523,7 +523,7 @@
         			</Anchors>
 					<TexCoords left="0" right="0.15625" top="0" bottom="1.0"/>
         		</Texture>
-				<Texture name="$parentMiddle" file="Interface\AddOns\MonolithDKP\Media\Textures\MonDKP-Inactive-Tab">
+				<Texture name="$parentMiddle" file="Interface\AddOns\EssentialDKP\Media\Textures\MonDKP-Inactive-Tab">
         			<Size>
         				<AbsDimension x="88" y="47"/>
         			</Size>
@@ -532,7 +532,7 @@
 					</Anchors>
 					<TexCoords left="0.15625" right="0.84375" top="0" bottom="1.0"/>
         		</Texture>
-				<Texture name="$parentRight" file="Interface\AddOns\MonolithDKP\Media\Textures\MonDKP-Inactive-Tab">
+				<Texture name="$parentRight" file="Interface\AddOns\EssentialDKP\Media\Textures\MonDKP-Inactive-Tab">
         			<Size>
         				<AbsDimension x="20" y="47"/>
         			</Size>
@@ -616,7 +616,7 @@
 				<AbsValue val="2"/>
 			</EdgeSize>
 		</Backdrop>
-		<ThumbTexture parentKey="Thumb" name="$parentThumb" file="Interface\AddOns\MonolithDKP\Media\Textures\slider-pin">
+		<ThumbTexture parentKey="Thumb" name="$parentThumb" file="Interface\AddOns\EssentialDKP\Media\Textures\slider-pin">
 			<Size x="16" y="16"/>
 		</ThumbTexture>
 	</Slider>
