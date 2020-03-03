@@ -283,7 +283,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 	elseif event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" then
 		MonDKP:CheckOfficer()
 		arg1 = strlower(arg1)
-		if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "!standby") == 1 or string.find(arg1, "！dkp") == 1) and core.IsOfficer == true then
+		if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "!standby") == 1 or string.find(arg1, "ďĽ�dkp") == 1) and core.IsOfficer == true then
 			MonDKP_CHAT_MSG_WHISPER(arg1, ...)
 		end
 	elseif event == "UPDATE_INSTANCE_INFO" then
@@ -339,7 +339,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		MonDKP:CheckOfficer()
 		if core.IsOfficer then
 			arg1 = strlower(arg1)
-			if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "！dkp") == 1) and MonDKP_DB.modes.channels.guild then
+			if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "ďĽ�dkp") == 1) and MonDKP_DB.modes.channels.guild then
 				MonDKP_CHAT_MSG_WHISPER(arg1, ...)
 			elseif string.find(arg1, "!standby") == 1 and core.StandbyActive then
 				MonDKP_Standby_Handler(arg1, ...)
@@ -438,7 +438,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 end
 
 function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run on load triggered registered events at bottom of file
-	if (name ~= "MonolithDKP") then return end 
+	if (name ~= "EssentialDKP") then return end 
 
 	-- allows using left and right buttons to move through chat 'edit' box
 	--[[for i = 1, NUM_CHAT_WINDOWS do
