@@ -1,7 +1,7 @@
 ## Interface: 11303
-## Title: M|cffaeaeddonolith|r |cffff0000DKP|r
-## Author: Roeshambo-Stalagg
-## Notes: Comprehensive DKP and raid management utility. |cff00ff00Essential Edition|r
+## Title: |cffaeaeddEssential|r |cffff0000DKP|r
+## Author: Danteril-MirageRaceway
+## Notes: Comprehensive DKP and raid management utility. MonotlithDKP fork |cff00ff00Essential Edition|r
 ## Version: 14.1.2
 ## DefaultState: enabled
 ## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_DKPHistory, MonDKP_MinBids, MonDKP_MaxBids, MonDKP_Whitelist, MonDKP_Standby, MonDKP_Archive
