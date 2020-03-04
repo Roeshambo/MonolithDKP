@@ -328,7 +328,7 @@ end
 function MonDKP:Print(...)        --print function to add "MonolithDKP:" to the beginning of print() outputs.
 	if not MonDKP_DB.defaults.supressNotifications then
 		local defaults = MonDKP:GetThemeColor();
-		local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "MonolithDKP:", defaults[2].hex:upper());
+		local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "EssentialDKP:", defaults[2].hex:upper());
 		local suffix = "|r";
 
 		for i = 1, NUM_CHAT_WINDOWS do
