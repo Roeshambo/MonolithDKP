@@ -51,11 +51,11 @@ function MonDKP_Standby_Handler(text, ...)
 
 			if search and not verify then
 				table.insert(MonDKP_Standby, MonDKP_DKPTable[search[1][1]])
-				response = "MonolithDKP: "..cmd.." "..L["STANDBYWHISPERRESP1"]
+				response = "EssentialDKP: "..cmd.." "..L["STANDBYWHISPERRESP1"]
 			elseif search and verify then
-				response = "MonolithDKP: "..cmd.." "..L["STANDBYWHISPERRESP2"]
+				response = "EssentialDKP: "..cmd.." "..L["STANDBYWHISPERRESP2"]
 			else
-				response = "MonolithDKP: "..cmd.." "..L["STANDBYWHISPERRESP3"];
+				response = "EssentialDKP: "..cmd.." "..L["STANDBYWHISPERRESP3"];
 			end
 		else
 			-- if it's just !standby
@@ -64,11 +64,11 @@ function MonDKP_Standby_Handler(text, ...)
 
 			if search and not verify then
 				table.insert(MonDKP_Standby, MonDKP_DKPTable[search[1][1]])
-				response = "MonolithDKP: "..L["STANDBYWHISPERRESP4"]
+				response = "EssentialDKP: "..L["STANDBYWHISPERRESP4"]
 			elseif search and verify then
-				response = "MonolithDKP: "..L["STANDBYWHISPERRESP5"]
+				response = "EssentialDKP: "..L["STANDBYWHISPERRESP5"]
 			else
-				response = "MonolithDKP: "..L["STANDBYWHISPERRESP6"];
+				response = "EssentialDKP: "..L["STANDBYWHISPERRESP6"];
 			end
 		end
 		if MonDKP:CheckRaidLeader() then 						 -- only raid leader responds to add.
@@ -78,7 +78,7 @@ function MonDKP_Standby_Handler(text, ...)
 
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", function(self, event, msg, ...)		-- suppresses outgoing whisper responses to limit spam
 		if core.StandbyActive and MonDKP_DB.defaults.SupressTells then
-			if strfind(msg, "MonolithDKP: ") then
+			if strfind(msg, "EssentialDKP: ") then
 				return true
 			end
 		end
