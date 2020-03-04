@@ -31,7 +31,7 @@ MonDKP.Commands = {
         StaticPopup_Show ("SUGGEST_RELOAD")
       end
     else
-      MonDKP:Print("Monolith DKP has not completed initialization.")
+      MonDKP:Print("Essential DKP has not completed initialization.")
     end
   end,
   ["reset"] = MonDKP.ResetPosition,
@@ -52,7 +52,7 @@ MonDKP.Commands = {
       end
       MonDKP:BidInterface_Toggle()
     else
-      MonDKP:Print("Monolith DKP has not completed initialization.")
+      MonDKP:Print("Essential DKP has not completed initialization.")
     end 
   end,
   ["repairtables"] = function(...)       -- test new features
@@ -107,7 +107,7 @@ MonDKP.Commands = {
         MonDKP:Print(L["NOPERMISSION"])
       end
     else
-      MonDKP:Print("Monolith DKP has not completed initialization.")
+      MonDKP:Print("Essential DKP has not completed initialization.")
     end
   end,
   ["help"] = function()
