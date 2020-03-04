@@ -46,8 +46,10 @@ end
 -- Addon Defaults
 --------------------------------------
 local defaults = {
-	theme = { r = 0.6823, g = 0.6823, b = 0.8666, hex = "aeaedd" },
-	theme2 = { r = 1, g = 0.37, b = 0.37, hex = "ff6060" }
+	--theme = { r = 0.6823, g = 0.6823, b = 0.8666, hex = "aeaedd" },
+	theme = { r = 0.4, g = 0.8, b = 0.4, hex = "66cc66" },
+	--theme2 = { r = 1, g = 0.37, b = 0.37, hex = "ff6060" }
+	theme2 = { r = 0.8, g = 0.8, b = 0.8, hex = "cccccc" }
 }
 
 core.WorkingTable = {};       -- table of all entries from MonDKP_DKPTable that are currently visible in the window. From MonDKP_DKPTable
@@ -325,10 +327,10 @@ function MonDKP:FormatTime(time)
 	return str;
 end
 
-function MonDKP:Print(...)        --print function to add "MonolithDKP:" to the beginning of print() outputs.
+function MonDKP:Print(...)        --print function to add "EsentialDKP:" to the beginning of print() outputs.
 	if not MonDKP_DB.defaults.supressNotifications then
 		local defaults = MonDKP:GetThemeColor();
-		local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "MonolithDKP:", defaults[2].hex:upper());
+		local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "EssentialDKP:", defaults[2].hex:upper());
 		local suffix = "|r";
 
 		for i = 1, NUM_CHAT_WINDOWS do

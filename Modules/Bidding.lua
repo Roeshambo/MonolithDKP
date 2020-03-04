@@ -242,9 +242,9 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
       local search = MonDKP:Table_Search(MonDKP_DKPTable, cmd, "player")
 
       if search then
-        response = "MonolithDKP: "..MonDKP_DKPTable[search[1][1]].player.." "..L["CURRENTLYHAS"].." "..MonDKP_DKPTable[search[1][1]].dkp.." "..L["DKPAVAILABLE"].."."
+        response = "EssentialDKP: "..MonDKP_DKPTable[search[1][1]].player.." "..L["CURRENTLYHAS"].." "..MonDKP_DKPTable[search[1][1]].dkp.." "..L["DKPAVAILABLE"].."."
       else
-        response = "MonolithDKP: "..L["PLAYERNOTFOUND"]
+        response = "EssentialDKP: "..L["PLAYERNOTFOUND"]
       end
     else
       local search = MonDKP:Table_Search(MonDKP_DKPTable, name)
@@ -278,9 +278,9 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
           end
 
       if search then
-        response = "MonolithDKP: "..L["YOUCURRENTLYHAVE"].." "..MonDKP_DKPTable[search[1][1]].dkp.." "..L["DKP"].."."..range;
+        response = "EssentialDKP: "..L["YOUCURRENTLYHAVE"].." "..MonDKP_DKPTable[search[1][1]].dkp.." "..L["DKP"].."."..range;
       else
-        response = "MonolithDKP: "..L["PLAYERNOTFOUND"]
+        response = "EssentialDKP: "..L["PLAYERNOTFOUND"]
       end
     end
 
@@ -308,7 +308,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
       end
     end
 
-    if strfind(msg, "MonolithDKP: ") == 1 then
+    if strfind(msg, "EssentialDKP: ") == 1 then
       return true
     elseif strfind(msg, L["NOBIDINPROGRESS"]) == 1 then
       return true
