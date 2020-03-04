@@ -517,7 +517,7 @@ if GetLocale() == "zhTW" then
 
     確實要這樣做嗎？]=],
     OUTOFDATE = "過時的",
-    OUTOFDATEANNOUNCE = "您的Monolith DKP版本已過時。請更新Curse / Twitch或WoWInterface，以確保沒有兼容性問題。",
+    OUTOFDATEANNOUNCE = "您的Monolith DKP版本已過時。請更新Curse / Twitch，以確保沒有兼容性問題。",
     PAUSERAID = "暫停RAID",
     PAUSERAIDTTDESC = "如果領導决定暫停計時器以進行中斷，則會暫停raid計時器。",
     PAUSERAIDTTWARN = "可通過按一下“繼續RAID”繼續。",

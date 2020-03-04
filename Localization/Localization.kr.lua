@@ -519,7 +519,7 @@ if GetLocale() == "koKR" then
 
     이 작업을 수행 하시겠습니까?]=],
     OUTOFDATE = "오래된",
-    OUTOFDATEANNOUNCE = "사용중인 Monolith DKP 버전이 오래되었습니다. 호환성 문제가 없는지 확인하려면 Curse / Twitch 또는 WoWInterface를 업데이트하십시오.",
+    OUTOFDATEANNOUNCE = "사용중인 Monolith DKP 버전이 오래되었습니다. 호환성 문제가 없는지 확인하려면 Curse / Twitch 를 업데이트하십시오.",
     PAUSERAID = "레이드 일시 중지",
     PAUSERAIDTTDESC = "리더가 휴식을 위해 타이머를 중단해야한다고 결정하면 급습 타이머가 일시 중지됩니다.",
     PAUSERAIDTTWARN = "\"계속 레이드\"를 클릭하여 다시 시작할 수 있습니다.",

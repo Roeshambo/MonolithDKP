@@ -533,7 +533,7 @@ if GetLocale() == "deDE" then
 
     Sind Sie sicher, dass Sie dies tun möchten?]=],
     OUTOFDATE = "veraltet",
-    OUTOFDATEANNOUNCE = "Ihre Version von Monolith DKP ist veraltet. Bitte aktualisieren Sie Curse / Twitch oder WoWInterface, um sicherzustellen, dass keine Kompatibilitätsprobleme vorliegen.",
+    OUTOFDATEANNOUNCE = "Ihre Version von Monolith DKP ist veraltet. Bitte aktualisieren Sie Curse / Twitch, um sicherzustellen, dass keine Kompatibilitätsprobleme vorliegen.",
     OVERWRITETABLES = "Ein kompletter Broadcast wird die Daten aller Empfänger mit deinen überschreiben. Hat jemand neuere Einträge als du, gehen diese verloren. Wenn du nur Daten senden willst, die anderen fehlen, benutze die \"Merge Last 2 Weeks\" option. Fortfahren?",
     PAUSERAID = "Raid anhalten",
     PAUSERAIDTTDESC = "Dies unterbricht einen Raid-Timer, wenn der Anführer entscheidet, dass der Timer für Pausen angehalten werden soll.",

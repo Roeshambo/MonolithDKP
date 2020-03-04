@@ -519,7 +519,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
 
     ¿Está seguro de que le gustaría hacer esto?]=],
     OUTOFDATE = "fuera de plazo",
-    OUTOFDATEANNOUNCE = "Su versión de Monolith DKP está desactualizada. Actualice Curse / Twitch o WoWInterface para asegurarse de que no haya problemas de compatibilidad.",
+    OUTOFDATEANNOUNCE = "Su versión de Monolith DKP está desactualizada. Actualice Curse / Twitch para asegurarse de que no haya problemas de compatibilidad.",
     PAUSERAID = "Pausa Raid",
     PAUSERAIDTTDESC = "Esto detiene un temporizador de incursión si el líder decide que el temporizador debe detenerse por descansos.",
     PAUSERAIDTTWARN = "Se puede reanudar haciendo clic en \"Continuar incursión\".",

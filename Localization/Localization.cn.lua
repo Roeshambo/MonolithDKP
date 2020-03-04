@@ -519,7 +519,7 @@ if GetLocale() == "zhCN" then
 
     您确定要这样做吗]=],
     OUTOFDATE = "过时的",
-    OUTOFDATEANNOUNCE = "您的Monolith DKP版本已过时。请更新Curse / Twitch或WoWInterface，以确保没有兼容性问题。",
+    OUTOFDATEANNOUNCE = "您的Monolith DKP版本已过时。请更新Curse / Twitch，以确保没有兼容性问题。",
     PAUSERAID = "暂停突",
     PAUSERAIDTTDESC = "如果领导者决定暂停计时器，则这会暂停突袭计时器",
     PAUSERAIDTTWARN = "可以通过单击“ 继续突袭 ”恢复",

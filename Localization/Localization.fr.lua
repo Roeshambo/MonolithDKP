@@ -519,7 +519,7 @@ if GetLocale() == "frFR" then
 
     Êtes-vous sûr de vouloir faire cela?]=],
     OUTOFDATE = "périmé",
-    OUTOFDATEANNOUNCE = "Votre version de Monolith DKP est obsolète. Veuillez mettre à jour Curse / Twitch ou WoWInterface pour vous assurer qu'il n'y a aucun problème de compatibilité.",
+    OUTOFDATEANNOUNCE = "Votre version de Monolith DKP est obsolète. Veuillez mettre à jour Curse / Twitch pour vous assurer qu'il n'y a aucun problème de compatibilité.",
     PAUSERAID = "Pause Raid",
     PAUSERAIDTTDESC = "Ceci met en pause un chronomètre de raid si le chef décide que le chronomètre doit être arrêté pour les pauses.",
     PAUSERAIDTTWARN = "Peut être repris en cliquant sur \"Continuer le raid\".",
