@@ -148,19 +148,19 @@ function AddRaidToDKPTable()
 	end
 end
 
-local function AddGuildToDKPTable(rank)
+local function AddGuildToDKPTable(rank, level)
 	local guildSize = GetNumGuildMembers();
-	local class, addedUsers, c, name, rankName, rankIndex;
+	local class, addedUsers, c, name, rankName, rankIndex, charLevel;
 	local numPlayers = 0;
 	local FlagRecovery = false
 	local curTime = time()
 
 	for i=1, guildSize do
-		name,rankName,rankIndex,_,_,_,_,_,_,_,class = GetGuildRosterInfo(i)
+		name,rankName,rankIndex,charLevel,_,_,_,_,_,_,class = GetGuildRosterInfo(i)
 		name = strsub(name, 1, string.find(name, "-")-1)			-- required to remove server name from player (can remove in classic if this is not an issue)
 		local search = MonDKP:Table_Search(MonDKP_DKPTable, name)
 
-		if not search and rankIndex == rank then
+		if not search and (level == nil or charLevel >= level) and (rank == nil or rankIndex == rank) then
 			tinsert(MonDKP_DKPTable, {
 				player=name,
 				class=class,
@@ -168,7 +168,7 @@ local function AddGuildToDKPTable(rank)
 				previous_dkp=0,
 				lifetime_gained = 0,
 				lifetime_spent = 0,
-				rank=rank,
+				rank=rankIndex,
 				rankName=rankName,
 				spec = "No Spec Reported",
 				role = "No Role Reported",
