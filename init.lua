@@ -237,9 +237,13 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		end
 	elseif event == "CHAT_MSG_WHISPER" then
 		MonDKP:CheckOfficer()
-		arg1 = strlower(arg1)
-		if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "！dkp") == 1) and core.IsOfficer == true then
-			MonDKP_CHAT_MSG_WHISPER(arg1, ...)
+		if core.IsOfficer then
+			arg1 = strlower(arg1)
+			if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "！dkp") == 1) then
+				MonDKP_CHAT_MSG_WHISPER(arg1, ...)
+			elseif string.find(arg1, "!standby") == 1 and core.StandbyActive then
+				MonDKP_Standby_Handler(arg1, ...)
+			end
 		end
 	elseif event == "GUILD_ROSTER_UPDATE" then
 		if IsInGuild() and not core.InitStart then

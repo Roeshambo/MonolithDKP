@@ -130,7 +130,21 @@ local function GenerateDKPTables(table, format)
 
 			ExportString = "<dkphistory>\n";
 			for i=1, numrows do
-				ExportString = ExportString.."    <historyentry>\n        <playerstring>"..MonDKP_DKPHistory[i].players.."</playerstring>\n        <dkp>"..MonDKP_DKPHistory[i].dkp.."</dkp>\n        <timestamp>"..MonDKP_DKPHistory[i].date.."</timestamp>\n        <reason>"..MonDKP_DKPHistory[i].reason.."</reason>\n    </historyentry>\n";
+				local deletes;
+				local deletedby;
+				if MonDKP_DKPHistory[i].deletes == nil then 
+					deletes = ''
+				else
+					deletes = MonDKP_DKPHistory[i].deletes
+				end
+	
+				if MonDKP_DKPHistory[i].deletedby == nil then 
+					deletedby = ''
+				else
+					deletedby = MonDKP_DKPHistory[i].deletedby
+				end
+	
+				ExportString = ExportString.."    <historyentry>\n        <playerstring>"..MonDKP_DKPHistory[i].players.."</playerstring>\n        <dkp>"..MonDKP_DKPHistory[i].dkp.."</dkp>\n        <timestamp>"..MonDKP_DKPHistory[i].date.."</timestamp>\n        <reason>"..MonDKP_DKPHistory[i].reason.."</reason>\n        <deletes>"..deletes.."</deletes>\n        <deletedby>"..deletedby.."</deletedby>\n    </historyentry>\n";
 			end
 			ExportString = ExportString.."</dkphistory>";
 		elseif table == MonDKP_Loot then
@@ -148,7 +162,21 @@ local function GenerateDKPTables(table, format)
 				local itemNumber = strsub(cur, string.find(cur, "Hitem:")+6, string.find(cur, ":", string.find(cur, "Hitem:")+6)-1)
 				local itemName = strsub(cur, string.find(cur, "::|h%[")+5, string.find(cur, "%]", string.find(cur, "::|h%[")+5)-1)
 				
-				ExportString = ExportString.."    <lootentry>\n        <player>"..MonDKP_Loot[i].player.."</player>\n        <itemname>"..itemName.."</itemname>\n        <itemnumber>"..itemNumber.."</itemnumber>\n        <zone>"..MonDKP_Loot[i].zone.."</zone>\n        <boss>"..MonDKP_Loot[i].boss.."</boss>\n        <timestamp>"..MonDKP_Loot[i].date.."</timestamp>\n        <cost>"..MonDKP_Loot[i].cost.."</cost>\n    </lootentry>\n";
+				local deletes;
+				local deletedby;
+				if MonDKP_Loot[i].deletes == nil then 
+					deletes = ''
+				else
+					deletes = MonDKP_Loot[i].deletes
+				end
+	
+				if MonDKP_Loot[i].deletedby == nil then 
+					deletedby = ''
+				else
+					deletedby = MonDKP_Loot[i].deletedby
+				end
+	
+				ExportString = ExportString.."    <lootentry>\n        <player>"..MonDKP_Loot[i].player.."</player>\n        <itemname>"..itemName.."</itemname>\n        <itemnumber>"..itemNumber.."</itemnumber>\n        <zone>"..MonDKP_Loot[i].zone.."</zone>\n        <boss>"..MonDKP_Loot[i].boss.."</boss>\n        <timestamp>"..MonDKP_Loot[i].date.."</timestamp>\n        <cost>"..MonDKP_Loot[i].cost.."</cost>\n        <deletes>"..deletes.."</deletes>\n        <deletedby>"..deletedby.."</deletedby>\n    </lootentry>\n";
 			end
 			ExportString = ExportString.."</loothistory>";
 		end

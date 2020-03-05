@@ -242,7 +242,8 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
             if MonDKP_DB.defaults.AutoOpenBid and not core.BidInterface:IsShown() then  -- toggles bid window if option is set to
               MonDKP:BidInterface_Toggle()
             end
-            MonDKP:CurrItem_Set(arg1, arg2, arg3, arg4)  -- populates bid window
+            local subarg1, subarg2, subarg3, subarg4 = strsplit("#", arg1);
+            MonDKP:CurrItem_Set(subarg1, subarg2, subarg3, subarg4)  -- populates bid window
           end
         end
       elseif prefix == "MonDKPRaidTime" and sender ~= UnitName("player") and core.IsOfficer and MonDKP.ConfigTab2 then
@@ -703,7 +704,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 end
               end
             elseif prefix == "MonDKPDKPModes" then
-              if MonDKP_DB.modes.mode ~= deserialized[1].mode then
+              if (MonDKP_DB.modes.mode ~= deserialized[1].mode) or (MonDKP_DB.modes.MaxBehavior ~= deserialized[1].MaxBehavior) then
                 MonDKP:Print(L["RECOMMENDRELOAD"])
               end
               MonDKP_DB.modes = deserialized[1]
