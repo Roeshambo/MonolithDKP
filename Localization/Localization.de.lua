@@ -781,7 +781,7 @@ if GetLocale() == "deDE" then
     ZEROSUMITEMCOST = "Zero Sum Item Costs",
     ZEROSUMITEMCOSTTTDESC = "Wählen Sie die Art der Artikelkosten aus, die Sie verwenden möchten. Static gibt Artikeln einen definierten Preis. Während Mindestgebot ermöglicht es den Spielern, ein Gebot abzugeben, das die Kosten definiert, während Sie einen Mindestgebotsschwellenwert festlegen.",
     ZONE = "Zone",
-    PASS                  = "Weitergeben",
+    PASS                  = "Passen",
 
     CHANGELOG1            = "- Verbessertes Broadcast-System mit zugänglicher Schnittstelle durch Klicken auf das Statusanzeigesymbol in der unteren linken Ecke der DKP-Hauptschnittstelle.",
     CHANGELOG2            = "  - Die Option \"Vollständige Übertragung\" überträgt alle Daten und überschreibt die Empfängertabellen mit identischen Kopien von Ihnen. Alle Daten, die sie hatten und die Sie nicht hatten, gehen verloren (Funktioniert genauso wie die Broadcast-Schaltfläche in 1.6 und früher).",
