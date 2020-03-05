@@ -630,23 +630,25 @@ function MonDKP:BidInterface_Create()
     else
       behavior = "Max DKP"
     end
-    
+
     local dkp = 0
     local search = MonDKP:Table_Search(MonDKP_DKPTable, UnitName("player"), "player")
     if search then
       dkp = MonDKP_DKPTable[search[1][1]].dkp;
     end
-    
+
     if behavior == "Max DKP" or itemValue == 0  then
       f.Bid:SetNumber(dkp);
     elseif behavior == "Max Item Value" then
       f.Bid:SetNumber(itemValue);
-    else
+    elseif behavior == "Min(Max DKP, Max Item Value)" then
       if dkp < itemValue then
         f.Bid:SetNumber(dkp)
       else
         f.Bid:SetNumber(itemValue);
       end
+    else
+      f.Bid:SetNumber(dkp);
     end
   end)
 
@@ -658,12 +660,33 @@ function MonDKP:BidInterface_Create()
   f.BidHalf:SetNormalFontObject("MonDKPSmallCenter");
   f.BidHalf:SetHighlightFontObject("MonDKPSmallCenter");
   f.BidHalf:SetScript("OnClick", function()
-    local search = MonDKP:Table_Search(MonDKP_DKPTable, UnitName("player"), "player")
-
-    if search then
-      f.Bid:SetNumber(MonDKP_DKPTable[search[1][1]].dkp/2);
+    local behavior = MonDKP_DB.modes.MaxBehavior
+    local itemValue = 0
+    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+      local value, text = strsplit(" ", f.MaxBid:GetText())
+      itemValue = tonumber(value)
     else
-      f.Bid:SetNumber(0);
+      behavior = "Max DKP"
+    end
+
+    local dkp = 0
+    local search = MonDKP:Table_Search(MonDKP_DKPTable, UnitName("player"), "player")
+    if search then
+      dkp = MonDKP_DKPTable[search[1][1]].dkp;
+    end
+
+    if behavior == "Max DKP" or itemValue == 0  then
+      f.Bid:SetNumber(dkp/2);
+    elseif behavior == "Max Item Value" then
+      f.Bid:SetNumber(itemValue/2);
+    elseif behavior == "Min(Max DKP, Max Item Value)" then
+      if dkp < itemValue then
+        f.Bid:SetNumber(dkp/2)
+      else
+        f.Bid:SetNumber(itemValue/2);
+      end
+    else
+      f.Bid:SetNumber(dkp/2)
     end
   end)
 
