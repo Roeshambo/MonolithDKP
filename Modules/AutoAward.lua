@@ -8,7 +8,7 @@ local function GetEligibleGuildMembers(onlineOnly, sameZone, currZone)
     -- Returns table playerTable where playerTable[playerName] is not nil iff playerName is eligible
     local playerTable = {}
     for playerIndex = 1, GetNumGuildMembers() do
-        name, _, _, _, _, zone, _, _, online, _, _, _, _, _, _, _ = GetGuildRosterInfo(playerIndex);
+        local name, _, _, _, _, zone, _, _, online, _, _, _, _, _, _, _ = GetGuildRosterInfo(playerIndex);
         if ((not onlineOnly) or online) and ((not sameZone) or (zone == currZone)) then
             playerTable[name] = 1
         end
@@ -26,7 +26,7 @@ function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to awar
         if phase == 1 or phase == 3 then
             -- Award DKP to raid members
             for i = 1, 40 do
-                local tempName, _rank, _subgroup, _level, _class, _fileName, zone, online = GetRaidRosterInfo(i)
+                local tempName, _, _, _, _, _, zone, online = GetRaidRosterInfo(i)
                 local search_DKP = MonDKP:Table_Search(MonDKP_DKPTable, tempName)
                 local OnlineOnly = MonDKP_DB.modes.OnlineOnly
                 local limitToZone = MonDKP_DB.modes.SameZoneOnly
