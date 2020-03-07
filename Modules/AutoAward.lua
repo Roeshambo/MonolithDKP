@@ -62,7 +62,7 @@ function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to awar
 
             -- Get list of online/same-zone players in the guild
             -- WARNING: Can not check if non-guild members are online/same-zone - these will be ALWAYS excluded!
-            standbyEligible = GetEligibleGuildMembers(OnlineOnly, limitToZone, GetRealZoneText())
+            local standbyEligible = GetEligibleGuildMembers(OnlineOnly, limitToZone, GetRealZoneText())
 
             -- Now award standby members DKP (which are not in raid since they would have been deleted before otherwise)
             for i = 1, #MonDKP_Standby do
