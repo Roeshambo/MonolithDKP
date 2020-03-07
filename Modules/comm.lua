@@ -209,7 +209,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
       if (prefix == "MonDKPBCastMsg") and sender ~= UnitName("player") then
         MonDKP:Print(message)
       elseif (prefix == "MonDKPCommand") then
-        local command, arg1, arg2, arg3, arg4 = strsplit(",", message);
+        local command, arg1, arg2, arg3, arg4, arg5 = strsplit(",", message);
         if sender ~= UnitName("player") then
           if command == "StartTimer" then
             MonDKP:StartTimer(arg1, arg2)
@@ -242,7 +242,13 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
             if MonDKP_DB.defaults.AutoOpenBid and not core.BidInterface:IsShown() then  -- toggles bid window if option is set to
               MonDKP:BidInterface_Toggle()
             end
-            local subarg1, subarg2, subarg3, subarg4 = strsplit("#", arg1);
+            
+            local subarg1, subarg2, subarg3, subarg4;
+            if arg5 then -- if arg5 exist this means arg2 is actually split between arg2 and arg3 due to , in item name
+              subarg1 = arg1; subarg2 = arg2..","..arg3; subarg3 = arg4; subarg4 = arg5;
+            else
+              subarg1 = arg1; subarg2 = arg2; subarg3 = arg3; subarg4 = arg4;
+            end
             MonDKP:CurrItem_Set(subarg1, subarg2, subarg3, subarg4)  -- populates bid window
           end
         end
