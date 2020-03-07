@@ -28,11 +28,9 @@ function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to awar
             for i = 1, 40 do
                 local tempName, _, _, _, _, _, zone, online = GetRaidRosterInfo(i)
                 local search_DKP = MonDKP:Table_Search(MonDKP_DKPTable, tempName)
-                local OnlineOnly = MonDKP_DB.modes.OnlineOnly
-                local limitToZone = MonDKP_DB.modes.SameZoneOnly
-                local isSameZone = zone == GetRealZoneText()
+                local isSameZone = (zone == GetRealZoneText())
 
-                if search_DKP and (not OnlineOnly or online) and (not limitToZone or isSameZone) then
+                if search_DKP and (not MonDKP_DB.modes.OnlineOnly or online) and (not MonDKP_DB.modes.SameZoneOnly or isSameZone) then
                     MonDKP:AwardPlayer(tempName, amount)
                     raidAwardList = raidAwardList .. tempName .. ",";
                 end
@@ -53,7 +51,7 @@ function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to awar
             -- Delete standby members from standby list if they are already in raid
             local i = 1
             while i <= #MonDKP_Standby do
-                if (strfind(raidParty, MonDKP_Standby[i].player .. ",") == 1 or strfind(raidParty, "," .. MonDKP_Standby[i].player .. ",")) then
+                if strfind(raidParty, MonDKP_Standby[i].player .. ",") == 1 then
                     table.remove(MonDKP_Standby, i)
                 else
                     i = i + 1
@@ -61,32 +59,33 @@ function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to awar
             end
 
             -- Get list of online/same-zone players in the guild
-            -- WARNING: Can not check if non-guild members are online/same-zone - these will be ALWAYS excluded!
-            local standbyEligible = GetEligibleGuildMembers(OnlineOnly, limitToZone, GetRealZoneText())
+            -- WARNING: Can not check if non-guild members are online/same-zone - these will be excluded from DKP if same-zone/only-online is active!
+            local standbyEligible = GetEligibleGuildMembers(MonDKP_DB.modes.OnlineOnly, MonDKP_DB.modes.SameZoneOnly, GetRealZoneText())
 
             -- Now award standby members DKP (which are not in raid since they would have been deleted before otherwise)
             for i = 1, #MonDKP_Standby do
-                if ((not OnlineOnly) and (not limitToZone)) or (standbyEligible[MonDKP_Standby[i].player] ~= nil) then
+                if ((not MonDKP_DB.modes.OnlineOnly) and (not MonDKP_DB.modes.SameZoneOnly)) or (standbyEligible[MonDKP_Standby[i].player] ~= nil) then
                 MonDKP :AwardPlayer(MonDKP_Standby[i].player, amount)
                     standbyAwardList = standbyAwardList .. MonDKP_Standby[i].player .. ",";
                 end
             end
         end
 
-        if raidAwardList ~= "" or standbyAwardList ~= "" then
-            if (phase == 1 or phase == 3) and raidAwardList ~= "" then
-                local newIndex = curOfficer .. "-" .. curTime
-                tinsert(MonDKP_DKPHistory, 1, { players = raidAwardList, dkp = amount, reason = reason, date = curTime, index = newIndex })
-                MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDDKPADJUSTBY"] .. " " .. amount .. " " .. L["FORREASON"] .. ": " .. reason)
-                MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP_DKPHistory[1])
-            end
-            if (phase == 2 or phase == 3) and standbyAwardList ~= "" then
-                local newIndex = curOfficer .. "-" .. curTime + 1
-                tinsert(MonDKP_DKPHistory, 1, { players = standbyAwardList, dkp = amount, reason = reason .. " (Standby)", date = curTime + 1, index = newIndex })
-                MonDKP.Sync:SendData("MonDKPBCastMsg", L["STANDBYADJUSTBY"] .. " " .. amount .. " " .. L["FORREASON"] .. ": " .. reason)
-                MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP_DKPHistory[1])
-            end
+        -- List of players to award is prepared (raidAwardList, standbyAwardList) - now assign DKP to them!
+        if raidAwardList ~= "" then -- Raid Member DKP
+            local newIndex = curOfficer .. "-" .. curTime
+            tinsert(MonDKP_DKPHistory, 1, { players = raidAwardList, dkp = amount, reason = reason, date = curTime, index = newIndex })
+            MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDDKPADJUSTBY"] .. " " .. amount .. " " .. L["FORREASON"] .. ": " .. reason)
+            MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP_DKPHistory[1])
+        end
+        if standbyAwardList ~= "" then -- Standby DKP
+            local newIndex = curOfficer .. "-" .. curTime + 1
+            tinsert(MonDKP_DKPHistory, 1, { players = standbyAwardList, dkp = amount, reason = reason .. " (Standby)", date = curTime + 1, index = newIndex })
+            MonDKP.Sync:SendData("MonDKPBCastMsg", L["STANDBYADJUSTBY"] .. " " .. amount .. " " .. L["FORREASON"] .. ": " .. reason)
+            MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP_DKPHistory[1])
+        end
 
+        if raidAwardList ~= "" or standbyAwardList ~= "" then -- If we made any changes at all, trigger update
             if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
                 MonDKP:DKPHistory_Update(true)
             end
