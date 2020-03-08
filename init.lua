@@ -196,10 +196,10 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				end
 
 				if MonDKP_DB.modes.AutoAward then
-					if not MonDKP_DB.modes.StandbyOptIn and MonDKP_DB.DKPBonus.IncStandby then
-						MonDKP:AutoAward(3, MonDKP_DB.DKPBonus.BossKillBonus, MonDKP_DB.bossargs.CurrentRaidZone..": "..MonDKP_DB.bossargs.LastKilledBoss)
+					if not MonDKP_DB.modes.StandbyOptIn and MonDKP_DB.DKPBonus.AutoIncStandby then
+						MonDKP:AwardRaid(true, true, MonDKP_DB.DKPBonus.BossKillBonus, MonDKP_DB.bossargs.CurrentRaidZone..": "..MonDKP_DB.bossargs.LastKilledBoss)
 					else
-						MonDKP:AutoAward(1, MonDKP_DB.DKPBonus.BossKillBonus, MonDKP_DB.bossargs.CurrentRaidZone..": "..MonDKP_DB.bossargs.LastKilledBoss)
+						MonDKP:AwardRaid(true, false, MonDKP_DB.DKPBonus.BossKillBonus, MonDKP_DB.bossargs.CurrentRaidZone..": "..MonDKP_DB.bossargs.LastKilledBoss)
 					end
 				end
 			else

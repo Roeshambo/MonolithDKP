@@ -24,7 +24,7 @@ function MonDKP_Standby_Announce(bossName)
 		if MonDKP:CheckRaidLeader() then
 			SendChatMessage(L["STANDBYOPTINEND"]..bossName, "GUILD") -- only raid leader announces
 			if MonDKP_DB.DKPBonus.AutoIncStandby then
-				MonDKP:AutoAward(2, MonDKP_DB.DKPBonus.BossKillBonus, MonDKP_DB.bossargs.CurrentRaidZone..": "..MonDKP_DB.bossargs.LastKilledBoss)
+				MonDKP:AwardRaid(false, true, MonDKP_DB.DKPBonus.BossKillBonus, MonDKP_DB.bossargs.CurrentRaidZone..": "..MonDKP_DB.bossargs.LastKilledBoss)
 			end
 		end
 	end)
