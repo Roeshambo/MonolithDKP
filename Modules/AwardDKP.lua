@@ -7,6 +7,7 @@ local function GetEligibleGuildMembers(onlineOnly, sameZone, currZone)
     -- Get list of guild members, optionally filtered for only online members and/or members currently in zone currZone
     -- Returns table playerTable where playerTable[playerName] is not nil iff playerName is eligible
     local playerTable = {}
+    GuildRoster()
     for playerIndex = 1, GetNumGuildMembers() do
         local name, _, _, _, _, zone, _, _, online, _, _, _, _, _, _, _ = GetGuildRosterInfo(playerIndex);
         if ((not onlineOnly) or online) and ((not sameZone) or (zone == currZone)) then
