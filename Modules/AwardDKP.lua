@@ -16,15 +16,25 @@ local function GetEligibleGuildMembers(onlineOnly, sameZone, currZone)
     return playerTable
 end
 
-function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to award (1=just raid, 2=just standby, 3=both)
+function MonDKP:AwardPlayer(name, amount)
+	local search = MonDKP:Table_Search(MonDKP_DKPTable, name, "player")
+	local path;
+
+	if search then
+		path = MonDKP_DKPTable[search[1][1]]
+		path.dkp = path.dkp + amount
+		path.lifetime_gained = path.lifetime_gained + amount;
+	end
+end
+
+function MonDKP:AwardRaid(includeRaid, includeStandby, amount, reason) -- includeStandby = True => Also awards to players on standby
     local raidAwardList = ""; -- List of players in raid that are awarded DKP
     local standbyAwardList = ""; -- List of players on standby that are awarded DKP
     local curTime = time();
     local curOfficer = UnitName("player")
 
     if MonDKP:CheckRaidLeader() then -- only allows raid leader to disseminate DKP
-        if phase == 1 or phase == 3 then
-            -- Award DKP to raid members
+        if includeRaid then -- Award DKP to raid members
             for i = 1, 40 do
                 local tempName, _, _, _, _, _, zone, online = GetRaidRosterInfo(i)
                 local search_DKP = MonDKP:Table_Search(MonDKP_DKPTable, tempName)
@@ -38,7 +48,7 @@ function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to awar
         end
 
         -- Potentially award DKP to standby list members
-        if #MonDKP_Standby > 0 and MonDKP_DB.DKPBonus.AutoIncStandby and (phase == 2 or phase == 3) then
+        if #MonDKP_Standby > 0 and includeStandby then
             -- Collect list of all current raid members
             local raidParty = "";
             for i = 1, 40 do
@@ -65,7 +75,7 @@ function MonDKP:AutoAward(phase, amount, reason) -- phase identifies who to awar
             -- Now award standby members DKP (which are not in raid since they would have been deleted before otherwise)
             for i = 1, #MonDKP_Standby do
                 if ((not MonDKP_DB.modes.OnlineOnly) and (not MonDKP_DB.modes.SameZoneOnly)) or (standbyEligible[MonDKP_Standby[i].player] ~= nil) then
-                MonDKP :AwardPlayer(MonDKP_Standby[i].player, amount)
+                MonDKP:AwardPlayer(MonDKP_Standby[i].player, amount)
                     standbyAwardList = standbyAwardList .. MonDKP_Standby[i].player .. ",";
                 end
             end

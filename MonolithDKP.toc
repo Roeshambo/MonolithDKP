@@ -21,13 +21,13 @@ Modules\comm.lua
 Modules\Standby.lua
 Modules\Bidding.lua
 MonolithDKP.lua
-Modules\AutoAward.lua
+Modules\AwardItem.lua
 init.lua
 Localization\Localization.lua
 Modules\LootHistory.lua
 Modules\DKPHistory.lua
 ConfigMenuTabs.lua
-Modules\Award.lua
+Modules\AwardDKP.lua
 Modules\AdjustDKP.lua
 Modules\ManageEntries.lua
 Modules\ClassGraph.lua
