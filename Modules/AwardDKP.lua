@@ -18,12 +18,12 @@ end
 
 function MonDKP:AwardPlayer(name, amount)
 	local search = MonDKP:Table_Search(MonDKP_DKPTable, name, "player")
-	local path;
+	local player;
 
 	if search then
-		path = MonDKP_DKPTable[search[1][1]]
-		path.dkp = path.dkp + amount
-		path.lifetime_gained = path.lifetime_gained + amount;
+		player = MonDKP_DKPTable[search[1][1]]
+		player.dkp = player.dkp + amount
+		player.lifetime_gained = player.lifetime_gained + amount;
 	end
 end
 
