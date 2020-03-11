@@ -568,7 +568,7 @@ function MonDKP:CreateMenu()
 		MonDKP.ChangeLogDisplay.DontShowCheck = CreateFrame("CheckButton", nil, MonDKP.ChangeLogDisplay, "UICheckButtonTemplate");
 		MonDKP.ChangeLogDisplay.DontShowCheck:SetChecked(false)
 		MonDKP.ChangeLogDisplay.DontShowCheck:SetScale(0.6);
-		MonDKP.ChangeLogDisplay.DontShowCheck.text:SetText("  |cff5151de"..L["DONTSHOW"].."|r");
+		MonDKP.ChangeLogDisplay.DontShowCheck.text:SetText("  |cff9BB5BD"..L["DONTSHOW"].."|r");
 		MonDKP.ChangeLogDisplay.DontShowCheck.text:SetScale(1.5);
 		MonDKP.ChangeLogDisplay.DontShowCheck.text:SetFontObject("MonDKPSmallLeft")
 		MonDKP.ChangeLogDisplay.DontShowCheck:SetPoint("LEFT", MonDKP.ChangeLogDisplay.ChangeLogHeader, "RIGHT", 10, 0);
@@ -580,7 +580,7 @@ function MonDKP:CreateMenu()
 			end
 		end)
 
-		MonDKP.ChangeLogDisplay.Notes:SetText("|CFFAEAEDD"..L["BESTPRACTICES"].."|r")
+		MonDKP.ChangeLogDisplay.Notes:SetText("|cff9BB5BD"..L["BESTPRACTICES"].."|r")
 		MonDKP.ChangeLogDisplay.VerNumber:SetText(core.MonVersion)
 
 		--------------------------------------

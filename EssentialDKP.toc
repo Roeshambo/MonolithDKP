@@ -1,5 +1,5 @@
 ## Interface: 11303
-## Title: |cff00ff00Essential|r |cffff0000DKP|r
+## Title: |cff65c6baEssential DKP|r
 ## Author: Roeshambo-Stalagg, Danteril-MirageRaceway
 ## Notes: Monolith DKP fork - Essential Edition. Comprehensive DKP and raid management utility.
 ## Version: 14.1.2

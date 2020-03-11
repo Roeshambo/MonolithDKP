@@ -171,7 +171,7 @@ function MonDKP:ConfigMenuTabs()
 		if i <= 9 then MonDKP.ConfigTab1.checkBtn[i]:SetChecked(true) else MonDKP.ConfigTab1.checkBtn[i]:SetChecked(false) end;
 		MonDKP.ConfigTab1.checkBtn[i]:SetID(i)
 		if i <= 8 then
-			MonDKP.ConfigTab1.checkBtn[i].text:SetText("|cff5151de"..core.LocalClass[core.classes[i]].."|r");
+			MonDKP.ConfigTab1.checkBtn[i].text:SetText("|cff9BB5BD"..core.LocalClass[core.classes[i]].."|r");
 		end
 		if i==9 then
 			MonDKP.ConfigTab1.checkBtn[i]:SetScript("OnClick",
@@ -216,20 +216,20 @@ function MonDKP:ConfigMenuTabs()
 	MonDKP.ConfigTab1.checkBtn[8]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[4], "BOTTOMLEFT", 0, -10);
 
 	MonDKP.ConfigTab1.checkBtn[9]:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab1.checkBtn[2], "TOPLEFT", 50, 0);
-	MonDKP.ConfigTab1.checkBtn[9].text:SetText("|cff5151de"..L["ALLCLASSES"].."|r");
+	MonDKP.ConfigTab1.checkBtn[9].text:SetText("|cff9BB5BD"..L["ALLCLASSES"].."|r");
 	MonDKP.ConfigTab1.checkBtn[10]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[5], "BOTTOMLEFT", 0, 0);
-	MonDKP.ConfigTab1.checkBtn[10].text:SetText("|cff5151de"..L["INPARTYRAID"].."|r");         -- executed in filterDKPTable (MonolithDKP.lua)
+	MonDKP.ConfigTab1.checkBtn[10].text:SetText("|cffE7ED6D"..L["INPARTYRAID"].."|r");         -- executed in filterDKPTable (MonolithDKP.lua)
 
 	MonDKP.ConfigTab1.checkBtn[11] = CreateFrame("CheckButton", nil, MonDKP.ConfigTab1, "UICheckButtonTemplate");
 	MonDKP.ConfigTab1.checkBtn[11]:SetID(11)
-	MonDKP.ConfigTab1.checkBtn[11].text:SetText("|cff5151de"..L["ONLINE"].."|r");
+	MonDKP.ConfigTab1.checkBtn[11].text:SetText("|cff9BB5BD"..L["ONLINE"].."|r");
 	MonDKP.ConfigTab1.checkBtn[11].text:SetFontObject("MonDKPSmall")
 	MonDKP.ConfigTab1.checkBtn[11]:SetScript("OnClick", MonDKPFilterChecks)
 	MonDKP.ConfigTab1.checkBtn[11]:SetPoint("TOPLEFT", MonDKP.ConfigTab1.checkBtn[10], "TOPRIGHT", 100, 0);
 
 	MonDKP.ConfigTab1.checkBtn[12] = CreateFrame("CheckButton", nil, MonDKP.ConfigTab1, "UICheckButtonTemplate");
 	MonDKP.ConfigTab1.checkBtn[12]:SetID(12)
-	MonDKP.ConfigTab1.checkBtn[12].text:SetText("|cff5151de"..L["NOTINRAIDFILTER"].."|r");
+	MonDKP.ConfigTab1.checkBtn[12].text:SetText("|cff9BB5BD"..L["NOTINRAIDFILTER"].."|r");
 	MonDKP.ConfigTab1.checkBtn[12].text:SetFontObject("MonDKPSmall")
 	MonDKP.ConfigTab1.checkBtn[12]:SetScript("OnClick", function(self)
 		MonDKP.ConfigTab1.checkBtn[10]:SetChecked(false);

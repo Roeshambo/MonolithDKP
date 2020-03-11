@@ -46,10 +46,8 @@ end
 -- Addon Defaults
 --------------------------------------
 local defaults = {
-	--theme = { r = 0.6823, g = 0.6823, b = 0.8666, hex = "aeaedd" },
-	theme = { r = 0.4, g = 0.8, b = 0.4, hex = "66cc66" },
-	--theme2 = { r = 1, g = 0.37, b = 0.37, hex = "ff6060" }
-	theme2 = { r = 0.8, g = 0.8, b = 0.8, hex = "cccccc" }
+	theme = { r = 0.4, g = 0.8, b = 0.4, hex = "65c6ba" },
+	theme2 = { r = 0.8, g = 0.8, b = 0.8, hex = "9bb5bd" }
 }
 
 core.WorkingTable = {};       -- table of all entries from MonDKP_DKPTable that are currently visible in the window. From MonDKP_DKPTable
