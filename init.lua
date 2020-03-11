@@ -413,7 +413,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				for i=1, GetNumLootItems() do
 					if LootSlotHasItem(i) and GetLootSlotLink(i) then
 						local _,link,quality = GetItemInfo(GetLootSlotLink(i))
-						if quality >= 2 then
+						if quality >= 3 then
 							table.insert(lootTable, link)
 						end
 					end
