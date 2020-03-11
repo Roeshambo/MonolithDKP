@@ -195,7 +195,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
     elseif prefix == "MonDKPBuild" and sender ~= UnitName("player") then
       local LastVerCheck = time() - core.LastVerCheck;
 
-      if LastVerCheck > 900 then             -- limits the Out of Date message from firing more than every 15 minutes
+      if LastVerCheck > 300 then             -- limits the Out of Date message from firing more than every 5 minutes
         if tonumber(message) > core.BuildNumber then
           core.LastVerCheck = time();
           MonDKP:Print(L["OUTOFDATEANNOUNCE"])

@@ -530,7 +530,7 @@ function MonDKP:CreateMenu()
 		MonDKP.ChangeLogDisplay.ChangeLogHeader:ClearAllPoints();
 		MonDKP.ChangeLogDisplay.ChangeLogHeader:SetFontObject("MonDKPLargeLeft")
 		MonDKP.ChangeLogDisplay.ChangeLogHeader:SetPoint("TOPLEFT", MonDKP.ChangeLogDisplay, "TOPLEFT", 10, -10);
-		MonDKP.ChangeLogDisplay.ChangeLogHeader:SetText("Monolith DKP Change Log");
+		MonDKP.ChangeLogDisplay.ChangeLogHeader:SetText("Essential DKP Changelog");
 
 		MonDKP.ChangeLogDisplay.Notes = MonDKP.ChangeLogDisplay:CreateFontString(nil, "OVERLAY")   -- Filters header
 		MonDKP.ChangeLogDisplay.Notes:ClearAllPoints();

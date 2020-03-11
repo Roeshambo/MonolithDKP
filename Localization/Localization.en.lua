@@ -106,7 +106,7 @@ core.L = {
   BCASTVALUESTTDESC = "Broadcast above minimum bid values to all officers. This will also broadcast any custom values set for specific items in the bid window.",
   BCASTVALUESTTWARN = "Current values will not be overwritten. Receiving this broadcast will update values already set or add values that don't exist. Any values they may have that are not sent will remain unchanged.",
   BELT = "Belt",
-  BESTPRACTICES = "Due to recurring issues with the sync system, the old broadcast system was brought back with some improvements. 2.1.0 is not compatible with earlier versions and all raiders must be on 2.1.0 or above. The new broadcast UI is available to officers by clicking the status indicator in the bottom left corner of the main DKP interface. There is also a repair option available to officers if your tables were corrupted by migration issues with 2.0.x. You can view how to use that via the YouTube video linked on the Curse page.",
+  BESTPRACTICES = "Please remember to remove MonolithDKP. You can either wait for a full broadcast or rename World of Warcraft\_classic_\WTF\Account\<account id>\SavedVariables\MonolithDKP.lua to EssentialDKP.lua and continue using the addon",
   BID = "Bid",
   BIDACCEPTEDFILTER = "Your bid was Accepted.",
   BIDCANCELLED = "Your bid has been canceled.",
@@ -757,7 +757,7 @@ core.L = {
   PASS = "Pass",
 
   CHANGELOG1 = "- Fully forked from MonolithDKP to EssentialDKP including databases",
-  CHANGELOG2 = "- Show also green and blue loot",
+  CHANGELOG2 = "- Shows also blue loot from bosses",
   CHANGELOG3 = "- Fix for invalid communication and bid display when item contains , e.g. Ashkandi, Greatsword of the Brotherhood",
   CHANGELOG4 = "- Fully functional MAX bidding including time counter display fix",
   CHANGELOG5 = "- Information will be shown when new configuration is being propagated with prompt to /reload UI",
