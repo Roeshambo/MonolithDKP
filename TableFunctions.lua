@@ -763,7 +763,7 @@ function DKPTable_Update()
 			local a = MonDKP:Table_Search(core.SelectedData, core.WorkingTable[index].player);  -- searches selectedData for the player name indexed.
 			if not a then
 				MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
-				MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.2)
+				MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.0)
 			else
 				MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\AddOns\\EssentialDKP\\Media\\Textures\\ListBox-Highlight")
 				MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
