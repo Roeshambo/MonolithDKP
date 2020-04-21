@@ -16,7 +16,7 @@ local tc_colors = {
 	["Mage"] = { r = 0.25, g = 0.78, b = 0.92, hex = "40C7EB" },
 	["Priest"] = { r = 1, g = 1, b = 1, hex = "FFFFFF" },
 	["Rogue"] = { r = 1, g = 0.96, b = 0.41, hex = "FFF569" },
-	["Shaman"] = { r = 0.96, g = 0.55, b = 0.73, hex = "F58CBA" },
+	["Shaman"] = { r = 0.01, g = 0.44, b = 0.87, hex = "0270DD" },
 	["Paladin"] = { r = 0.96, g = 0.55, b = 0.73, hex = "F58CBA" },
 	["Warlock"] = { r = 0.53, g = 0.53, b = 0.93, hex = "8787ED" },
 	["Warrior"] = { r = 0.78, g = 0.61, b = 0.43, hex = "C79C6E" }
