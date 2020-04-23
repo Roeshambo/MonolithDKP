@@ -710,6 +710,35 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 end
                 MonDKP:ZeroSumBank_Update()
               end
+<<<<<<< HEAD
+=======
+            elseif prefix == "MonDKPDKPModes" then
+              if (MonDKP_DB.modes.mode ~= deserialized[1].mode) or (MonDKP_DB.modes.MaxBehavior ~= deserialized[1].MaxBehavior) then
+                MonDKP:Print(L["RECOMMENDRELOAD"])
+              end
+              MonDKP_DB.modes = deserialized[1]
+              MonDKP_DB.DKPBonus = deserialized[2]
+              MonDKP_DB.raiders = deserialized[3]
+            elseif prefix == "MonDKPBidShare" then
+              if core.BidInterface then
+                MonDKP:Bids_Set(deserialized)
+              end
+              return
+            elseif prefix == "MonDKPBossLoot" then
+              local lootList = {};
+              MonDKP_DB.bossargs.LastKilledBoss = deserialized.boss;
+            
+              for i=1, #deserialized do
+                local item = Item:CreateFromItemLink(deserialized[i]);
+                item:ContinueOnItemLoad(function()
+                  local icon = item:GetItemIcon()
+                  table.insert(lootList, {icon=icon, link=item:GetItemLink()})
+                end);
+              end
+
+              MonDKP:LootTable_Set(lootList)
+              MonDKP:LootList_Add(lootList)
+>>>>>>> feature-raid-loot-list
             end
           elseif prefix == "MonDKPDKPModes" then
             if (MonDKP_DB.modes.mode ~= deserialized[1].mode) or (MonDKP_DB.modes.MaxBehavior ~= deserialized[1].MaxBehavior) then

@@ -98,6 +98,9 @@ MonDKP.Commands = {
   ["export"] = function(time, ...)
     MonDKP:ToggleExportWindow()
   end,
+  ["loot"] = function(time, ...)
+    MonDKP:LootList_Print()
+  end,
   ["modes"] = function()
     if core.Initialized then
       MonDKP:CheckOfficer()
