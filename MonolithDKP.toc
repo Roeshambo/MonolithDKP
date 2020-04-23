@@ -44,3 +44,4 @@ Modules\Repair.lua
 Modules\RaidTimer.lua
 Modules\ZeroSumBank.lua
 Modules\Validate.lua
+Modules\RaidLootList.lua

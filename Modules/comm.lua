@@ -728,6 +728,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
               end
 
               MonDKP:LootTable_Set(lootList)
+              MonDKP:LootList_Add(lootList)
             end
           else
             MonDKP:Print("Report the following error on Curse or Github: "..deserialized)  -- error reporting if string doesn't get deserialized correctly
