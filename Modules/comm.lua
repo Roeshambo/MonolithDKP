@@ -710,8 +710,6 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 end
                 MonDKP:ZeroSumBank_Update()
               end
-<<<<<<< HEAD
-=======
             elseif prefix == "MonDKPDKPModes" then
               if (MonDKP_DB.modes.mode ~= deserialized[1].mode) or (MonDKP_DB.modes.MaxBehavior ~= deserialized[1].MaxBehavior) then
                 MonDKP:Print(L["RECOMMENDRELOAD"])
@@ -738,7 +736,6 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 
               MonDKP:LootTable_Set(lootList)
               MonDKP:LootList_Add(lootList)
->>>>>>> feature-raid-loot-list
             end
           elseif prefix == "MonDKPDKPModes" then
             if (MonDKP_DB.modes.mode ~= deserialized[1].mode) or (MonDKP_DB.modes.MaxBehavior ~= deserialized[1].MaxBehavior) then
