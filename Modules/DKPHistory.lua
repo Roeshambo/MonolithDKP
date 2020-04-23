@@ -362,7 +362,7 @@ function MonDKP:DKPHistory_Update(reset)
 					end
 					dkp = MonDKP_DKPHistory[search[1][1]].dkp;
 					date = MonDKP:FormatTime(MonDKP_DKPHistory[search[1][1]].date);
-					delete_on_date = MonDKP:FormatTime(DKPHistory[i].date)
+          delete_on_date = MonDKP:FormatTime(DKPHistory[i].date)
 					delete_day = strsub(delete_on_date, 1, 8)
 					delete_timeofday = strsub(delete_on_date, 10)
 					delete_year, delete_month, delete_day = strsplit("/", delete_day)
@@ -418,7 +418,7 @@ function MonDKP:DKPHistory_Update(reset)
 				if i~=1 then
 					MonDKP.ConfigTab6.history[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab6.history[i-1], "BOTTOMLEFT", 0, -20)
 				end
-				MonDKP.ConfigTab6.history[i].h:SetText(month.."/"..day.."/"..year);
+				MonDKP.ConfigTab6.history[i].h:SetText(day.."-"..month.."-"..year);
 				MonDKP.ConfigTab6.history[i].h:Show()
 				curDate = day;
 			else
@@ -476,7 +476,7 @@ function MonDKP:DKPHistory_Update(reset)
 				    	end
 						GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 0);
 						GameTooltip:SetText(L["DELETEDBY"], 0.25, 0.75, 0.90, 1, true);
-						GameTooltip:AddDoubleLine("|cff"..col.hex..delOfficer.."|r", delete_month.."/"..delete_day.."/"..delete_year.." @ "..delete_timeofday, 1,0,0,1,1,1)
+						GameTooltip:AddDoubleLine("|cff"..col.hex..delOfficer.."|r", delete_day.."-"..delete_month.."-"..delete_year.." @ "..delete_timeofday, 1,0,0,1,1,1)
 						GameTooltip:Show()
 					end);
 					MonDKP.ConfigTab6.history[i].b:SetScript("OnLeave", function(self)
