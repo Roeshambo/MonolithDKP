@@ -270,6 +270,7 @@ core.L = {
   FORWAISTSLOT = "for waist slot items.",
   FORWRISTSLOT = "for wrist slot items.",
   FROMSTANDBYLIST = "from Standby List",
+  GENACTIVITY = "Generate Active Raiders",
   GENDKPHIST = "Generate DKP History",
   GENDKPTABLE = "Generate DKP Table",
   GENLOOTHIST = "Generate Loot History",

@@ -3,7 +3,64 @@ local _G = _G;
 local MonDKP = core.MonDKP;
 local L = core.L;
 
+local function SanityCheckPositiveDKPHistoryEntry(data)
+  if not data then return false end
+  if (data.deletedby or data.deletes) then return false end
+  if (type(data.dkp) == "nil") then return false end
+  if (type(data.reason) == "nil") then return false end
+  if (data.reason == "Weekly Decay") then return false end
+  if ((type(data.dkp) == "number") and (data.dkp <= 0)) then return false end
+  
+  -- This should not be ever reached but I'll add this just in case
+  -- If any of the dkp adjustments in the CSV list is not positive we assume all are 
+  if ((type(data.dkp) == "string")) then
+    local dkpAdjustement = { strsplit(",", data.dkp) }
+    for _,val in pairs(dkpAdjustement) do
+      if tonumber(val) <= 0 then return false end
+    end
+  end
+  
+  return true
+end
 
+local function GetActivePlayersTable(limit, activePlayers)
+  -- Cache player classes
+  local GuildieClassCache = {}
+  GuildRoster()
+  local guildMembers = GetNumGuildMembers();
+  for i=1,guildMembers,1 do
+    local character, _, _, level, class = GetGuildRosterInfo(i);
+    local nameServer = { strsplit("-", character) }
+    if (level >= 55) then
+      GuildieClassCache[nameServer[1]] = class
+    end
+  end
+  
+  -- Activity
+  local count = 0
+  for _, data in pairs(MonDKP_DKPHistory) do
+    if SanityCheckPositiveDKPHistoryEntry(data) then
+        local players = { strsplit(",", data.players) }
+        for _,name in pairs(players) do
+          if not activePlayers[name] then
+            if GuildieClassCache[name] then
+              activePlayers[name] = {class = GuildieClassCache[name], lastActive = data.date}
+            end
+          end
+        end
+        count = count + 1
+        if data.date < limit then return end
+    end
+  end
+end
+
+local function ActivePlayersTableToCSV(activePlayers)
+  local csv = "charName,class,lastActive\n"
+  for name,data in pairs(activePlayers) do
+    csv = csv..name..","..data.class..","..data.lastActive.."\n"
+  end
+  return csv
+end
 
 local function GenerateDKPTables(table, format)
 	local ExportString;
@@ -59,7 +116,12 @@ local function GenerateDKPTables(table, format)
 			ExportString = ExportString.."   </div>\n</div>\n</div>\n</html>"
 		end
 	elseif format == "CSV" then
-		if table == MonDKP_DKPTable then
+		if table == "Activity" then
+      local limit = time() - 30*24*60*60
+      local activePlayers = {}
+      GetActivePlayersTable(limit, activePlayers)
+      ExportString = ActivePlayersTableToCSV(activePlayers)
+    elseif table == MonDKP_DKPTable then
 			Headers = "player,class,DKP,previousDKP,lifetimeGained,lifetimeSpent\n"
 			ExportString = Headers.."";
 			for i=1, #MonDKP_DKPTable do
@@ -190,7 +252,7 @@ function MonDKPExportBox_Show(text)
     if not MonDKPExportBox then
         local f = CreateFrame("Frame", "MonDKPExportBox", UIParent)
         f:SetPoint("CENTER")
-        f:SetSize(700, 590)
+        f:SetSize(850, 590)
         
         f:SetBackdrop({
             bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -250,7 +312,7 @@ function MonDKPExportBox_Show(text)
         
         -- Resizable
         f:SetResizable(true)
-        f:SetMinResize(650, 500)
+        f:SetMinResize(850, 500)
         
         local rb = CreateFrame("Button", "MonDKPExportBoxResizeButton", MonDKPExportBox)
         rb:SetPoint("BOTTOMRIGHT", -6, 7)
@@ -269,7 +331,7 @@ function MonDKPExportBox_Show(text)
             f:StopMovingOrSizing()
             self:GetHighlightTexture():Show()
             eb:SetWidth(sf:GetWidth())
-            desc:SetWidth(sf:GetWidth()-30)
+            f.desc:SetWidth(sf:GetWidth()-30)
         end)
         f:Show()
 
@@ -329,7 +391,17 @@ function MonDKPExportBox_Show(text)
 			preferredIndex = 3,
 		}
 
-        f.GenerateDKPButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -355, 20, "1) "..L["GENDKPTABLE"]);
+    f.GenerateDKPButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -510, 20, "1) "..L["GENACTIVITY"]);
+    f.GenerateDKPButton:SetSize(150, 24)
+    f.GenerateDKPButton:SetScript("OnClick", function()
+      if CurFormat then
+        GenerateDKPTables("Activity", CurFormat)
+      else
+        StaticPopup_Show ("NO_FORMAT")
+      end
+    end)
+
+    f.GenerateDKPButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -355, 20, "2) "..L["GENDKPTABLE"]);
 		f.GenerateDKPButton:SetSize(150, 24)
 		f.GenerateDKPButton:SetScript("OnClick", function()
 			if CurFormat then
@@ -339,7 +411,7 @@ function MonDKPExportBox_Show(text)
 			end
 		end)
 
-		f.GenerateDKPHistoryButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -200, 20, "2) "..L["GENDKPHIST"]);
+		f.GenerateDKPHistoryButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -200, 20, "3) "..L["GENDKPHIST"]);
 		f.GenerateDKPHistoryButton:SetSize(150, 24)
 		f.GenerateDKPHistoryButton:SetScript("OnClick", function()
 			if CurFormat then
@@ -349,7 +421,7 @@ function MonDKPExportBox_Show(text)
 			end
 		end)
 
-		f.GenerateDKPLootButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -45, 20, "3) "..L["GENLOOTHIST"]);
+		f.GenerateDKPLootButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -45, 20, "4) "..L["GENLOOTHIST"]);
 		f.GenerateDKPLootButton:SetSize(150, 24)
 		f.GenerateDKPLootButton:SetScript("OnClick", function()
 			if CurFormat then
@@ -375,4 +447,9 @@ end
 
 function MonDKP:ToggleExportWindow()
 	MonDKPExportBox_Show()
+end
+
+local function GenerateActiveRaidersTable(table)
+  local MONTH_SECONDS = 60*60*24*30;
+  
 end
