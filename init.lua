@@ -98,6 +98,9 @@ MonDKP.Commands = {
   ["export"] = function(time, ...)
     MonDKP:ToggleExportWindow()
   end,
+  ["loot"] = function(time, ...)
+    MonDKP:LootList_Print()
+  end,
   ["modes"] = function()
     if core.Initialized then
       MonDKP:CheckOfficer()
@@ -123,6 +126,7 @@ MonDKP.Commands = {
     MonDKP:Print("|cff00cc66/dkp award [item link]|r - "..L["DKPAWARDHELP"]);
     MonDKP:Print("|cff00cc66/dkp modes|r - "..L["DKPMODESHELP"]);
     MonDKP:Print("|cff00cc66/dkp export|r - "..L["DKPEXPORTHELP"]);
+    MonDKP:Print("|cff00cc66/dkp loot|r - "..L["DKPLOOTHELP"]);
     MonDKP:Print(" ");
     MonDKP:Print(L["WHISPERCMDSHELP"]);
     MonDKP:Print("|cff00cc66!bid (or !bid <"..L["VALUE"]..">)|r - "..L["BIDHELP"]);

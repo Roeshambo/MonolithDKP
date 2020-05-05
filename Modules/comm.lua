@@ -736,6 +736,14 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
             end
 
             MonDKP:LootTable_Set(lootList)
+            local senderRaidId = UnitInRaid(sender)
+            if senderRaidId then
+              --local name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(senderRaidId);
+              local _, _, _, _, _, _, _, _, _, _, isML = GetRaidRosterInfo(senderRaidId);
+              if isML then
+                MonDKP:LootList_Add(lootList)
+              end
+            end
           end
         else
           MonDKP:Print("Report the following error on Curse or Github: "..deserialized)  -- error reporting if string doesn't get deserialized correctly

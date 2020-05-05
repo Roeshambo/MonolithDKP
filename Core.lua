@@ -88,7 +88,7 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "vE.1.3";
+core.MonVersion = "v1.3.2";
 core.BuildNumber = 140103;
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
