@@ -361,14 +361,14 @@ function MonDKP:CurrItem_Set(item, value, icon, value2)
   -- Check if item is in the item list
   -- If not then we have out of kill bid
   -- Overwrite the list to contain only the item
-  local CurrLink = CurrItemForBid:GetItemLink()
+  local _,tmpLink,_,_,_,_,_,_,_,tmpIcon = GetItemInfo(item)
   local currItemInLoot = false
-  for _,item in pairs(lootTable) do
-    if item.link == CurrLink then currItemInLoot = true end
+  for _,_i in pairs(lootTable) do
+    if _i.link == tmpLink then currItemInLoot = true end
   end
 
   if not currItemInLoot then
-    LootTable_Set({icon=CurrItemForBid, link=CurrLink})
+    LootTable_Set({icon=tmpIcon, link=tmpLink})
   end
   ----------------------------------------------------------------------
 
