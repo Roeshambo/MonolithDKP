@@ -205,6 +205,7 @@ core.L = {
   DKPDATAUPDATEDBY = "DKP database updated by",
   DKPENTRIESBY = "DKP entries by",
   DKPEXPORTHELP = "Opens window to export all DKP information to HTML, CSV or XML. (More export implementations to come)",
+  DKPLOOTHELP = "[Experimental] Prints all loot from current raid. Requires Master Looter to open the loot.",
   DKPHISTCASTCOMP = "DKP History Broadcast Complete",
   DKPHISTLIMITTTDESC = "Maximum DKP history entries stored.",
   DKPHISTLIMITTTWARN = "Warning: If you reduce this below the number of currently stored entries, the oldest will be deleted to meet the limit.",
