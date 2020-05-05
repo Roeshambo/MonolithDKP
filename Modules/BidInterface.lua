@@ -368,7 +368,7 @@ function MonDKP:CurrItem_Set(item, value, icon, value2)
   end
 
   if not currItemInLoot then
-    LootTable_Set({icon=tmpIcon, link=tmpLink})
+    MonDKP:LootTable_Set({{icon=tmpIcon, link=tmpLink}})
   end
   ----------------------------------------------------------------------
 
