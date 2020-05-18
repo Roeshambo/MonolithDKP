@@ -47,7 +47,6 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 
 	MonDKP:StatusVerify_Update()
 	if core.IsOfficer then
-		print("Is Officer");
 		if MonDKP_DB.modes.costvalue == "Percent" then
 			local search = MonDKP:Table_Search(MonDKP_DKPTable, winner);
 

@@ -72,14 +72,21 @@ MonDKP.Commands = {
       if not name or not strfind(name, ":::::") then
         MonDKP:Print(L["AWARDWARNING"])
         return
-      end
+	  end
       local item = strjoin(" ", ...)
       if not item then return end
       item = name.." "..item;
-	  local itemName,itemLink,_,_,_,_,_,_,_,_ = GetItemInfo(item)
+	  local itemName,_,_,_,_,_,_,_,_,_ = GetItemInfo(item)
+	  local cost = 0;
 	  local search = MonDKP:Table_Search(MonDKP_MinBids, itemName)
-	  local cost = MonDKP_MinBids[search[1][1]].minbid or MonDKP:GetMinBid(itemLink);
-      MonDKP:AwardConfirm(nil, cost, MonDKP_DB.bossargs.LastKilledBoss, MonDKP_DB.bossargs.CurrentRaidZone, item)
+
+	  if not search then
+		cost = MonDKP:GetMinBid(item)
+	  else
+		cost = MonDKP_MinBids[search[1][1]].minbid;
+	  end
+
+	  MonDKP:AwardConfirm(nil, cost, MonDKP_DB.bossargs.LastKilledBoss, MonDKP_DB.bossargs.CurrentRaidZone, item)
     else
       MonDKP:Print(L["NOPERMISSION"])
     end
