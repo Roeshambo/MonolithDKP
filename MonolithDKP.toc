@@ -28,6 +28,7 @@ Modules\LootHistory.lua
 Modules\DKPHistory.lua
 ConfigMenuTabs.lua
 Modules\Award.lua
+Modules\LootPriceTab.lua
 Modules\AdjustDKP.lua
 Modules\ManageEntries.lua
 Modules\ClassGraph.lua

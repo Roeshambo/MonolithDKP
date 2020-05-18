@@ -3,6 +3,34 @@ local _G = _G;
 local MonDKP = core.MonDKP;
 local L = core.L;
 
+local function SetItemPrice(cost, loot)
+	local itemName,itemLink,_,_,_,_,_,_,_,itemIcon = GetItemInfo(loot)
+	local cost = cost;
+	local mode = MonDKP_DB.modes.mode;
+
+	if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
+		local search = MonDKP:Table_Search(MonDKP_MinBids, itemName)
+		local newItem = {item=itemName, minbid=cost, link=itemLink, icon=itemIcon, disenchants=0}
+
+		if not search then
+			tinsert(MonDKP_MinBids, newItem)
+		elseif search then
+			if MonDKP_MinBids[search[1][1]].minbid ~= itemName then
+				MonDKP_MinBids[search[1][1]].minbid = MonDKP_round(cost, MonDKP_DB.modes.rounding);
+				MonDKP_MinBids[search[1][1]].link = itemLink;
+				MonDKP_MinBids[search[1][1]].icon = itemIcon;
+				if cost == 0 then
+					MonDKP_MinBids[search[1][1]].disenchants = 0;
+				end
+				newItem = MonDKP_MinBids[search[1][1]];
+			end
+		end
+		core.PriceTable = MonDKP_MinBids;
+		MonDKP:PriceTable_Update(0);
+		MonDKP.Sync:SendData("MonDKPSetPrice", newItem);
+	end
+end
+
 local function AwardItem(player, cost, boss, zone, loot, reassign)
 	local cost = cost;
 	local winner = player;
@@ -15,10 +43,11 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 	local curOfficer = UnitName("player")
 	local bids;
 	local search_reassign;
+	local itemName,itemLink,_,_,_,_,_,_,_,itemIcon = GetItemInfo(loot)
 
 	MonDKP:StatusVerify_Update()
-
 	if core.IsOfficer then
+		print("Is Officer");
 		if MonDKP_DB.modes.costvalue == "Percent" then
 			local search = MonDKP:Table_Search(MonDKP_DKPTable, winner);
 
@@ -111,7 +140,6 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 				MonDKP_Loot[1].bids = bids
 			end
 		end
-		
 		MonDKP:BidsSubmitted_Clear()
 		MonDKP.Sync:SendData("MonDKPLootDist", MonDKP_Loot[1])
 		MonDKP:DKPTable_Set(winner, "dkp", MonDKP_round(cost, MonDKP_DB.modes.rounding), true)
@@ -119,6 +147,7 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 		MonDKP:LootHistory_Update(L["NOFILTER"])
 
 		if core.BiddingWindow and core.BiddingWindow:IsShown() then  -- runs below if award is through bidding window (update minbids and zerosum bank)
+			print("Bid Window Open");
 			if _G["MonDKPBiddingStartBiddingButton"] then
 				_G["MonDKPBiddingStartBiddingButton"]:SetText(L["STARTBIDDING"])
 				_G["MonDKPBiddingStartBiddingButton"]:SetScript("OnClick", function (self)
@@ -133,30 +162,31 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 			SendChatMessage(L["CONGRATS"].." "..winner.." "..L["ON"].." "..loot.." @ "..-cost.." "..L["DKP"], "RAID_WARNING")
 			if MonDKP_DB.modes.AnnounceAward then
 				SendChatMessage(L["CONGRATS"].." "..winner.." "..L["ON"].." "..loot.." @ "..-cost.." "..L["DKP"], "GUILD")
-      end
-
-				
+        	end
+			
 			if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
-				local search = MonDKP:Table_Search(MonDKP_MinBids, core.BiddingWindow.itemName:GetText())
+				local search = MonDKP:Table_Search(MonDKP_MinBids, itemName)
 				local val = MonDKP:GetMinBid(loot);
 
 				if not search and core.BiddingWindow.cost:GetNumber() ~= tonumber(val) then
-					tinsert(MonDKP_MinBids, {item=core.BiddingWindow.itemName:GetText(), minbid=core.BiddingWindow.cost:GetNumber()})
+					tinsert(MonDKP_MinBids, {item=itemName, minbid=core.BiddingWindow.cost:GetNumber(), link=itemLink, icon=itemIcon})
 					core.BiddingWindow.CustomMinBid:SetShown(true);
 					core.BiddingWindow.CustomMinBid:SetChecked(true);
 				elseif search and core.BiddingWindow.cost:GetNumber() ~= tonumber(val) and core.BiddingWindow.CustomMinBid:GetChecked() == true then
 					if MonDKP_MinBids[search[1][1]].minbid ~= core.BiddingWindow.cost:GetText() then
-					MonDKP_MinBids[search[1][1]].minbid = MonDKP_round(core.BiddingWindow.cost:GetNumber(), MonDKP_DB.modes.rounding);
-					core.BiddingWindow.CustomMinBid:SetShown(true);
-					core.BiddingWindow.CustomMinBid:SetChecked(true);
+						MonDKP_MinBids[search[1][1]].minbid = MonDKP_round(core.BiddingWindow.cost:GetNumber(), MonDKP_DB.modes.rounding);
+						MonDKP_MinBids[search[1][1]].link = itemLink;
+						MonDKP_MinBids[search[1][1]].icon = itemIcon;
+						core.BiddingWindow.CustomMinBid:SetShown(true);
+						core.BiddingWindow.CustomMinBid:SetChecked(true);
+				    end
+				end
+				
+				if search and core.BiddingWindow.CustomMinBid:GetChecked() == false then
+					table.remove(MonDKP_MinBids, search[1][1])
+					core.BiddingWindow.CustomMinBid:SetShown(false);
 				end
 			end
-
-			if search and core.BiddingWindow.CustomMinBid:GetChecked() == false then
-				table.remove(MonDKP_MinBids, search[1][1])
-				core.BiddingWindow.CustomMinBid:SetShown(false);
-			end
-				end
 				
 			if mode == "Zero Sum" and not reassign then
 				MonDKP_DB.modes.ZeroSumBank.balance = MonDKP_DB.modes.ZeroSumBank.balance + -tonumber(cost)
@@ -285,6 +315,8 @@ local function AwardConfirm_Create()
 	UIDropDownMenu_JustifyText(f.zoneDropDown, "LEFT")
 
 	f.yesButton = MonDKP:CreateButton("BOTTOMLEFT", f, "BOTTOMLEFT", 20, 15, L["CONFIRM"]);
+	f.setPriceButton = MonDKP:CreateButton("BOTTOMLEFT", f, "BOTTOMLEFT", 150, 15, "Set Price");
+	f.setPriceButton:SetShown(false);
 	f.noButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -20, 15, L["CANCEL"]);
 
 	return f;
@@ -296,10 +328,11 @@ function MonDKP:AwardConfirm(player, cost, boss, zone, loot, reassign)
 	local class, search;
 	local PlayerList = {};
 	local curSelected = 0;
-
-	if cost == 0 then
+	local mode = MonDKP_DB.modes.mode;
+	
+--[[ 	if cost == 0 then
 		cost = MonDKP:GetMinBid(itemLink)
-	end
+	end ]]
 	
 	if player then
 		search = MonDKP:Table_Search(MonDKP_DKPTable, player)
@@ -316,6 +349,10 @@ function MonDKP:AwardConfirm(player, cost, boss, zone, loot, reassign)
 	PlaySound(850)
 	core.AwardConfirm = core.AwardConfirm or AwardConfirm_Create()
 	core.AwardConfirm:SetShown(not core.AwardConfirm:IsShown())
+
+	if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
+		core.AwardConfirm.setPriceButton:SetShown(true);
+	end
 
 	--core.AwardConfirm.player:SetText("|cff"..class.hex..player.."|r")
 	core.AwardConfirm.lootIcon:SetTexture(itemIcon)
@@ -464,6 +501,11 @@ function MonDKP:AwardConfirm(player, cost, boss, zone, loot, reassign)
 		PlaySound(851)
 	end)
 	core.AwardConfirm.noButton:SetScript("OnClick", function()          -- Run when "No" is clicked
+		PlaySound(851)
+		core.AwardConfirm:SetShown(false)
+	end)
+	core.AwardConfirm.setPriceButton:SetScript("OnClick", function()          -- Run when "Set Price" is clicked
+		SetItemPrice(cost, loot)
 		PlaySound(851)
 		core.AwardConfirm:SetShown(false)
 	end)

@@ -34,9 +34,9 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
 	end
 	--core.IsOfficer = C_GuildInfo.CanEditOfficerNote()  -- seemingly removed from classic API
 	if core.IsOfficer == false then
-		for i=2, 3 do
-			_G["MonDKPMonDKP.ConfigTabMenuTab"..i]:Hide();
-		end
+		_G["MonDKPMonDKP.ConfigTabMenuTab2"]:Hide(); --Adjust DKP
+		_G["MonDKPMonDKP.ConfigTabMenuTab3"]:Hide(); -- Manage
+		--_G["MonDKPMonDKP.ConfigTabMenuTab7"]:Hide(); -- Loot Prices
 		_G["MonDKPMonDKP.ConfigTabMenuTab4"]:SetPoint("TOPLEFT", _G["MonDKPMonDKP.ConfigTabMenuTab1"], "TOPRIGHT", -14, 0)
 		_G["MonDKPMonDKP.ConfigTabMenuTab5"]:SetPoint("TOPLEFT", _G["MonDKPMonDKP.ConfigTabMenuTab4"], "TOPRIGHT", -14, 0)
 		_G["MonDKPMonDKP.ConfigTabMenuTab6"]:SetPoint("TOPLEFT", _G["MonDKPMonDKP.ConfigTabMenuTab5"], "TOPRIGHT", -14, 0)
@@ -474,7 +474,7 @@ function MonDKP:CreateMenu()
 	MonDKP.UIConfig.expand.trigger:SetPoint("CENTER", MonDKP.UIConfig.expand, "CENTER", 0, 0)
 	MonDKP.UIConfig.expand.trigger:SetScript("OnClick", function(self) 
 		if core.ShowState == false then
-			MonDKP.UIConfig:SetWidth(1050)
+			MonDKP.UIConfig:SetWidth(1106)
 			MonDKP.UIConfig.TabMenu:Show()
 			MonDKP.UIConfig.expandtab:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\collapse-arrow");
 		else

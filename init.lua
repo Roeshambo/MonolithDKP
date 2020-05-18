@@ -76,8 +76,10 @@ MonDKP.Commands = {
       local item = strjoin(" ", ...)
       if not item then return end
       item = name.." "..item;
-      
-      MonDKP:AwardConfirm(nil, 0, MonDKP_DB.bossargs.LastKilledBoss, MonDKP_DB.bossargs.CurrentRaidZone, item)
+	  local itemName,itemLink,_,_,_,_,_,_,_,_ = GetItemInfo(item)
+	  local search = MonDKP:Table_Search(MonDKP_MinBids, itemName)
+	  local cost = MonDKP_MinBids[search[1][1]].minbid or MonDKP:GetMinBid(itemLink);
+      MonDKP:AwardConfirm(nil, cost, MonDKP_DB.bossargs.LastKilledBoss, MonDKP_DB.bossargs.CurrentRaidZone, item)
     else
       MonDKP:Print(L["NOPERMISSION"])
     end
@@ -256,7 +258,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				MonDKP:CheckOfficer()
 				MonDKP:SortLootTable()
 				MonDKP:SortDKPHistoryTable()
-				MonDKP:Print(L["VERSION"].." "..core.MonVersion..", "..L["CREATEDMAINTAIN"].." Roeshambo@Stalagg-PvP");
+				MonDKP:Print(L["VERSION"].." "..core.MonVersion..", "..L["CREATEDMAINTAIN"].." Kyliee@BloodsailBuccaneers-Classic");
 				MonDKP:Print(L["LOADED"].." "..#MonDKP_DKPTable.." "..L["PLAYERRECORDS"]..", "..#MonDKP_Loot.." "..L["LOOTHISTRECORDS"].." "..#MonDKP_DKPHistory.." "..L["DKPHISTRECORDS"]..".");
 				MonDKP:Print(L["USE"].." /dkp ? "..L["SUBMITBUGS"].." @ https://github.com/Roeshambo/MonolithDKP/issues");
 				MonDKP.Sync:SendData("MonDKPBuild", tostring(core.BuildNumber)) -- broadcasts build number to guild to check if a newer version is available
@@ -534,7 +536,8 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	    ------------------------------------
 	    --	Import SavedVariables
 	    ------------------------------------
-	    core.WorkingTable 		= MonDKP_DKPTable;						-- imports full DKP table to WorkingTable for list manipulation
+		core.WorkingTable 		= MonDKP_DKPTable;						-- imports full DKP table to WorkingTable for list manipulation
+		core.PriceTable			= MonDKP_MinBids;
 	    core.CurrentRaidZone	= MonDKP_DB.bossargs.CurrentRaidZone;	-- stores raid zone as a redundency
 		core.LastKilledBoss 	= MonDKP_DB.bossargs.LastKilledBoss;	-- stores last boss killed as a redundency
 		core.LastKilledNPC		= MonDKP_DB.bossargs.LastKilledNPC 		-- Stores last 30 mobs killed in raid.
@@ -542,6 +545,10 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 
 		table.sort(MonDKP_DKPTable, function(a, b)
 			return a["player"] < b["player"]
+		end)
+		
+		table.sort(core.PriceTable, function(a, b)
+			return a["item"] < b["item"]
 		end)
 		
 		MonDKP:StartBidTimer("seconds", nil)						-- initiates timer frame for use

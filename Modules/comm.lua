@@ -66,6 +66,7 @@ function MonDKP.Sync:OnEnable()
   MonDKP.Sync:RegisterComm("MonDKPBidShare", MonDKP.Sync:OnCommReceived())      -- broadcast accepted bids
   MonDKP.Sync:RegisterComm("MonDKPBidder", MonDKP.Sync:OnCommReceived())      -- Submit bids
   MonDKP.Sync:RegisterComm("MonDKPAllTabs", MonDKP.Sync:OnCommReceived())      -- Full table broadcast
+  MonDKP.Sync:RegisterComm("MonDKPSetPrice", MonDKP.Sync:OnCommReceived())      -- Set Single Item Price
   --MonDKP.Sync:RegisterComm("MonDKPEditLoot", MonDKP.Sync:OnCommReceived())    -- not in use
   --MonDKP.Sync:RegisterComm("MonDKPDataSync", MonDKP.Sync:OnCommReceived())    -- not in use
   --MonDKP.Sync:RegisterComm("MonDKPDKPLogSync", MonDKP.Sync:OnCommReceived())  -- not in use
@@ -289,16 +290,20 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
       if (sender ~= UnitName("player")) then
         if prefix == "MonDKPLootDist" or prefix == "MonDKPDKPDist" or prefix == "MonDKPDelLoot" or prefix == "MonDKPDelSync" or prefix == "MonDKPMinBid" or prefix == "MonDKPWhitelist"
         or prefix == "MonDKPDKPModes" or prefix == "MonDKPStand" or prefix == "MonDKPZSumBank" or prefix == "MonDKPBossLoot" or prefix == "MonDKPDecay" or prefix == "MonDKPDelUsers" or
-        prefix == "MonDKPAllTabs" or prefix == "MonDKPBidShare" or prefix == "MonDKPMerge" then
+        prefix == "MonDKPAllTabs" or prefix == "MonDKPBidShare" or prefix == "MonDKPMerge" or prefix == "MonDKPSetPrice" then
           decoded = LibDeflate:DecompressDeflate(LibDeflate:DecodeForWoWAddonChannel(message))
           local success, deserialized = LibAceSerializer:Deserialize(decoded);
           if success then
             if prefix == "MonDKPAllTabs" then   -- receives full table broadcast
+              print("[MonolithDKP] COMMS: Full Broadcast Receive Started");
               table.sort(deserialized.Loot, function(a, b)
                 return a["date"] > b["date"]
               end)
               table.sort(deserialized.DKP, function(a, b)
                 return a["date"] > b["date"]
+              end)
+              table.sort(deserialized.MinBids, function(a, b)
+                return a["item"] < b["item"]
               end)
 
               if (#MonDKP_DKPHistory > 0 and #MonDKP_Loot > 0) and (deserialized.DKP[1].date < MonDKP_DKPHistory[1].date or deserialized.Loot[1].date < MonDKP_Loot[1].date) then
@@ -313,14 +318,17 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                     MonDKP_DKPTable = deserialized.DKPTable
                     MonDKP_DKPHistory = deserialized.DKP
                     MonDKP_Loot = deserialized.Loot
-                    
                     MonDKP_Archive = deserialized.Archive
+                    MonDKP_MinBids = deserialized.MinBids
                     
                     if MonDKP.ConfigTab6 and MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
                       MonDKP:DKPHistory_Update(true)
                     elseif MonDKP.ConfigTab5 and MonDKP.ConfigTab5:IsShown() then
                       MonDKP:LootHistory_Reset()
                       MonDKP:LootHistory_Update(L["NOFILTER"]);
+                    elseif MonDKP.ConfigTab7 and MonDKP.ConfigTab7:IsShown() then
+                      core.PriceTable	= MonDKP_MinBids;
+                      MonDKP:PriceTable_Update(0);
                     end
                     if core.ClassGraph then
                       MonDKP:ClassGraph_Update()
@@ -340,7 +348,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 MonDKP_DKPTable = deserialized.DKPTable
                 MonDKP_DKPHistory = deserialized.DKP
                 MonDKP_Loot = deserialized.Loot
-                
+                MonDKP_MinBids = deserialized.MinBids
                 MonDKP_Archive = deserialized.Archive
                 
                 if MonDKP.ConfigTab6 and MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
@@ -348,6 +356,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 elseif MonDKP.ConfigTab5 and MonDKP.ConfigTab5:IsShown() then
                   MonDKP:LootHistory_Reset()
                   MonDKP:LootHistory_Update(L["NOFILTER"]);
+                elseif MonDKP.ConfigTab7 and MonDKP.ConfigTab7:IsShown() then
+                  core.PriceTable	= MonDKP_MinBids;
+                  MonDKP:PriceTable_Update(0);
                 end
                 if core.ClassGraph then
                   MonDKP:ClassGraph_Update()
@@ -357,6 +368,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 MonDKP:FilterDKPTable(core.currentSort, "reset")
                 MonDKP:StatusVerify_Update()
               end
+              print("[MonolithDKP] COMMS: Full Broadcast Receive Finished");
               return
             elseif prefix == "MonDKPMerge" then
               for i=1, #deserialized.DKP do
@@ -671,6 +683,12 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                   local search = MonDKP:Table_Search(MonDKP_MinBids, deserialized[2][i].item)
                   if search then
                     MonDKP_MinBids[search[1][1]].minbid = deserialized[2][i].minbid
+                    if deserialized[2][i]["link"] ~= nil then
+                      MonDKP_MinBids[search[1][1]].link = deserialized[2][i].link
+                    end
+                    if deserialized[2][i]["icon"] ~= nil then
+                      MonDKP_MinBids[search[1][1]].icon = deserialized[2][i].icon
+                    end
                   else
                     table.insert(MonDKP_MinBids, deserialized[2][i])
                   end
@@ -693,6 +711,21 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
               MonDKP_Whitelist = deserialized;
             elseif prefix == "MonDKPStand" then
               MonDKP_Standby = deserialized;
+            elseif prefix == "MonDKPSetPrice" then
+              local mode = MonDKP_DB.modes.mode;
+
+              if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
+                local search = MonDKP:Table_Search(MonDKP_MinBids, itemName)
+            
+                if not search then
+                  tinsert(MonDKP_MinBids, deserialized)
+                elseif search and cost ~= tonumber(val) then
+                  MonDKP_MinBids[search[1][1]] = deserialized;
+                end
+
+                MonDKP:PriceTable_Update(0);
+              end
+            
             elseif prefix == "MonDKPZSumBank" then
               if core.IsOfficer then
                 MonDKP_DB.modes.ZeroSumBank = deserialized;
@@ -742,6 +775,12 @@ function MonDKP.Sync:SendData(prefix, data, target)
   --if prefix ~= "MDKPProfile" then print("|cff00ff00Sent: "..prefix.."|r") end
   if data == nil or data == "" then data = " " end -- just in case, to prevent disconnects due to empty/nil string AddonMessages
 
+  --AceComm Communication doesn't work if the prefix is longer than 15.  And if sucks if you try.
+  if #prefix > 15 then
+    MonDKP:Print("MonolithDKP Error: Prefix ["..prefix.."] is longer than 15. Please shorten.");
+    return;
+  end
+
   -- non officers / not encoded
   if IsInGuild() then
     if prefix == "MonDKPQuery" or prefix == "MonDKPBuild" or prefix == "MonDKPTalents" or prefix == "MonDKPRoles" then
@@ -752,12 +791,10 @@ function MonDKP.Sync:SendData(prefix, data, target)
       return;
     end
   end
-
   -- officers
   if IsInGuild() and core.IsOfficer then
     local serialized = nil;
     local packet = nil;
-
     if prefix == "MonDKPCommand" or prefix == "MonDKPRaidTime" then
       MonDKP.Sync:SendCommMessage(prefix, data, "RAID")
       return;
@@ -771,7 +808,6 @@ function MonDKP.Sync:SendData(prefix, data, target)
     if data then
       serialized = LibAceSerializer:Serialize(data);  -- serializes tables to a string
     end
-
     local compressed = LibDeflate:CompressDeflate(serialized, {level = 9})
     if compressed then
       packet = LibDeflate:EncodeForWoWAddonChannel(compressed)
@@ -791,7 +827,6 @@ function MonDKP.Sync:SendData(prefix, data, target)
       end
       return
     end
-    
     if target then
       MonDKP.Sync:SendCommMessage(prefix, packet, "WHISPER", target)
     else

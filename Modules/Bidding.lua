@@ -116,7 +116,7 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
   local dkp;
   local seconds;
   local response = L["ERRORPROCESSING"];
-  local snipemessage;
+  
   mode = MonDKP_DB.modes.mode;
 
   if string.find(name, "-") then          -- finds and removes server name from name if exists
@@ -560,9 +560,9 @@ local function StartBidding()
       MonDKP:BidInterface_Toggle()
     end
 
-    local search_min = MonDKP:Table_Search(MonDKP_MinBids, core.BiddingWindow.itemName:GetText())
+    local search_min = MonDKP:Table_Search(MonDKP_MinBids, core.BiddingWindow.itemName:GetText(), "item")
     local val_min = MonDKP:GetMinBid(CurrItemForBid);
-    local search_max = MonDKP:Table_Search(MonDKP_MaxBids, core.BiddingWindow.itemName:GetText())
+    local search_max = MonDKP:Table_Search(MonDKP_MaxBids, core.BiddingWindow.itemName:GetText(), "item")
     local val_max = MonDKP:GetMaxBid(CurrItemForBid);
 
     -- Min
@@ -1766,6 +1766,12 @@ function MonDKP:CreateBidWindow()
         }
         StaticPopup_Show ("CONFIRM_AWARD")
       end
+    end);
+
+    f.ItemDE = MonDKP:CreateButton("LEFT", f.cost, "RIGHT", 190, 0, "DE");
+    f.ItemDE:SetSize(35,25)
+    f.ItemDE:SetScript("OnClick", function () 
+      MonDKP:ProcessDisenchant(CurrItemForBid)
     end);
 
     f:SetScript("OnMouseUp", function(self)    -- clears focus on esc
