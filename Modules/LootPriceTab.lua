@@ -36,10 +36,6 @@ local function CreateRow(parent, id) -- Create 3 buttons for each row in the lis
 	f.PriceInfo[1]:SetPoint("LEFT", 30, 0);
 	f.PriceInfo[2]:SetPoint("CENTER", 155, 0)
 	f.PriceInfo[3]:SetPoint("RIGHT", 15, 0)
-	
-	
-	
-
 
 	--f:SetScript("OnMouseDown", function(self, button)
 	--	if button == "RightButton" then
@@ -65,13 +61,13 @@ function MonDKP:ProcessDisenchant(loot)
 
 		core.BidInProgress = false;
 		MonDKP:BroadcastStopBidTimer()
-		print("Got here");
+
 		if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
 			local search = MonDKP:Table_Search(MonDKP_MinBids, itemName)
 			local numOfDisenchants = MonDKP_MinBids[search[1][1]].disenchants or 0
 			local updatedDisenchants = numOfDisenchants + 1
 			local cost = core.BiddingWindow.cost:GetNumber();
-			print("Got here 2");
+
 			SendChatMessage("No votes for ".." "..itemLink.." for "..cost.." "..L["DKP"].." and will be disenchanted. This will be disenchant number "..updatedDisenchants, "RAID_WARNING");
 			
 			--If cost is 0, dont' track.
@@ -86,33 +82,33 @@ function MonDKP:ProcessDisenchant(loot)
 					cost = 5
 				end
 			end
-			print("Got here 3");
+
 			local newItem = {item=itemName, minbid=cost, link=itemLink, icon=itemIcon, disenchant=updatedDisenchants};
-			print("Got here 4");
+
 			if not search then
-				print("Got here 5");
+
 				tinsert(MonDKP_MinBids, newItem)
 				core.BiddingWindow.CustomMinBid:SetShown(true);
 				core.BiddingWindow.CustomMinBid:SetChecked(true);
 			else
-				print("Got here 6");
+
 				MonDKP_MinBids[search[1][1]].minbid = cost;
 				MonDKP_MinBids[search[1][1]].link = itemLink;
 				MonDKP_MinBids[search[1][1]].icon = itemIcon;
 				MonDKP_MinBids[search[1][1]].disenchants = updatedDisenchants;
 				newItem = MonDKP_MinBids[search[1][1]];
 			end
-			print("Got here 7");
+
 			MonDKP.Sync:SendData("MonDKPSetPrice", newItem);
 		else
-			print("Got here 8");
+
 			SendChatMessage("No votes for ".." "..itemLink.." for "..-cost.." "..L["DKP"].." and will be disenchanted.", "RAID_WARNING")
 		end
-		print("Got here 9");
+
 		core.BiddingWindow:Hide()
-		print("Got here 10");
+
 		ClearBidWindow()
-		print("Got here 11");
+
 	end
 
 end
@@ -141,6 +137,8 @@ function MonDKP:PriceTable_Update(scrollOffset)
 
 			if core.PriceTable[index]["disenchants"] ~= nil then
 				curDisenchants = core.PriceTable[index].disenchants;
+			else
+				core.PriceTable[index]["disenchants"] = curDisenchants;
 			end
 
 			if core.PriceTable[index]["link"] ~= nil then
@@ -202,11 +200,7 @@ function MonDKP:PriceListSort(id, reset)
 	local button;                                 -- passing "reset" forces it to do initial sort (A to Z repeatedly instead of A to Z then Z to A toggled)
 	local PriceSortButtons = core.PriceSortButtons
 
-	if id == "disenchants" then
-		button = PriceSortButtons["item"]
-	else
-		button = PriceSortButtons[id]
-	end
+	button = PriceSortButtons[id]
 
 	if reset and reset ~= "Clear" then                         -- reset is useful for check boxes when you don't want it repeatedly reversing the sort
 		button.Ascend = button.Ascend
@@ -220,16 +214,16 @@ function MonDKP:PriceListSort(id, reset)
 	end
 	table.sort(core.PriceTable, function(a, b)
 		if button.Ascend then
-			if id == "minbid" then
-				return a[button.Id] > b[button.Id]
-			else
+			if id == "item" then
 				return a[button.Id] < b[button.Id]
+			else
+				return a[button.Id] > b[button.Id]
 			end
 		else
-			if id == "minbid" then
-				return a[button.Id] < b[button.Id]
-			else
+			if id == "item" then
 				return a[button.Id] > b[button.Id]
+			else
+				return a[button.Id] < b[button.Id]
 			end
 		end
 	end)
@@ -317,10 +311,6 @@ function MonDKP:PriceTab_Create()
 		end
 		v:SetScript("OnClick", function(self) MonDKP:PriceListSort(self.Id, "Clear") end)
 	end
-
-	--PriceSortButtons.item:SetSize((370), core.TableRowHeight)
-	--PriceSortButtons.disenchants:SetSize((70), core.TableRowHeight)
-	--PriceSortButtons.minbid:SetSize((60), core.TableRowHeight)
 
 	PriceSortButtons.item.t = PriceSortButtons.item:CreateFontString(nil, "OVERLAY")
 	PriceSortButtons.item.t:SetFontObject("MonDKPNormal")
