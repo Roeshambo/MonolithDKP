@@ -74,8 +74,17 @@ function MonDKP.Sync:OnEnable()
   --MonDKP.Sync:RegisterComm("MonDKPLogSync", MonDKP.Sync:OnCommReceived())    -- not in use
 end
 
+local function _LogComm(prefix, message, distribution, sender)
+  local entry = { prefix = prefix, message = message, distribution = distribution, sender = sender }
+  table.insert(MonDKP_CommLogs, entry)
+  print("("..sender.."): |cffff0000"..prefix.."|r")
+end
+
 function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
   if not core.Initialized or core.IsOfficer == nil then return end
+  
+  _LogComm(prefix, message, distribution, sender)
+  
   if prefix then
     --if prefix ~= "MDKPProfile" then print("|cffff0000Received: "..prefix.." from "..sender.."|r") end
     if prefix == "MonDKPQuery" then

@@ -4,7 +4,7 @@
 ## Notes: Monolith DKP fork - Essential Edition. Comprehensive DKP and raid management utility.
 ## Version: 14.1.3
 ## DefaultState: enabled
-## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_DKPHistory, MonDKP_MinBids, MonDKP_MaxBids, MonDKP_Whitelist, MonDKP_Standby, MonDKP_Archive
+## SavedVariables: MonDKP_DB, MonDKP_Loot, MonDKP_DKPTable, MonDKP_DKPHistory, MonDKP_MinBids, MonDKP_MaxBids, MonDKP_Whitelist, MonDKP_Standby, MonDKP_Archive, MonDKP_CommLogs
 
 Localization\Localization.en.lua
 Localization\Localization.cn.lua

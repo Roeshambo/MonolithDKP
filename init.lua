@@ -477,7 +477,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		C_Timer.After(5, function ()
 			core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();		-- creates main menu after 5 seconds (trying to initialize after raid frames are loaded)
 		end)
-    	if not MonDKP_DKPTable then MonDKP_DKPTable = {} end;
+    if not MonDKP_DKPTable then MonDKP_DKPTable = {} end;
 		if not MonDKP_Loot then MonDKP_Loot = {} end;
 		if not MonDKP_DKPHistory then MonDKP_DKPHistory = {} end;
 		if not MonDKP_MinBids then MonDKP_MinBids = {} end;
@@ -486,6 +486,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not MonDKP_Standby then MonDKP_Standby = {} end;
 		if not MonDKP_Archive then MonDKP_Archive = {} end;
 		if not MonDKP_DB then MonDKP_DB = {} end
+		if not MonDKP_CommLogs then MonDKP_CommLogs = {} end
 		if not MonDKP_DB.DKPBonus or not MonDKP_DB.DKPBonus.OnTimeBonus then
 			MonDKP_DB.DKPBonus = {
     			OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, DecayPercentage = 20, GiveRaidStart = false, IncStandby = false,
