@@ -263,9 +263,6 @@ function MonDKP_OnEvent(self, event, arg1, ...)
         MonDKP:SortLootTable()
         MonDKP:SortDKPHistoryTable()
         MonDKP:Print(L["VERSION"].." "..core.MonVersion);
-        --MonDKP:Print(L["VERSION"].." "..core.MonVersion..", Maintained by Danteril-MirageRaceway | Fork of MonolithDKP created by Roeshambo@Stalagg-PvP");
-        --MonDKP:Print(L["LOADED"].." "..#MonDKP_DKPTable.." "..L["PLAYERRECORDS"]..", "..#MonDKP_Loot.." "..L["LOOTHISTRECORDS"].." "..#MonDKP_DKPHistory.." "..L["DKPHISTRECORDS"]..".");
-        --MonDKP:Print(L["USE"].." /dkp ? "..L["SUBMITBUGS"].." @ https://github.com/lantisnt/EssentialDKP/issues");
         MonDKP.Sync:SendData("MonDKPBuild", tostring(core.BuildNumber)) -- broadcasts build number to guild to check if a newer version is available
 
         if not MonDKP_DB.defaults.installed210 then
@@ -274,21 +271,19 @@ function MonDKP_OnEvent(self, event, arg1, ...)
           MonDKP_DB.defaults.installed = nil
         end
 
-        local seed
-        if #MonDKP_DKPHistory > 0 and #MonDKP_Loot > 0 and strfind(MonDKP_DKPHistory[1].index, "-") and strfind(MonDKP_Loot[1].index, "-") then
-          local off1,date1 = strsplit("-", MonDKP_DKPHistory[1].index)
-          local off2,date2 = strsplit("-", MonDKP_Loot[1].index)
+        if core.IsOfficer then
+          local seed = "start"
+          if #MonDKP_DKPHistory > 0 and #MonDKP_Loot > 0 and strfind(MonDKP_DKPHistory[1].index, "-") and strfind(MonDKP_Loot[1].index, "-") then
+            local off1,date1 = strsplit("-", MonDKP_DKPHistory[1].index)
+            local off2,date2 = strsplit("-", MonDKP_Loot[1].index)
 
-          if MonDKP:ValidateSender(off1) and MonDKP:ValidateSender(off2) and tonumber(date1) > MonDKP_DB.defaults.installed210 and tonumber(date2) > MonDKP_DB.defaults.installed210 then
-            seed = MonDKP_DKPHistory[1].index..","..MonDKP_Loot[1].index  -- seed is only sent if the seed dates are post 2.1 installation and the posting officer is an officer in the current guild
-          else
-            seed = "start"
+            if MonDKP:ValidateSender(off1) and MonDKP:ValidateSender(off2) and tonumber(date1) > MonDKP_DB.defaults.installed210 and tonumber(date2) > MonDKP_DB.defaults.installed210 then
+              seed = MonDKP_DKPHistory[1].index..","..MonDKP_Loot[1].index  -- seed is only sent if the seed dates are post 2.1 installation and the posting officer is an officer in the current guild
+            end
           end
-        else
-          seed = "start"
+          MonDKP.Sync:SendData("MonDKPQuery", seed) -- requests role and spec data and sends current seeds (index of newest DKP and Loot entries)
         end
 
-        MonDKP.Sync:SendData("MonDKPQuery", seed) -- requests role and spec data and sends current seeds (index of newest DKP and Loot entries)
       end)
     end
   elseif event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" then
@@ -386,64 +381,442 @@ function MonDKP_OnEvent(self, event, arg1, ...)
   --[[elseif event == "COMBAT_LOG_EVENT_UNFILTERED" then 					-- replaced with above BOSS_KILL event handler
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		if IsInRaid() then 					-- only processes combat log events if in raid
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 			local _,arg1,_,_,_,_,_,_,arg2 = CombatLogGetCurrentEventInfo();			-- run operation when boss is killed
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 			if arg1 == "UNIT_DIED" then
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 				MonDKP:CheckOfficer()
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 				if core.IsOfficer == true then
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 					if MonDKP:TableStrFind(core.BossList, arg2) then
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 						MonDKP.ConfigTab2.BossKilledDropdown:SetValue(arg2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 					elseif arg2 == "Flamewalker Elite" or arg2 == "Flamewalker Healer" then
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 						MonDKP.ConfigTab2.BossKilledDropdown:SetValue("Majordomo Executus")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 					elseif arg2 == "Emperor Vek'lor" or arg2 == "Emperor Vek'nilash" then
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 						MonDKP.ConfigTab2.BossKilledDropdown:SetValue("Twin Emperors")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 					elseif arg2 == "Princess Yauj" or arg2 == "Vem" or arg2 == "Lord Kri" then
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 						MonDKP.ConfigTab2.BossKilledDropdown:SetValue("Bug Family")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 					elseif arg2 == "Highlord Mograine" or arg2 == "Thane Korth'azz" or arg2 == "Sir Zeliek" or arg2 == "Lady Blaumeux" then
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 						MonDKP.ConfigTab2.BossKilledDropdown:SetValue("The Four Horsemen")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 					elseif arg2 == "Gri'lek" or arg2 == "Hazza'rah" or arg2 == "Renataki" or arg2 == "Wushoolay" then
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 						MonDKP.ConfigTab2.BossKilledDropdown:SetValue("Edge of Madness")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 					end
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 				end
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 			end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 		end--]]
@@ -497,7 +870,43 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
   --[[for i = 1, NUM_CHAT_WINDOWS do
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 		_G["ChatFrame"..i.."EditBox"]:SetAltArrowKeyMode(false);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	end--]]
@@ -510,6 +919,24 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
   SlashCmdList.MonolithDKP = HandleSlashCommands;
 
   --[[SLASH_RELOADUI1 = "/rl"; -- new slash command for reloading UI 				-- for debugging
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	SlashCmdList.RELOADUI = ReloadUI;--]]
