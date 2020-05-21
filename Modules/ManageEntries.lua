@@ -280,7 +280,6 @@ local function UpdateWhitelist()
 					preferredIndex = 3,
 				}
 				StaticPopup_Show ("VALIDATE_OFFICER")
-				return;
 			end
 		end
 		for i=1, #core.SelectedData do
