@@ -130,9 +130,9 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 			core.BidInProgress = false;
 			MonDKP:BroadcastStopBidTimer()
 			
-			SendChatMessage(L["CONGRATS"].." "..winner.." "..L["ON"].." "..loot.." @ "..-cost.." "..L["DKP"], "RAID_WARNING")
+			SendChatMessage(L["CONGRATS"].." "..winner.." "..L["ON"].." "..loot.." @ "..math.abs(cost).." "..L["DKP"], "RAID_WARNING")
 			if MonDKP_DB.modes.AnnounceAward then
-				SendChatMessage(L["CONGRATS"].." "..winner.." "..L["ON"].." "..loot.." @ "..-cost.." "..L["DKP"], "GUILD")
+				SendChatMessage(L["CONGRATS"].." "..winner.." "..L["ON"].." "..loot.." @ "..math.abs(cost).." "..L["DKP"], "GUILD")
       end
 
 				
