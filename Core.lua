@@ -87,9 +87,14 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 	}
 }
 
+local BASE = 14000
+local MAJOR = 1
+local MINOR = 3
+local PATCH = 6
+
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v1.3.2";
-core.BuildNumber = 140103;
+core.MonVersion = string.format("v%s.%s.%s", MAJOR, MINOR, PATHC)
+core.BuildNumber = BASE+(MAJOR*10000)+(MINOR*100)+PATCH;
 core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
