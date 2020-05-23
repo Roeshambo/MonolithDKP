@@ -152,7 +152,7 @@ end
 function CreateSortBox()
 	local PlayerList = GetSortOptions();
 	local ItemList = GetItemHistoryList();
-	local curSelected = 0;
+	curSelected = 0;
 
 	-- Create the dropdown, and configure its appearance
 	if not sortDropdown then
@@ -220,8 +220,7 @@ function CreateSortBox()
 
 			if UIDROPDOWNMENU_MENU_VALUE == L["PLAYERS"] then
 
-				for i=1, ceil(#PlayerList/displayLimit) do -- from i = 1 to calculated sub levels of players (for 45 players Ceil(45/20) = 3 sub levels) do -- from i = 1 to calculated sub levels of players (for 45 players Ceil(45/20) = 3 sub levels)
-
+				for i=1, ceil(#PlayerList/displayLimit) do 
 					local max = i*displayLimit;
 					if max > #PlayerList then max = #PlayerList end
 					dropDownMenuItem.text = strsub(PlayerList[((i*displayLimit)-(displayLimit-1))], 1, 1).."-"..strsub(PlayerList[max], 1, 1) 
@@ -230,6 +229,7 @@ function CreateSortBox()
 					dropDownMenuItem.value = L["PLAYERS"] -- for submenu handling in level 3
 					dropDownMenuItem.hasArrow = true
 					dropDownMenuItem.isNotRadio = true
+					dropDownMenuItem.checked = (curDropDownMenuFilterCategory == L["PLAYERS"] and (curSelected >= (1+(i-1)*displayLimit) and curSelected <= 1+(i-1)*displayLimit+(displayLimit-1)))
 					UIDropDownMenu_AddButton(dropDownMenuItem, level)
 				end
 
@@ -244,6 +244,7 @@ function CreateSortBox()
 					dropDownMenuItem.value = L["ITEMS"] -- for submenu handling in level 3
 					dropDownMenuItem.hasArrow = true
 					dropDownMenuItem.isNotRadio = true
+					dropDownMenuItem.checked = (curDropDownMenuFilterCategory == L["ITEMS"] and (curSelected >= (1+(i-1)*displayLimit) and curSelected <= 1+(i-1)*displayLimit+(displayLimit-1)))
 					UIDropDownMenu_AddButton(dropDownMenuItem, level)
 				end
 
@@ -271,8 +272,9 @@ function CreateSortBox()
 						dropDownMenuItem.value = "|cff"..c.hex..PlayerList[i].."|r" 
 						dropDownMenuItem.arg1 = PlayerList[i]
 						dropDownMenuItem.arg2 = L["PLAYERS"]
-						dropDownMenuItem.checked =  PlayerList[i] == curDropDownMenuFilterCategory
 						dropDownMenuItem.isNotRadio = true
+						dropDownMenuItem.checked =  PlayerList[i] == curfilterValue
+						dropDownMenuItem.menuList = i
 						UIDropDownMenu_AddButton(dropDownMenuItem, level)
 					end
 				end
@@ -286,7 +288,8 @@ function CreateSortBox()
 						dropDownMenuItem.arg1 = ItemList[i]
 						dropDownMenuItem.arg2 = L["ITEMS"]
 						dropDownMenuItem.isNotRadio = true
-						dropDownMenuItem.checked =  ItemList[i] == curDropDownMenuFilterCategory
+						dropDownMenuItem.checked =  ItemList[i] == curfilterValue
+						dropDownMenuItem.menuList = i
 						UIDropDownMenu_AddButton(dropDownMenuItem, level)
 					end
 				end
@@ -320,17 +323,22 @@ function CreateSortBox()
 		if curfilterValue == nil or curfilterValue ~= newValue then
 			curfilterValue = newValue
 		elseif curfilterValue == newValue then
-			noFilter = true
 			curDropDownMenuFilterCategory = nil
 			curfilterValue = nil
 		end
 	end
 	
 	if curDropDownMenuFilterCategory == nil and curfilterValue == nil then
+		curSelected = 0
 		UIDropDownMenu_SetText(sortDropdown, L["NOFILTER"])
-	elseif arg2 == L["NOFILTER"] or arg2 == L["DELETEDENTRY"] or arg2 == L["ITEMS"] then
+	elseif arg2 == L["NOFILTER"] or arg2 == L["DELETEDENTRY"] then
+		curSelected = 0
+		UIDropDownMenu_SetText(sortDropdown, newValue)
+	elseif arg2 == L["ITEMS"] then
+		curSelected = self.menuList
 		UIDropDownMenu_SetText(sortDropdown, newValue)
 	elseif arg2 == L["PLAYERS"] then
+		curSelected = self.menuList
 		UIDropDownMenu_SetText(sortDropdown, self.value)
 	end
 
