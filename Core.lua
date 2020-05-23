@@ -89,8 +89,8 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v2.2.4 - LJT";
-core.BuildNumber = 20204;
+core.MonVersion = "v2.2.5 - LJT";
+core.BuildNumber = 20205;
 core.TableWidth, core.TableRowHeight, core.TableNumRows, core.PriceNumRows = 500, 18, 27, 22; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes

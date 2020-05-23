@@ -493,7 +493,7 @@ function MonDKP:AwardConfirm(player, cost, boss, zone, loot, reassign)
 			else
 				AwardItem(player, cost, curBoss, curZone, loot)
 			end
-			
+			SetItemPrice(cost, loot)
 			core.AwardConfirm:SetShown(false)
 		end
 

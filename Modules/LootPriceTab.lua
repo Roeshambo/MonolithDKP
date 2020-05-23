@@ -63,9 +63,9 @@ function MonDKP:ProcessDisenchant(loot)
 		MonDKP:BroadcastStopBidTimer()
 
 		if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
-			local search = MonDKP:Table_Search(MonDKP_MinBids, itemName)
-			local numOfDisenchants = MonDKP_MinBids[search[1][1]].disenchants or 0
-			local updatedDisenchants = numOfDisenchants + 1
+			local search = MonDKP:Table_Search(MonDKP_MinBids, itemName);
+			local numOfDisenchants = MonDKP_MinBids[search[1][1]]["disenchants"] or 0;
+			local updatedDisenchants = numOfDisenchants + 1;
 			local cost = core.BiddingWindow.cost:GetNumber();
 
 			SendChatMessage("No votes for ".." "..itemLink.." for "..cost.." "..L["DKP"].." and will be disenchanted. This will be disenchant number "..updatedDisenchants, "RAID_WARNING");
