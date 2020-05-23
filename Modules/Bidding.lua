@@ -114,7 +114,9 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
   local name = ...;
   local cmd;
   local dkp;
+  local seconds;
   local response = L["ERRORPROCESSING"];
+  
   mode = MonDKP_DB.modes.mode;
 
   if string.find(name, "-") then          -- finds and removes server name from name if exists
@@ -185,10 +187,11 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
                   MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
                 end
                 if Timer ~= 0 and Timer > (core.BiddingWindow.bidTimer:GetText() - 10) and MonDKP_DB.modes.AntiSnipe > 0 then
+                  seconds = core.BiddingWindow.bidTimer:GetText().."{"..MonDKP_DB.modes.AntiSnipe
                   if core.BiddingWindow.maxBid:GetNumber() ~= 0 then
-                    MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText().."{"..MonDKP_DB.modes.AntiSnipe, core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText().." Max Bid: "..core.BiddingWindow.maxBid:GetText(), core.BiddingWindow.itemIcon:GetTexture());
+                    MonDKP:BroadcastBidTimer(seconds, core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText().." Max Bid: "..core.BiddingWindow.maxBid:GetText(), core.BiddingWindow.itemIcon:GetTexture());
                   else
-                    MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText().."{"..MonDKP_DB.modes.AntiSnipe, core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), core.BiddingWindow.itemIcon:GetTexture());
+                    MonDKP:BroadcastBidTimer(seconds, core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), core.BiddingWindow.itemIcon:GetTexture());
                   end
                 end
               elseif mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
@@ -204,11 +207,12 @@ function MonDKP_CHAT_MSG_WHISPER(text, ...)
                   MonDKP.Sync:SendData("MonDKPBidShare", Bids_Submitted)
                 end
                 response = L["BIDWASACCEPTED"]
+
                 if Timer ~= 0 and Timer > (core.BiddingWindow.bidTimer:GetText() - 10) and MonDKP_DB.modes.AntiSnipe > 0 then
-                  MonDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText().."{"..MonDKP_DB.modes.AntiSnipe, core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), core.BiddingWindow.itemIcon:GetTexture());
+                  seconds = core.BiddingWindow.bidTimer:GetText().."{"..MonDKP_DB.modes.AntiSnipe
+                  MonDKP:BroadcastBidTimer(seconds, core.BiddingWindow.item:GetText().." Extended", core.BiddingWindow.itemIcon:GetTexture());
                 end
               end
-
               BidScrollFrame_Update()
             else
               response = L["BIDDENIEDMINBID"].." "..core.BiddingWindow.minBid:GetNumber().."!"
@@ -556,9 +560,9 @@ local function StartBidding()
       MonDKP:BidInterface_Toggle()
     end
 
-    local search_min = MonDKP:Table_Search(MonDKP_MinBids, core.BiddingWindow.itemName:GetText())
+    local search_min = MonDKP:Table_Search(MonDKP_MinBids, core.BiddingWindow.itemName:GetText(), "item")
     local val_min = MonDKP:GetMinBid(CurrItemForBid);
-    local search_max = MonDKP:Table_Search(MonDKP_MaxBids, core.BiddingWindow.itemName:GetText())
+    local search_max = MonDKP:Table_Search(MonDKP_MaxBids, core.BiddingWindow.itemName:GetText(), "item")
     local val_max = MonDKP:GetMaxBid(CurrItemForBid);
 
     -- Min
@@ -1762,6 +1766,12 @@ function MonDKP:CreateBidWindow()
         }
         StaticPopup_Show ("CONFIRM_AWARD")
       end
+    end);
+
+    f.ItemDE = MonDKP:CreateButton("LEFT", f.cost, "RIGHT", 190, 0, "DE");
+    f.ItemDE:SetSize(35,25)
+    f.ItemDE:SetScript("OnClick", function () 
+      MonDKP:ProcessDisenchant(CurrItemForBid)
     end);
 
     f:SetScript("OnMouseUp", function(self)    -- clears focus on esc

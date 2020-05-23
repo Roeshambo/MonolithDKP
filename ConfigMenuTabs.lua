@@ -68,6 +68,10 @@ local function Tab_OnClick(self)
 		MonDKP:DKPHistory_Update(true)
 	end
 
+	if self:GetID() == 7 then
+		self:GetParent().ScrollFrame.ScrollBar:Hide()
+	end
+
 	local scrollChild = self:GetParent().ScrollFrame:GetScrollChild();
 	if (scrollChild) then
 		scrollChild:Hide();
@@ -120,8 +124,8 @@ function MonDKP:ConfigMenuTabs()
 	---------------------------------------
 
 	MonDKP.UIConfig.TabMenu = CreateFrame("Frame", "MonDKPMonDKP.ConfigTabMenu", MonDKP.UIConfig);
-	MonDKP.UIConfig.TabMenu:SetPoint("TOPRIGHT", MonDKP.UIConfig, "TOPRIGHT", -25, -25);
-	MonDKP.UIConfig.TabMenu:SetSize(477, 510);
+	MonDKP.UIConfig.TabMenu:SetPoint("TOPRIGHT", MonDKP.UIConfig, "TOPRIGHT", -25, -25); --Moves the entire tabframe (defaults -25, -25)
+	MonDKP.UIConfig.TabMenu:SetSize(535, 510);  --default: 477,510
 	MonDKP.UIConfig.TabMenu:SetBackdrop( {
 		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
 		insets = { left = 0, right = 0, top = 0, bottom = 0 }
@@ -132,7 +136,7 @@ function MonDKP:ConfigMenuTabs()
 	MonDKP.UIConfig.TabMenuBG = MonDKP.UIConfig.TabMenu:CreateTexture(nil, "OVERLAY", nil);
 	MonDKP.UIConfig.TabMenuBG:SetColorTexture(0, 0, 0, 1)
 	MonDKP.UIConfig.TabMenuBG:SetPoint("TOPLEFT", MonDKP.UIConfig.TabMenu, "TOPLEFT", 2, -2);
-	MonDKP.UIConfig.TabMenuBG:SetSize(478, 511);
+	MonDKP.UIConfig.TabMenuBG:SetSize(536, 511);
 	MonDKP.UIConfig.TabMenuBG:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\menu-bg");
 
 	-- TabMenu ScrollFrame and ScrollBar
@@ -149,7 +153,7 @@ function MonDKP:ConfigMenuTabs()
 	MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", MonDKP.UIConfig.TabMenu.ScrollFrame, "TOPRIGHT", -20, -12);
 	MonDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", MonDKP.UIConfig.TabMenu.ScrollFrame, "BOTTOMRIGHT", -2, 15);
 
-	MonDKP.ConfigTab1, MonDKP.ConfigTab2, MonDKP.ConfigTab3, MonDKP.ConfigTab4, MonDKP.ConfigTab5, MonDKP.ConfigTab6 = MonDKP:SetTabs(MonDKP.UIConfig.TabMenu, 6, 475, 490, L["FILTERS"], L["ADJUSTDKP"], L["MANAGE"], L["OPTIONS"], L["LOOTHISTORY"], L["DKPHISTORY"]);
+	MonDKP.ConfigTab1, MonDKP.ConfigTab2, MonDKP.ConfigTab3, MonDKP.ConfigTab4, MonDKP.ConfigTab5, MonDKP.ConfigTab6, MonDKP.ConfigTab7 = MonDKP:SetTabs(MonDKP.UIConfig.TabMenu, 7, 533, 490, L["FILTERS"], L["ADJUSTDKP"], L["MANAGE"], L["OPTIONS"], L["LOOTHISTORY"], L["DKPHISTORY"], L["PRICETAB"]);
 
 	---------------------------------------
 	-- MENU TAB 1
@@ -246,6 +250,12 @@ function MonDKP:ConfigMenuTabs()
 	MonDKP:AdjustDKPTab_Create()
 
 	---------------------------------------
+	-- Price  TAB
+	---------------------------------------
+
+	MonDKP:PriceTab_Create()
+
+	---------------------------------------
 	-- Manage DKP TAB
 	---------------------------------------
 
@@ -253,7 +263,7 @@ function MonDKP:ConfigMenuTabs()
 	MonDKP.ConfigTab3.header:ClearAllPoints();
 	MonDKP.ConfigTab3.header:SetFontObject("MonDKPLargeCenter");
 	MonDKP.ConfigTab3.header:SetPoint("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 15, -10);
-	MonDKP.ConfigTab3.header:SetText(L["MANAGEDKP"]); 
+	MonDKP.ConfigTab3.header:SetText(L["MANAGEDKP"]);
 	MonDKP.ConfigTab3.header:SetScale(1.2)
 
 	-- Populate Manage Tab

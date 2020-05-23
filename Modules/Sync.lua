@@ -220,7 +220,7 @@ function MonDKP_BroadcastFull_Init()
 		end
 
 		if core.Broadcast.fullCheckbox:GetChecked() == true then
-			tempTable = { DKPTable=MonDKP_DKPTable, DKP=MonDKP_DKPHistory, Loot=MonDKP_Loot, Archive=MonDKP_Archive }
+			tempTable = { DKPTable=MonDKP_DKPTable, DKP=MonDKP_DKPHistory, Loot=MonDKP_Loot, Archive=MonDKP_Archive, MinBids=MonDKP_MinBids }
 		elseif core.Broadcast.mergeCheckbox:GetChecked() == true then
 			tempTable = MonDKP_MergeTable_Create()
 		end

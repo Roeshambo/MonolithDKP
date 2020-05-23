@@ -50,6 +50,7 @@ local defaults = {
 	theme2 = { r = 1, g = 0.37, b = 0.37, hex = "ff6060" }
 }
 
+core.PriceSortButtons = {}
 core.WorkingTable = {};       -- table of all entries from MonDKP_DKPTable that are currently visible in the window. From MonDKP_DKPTable
 core.EncounterList = {      -- Event IDs must be in the exact same order as core.BossList declared in localization files
 	MC = {
@@ -88,9 +89,9 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v2.1.2";
-core.BuildNumber = 20102;
-core.TableWidth, core.TableRowHeight, core.TableNumRows = 500, 18, 27; -- width, row height, number of rows
+core.MonVersion = "v2.2.5 - LJT";
+core.BuildNumber = 20205;
+core.TableWidth, core.TableRowHeight, core.TableNumRows, core.PriceNumRows = 500, 18, 27, 22; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
 core.classFiltered = {};   -- tracks classes filtered out with checkboxes
 core.IsOfficer = nil;
@@ -385,7 +386,7 @@ function MonDKP:CreateContainer(parent, name, header)
 	f.header.text:SetFontObject("MonDKPSmallCenter");
 	f.header.text:SetPoint("CENTER", f.header, "CENTER", 0, 0);
 	f.header.text:SetText(header);
-	f.header:SetWidth(f.header.text:GetWidth() + 10)
+	f.header:SetWidth(f.header.text:GetWidth() + 600)
 	f.header:SetHeight(f.header.text:GetHeight() + 4)
 
 	return f;
