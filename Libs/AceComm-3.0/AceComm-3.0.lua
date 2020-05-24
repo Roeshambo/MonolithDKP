@@ -85,7 +85,6 @@ local warnedPrefix=false
 -- @param callbackFn OPTIONAL: callback function to be called as each chunk is sent. receives 3 args: the user supplied arg (see next), the number of bytes sent so far, and the number of bytes total to send.
 -- @param callbackArg: OPTIONAL: first arg to the callback function. nil will be passed if not specified.
 function AceComm:SendCommMessage(prefix, text, distribution, target, prio, callbackFn, callbackArg)
-
 	prio = prio or "NORMAL"	-- pasta's reference implementation had different prio for singlepart and multipart, but that's a very bad idea since that can easily lead to out-of-sequence delivery!
 	if not( type(prefix)=="string" and
 			type(text)=="string" and
@@ -95,6 +94,7 @@ function AceComm:SendCommMessage(prefix, text, distribution, target, prio, callb
 		) then
 		error('Usage: SendCommMessage(addon, "prefix", "text", "distribution"[, "target"[, "prio"[, callbackFn, callbackarg]]])', 2)
 	end
+
 	local textlen = #text
 	local maxtextlen = 255  -- Yes, the max is 255 even if the dev post said 256. I tested. Char 256+ get silently truncated. /Mikk, 20110327
 	local queueName = prefix..distribution..(target or "")
@@ -105,6 +105,7 @@ function AceComm:SendCommMessage(prefix, text, distribution, target, prio, callb
 			return callbackFn(callbackArg, sent, textlen)
 		end
 	end
+
 	local forceMultipart
 	if match(text, "^[\001-\009]") then -- 4.1+: see if the first character is a control character
 		-- we need to escape the first character with a \004
@@ -116,6 +117,7 @@ function AceComm:SendCommMessage(prefix, text, distribution, target, prio, callb
 	end
 
 	if not forceMultipart and textlen <= maxtextlen then
+		-- fits all in one message
 		CTL:SendAddonMessage(prio, prefix, text, distribution, target, queueName, ctlCallback, textlen)
 	else
 		maxtextlen = maxtextlen - 1	-- 1 extra byte for part indicator in prefix(4.0)/start of message(4.1)
@@ -123,6 +125,7 @@ function AceComm:SendCommMessage(prefix, text, distribution, target, prio, callb
 		-- first part
 		local chunk = strsub(text, 1, maxtextlen)
 		CTL:SendAddonMessage(prio, prefix, MSG_MULTI_FIRST..chunk, distribution, target, queueName, ctlCallback, maxtextlen)
+
 		-- continuation
 		local pos = 1+maxtextlen
 

@@ -4,9 +4,12 @@ local MonDKP = core.MonDKP;
 local L = core.L;
 
 local menu = {}
-local curfilterName = L["NOFILTER"];
+local curDropDownMenuFilterCategory = L["NOFILTER"];
+local curfilterValue = nil;
 
 local menuFrame = CreateFrame("Frame", "MonDKPDeleteLootMenuFrame", UIParent, "UIDropDownMenuTemplate")
+
+
 
 function MonDKP:SortLootTable()             -- sorts the Loot History Table by date
   table.sort(MonDKP_Loot, function(a, b)
@@ -20,6 +23,14 @@ local function SortPlayerTable(arg)             -- sorts player list alphabetica
   end)
 end
 
+-- |cffa335ee|Hitem:19138::::::::60:::::::|h[Band of Sulfuras]|h|r
+local function SortItemTable(arg)
+	table.sort(arg, function(a,b)
+		-- sort table by itemName of each itemLink
+		return strsub(tostring(a), strfind(tostring(a), "%[") + 1, strfind(tostring(a), "%]") - 1) < strsub(tostring(b), strfind(tostring(b), "%[") + 1, strfind(tostring(b), "%]") - 1) 
+	end)
+end
+
 local function GetSortOptions()
 	local PlayerList = {}
 	for i=1, #MonDKP_Loot do
@@ -30,6 +41,19 @@ local function GetSortOptions()
 	end
 	SortPlayerTable(PlayerList)
 	return PlayerList;
+end
+
+local function GetItemHistoryList() 
+	_ItemList = {}
+	-- we look at saved variable and find every unique item looted?
+	for i=1, #MonDKP_Loot do
+		local itemSearch = MonDKP:Table_Search(_ItemList, MonDKP_Loot[i].loot)
+		if not itemSearch then
+			tinsert(_ItemList, MonDKP_Loot[i].loot)
+		end
+	end
+	SortItemTable(_ItemList)
+	return _ItemList;
 end
 
 local function DeleteLootHistoryEntry(index)
@@ -122,11 +146,13 @@ local function RightClickLootMenu(self, index)  -- called by right click functio
 		end }
 	}
 	EasyMenu(menu, menuFrame, "cursor", 0 , 0, "MENU");
-	end
+end
+
 
 function CreateSortBox()
 	local PlayerList = GetSortOptions();
-	local curSelected = 0;
+	local ItemList = GetItemHistoryList();
+	curSelected = 0;
 
 	-- Create the dropdown, and configure its appearance
 	if not sortDropdown then
@@ -135,41 +161,137 @@ function CreateSortBox()
 
 	-- Create and bind the initialization function to the dropdown menu
 	UIDropDownMenu_Initialize(sortDropdown, function(self, level, menuList)
-		local filterName = UIDropDownMenu_CreateInfo()
-		local ranges = {1}
-
-		while ranges[#ranges] < #PlayerList do
-			table.insert(ranges, ranges[#ranges]+20)
-		end
+		local dropDownMenuItem = UIDropDownMenu_CreateInfo()
+		local displayLimit = 20 -- control how many items will be created in Levels 2 and 3
 
 		if (level or 1) == 1 then
-			local numSubs = ceil(#PlayerList/20)
-			filterName.func = self.FilterSetValue
-			filterName.text, filterName.arg1, filterName.checked, filterName.isNotRadio = L["NOFILTER"], L["NOFILTER"], L["NOFILTER"] == curfilterName, true
-			UIDropDownMenu_AddButton(filterName)
-			filterName.text, filterName.arg1, filterName.arg2, filterName.checked, filterName.isNotRadio = L["DELETEDENTRY"], L["DELETEDENTRY"], L["DELETEDENTRY"], L["DELETEDENTRY"] == curfilterName, true
-			UIDropDownMenu_AddButton(filterName)
-		
-			for i=1, numSubs do
-				local max = i*20;
-				if max > #PlayerList then max = #PlayerList end
-				filterName.text, filterName.checked, filterName.menuList, filterName.hasArrow = strsub(PlayerList[((i*20)-19)], 1, 1).."-"..strsub(PlayerList[max], 1, 1), curSelected >= (i*20)-19 and curSelected <= i*20, i, true
-				UIDropDownMenu_AddButton(filterName)
-			end
-		else
-			filterName.func = self.FilterSetValue
-			for i=ranges[menuList], ranges[menuList]+19 do
-				if PlayerList[i] then
-					local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, PlayerList[i])
-				    local c;
+			
+			-- made it a bit more clear to read for now
+			-- add no filter button
+			dropDownMenuItem.func = self.FilterSetValue
+			dropDownMenuItem.text = L["NOFILTER"]
+			dropDownMenuItem.value = L["NOFILTER"]
+			dropDownMenuItem.arg1 = L["NOFILTER"]
+			dropDownMenuItem.arg2 = L["NOFILTER"]
+			dropDownMenuItem.checked = (L["NOFILTER"] == curDropDownMenuFilterCategory)
+			dropDownMenuItem.isNotRadio = true
+			UIDropDownMenu_AddButton(dropDownMenuItem, level)
 
-				    if classSearch then
-				     	c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
-				    else
-				     	c = { hex="444444" }
-				    end
-					filterName.text, filterName.arg1, filterName.arg2, filterName.checked, filterName.isNotRadio = "|cff"..c.hex..PlayerList[i].."|r", PlayerList[i], "|cff"..c.hex..PlayerList[i].."|r", PlayerList[i] == curfilterName, true
-					UIDropDownMenu_AddButton(filterName, level)
+			-- add deleted entries button
+			dropDownMenuItem.text = L["DELETEDENTRY"] 
+			dropDownMenuItem.value = L["DELETEDENTRY"] 
+			dropDownMenuItem.arg1 = L["DELETEDENTRY"] 
+			dropDownMenuItem.arg2 = L["DELETEDENTRY"]
+			dropDownMenuItem.checked = L["DELETEDENTRY"] == curDropDownMenuFilterCategory
+			dropDownMenuItem.hasArrow = false -- should probably check if players table holds any values
+			dropDownMenuItem.isNotRadio = true
+			UIDropDownMenu_AddButton(dropDownMenuItem, level)
+
+			-- add separator
+			wipe(dropDownMenuItem)
+			dropDownMenuItem.disabled = 1
+			dropDownMenuItem.isNotRadio = true
+			UIDropDownMenu_AddButton(dropDownMenuItem, level)
+			dropDownMenuItem.disabled = nil
+		
+			-- add players section
+			dropDownMenuItem.text =  L["PLAYERS"] 
+			dropDownMenuItem.value =  L["PLAYERS"] 
+			dropDownMenuItem.arg1 = L["PLAYERS"] 
+			dropDownMenuItem.arg2 = L["PLAYERS"]
+			dropDownMenuItem.value = L["PLAYERS"] -- for submenu handling in level 2
+			dropDownMenuItem.checked = L["PLAYERS"] == curDropDownMenuFilterCategory
+			dropDownMenuItem.isNotRadio = true
+			dropDownMenuItem.hasArrow = true -- should probably check if items table holds any values
+			UIDropDownMenu_AddButton(dropDownMenuItem, level)
+
+			-- add items section
+			dropDownMenuItem.text =  L["ITEMS"] 
+			dropDownMenuItem.value =  L["ITEMS"] 
+			dropDownMenuItem.arg1 = L["ITEMS"] 
+			dropDownMenuItem.arg2 = L["ITEMS"]
+			dropDownMenuItem.value = L["ITEMS"] -- for submenu handling in level 2
+			dropDownMenuItem.checked = L["ITEMS"] == curDropDownMenuFilterCategory
+			dropDownMenuItem.isNotRadio = true
+			UIDropDownMenu_AddButton(dropDownMenuItem, level)
+
+		-- level 2 to handle players and items
+		elseif (level or 2) == 2 then
+
+			if UIDROPDOWNMENU_MENU_VALUE == L["PLAYERS"] then
+
+				for i=1, ceil(#PlayerList/displayLimit) do 
+					local max = i*displayLimit;
+					if max > #PlayerList then max = #PlayerList end
+					dropDownMenuItem.text = strsub(PlayerList[((i*displayLimit)-(displayLimit-1))], 1, 1).."-"..strsub(PlayerList[max], 1, 1) 
+					dropDownMenuItem.checked = curSelected >= (i*displayLimit)-(displayLimit-1) and curSelected <= i*displayLimit
+					dropDownMenuItem.menuList = i -- to know which subLevel of players we are on
+					dropDownMenuItem.value = L["PLAYERS"] -- for submenu handling in level 3
+					dropDownMenuItem.hasArrow = true
+					dropDownMenuItem.isNotRadio = true
+					dropDownMenuItem.checked = (curDropDownMenuFilterCategory == L["PLAYERS"] and (curSelected >= (1+(i-1)*displayLimit) and curSelected <= 1+(i-1)*displayLimit+(displayLimit-1)))
+					UIDropDownMenu_AddButton(dropDownMenuItem, level)
+				end
+
+			elseif UIDROPDOWNMENU_MENU_VALUE == L["ITEMS"] then
+
+				for i=1, ceil(#ItemList/displayLimit) do 
+					local max = i*displayLimit;
+					if max > #ItemList then max = #ItemList end
+					dropDownMenuItem.text = ItemList[((i*displayLimit)-(displayLimit-1))]
+					dropDownMenuItem.text = strsub(ItemList[((i*displayLimit)-(displayLimit-1))], strfind(ItemList[((i*displayLimit)-(displayLimit-1))], "%[", 1) + 1, strfind(ItemList[((i*displayLimit)-(displayLimit-1))], "%[", 1) + 1).."-"..strsub(ItemList[max], strfind(ItemList[max], "%[", 1) + 1, strfind(ItemList[max], "%[", 1) + 1)
+					dropDownMenuItem.menuList = i -- to know which subLevel of items we are on
+					dropDownMenuItem.value = L["ITEMS"] -- for submenu handling in level 3
+					dropDownMenuItem.hasArrow = true
+					dropDownMenuItem.isNotRadio = true
+					dropDownMenuItem.checked = (curDropDownMenuFilterCategory == L["ITEMS"] and (curSelected >= (1+(i-1)*displayLimit) and curSelected <= 1+(i-1)*displayLimit+(displayLimit-1)))
+					UIDropDownMenu_AddButton(dropDownMenuItem, level)
+				end
+
+			end
+		else -- level 3
+
+			dropDownMenuItem.func = self.FilterSetValue
+			if UIDROPDOWNMENU_MENU_VALUE == L["PLAYERS"] then
+
+				--for i=playersRange[menuList], playersRange[menuList]+(displayLimit-1) do
+				-- depending on menuList value from higher level this should give
+				-- for i.e menuList = 3
+				-- for i = 1+(3-1)*20 = 41 ,  1+(3-1)*20+(20-1) = 60 do
+				for i=1+(menuList-1)*displayLimit, 1+(menuList-1)*displayLimit+(displayLimit-1) do
+					if PlayerList[i] then
+						local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, PlayerList[i])
+						local c;
+
+						if classSearch then
+							c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+						else
+							c = { hex="444444" }
+						end
+						dropDownMenuItem.text = "|cff"..c.hex..PlayerList[i].."|r" 
+						dropDownMenuItem.value = "|cff"..c.hex..PlayerList[i].."|r" 
+						dropDownMenuItem.arg1 = PlayerList[i]
+						dropDownMenuItem.arg2 = L["PLAYERS"]
+						dropDownMenuItem.isNotRadio = true
+						dropDownMenuItem.checked =  PlayerList[i] == curfilterValue
+						dropDownMenuItem.menuList = i
+						UIDropDownMenu_AddButton(dropDownMenuItem, level)
+					end
+				end
+				
+			elseif UIDROPDOWNMENU_MENU_VALUE == L["ITEMS"] then
+
+				for  i=1+(menuList-1)*displayLimit, 1+(menuList-1)*displayLimit+(displayLimit-1) do
+					if ItemList[i] then
+						dropDownMenuItem.text = ItemList[i]
+						dropDownMenuItem.value = ItemList[i]
+						dropDownMenuItem.arg1 = ItemList[i]
+						dropDownMenuItem.arg2 = L["ITEMS"]
+						dropDownMenuItem.isNotRadio = true
+						dropDownMenuItem.checked =  ItemList[i] == curfilterValue
+						dropDownMenuItem.menuList = i
+						UIDropDownMenu_AddButton(dropDownMenuItem, level)
+					end
 				end
 			end
 		end
@@ -178,17 +300,57 @@ function CreateSortBox()
 	sortDropdown:SetPoint("TOPRIGHT", MonDKP.ConfigTab5, "TOPRIGHT", -13, -11)
 
 	UIDropDownMenu_SetWidth(sortDropdown, 150)
-	UIDropDownMenu_SetText(sortDropdown, curfilterName or "Filter Name")
+	UIDropDownMenu_SetText(sortDropdown, curDropDownMenuFilterCategory or "Filter Name")
 
   -- Dropdown Menu Function
   function sortDropdown:FilterSetValue(newValue, arg2)
-    if curfilterName ~= newValue then curfilterName = newValue else curfilterName = nil end
-    UIDropDownMenu_SetText(sortDropdown, arg2)
-    MonDKP:LootHistory_Update(newValue)
+ 
+	-- text  - display string
+	-- value - formatted string for player class color
+	-- arg1  - actual value which we filter by
+	-- arg2  - decode which filtering is going on
+	 	-- L["NOFILTER"]
+		-- L["DELETEDENTRY"] 
+		-- L["PLAYERS"]
+		-- L["ITEMS"]
+
+	if curDropDownMenuFilterCategory ~= arg2 then 
+		curDropDownMenuFilterCategory = arg2 
+		if curfilterValue == nil or curfilterValue ~= newValue then
+			curfilterValue = newValue
+		end
+	elseif curDropDownMenuFilterCategory == arg2 then
+		if curfilterValue == nil or curfilterValue ~= newValue then
+			curfilterValue = newValue
+		elseif curfilterValue == newValue then
+			curDropDownMenuFilterCategory = nil
+			curfilterValue = nil
+		end
+	end
+	
+	if curDropDownMenuFilterCategory == nil and curfilterValue == nil then
+		curSelected = 0
+		UIDropDownMenu_SetText(sortDropdown, L["NOFILTER"])
+	elseif arg2 == L["NOFILTER"] or arg2 == L["DELETEDENTRY"] then
+		curSelected = 0
+		UIDropDownMenu_SetText(sortDropdown, newValue)
+	elseif arg2 == L["ITEMS"] then
+		curSelected = self.menuList
+		UIDropDownMenu_SetText(sortDropdown, newValue)
+	elseif arg2 == L["PLAYERS"] then
+		curSelected = self.menuList
+		UIDropDownMenu_SetText(sortDropdown, self.value)
+	end
+
+	if curDropDownMenuFilterCategory == nil and curfilterValue == nil then
+		MonDKP:LootHistory_Update(L["NOFILTER"])
+	else
+		MonDKP:LootHistory_Update(newValue)
+	end
+    
     CloseDropDownMenus()
   end
 end
-
 
 local tooltip = CreateFrame('GameTooltip', "nil", UIParent, 'GameTooltipTemplate')
 local CurrentPosition = 0
@@ -229,7 +391,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 	if LootHistTimer then LootHistTimer:SetScript("OnUpdate", nil) end
 
 	if filter and filter == L["NOFILTER"] then
-		curfilterName = L["NOFILTER"]
+		curDropDownMenuFilterCategory = L["NOFILTER"]
 		CreateSortBox()
 	end
 	
@@ -238,9 +400,17 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 	end
 
 	if filter and filter ~= L["NOFILTER"] and filter ~= L["DELETEDENTRY"] then
+		-- items or players
+		
 		for i=1, #MonDKP_Loot do
-			if not MonDKP_Loot[i].deletes and not MonDKP_Loot[i].deletedby and not MonDKP_Loot[i].hidden and MonDKP_Loot[i].player == filter then
-				table.insert(LootTable, MonDKP_Loot[i])
+			if curDropDownMenuFilterCategory == L["PLAYERS"] then
+				if not MonDKP_Loot[i].deletes and not MonDKP_Loot[i].deletedby and not MonDKP_Loot[i].hidden and MonDKP_Loot[i].player == filter then
+					table.insert(LootTable, MonDKP_Loot[i])
+				end
+			elseif curDropDownMenuFilterCategory == L["ITEMS"] then
+				if not MonDKP_Loot[i].deletes and not MonDKP_Loot[i].deletedby and not MonDKP_Loot[i].hidden and MonDKP_Loot[i].loot == filter then
+					table.insert(LootTable, MonDKP_Loot[i])
+				end
 			end
 		end
 	elseif filter and filter == L["DELETEDENTRY"] then
@@ -249,7 +419,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 				table.insert(LootTable, MonDKP_Loot[i])
 			end
 		end
-	else
+	else -- no filter
 		for i=1, #MonDKP_Loot do
 			if not MonDKP_Loot[i].deletes and not MonDKP_Loot[i].deletedby and not MonDKP_Loot[i].hidden then
 				table.insert(LootTable, MonDKP_Loot[i])

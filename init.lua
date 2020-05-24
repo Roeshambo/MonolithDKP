@@ -2,6 +2,8 @@ local _, core = ...;
 local _G = _G;
 local MonDKP = core.MonDKP;
 local L = core.L;
+local waitTable = {};
+local waitFrame = nil;
 
 local lockouts = CreateFrame("Frame", "LockoutsFrame");
 
@@ -172,6 +174,39 @@ local function HandleSlashCommands(str)
   end
 end
 
+function MonDKP_wait(delay, func, ...)
+	if(type(delay)~="number" or type(func)~="function") then
+		return false;
+	end
+	if(waitFrame == nil) then
+		waitFrame = CreateFrame("Frame","WaitFrame", UIParent);
+		waitFrame:SetScript("onUpdate",function (self,elapse)
+		local count = #waitTable;
+		local i = 1;
+		while(i<=count) do
+			local waitRecord = tremove(waitTable,i);
+			local d = tremove(waitRecord,1);
+			local f = tremove(waitRecord,1);
+			local p = tremove(waitRecord,1);
+			if(d>elapse) then
+			tinsert(waitTable,i,{d-elapse,f,p});
+			i = i + 1;
+			else
+			count = count - 1;
+			f(unpack(p));
+			end
+		end
+		end);
+  end
+  tinsert(waitTable,{delay,func,{...}});
+  return true;
+end
+
+function DoInit(event, arg1)
+	MonDKP:OnInitialize(event, arg1);
+	self:UnregisterEvent("ADDON_LOADED")
+end
+
 function MonDKP_OnEvent(self, event, arg1, ...)
 
 	-- unregister unneccessary events
@@ -190,8 +225,8 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 	end
 
 	if event == "ADDON_LOADED" then
-		MonDKP:OnInitialize(event, arg1)
-		self:UnregisterEvent("ADDON_LOADED")
+		if (arg1 ~= "MonolithDKP") then return end
+		MonDKP_wait(2.5, DoInit, event, arg1);
 	elseif event == "BOSS_KILL" then
 		MonDKP:CheckOfficer()
 		if core.IsOfficer and IsInRaid() then
@@ -540,17 +575,54 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if MonDKP_Archive_Meta then MonDKP_Archive_Meta = nil end
 		if MonDKP_Errant then MonDKP_Errant = nil end
 
-	    ------------------------------------
+
+		------------------------------------------------
+		-- Verify DB Schemas
+		------------------------------------------------
+		if not VerifyDBSchema(MonDKP_Player_DKPTable) then MonDKP_Player_DKPTable =  UpgradeDBSchema(MonDKP_Player_DKPTable, MonDKP_DKPTable, true, "MonDKP_DKPTable") end;
+		if not VerifyDBSchema(MonDKP_Player_Loot) then MonDKP_Player_Loot =  UpgradeDBSchema(MonDKP_Player_Loot, MonDKP_Loot, true, "MonDKP_Loot") end;
+		if not VerifyDBSchema(MonDKP_Player_DKPHistory) then MonDKP_Player_DKPHistory =  UpgradeDBSchema(MonDKP_Player_DKPHistory, MonDKP_DKPHistory, true, "MonDKP_DKPHistory") end;
+		if not VerifyDBSchema(MonDKP_Player_MinBids) then MonDKP_Player_MinBids =  UpgradeDBSchema(MonDKP_Player_MinBids, MonDKP_MinBids, true, "MonDKP_MinBids") end;
+		if not VerifyDBSchema(MonDKP_Player_MaxBids) then MonDKP_Player_MaxBids =  UpgradeDBSchema(MonDKP_Player_MaxBids, MonDKP_MaxBids, true, "MonDKP_MaxBids") end;
+		if not VerifyDBSchema(MonDKP_Player_Whitelist) then MonDKP_Player_Whitelist =  UpgradeDBSchema(MonDKP_Player_Whitelist, MonDKP_Whitelist, false, "MonDKP_Whitelist") end;
+		if not VerifyDBSchema(MonDKP_Player_Standby) then MonDKP_Player_Standby =  UpgradeDBSchema(MonDKP_Player_Standby, MonDKP_Standby, true, "MonDKP_Standby") end;
+		if not VerifyDBSchema(MonDKP_Player_Archive) then MonDKP_Player_Archive =  UpgradeDBSchema(MonDKP_Player_Archive, MonDKP_Archive, true, "MonDKP_Archive") end;
+		if not VerifyDBSchema(MonDKP_Player_DB) then MonDKP_Player_DB =  UpgradeDBSchema(MonDKP_Player_DB, MonDKP_DB, false, "MonDKP_DB") end;
+
+
+		------------------------------------
 	    --	Import SavedVariables
 	    ------------------------------------
-		core.WorkingTable 		= MonDKP_DKPTable;						-- imports full DKP table to WorkingTable for list manipulation
-		core.PriceTable			= MonDKP_MinBids;
-	    core.CurrentRaidZone	= MonDKP_DB.bossargs.CurrentRaidZone;	-- stores raid zone as a redundency
-		core.LastKilledBoss 	= MonDKP_DB.bossargs.LastKilledBoss;	-- stores last boss killed as a redundency
-		core.LastKilledNPC		= MonDKP_DB.bossargs.LastKilledNPC 		-- Stores last 30 mobs killed in raid.
-		core.RecentZones		= MonDKP_DB.bossargs.RecentZones 		-- Stores last 30 zones entered within a raid party.
+		if IsInGuild() then
+			core.DB 				= MonDKP:GetTable(MonDKP_Player_DB); --Player specific DB
+			core.WorkingTable 		= MonDKP:GetTable(MonDKP_Player_DKPTable, true); -- imports full DKP table to WorkingTable for list manipulation
+			core.PriceTable			= MonDKP:GetTable(MonDKP_Player_MinBids, true);
+			core.MonDKP_Loot 		= MonDKP:GetTable(MonDKP_Player_Loot, true);
+			core.MonDKP_DKPHistory 	= MonDKP:GetTable(MonDKP_Player_DKPHistory, true);
+			core.MonDKP_MaxBids		= MonDKP:GetTable(MonDKP_Player_MaxBids, true);
+			core.MonDKP_Whitelist	= MonDKP:GetTable(MonDKP_Player_Whitelist);
+			core.MonDKP_Standby		= MonDKP:GetTable(MonDKP_Player_Standby, true);
+			core.MonDKP_Archive		= MonDKP:GetTable(MonDKP_Player_Archive, true);
+			core.MonDKP_DKPTable 	= MonDKP:GetTable(MonDKP_Player_DKPTable, true);
+		else
+			core.DB 				= MonDKP_DB; --global DB
+			core.WorkingTable 		= MonDKP_DKPTable;						-- imports full DKP table to WorkingTable for list manipulation
+			core.PriceTable			= MonDKP_MinBids;
+			core.MonDKP_Loot 		= MonDKP_Loot;
+			core.MonDKP_DKPHistory 	= MonDKP_DKPHistory;
+			core.MonDKP_MaxBids		= MonDKP_MaxBids;
+			core.MonDKP_Whitelist	= MonDKP_Whitelist;
+			core.MonDKP_Standby		= MonDKP_Standby;
+			core.MonDKP_Archive		= MonDKP_Archive;
+			core.MonDKP_DKPTable 	= MonDKP_DKPTable;
+		end
 
-		table.sort(MonDKP_DKPTable, function(a, b)
+		core.CurrentRaidZone	= core.DB.bossargs.CurrentRaidZone;	-- stores raid zone as a redundency
+		core.LastKilledBoss 	= core.DB.bossargs.LastKilledBoss;	-- stores last boss killed as a redundency
+		core.LastKilledNPC		= core.DB.bossargs.LastKilledNPC 		-- Stores last 30 mobs killed in raid.
+		core.RecentZones		= core.DB.bossargs.RecentZones 		-- Stores last 30 zones entered within a raid party.
+
+		table.sort(core.WorkingTable, function(a, b)
 			return a["player"] < b["player"]
 		end)
 		
@@ -561,14 +633,103 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		MonDKP:StartBidTimer("seconds", nil)						-- initiates timer frame for use
 
 		if MonDKP.BidTimer then MonDKP.BidTimer:SetScript("OnUpdate", nil) end
-		
-		if #MonDKP_Loot > MonDKP_DB.defaults.HistoryLimit then
+
+		-- Debug Test Adding another Team
+		if IsInGuild() then
+			MonDKP:GetTable(MonDKP_Player_DKPTable)["1"] = {}
+			core.WorkingTable = MonDKP:GetTable(MonDKP_Player_DKPTable)["1"];
+		end
+
+		if #MonDKP_Loot > core.DB.defaults.HistoryLimit then
 			MonDKP:PurgeLootHistory()									-- purges Loot History entries that exceed the "HistoryLimit" option variable (oldest entries) and populates MonDKP_Archive with deleted values
 		end
-		if #MonDKP_DKPHistory > MonDKP_DB.defaults.DKPHistoryLimit then
+		if #MonDKP_DKPHistory > core.DB.defaults.DKPHistoryLimit then
 			MonDKP:PurgeDKPHistory()									-- purges DKP History entries that exceed the "DKPHistoryLimit" option variable (oldest entries) and populates MonDKP_Archive with deleted values
 		end
 	end
+end
+
+function MonDKP:GetTable(dbTable, hasTeams)
+	hasTeams = hasTeams or false;
+
+	if hasTeams then
+		return dbTable[MonDKP:GetRealmName()][MonDKP:GetGuildName()][core.DB.defaults.CurrentTeam];
+	else
+		return dbTable[MonDKP:GetRealmName()][MonDKP:GetGuildName()];
+	end
+end
+
+function VerifyDBSchema(dbTable)
+	local verified = false;
+	--Check to see if the schema node exists. If not, this is 2.1.2 database.
+	local retOK, hasInfo = pcall(tableHasKey,dbTable,"dbinfo");
+
+	if (not retOK) or (retOK and not hasInfo) then
+		verified = false;
+	elseif dbTable.dbinfo.build == core.BuildNumber then
+		verified = true;
+	end
+	return verified;
+end
+
+function UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
+
+	-- Initialize the Database for a Pre-2.2 Database
+	local retOK, hasInfo = pcall(tableHasKey,oldDbTable,"dbinfo");
+	if (not retOK) or (retOK and not hasInfo) then
+		newDbTable = InitPlayerTable(oldDbTable, hasTeams, tableName)
+	end
+	
+	--Set Prior Build
+	newDbTable.dbinfo.priorbuild = newDbTable.dbinfo.build;
+
+	-- Build 20205 (2.2.5) Changes
+	if newDbTable.dbinfo.build < 20205 then
+		if newDbTable.dbinfo.name == "MonDKP_DB" then
+			if IsInGuild() then
+				if not MonDKP:GetTable(newDbTable).defaults.CurrentTeam then MonDKP:GetTable(newDbTable).defaults.CurrentTeam = "0" end;
+				if not MonDKP:GetTable(newDbTable).teams then MonDKP:GetTable(newDbTable).teams = {} end;
+				if not MonDKP:GetTable(newDbTable).teams["0"] then MonDKP:GetTable(newDbTable).teams["0"] = {name=MonDKP:GetGuildName()} end;
+			end
+		end
+	end
+
+	-- Set Current Build Number
+	newDbTable.dbinfo.build = core.BuildNumber;
+	return newDbTable;
+end
+
+function tableHasKey(table,key)
+	return table[key] ~= nil;
+end
+
+function InitPlayerTable(globalTable, hasTeams, tableName)
+	local playerTable = {};
+
+	if IsInGuild() then
+		local realmName = MonDKP:GetRealmName();
+		local guildName = MonDKP:GetGuildName();
+
+		playerTable[realmName] = {};
+		playerTable[realmName][guildName] = {};
+
+		if hasTeams then
+			playerTable[realmName][guildName]["0"] = CopyTable(globalTable);
+		else
+			playerTable[realmName][guildName] = CopyTable(globalTable);
+		end
+	end
+	playerTable = InitDbSchema(playerTable, tableName);
+	return playerTable;
+end
+
+function InitDbSchema(dbTable, tableName)
+	dbTable["dbinfo"] = {};
+	dbTable.dbinfo["build"] = 0;
+	dbTable.dbinfo["name"] = tableName;
+	dbTable.dbinfo["priorbuild"] = 0;
+	dbTable.dbinfo["needsUpgrade"] = false;
+	return dbTable;
 end
 
 ----------------------------------

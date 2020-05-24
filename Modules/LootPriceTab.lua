@@ -213,6 +213,16 @@ function MonDKP:PriceListSort(id, reset)
 		end
 	end
 	table.sort(core.PriceTable, function(a, b)
+
+		if id == "disenchants" then
+			if a[button.Id] == nil then
+				a[button.Id] = 0;
+			end
+			if b[button.Id] == nil then
+				b[button.Id] = 0;
+			end
+		end
+
 		if button.Ascend then
 			if id == "item" then
 				return a[button.Id] < b[button.Id]
