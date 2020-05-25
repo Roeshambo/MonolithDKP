@@ -51,7 +51,7 @@ local defaults = {
 }
 
 core.PriceSortButtons = {}
-core.WorkingTable = {};       -- table of all entries from MonDKP_DKPTable that are currently visible in the window. From MonDKP_DKPTable
+core.WorkingTable = {};       -- table of all entries from MonDKP:GetTable(MonDKP_Player_DKPTable, true) that are currently visible in the window. From MonDKP:GetTable(MonDKP_Player_DKPTable, true)
 core.EncounterList = {      -- Event IDs must be in the exact same order as core.BossList declared in localization files
 	MC = {
 		663, 664, 665,
@@ -204,10 +204,10 @@ function MonDKP:CheckOfficer()      -- checks if user is an officer IF core.IsOf
 			return;
 		end
 		if IsInGuild() then
-			if #MonDKP_Whitelist > 0 then
+			if #MonDKP:GetTable(MonDKP_Player_Whitelist) > 0 then
 				core.IsOfficer = false;
-				for i=1, #MonDKP_Whitelist do
-					if MonDKP_Whitelist[i] == UnitName("player") then
+				for i=1, #MonDKP:GetTable(MonDKP_Player_Whitelist) do
+					if MonDKP:GetTable(MonDKP_Player_Whitelist)[i] == UnitName("player") then
 						core.IsOfficer = true;
 					end
 				end
@@ -264,45 +264,45 @@ function MonDKP:GetThemeColor()
 end
 
 function MonDKP:GetPlayerDKP(player)
-	local search = MonDKP:Table_Search(MonDKP_DKPTable, player)
+	local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), player)
 
 	if search then
-		return MonDKP_DKPTable[search[1][1]].dkp
+		return MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp
 	else
 		return false;
 	end
 end
 
 function MonDKP:PurgeLootHistory()     -- cleans old loot history beyond history limit to reduce native system load
-	local limit = MonDKP_DB.defaults.HistoryLimit
+	local limit = core.DB.defaults.HistoryLimit
 
-	if #MonDKP_Loot > limit then
-		while #MonDKP_Loot > limit do
+	if #MonDKP:GetTable(MonDKP_Player_Loot, true) > limit then
+		while #MonDKP:GetTable(MonDKP_Player_Loot, true) > limit do
 			MonDKP:SortLootTable()
-			local path = MonDKP_Loot[#MonDKP_Loot]
+			local path = MonDKP:GetTable(MonDKP_Player_Loot, true)[#MonDKP:GetTable(MonDKP_Player_Loot, true)]
 
-			if not MonDKP_Archive[path.player] then
-				MonDKP_Archive[path.player] = { dkp=path.cost, lifetime_spent=path.cost, lifetime_gained=0 }
+			if not MonDKP:GetTable(MonDKP_Player_Archive, true)[path.player] then
+				MonDKP:GetTable(MonDKP_Player_Archive, true)[path.player] = { dkp=path.cost, lifetime_spent=path.cost, lifetime_gained=0 }
 			else
-				MonDKP_Archive[path.player].dkp = MonDKP_Archive[path.player].dkp + path.cost
-				MonDKP_Archive[path.player].lifetime_spent = MonDKP_Archive[path.player].lifetime_spent + path.cost
+				MonDKP:GetTable(MonDKP_Player_Archive, true)[path.player].dkp = MonDKP:GetTable(MonDKP_Player_Archive, true)[path.player].dkp + path.cost
+				MonDKP:GetTable(MonDKP_Player_Archive, true)[path.player].lifetime_spent = MonDKP:GetTable(MonDKP_Player_Archive, true)[path.player].lifetime_spent + path.cost
 			end
-			if not MonDKP_Archive.LootMeta or MonDKP_Archive.LootMeta < path.date then
-				MonDKP_Archive.LootMeta = path.date
+			if not MonDKP:GetTable(MonDKP_Player_Archive, true).LootMeta or MonDKP:GetTable(MonDKP_Player_Archive, true).LootMeta < path.date then
+				MonDKP:GetTable(MonDKP_Player_Archive, true).LootMeta = path.date
 			end
 
-			tremove(MonDKP_Loot, #MonDKP_Loot)
+			tremove(MonDKP:GetTable(MonDKP_Player_Loot, true), #MonDKP:GetTable(MonDKP_Player_Loot, true))
 		end
 	end
 end
 
-function MonDKP:PurgeDKPHistory()     -- purges old entries and stores relevant data in each users MonDKP_Archive entry (dkp, lifetime spent, and lifetime gained) 
-	local limit = MonDKP_DB.defaults.DKPHistoryLimit
+function MonDKP:PurgeDKPHistory()     -- purges old entries and stores relevant data in each users MonDKP:GetTable(MonDKP_Player_Archive, true) entry (dkp, lifetime spent, and lifetime gained) 
+	local limit = core.DB.defaults.DKPHistoryLimit
 
-	if #MonDKP_DKPHistory > limit then
-		while #MonDKP_DKPHistory > limit do
+	if #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) > limit then
+		while #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) > limit do
 			MonDKP:SortDKPHistoryTable()
-			local path = MonDKP_DKPHistory[#MonDKP_DKPHistory]
+			local path = MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[#MonDKP:GetTable(MonDKP_Player_DKPHistory, true)]
 			local players = {strsplit(",", strsub(path.players, 1, -2))}
 			local dkp = {strsplit(",", path.dkp)}
 
@@ -317,24 +317,24 @@ function MonDKP:PurgeDKPHistory()     -- purges old entries and stores relevant 
 			end
 
 			for i=1, #players do
-				if not MonDKP_Archive[players[i]] then
+				if not MonDKP:GetTable(MonDKP_Player_Archive, true)[players[i]] then
 					if ((dkp[i] > 0 and not path.deletes) or (dkp[i] < 0 and path.deletes)) and not strfind(path.dkp, "%-%d*%.?%d+%%") then
-						MonDKP_Archive[players[i]] = { dkp=dkp[i], lifetime_spent=0, lifetime_gained=dkp[i] }
+						MonDKP:GetTable(MonDKP_Player_Archive, true)[players[i]] = { dkp=dkp[i], lifetime_spent=0, lifetime_gained=dkp[i] }
 					else
-						MonDKP_Archive[players[i]] = { dkp=dkp[i], lifetime_spent=0, lifetime_gained=0 }
+						MonDKP:GetTable(MonDKP_Player_Archive, true)[players[i]] = { dkp=dkp[i], lifetime_spent=0, lifetime_gained=0 }
 					end
 				else
-					MonDKP_Archive[players[i]].dkp = MonDKP_Archive[players[i]].dkp + dkp[i]
+					MonDKP:GetTable(MonDKP_Player_Archive, true)[players[i]].dkp = MonDKP:GetTable(MonDKP_Player_Archive, true)[players[i]].dkp + dkp[i]
 					if ((dkp[i] > 0 and not path.deletes) or (dkp[i] < 0 and path.deletes)) and not strfind(path.dkp, "%-%d*%.?%d+%%") then 	--lifetime gained if dkp addition and not a delete entry, dkp decrease and IS a delete entry
-						MonDKP_Archive[players[i]].lifetime_gained = MonDKP_Archive[players[i]].lifetime_gained + path.dkp 				--or is NOT a decay
+						MonDKP:GetTable(MonDKP_Player_Archive, true)[players[i]].lifetime_gained = MonDKP:GetTable(MonDKP_Player_Archive, true)[players[i]].lifetime_gained + path.dkp 				--or is NOT a decay
 					end
 				end
 			end
-			if not MonDKP_Archive.DKPMeta or MonDKP_Archive.DKPMeta < path.date then
-				MonDKP_Archive.DKPMeta = path.date
+			if not MonDKP:GetTable(MonDKP_Player_Archive, true).DKPMeta or MonDKP:GetTable(MonDKP_Player_Archive, true).DKPMeta < path.date then
+				MonDKP:GetTable(MonDKP_Player_Archive, true).DKPMeta = path.date
 			end
 
-			tremove(MonDKP_DKPHistory, #MonDKP_DKPHistory)
+			tremove(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), #MonDKP:GetTable(MonDKP_Player_DKPHistory, true))
 		end
 	end
 end
@@ -346,7 +346,7 @@ function MonDKP:FormatTime(time)
 end
 
 function MonDKP:Print(...)        --print function to add "MonolithDKP:" to the beginning of print() outputs.
-	if not MonDKP_DB.defaults.supressNotifications then
+	if not core.DB.defaults.supressNotifications then
 		local defaults = MonDKP:GetThemeColor();
 		local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "MonolithDKP:", defaults[2].hex:upper());
 		local suffix = "|r";
@@ -354,7 +354,7 @@ function MonDKP:Print(...)        --print function to add "MonolithDKP:" to the 
 		for i = 1, NUM_CHAT_WINDOWS do
 			local name = GetChatWindowInfo(i)
 
-			if MonDKP_DB.defaults.ChatFrames[name] then
+			if core.DB.defaults.ChatFrames[name] then
 				_G["ChatFrame"..i]:AddMessage(string.join(" ", prefix, ..., suffix));
 			end
 		end
@@ -430,7 +430,7 @@ function MonDKP:StartTimer(seconds, ...)
 	MonDKP.BidTimer.timerTitle:SetText(...)
 	PlaySound(8959)
 
-	if MonDKP_DB.timerpos then
+	if core.DB.timerpos then
 		local a = MonDKP_DB["timerpos"]                   -- retrieves timer's saved position from SavedVariables
 		MonDKP.BidTimer:SetPoint(a.point, a.relativeTo, a.relativePoint, a.x, a.y)
 	else
@@ -486,7 +486,7 @@ function MonDKP:StartTimer(seconds, ...)
 end
 
 function MonDKP:StatusVerify_Update()
-	if (MonDKP.UIConfig and not MonDKP.UIConfig:IsShown()) or (#MonDKP_DKPHistory == 0 and #MonDKP_Loot == 0) then     -- blocks update if dkp window is closed. Updated when window is opened anyway
+	if (MonDKP.UIConfig and not MonDKP.UIConfig:IsShown()) or (#MonDKP:GetTable(MonDKP_Player_DKPHistory, true) == 0 and #MonDKP:GetTable(MonDKP_Player_Loot, true) == 0) then     -- blocks update if dkp window is closed. Updated when window is opened anyway
 		return;
 	end
 
@@ -495,13 +495,13 @@ function MonDKP:StatusVerify_Update()
 
 		local missing = {}
 
-		if MonDKP_Loot.seed and MonDKP_DKPHistory.seed and strfind(MonDKP_Loot.seed, "-") and strfind(MonDKP_DKPHistory.seed, "-") then
-			local search_dkp = MonDKP:Table_Search(MonDKP_DKPHistory, MonDKP_DKPHistory.seed, "index")
-			local search_loot = MonDKP:Table_Search(MonDKP_Loot, MonDKP_Loot.seed, "index")
+		if MonDKP:GetTable(MonDKP_Player_Loot, true).seed and MonDKP:GetTable(MonDKP_Player_DKPHistory, true).seed and strfind(MonDKP:GetTable(MonDKP_Player_Loot, true).seed, "-") and strfind(MonDKP:GetTable(MonDKP_Player_DKPHistory, true).seed, "-") then
+			local search_dkp = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), MonDKP:GetTable(MonDKP_Player_DKPHistory, true).seed, "index")
+			local search_loot = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_Loot, true), MonDKP:GetTable(MonDKP_Player_Loot, true).seed, "index")
 
 			if not search_dkp then
 				core.OOD = true
-				local officer1, date1 = strsplit("-", MonDKP_DKPHistory.seed)
+				local officer1, date1 = strsplit("-", MonDKP:GetTable(MonDKP_Player_DKPHistory, true).seed)
 				if (date1 and tonumber(date1) < (time() - 1209600)) or not MonDKP:ValidateSender(officer1) then   -- does not consider if claimed entry was made more than two weeks ago or name is not an officer
 					core.OOD = false
 				else
@@ -512,7 +512,7 @@ function MonDKP:StatusVerify_Update()
 
 			if not search_loot then
 				core.OOD = true
-				local officer2, date2 = strsplit("-", MonDKP_Loot.seed)
+				local officer2, date2 = strsplit("-", MonDKP:GetTable(MonDKP_Player_Loot, true).seed)
 				if (date2 and tonumber(date2) < (time() - 1209600)) or not MonDKP:ValidateSender(officer2) then   -- does not consider if claimed entry was made more than two weeks ago or name is not an officer
 					core.OOD = false
 				else
@@ -544,7 +544,7 @@ function MonDKP:StatusVerify_Update()
 			MonDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
 				GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
-				if #MonDKP_Loot == 0 and #MonDKP_DKPHistory == 0 then
+				if #MonDKP:GetTable(MonDKP_Player_Loot, true) == 0 and #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) == 0 then
 					GameTooltip:AddLine(L["TABLESAREEMPTY"], 1.0, 1.0, 1.0, false);
 				else
 					GameTooltip:AddLine(L["ONETABLEOOD"].." |cffff0000"..L["OUTOFDATE"].."|r.", 1.0, 1.0, 1.0, false);
@@ -554,10 +554,10 @@ function MonDKP:StatusVerify_Update()
 				GameTooltip:AddLine(" ")
 				GameTooltip:AddDoubleLine(L["PLAYER"], L["CREATED"],1,1,1,1,1,1)
 				for k,v in pairs(missing) do
-					local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, k)
+					local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), k)
 
 					if classSearch then
-						c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+						c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[classSearch[1][1]].class)
 					else
 						c = { hex="ffffff" }
 					end
@@ -591,11 +591,11 @@ function MonDKP:StatusVerify_Update()
 end
 
 -------------------------------------
--- Recursively searches tar (table) for val (string) as far as 4 nests deep (use field only if you wish to search a specific key IE: MonDKP_DKPTable, "Roeshambo", "player" would only search for Roeshambo in the player key)
+-- Recursively searches tar (table) for val (string) as far as 4 nests deep (use field only if you wish to search a specific key IE: MonDKP:GetTable(MonDKP_Player_DKPTable, true), "Roeshambo", "player" would only search for Roeshambo in the player key)
 -- returns an indexed array of the keys to get to searched value
 -- First key is the result (ie if it's found 8 times, it will return 8 tables containing results).
--- Second key holds the path to the value searched. So to get to a player searched on DKPTable that returned 1 result, MonDKP_DKPTable[search[1][1]][search[1][2]] would point at the "player" field
--- if the result is 1 level deeper, it would be MonDKP_DKPTable[search[1][1]][search[1][2]][search[1][3]].  MonDKP_DKPTable[search[2][1]][search[2][2]][search[2][3]] would locate the second return, if there is one.
+-- Second key holds the path to the value searched. So to get to a player searched on DKPTable that returned 1 result, MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]][search[1][2]] would point at the "player" field
+-- if the result is 1 level deeper, it would be MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]][search[1][2]][search[1][3]].  MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[2][1]][search[2][2]][search[2][3]] would locate the second return, if there is one.
 -- use to search for players in SavedVariables. Only two possible returns is the table or false.
 -------------------------------------
 function MonDKP:Table_Search(tar, val, field)
@@ -662,7 +662,7 @@ function MonDKP:Table_Search(tar, val, field)
 end
 
 function MonDKP:TableStrFind(tar, val, field)              -- same function as above, but searches values that contain the searched string rather than exact string matches
-	local value = string.upper(tostring(val));        -- ex. MonDKP:TableStrFind(MonDKP_DKPHistory, "Roeshambo") will return the path to any table element that contains "Roeshambo"
+	local value = string.upper(tostring(val));        -- ex. MonDKP:TableStrFind(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), "Roeshambo") will return the path to any table element that contains "Roeshambo"
 	local location = {}
 	for k,v in pairs(tar) do
 		if(type(v) == "table") then
@@ -725,18 +725,18 @@ function MonDKP:TableStrFind(tar, val, field)              -- same function as a
 end
 
 function MonDKP:DKPTable_Set(tar, field, value, loot)                -- updates field with value where tar is found (IE: MonDKP:DKPTable_Set("Roeshambo", "dkp", 10) adds 10 dkp to user Roeshambo). loot = true/false if it's to alter lifetime_spent
-	local result = MonDKP:Table_Search(MonDKP_DKPTable, tar);
+	local result = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), tar);
 	for i=1, #result do
-		local current = MonDKP_DKPTable[result[i][1]][field];
+		local current = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[result[i][1]][field];
 		if(field == "dkp") then
-			MonDKP_DKPTable[result[i][1]][field] = MonDKP_round(tonumber(current + value), MonDKP_DB.modes.rounding)
+			MonDKP:GetTable(MonDKP_Player_DKPTable, true)[result[i][1]][field] = MonDKP_round(tonumber(current + value), core.DB.modes.rounding)
 			if value > 0 and loot == false then
-				MonDKP_DKPTable[result[i][1]]["lifetime_gained"] = MonDKP_round(tonumber(MonDKP_DKPTable[result[i][1]]["lifetime_gained"] + value), MonDKP_DB.modes.rounding)
+				MonDKP:GetTable(MonDKP_Player_DKPTable, true)[result[i][1]]["lifetime_gained"] = MonDKP_round(tonumber(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[result[i][1]]["lifetime_gained"] + value), core.DB.modes.rounding)
 			elseif value < 0 and loot == true then
-				MonDKP_DKPTable[result[i][1]]["lifetime_spent"] = MonDKP_round(tonumber(MonDKP_DKPTable[result[i][1]]["lifetime_spent"] + value), MonDKP_DB.modes.rounding)
+				MonDKP:GetTable(MonDKP_Player_DKPTable, true)[result[i][1]]["lifetime_spent"] = MonDKP_round(tonumber(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[result[i][1]]["lifetime_spent"] + value), core.DB.modes.rounding)
 			end
 		else
-			MonDKP_DKPTable[result[i][1]][field] = value
+			MonDKP:GetTable(MonDKP_Player_DKPTable, true)[result[i][1]][field] = value
 		end
 	end
 	DKPTable_Update()

@@ -21,22 +21,22 @@ function MonDKP:DKPModes_Main()
   local RollDescription = L["ROLLDESCRIPTION"]
   local ZeroSumDescription = L["ZEROSUMDESCRIPTION"];
 
-  if MonDKP_DB.modes.mode == "Minimum Bid Values" then
+  if core.DB.modes.mode == "Minimum Bid Values" then
     f.DKPModesMain.ModeDescriptionHeader:SetText(L["MINBIDVALUESHEAD"])
     f.DKPModesMain.ModeDescription:SetText(MinBidDescription)
-  elseif MonDKP_DB.modes.mode == "Static Item Values" then
+  elseif core.DB.modes.mode == "Static Item Values" then
     f.DKPModesMain.ModeDescriptionHeader:SetText(L["STATICITEMVALUESHEAD"])
     f.DKPModesMain.ModeDescription:SetText(StaticDescription)
-  elseif MonDKP_DB.modes.mode == "Roll Based Bidding" then
+  elseif core.DB.modes.mode == "Roll Based Bidding" then
     f.DKPModesMain.ModeDescriptionHeader:SetText(L["ROLLBIDDINGHEAD"])
     f.DKPModesMain.ModeDescription:SetText(RollDescription)
-  elseif MonDKP_DB.modes.mode == "Zero Sum" then
+  elseif core.DB.modes.mode == "Zero Sum" then
     f.DKPModesMain.ModeDescriptionHeader:SetText(L["ZEROSUMHEAD"])
     f.DKPModesMain.ModeDescription:SetText(ZeroSumDescription)
   end
 
   -- Mode DROPDOWN box 
-  local CurMode = MonDKP_DB.modes.mode;
+  local CurMode = core.DB.modes.mode;
   local LocalMode;
 
   if CurMode == "Minimum Bid Values" then
@@ -78,19 +78,19 @@ function MonDKP:DKPModes_Main()
     f.DKPModesMain.ModeDescriptionHeader:SetText(newValue)
     
     if newValue == "Minimum Bid Values" then
-      MonDKP_DB.modes.mode = "Minimum Bid Values";
+      core.DB.modes.mode = "Minimum Bid Values";
       f.DKPModesMain.ModeDescription:SetText(MinBidDescription)
       f.DKPModesMain.ItemCostDropDown:Hide();
       f.DKPModesMain.ItemCostHeader:Hide();
       f.DKPModesMain.MaxBidBehaviorDropDown:Show();
       f.DKPModesMain.MaxBidBehaviorHeader:Show();
-      MonDKP_DB.modes.costvalue = "Integer";
+      core.DB.modes.costvalue = "Integer";
       UIDropDownMenu_SetText(f.DKPModesMain.ItemCostDropDown, "Integer")
       f.DKPModesMain.SubZeroBidding:Show();
-      f.DKPModesMain.SubZeroBidding:SetChecked(MonDKP_DB.modes.SubZeroBidding)
-      if MonDKP_DB.modes.SubZeroBidding == true then
+      f.DKPModesMain.SubZeroBidding:SetChecked(core.DB.modes.SubZeroBidding)
+      if core.DB.modes.SubZeroBidding == true then
         f.DKPModesMain.AllowNegativeBidders:Show()
-        f.DKPModesMain.AllowNegativeBidders:SetChecked(MonDKP_DB.modes.AllowNegativeBidders)
+        f.DKPModesMain.AllowNegativeBidders:SetChecked(core.DB.modes.AllowNegativeBidders)
       end
       f.DKPModesMain.RollContainer:Hide();
       f.DKPModesMain.ZeroSumType:Hide();
@@ -100,13 +100,13 @@ function MonDKP:DKPModes_Main()
       f.DKPModesMain.Inflation:Hide()
         f.DKPModesMain.Inflation.Header:Hide()
     elseif newValue == "Static Item Values" then
-      MonDKP_DB.modes.mode = "Static Item Values"
+      core.DB.modes.mode = "Static Item Values"
       f.DKPModesMain.ModeDescription:SetText(StaticDescription)
       f.DKPModesMain.ItemCostHeader:Show();
       f.DKPModesMain.ItemCostDropDown:Show();
       f.DKPModesMain.MaxBidBehaviorDropDown:Hide();
       f.DKPModesMain.MaxBidBehaviorHeader:Hide();
-      MonDKP_DB.modes.MaxBehavior = "Max DKP";
+      core.DB.modes.MaxBehavior = "Max DKP";
       UIDropDownMenu_SetText(f.DKPModesMain.MaxBidBehaviorDropDown, "Max DKP")
       f.DKPModesMain.RollContainer:Hide()
       f.DKPModesMain.ZeroSumType:Hide()
@@ -116,22 +116,22 @@ function MonDKP:DKPModes_Main()
       f.DKPModesMain.Inflation:Hide()
       f.DKPModesMain.Inflation.Header:Hide()
 
-      if MonDKP_DB.modes.costvalue == "Integer" then
+      if core.DB.modes.costvalue == "Integer" then
         f.DKPModesMain.SubZeroBidding:Show()
-        f.DKPModesMain.SubZeroBidding:SetChecked(MonDKP_DB.modes.SubZeroBidding)
-        if MonDKP_DB.modes.SubZeroBidding == true then
+        f.DKPModesMain.SubZeroBidding:SetChecked(core.DB.modes.SubZeroBidding)
+        if core.DB.modes.SubZeroBidding == true then
           f.DKPModesMain.AllowNegativeBidders:Show()
-          f.DKPModesMain.AllowNegativeBidders:SetChecked(MonDKP_DB.modes.AllowNegativeBidders)
+          f.DKPModesMain.AllowNegativeBidders:SetChecked(core.DB.modes.AllowNegativeBidders)
         end
         UIDropDownMenu_SetText(f.DKPModesMain.ItemCostDropDown, "Integer")
       end
     elseif newValue == "Roll Based Bidding" then
-      MonDKP_DB.modes.mode = "Roll Based Bidding"
+      core.DB.modes.mode = "Roll Based Bidding"
       f.DKPModesMain.ItemCostHeader:Show();
       f.DKPModesMain.ItemCostDropDown:Show();
       f.DKPModesMain.MaxBidBehaviorDropDown:Hide();
       f.DKPModesMain.MaxBidBehaviorHeader:Hide();
-      MonDKP_DB.modes.MaxBehavior = "Max DKP";
+      core.DB.modes.MaxBehavior = "Max DKP";
       UIDropDownMenu_SetText(f.DKPModesMain.MaxBidBehaviorDropDown, "Max DKP")
       f.DKPModesMain.ModeDescription:SetText(RollDescription)
       f.DKPModesMain.RollContainer:Show()
@@ -142,18 +142,18 @@ function MonDKP:DKPModes_Main()
       f.DKPModesMain.Inflation:Hide()
         f.DKPModesMain.Inflation.Header:Hide()
 
-      if MonDKP_DB.modes.costvalue == "Integer" then
+      if core.DB.modes.costvalue == "Integer" then
         f.DKPModesMain.SubZeroBidding:Show()
-        f.DKPModesMain.SubZeroBidding:SetChecked(MonDKP_DB.modes.SubZeroBidding)
-        if MonDKP_DB.modes.SubZeroBidding == true then
+        f.DKPModesMain.SubZeroBidding:SetChecked(core.DB.modes.SubZeroBidding)
+        if core.DB.modes.SubZeroBidding == true then
           f.DKPModesMain.AllowNegativeBidders:Show()
-          f.DKPModesMain.AllowNegativeBidders:SetChecked(MonDKP_DB.modes.AllowNegativeBidders)
+          f.DKPModesMain.AllowNegativeBidders:SetChecked(core.DB.modes.AllowNegativeBidders)
         end
         UIDropDownMenu_SetText(f.DKPModesMain.ItemCostDropDown, "Integer")
       end
     elseif newValue == "Zero Sum" then
-      MonDKP_DB.modes.mode = "Zero Sum"
-      MonDKP_DB.modes.costvalue = "Integer"
+      core.DB.modes.mode = "Zero Sum"
+      core.DB.modes.costvalue = "Integer"
       f.DKPModesMain.ModeDescription:SetText(ZeroSumDescription)
       f.DKPModesMain.SubZeroBidding:Hide()
       f.DKPModesMain.AllowNegativeBidders:Hide()
@@ -163,14 +163,14 @@ function MonDKP:DKPModes_Main()
       f.DKPModesMain.ItemCostDropDown:Hide();
       f.DKPModesMain.ZeroSumType:Show()
       f.DKPModesMain.ZeroSumTypeHeader:Show();
-      MonDKP_DB.modes.SubZeroBidding = true
+      core.DB.modes.SubZeroBidding = true
       f.DKPModesMain.Inflation:Show()
         f.DKPModesMain.Inflation.Header:Show()
 
-      if MonDKP_DB.modes.ZeroSumBidType == "Static" then
+      if core.DB.modes.ZeroSumBidType == "Static" then
         f.DKPModesMain.MaxBidBehaviorDropDown:Hide();
         f.DKPModesMain.MaxBidBehaviorHeader:Hide();
-        MonDKP_DB.modes.MaxBehavior = "Max DKP";
+        core.DB.modes.MaxBehavior = "Max DKP";
         UIDropDownMenu_SetText(f.DKPModesMain.MaxBidBehaviorDropDown, "Max DKP")
         f.DKPModesMain.CostSelection:Hide()
         f.DKPModesMain.CostSelectionHeader:Hide()
@@ -221,25 +221,25 @@ function MonDKP:DKPModes_Main()
   local places = UIDropDownMenu_CreateInfo()
     places.func = self.SetValue
     places.fontObject = "MonDKPSmallCenter"
-    places.text, places.arg1, places.checked, places.isNotRadio = 0, 0, 0 == MonDKP_DB.modes.rounding, false
+    places.text, places.arg1, places.checked, places.isNotRadio = 0, 0, 0 == core.DB.modes.rounding, false
     UIDropDownMenu_AddButton(places)
-    places.text, places.arg1, places.checked, places.isNotRadio = 1, 1, 1 == MonDKP_DB.modes.rounding, false
+    places.text, places.arg1, places.checked, places.isNotRadio = 1, 1, 1 == core.DB.modes.rounding, false
     UIDropDownMenu_AddButton(places)
-    places.text, places.arg1, places.checked, places.isNotRadio = 2, 2, 2 == MonDKP_DB.modes.rounding, false
+    places.text, places.arg1, places.checked, places.isNotRadio = 2, 2, 2 == core.DB.modes.rounding, false
     UIDropDownMenu_AddButton(places)
-    places.text, places.arg1, places.checked, places.isNotRadio = 3, 3, 3 == MonDKP_DB.modes.rounding, false
+    places.text, places.arg1, places.checked, places.isNotRadio = 3, 3, 3 == core.DB.modes.rounding, false
     UIDropDownMenu_AddButton(places)
-    places.text, places.arg1, places.checked, places.isNotRadio = 4, 4, 4 == MonDKP_DB.modes.rounding, false
+    places.text, places.arg1, places.checked, places.isNotRadio = 4, 4, 4 == core.DB.modes.rounding, false
     UIDropDownMenu_AddButton(places)
   end)
 
   f.DKPModesMain.RoundDropDown:SetPoint("TOPLEFT", f.DKPModesMain.ModesDropDown, "BOTTOMLEFT", 0, -95)
   UIDropDownMenu_SetWidth(f.DKPModesMain.RoundDropDown, 80)
-  UIDropDownMenu_SetText(f.DKPModesMain.RoundDropDown, MonDKP_DB.modes.rounding)
+  UIDropDownMenu_SetText(f.DKPModesMain.RoundDropDown, core.DB.modes.rounding)
 
   -- Dropdown Menu Function
   function f.DKPModesMain.RoundDropDown:SetValue(newValue)
-    MonDKP_DB.modes.rounding = newValue;
+    core.DB.modes.rounding = newValue;
     UIDropDownMenu_SetText(f.DKPModesMain.RoundDropDown, newValue)
     CloseDropDownMenus()
   end
@@ -270,21 +270,21 @@ function MonDKP:DKPModes_Main()
   local MaxBehavior = UIDropDownMenu_CreateInfo()
     MaxBehavior.func = self.SetValue
     MaxBehavior.fontObject = "MonDKPSmallCenter"
-    MaxBehavior.text, MaxBehavior.arg1, MaxBehavior.checked, MaxBehavior.isNotRadio = L["MAXBIDBEHAVIORMAXDKP"], "Max DKP", "Max DKP" == MonDKP_DB.modes.MaxBehavior, false
+    MaxBehavior.text, MaxBehavior.arg1, MaxBehavior.checked, MaxBehavior.isNotRadio = L["MAXBIDBEHAVIORMAXDKP"], "Max DKP", "Max DKP" == core.DB.modes.MaxBehavior, false
     UIDropDownMenu_AddButton(MaxBehavior)
-    MaxBehavior.text, MaxBehavior.arg1, MaxBehavior.checked, MaxBehavior.isNotRadio = L["MAXBIDBEHAVIORMAXITEMVALUE"], "Max Item Value", "Max Item Value" == MonDKP_DB.modes.MaxBehavior, false
+    MaxBehavior.text, MaxBehavior.arg1, MaxBehavior.checked, MaxBehavior.isNotRadio = L["MAXBIDBEHAVIORMAXITEMVALUE"], "Max Item Value", "Max Item Value" == core.DB.modes.MaxBehavior, false
     UIDropDownMenu_AddButton(MaxBehavior)
-    MaxBehavior.text, MaxBehavior.arg1, MaxBehavior.checked, MaxBehavior.isNotRadio = L["MAXBIDBEHAVIORMIN"], "Min(Max DKP, Max Item Value)", "Min(Max DKP, Max Item Value)" == MonDKP_DB.modes.MaxBehavior, false
+    MaxBehavior.text, MaxBehavior.arg1, MaxBehavior.checked, MaxBehavior.isNotRadio = L["MAXBIDBEHAVIORMIN"], "Min(Max DKP, Max Item Value)", "Min(Max DKP, Max Item Value)" == core.DB.modes.MaxBehavior, false
     UIDropDownMenu_AddButton(MaxBehavior)
   end)
 
   f.DKPModesMain.MaxBidBehaviorDropDown:SetPoint("TOPLEFT", f.DKPModesMain.ModesDropDown, "BOTTOMLEFT", 0, -50)
   UIDropDownMenu_SetWidth(f.DKPModesMain.MaxBidBehaviorDropDown, 200)
-  UIDropDownMenu_SetText(f.DKPModesMain.MaxBidBehaviorDropDown, MonDKP_DB.modes.MaxBehavior)
+  UIDropDownMenu_SetText(f.DKPModesMain.MaxBidBehaviorDropDown, core.DB.modes.MaxBehavior)
 
   -- Dropdown Menu Function
   function f.DKPModesMain.MaxBidBehaviorDropDown:SetValue(newValue)
-    MonDKP_DB.modes.MaxBehavior = newValue;
+    core.DB.modes.MaxBehavior = newValue;
     if newValue == "Max DKP" then
       UIDropDownMenu_SetText(f.DKPModesMain.MaxBidBehaviorDropDown, L["MAXBIDBEHAVIORMAXDKP"])
     elseif newValue == "Max Item Value" then
@@ -330,17 +330,17 @@ function MonDKP:DKPModes_Main()
     f.DKPModesMain.AntiSnipe:SetTextColor(1, 1, 1, 1)
     f.DKPModesMain.AntiSnipe:SetFontObject("MonDKPSmallRight")
     f.DKPModesMain.AntiSnipe:SetTextInsets(10, 15, 5, 5)
-    f.DKPModesMain.AntiSnipe:SetText(MonDKP_DB.modes.AntiSnipe)
+    f.DKPModesMain.AntiSnipe:SetText(core.DB.modes.AntiSnipe)
     f.DKPModesMain.AntiSnipe:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
-      MonDKP_DB.modes.AntiSnipe = f.DKPModesMain.AntiSnipe:GetNumber()
+      core.DB.modes.AntiSnipe = f.DKPModesMain.AntiSnipe:GetNumber()
       self:ClearFocus()
     end)
     f.DKPModesMain.AntiSnipe:SetScript("OnTabPressed", function(self)    -- clears focus on esc
-      MonDKP_DB.modes.AntiSnipe = f.DKPModesMain.AntiSnipe:GetNumber()
+      core.DB.modes.AntiSnipe = f.DKPModesMain.AntiSnipe:GetNumber()
       self:ClearFocus()
     end)
     f.DKPModesMain.AntiSnipe:SetScript("OnEnterPressed", function(self)    -- clears focus on esc
-      MonDKP_DB.modes.AntiSnipe = f.DKPModesMain.AntiSnipe:GetNumber()
+      core.DB.modes.AntiSnipe = f.DKPModesMain.AntiSnipe:GetNumber()
       self:ClearFocus()
     end)
     f.DKPModesMain.AntiSnipe:SetScript("OnKeyUp", function(self)    -- clears focus on esc
@@ -350,7 +350,7 @@ function MonDKP:DKPModes_Main()
           f.DKPModesMain.AntiSnipe:HighlightText()
         end
       else
-        MonDKP_DB.modes.AntiSnipe = f.DKPModesMain.AntiSnipe:GetNumber()
+        core.DB.modes.AntiSnipe = f.DKPModesMain.AntiSnipe:GetNumber()
       end
     end)
     f.DKPModesMain.AntiSnipe:SetScript("OnEnter", function(self)
@@ -379,11 +379,11 @@ function MonDKP:DKPModes_Main()
     OpenChannel.fontObject = "MonDKPSmallCenter"
     OpenChannel.keepShownOnClick = true;
     OpenChannel.isNotRadio = true;
-    OpenChannel.text, OpenChannel.arg1, OpenChannel.checked = L["WHISPER"], "Whisper", true == MonDKP_DB.modes.channels.whisper
+    OpenChannel.text, OpenChannel.arg1, OpenChannel.checked = L["WHISPER"], "Whisper", true == core.DB.modes.channels.whisper
     UIDropDownMenu_AddButton(OpenChannel)
-    OpenChannel.text, OpenChannel.arg1, OpenChannel.checked = L["RAID"], "Raid", true == MonDKP_DB.modes.channels.raid
+    OpenChannel.text, OpenChannel.arg1, OpenChannel.checked = L["RAID"], "Raid", true == core.DB.modes.channels.raid
     UIDropDownMenu_AddButton(OpenChannel)
-    OpenChannel.text, OpenChannel.arg1, OpenChannel.checked = L["GUILD"], "Guild", true == MonDKP_DB.modes.channels.guild
+    OpenChannel.text, OpenChannel.arg1, OpenChannel.checked = L["GUILD"], "Guild", true == core.DB.modes.channels.guild
     UIDropDownMenu_AddButton(OpenChannel)
   end)
 
@@ -394,11 +394,11 @@ function MonDKP:DKPModes_Main()
   -- Dropdown Menu Function
   function f.DKPModesMain.ChannelsDropDown:SetValue(arg1)
     if arg1 == "Whisper" then
-      MonDKP_DB.modes.channels.whisper = not MonDKP_DB.modes.channels.whisper
+      core.DB.modes.channels.whisper = not core.DB.modes.channels.whisper
     elseif arg1 == "Raid" then
-      MonDKP_DB.modes.channels.raid = not MonDKP_DB.modes.channels.raid
+      core.DB.modes.channels.raid = not core.DB.modes.channels.raid
     elseif arg1 == "Guild" then
-      MonDKP_DB.modes.channels.guild = not MonDKP_DB.modes.channels.guild
+      core.DB.modes.channels.guild = not core.DB.modes.channels.guild
     end
 
     UIDropDownMenu_SetText(f.DKPModesMain.ChannelsDropDown, "Open Channels")
@@ -421,15 +421,15 @@ function MonDKP:DKPModes_Main()
   f.DKPModesMain.ChannelsHeader:SetText(L["COMMANDCHANNELS"])
 
   -- Cost Auto Update Value DROPDOWN box 
-  if not MonDKP_DB.modes.CostSelection then MonDKP_DB.modes.CostSelection = "Second Bidder" end
+  if not core.DB.modes.CostSelection then core.DB.modes.CostSelection = "Second Bidder" end
   f.DKPModesMain.CostSelection = CreateFrame("FRAME", "MonDKPModeSelectDropDown", f.DKPModesMain, "MonolithDKPUIDropDownMenuTemplate")
   f.DKPModesMain.CostSelection:SetPoint("TOPLEFT", f.DKPModesMain.ChannelsDropDown, "BOTTOMLEFT", 0, -10)
 
   local LocalCostSel;
 
-  if MonDKP_DB.modes.CostSelection == "First Bidder" then
+  if core.DB.modes.CostSelection == "First Bidder" then
     LocalCostSel = L["FIRSTBIDDER"]
-  elseif MonDKP_DB.modes.CostSelection == "Second Bidder" then
+  elseif core.DB.modes.CostSelection == "Second Bidder" then
     LocalCostSel = L["SECONDBIDDER"]
   end
 
@@ -438,9 +438,9 @@ function MonDKP:DKPModes_Main()
   local CostSelect = UIDropDownMenu_CreateInfo()
     CostSelect.func = self.SetValue
     CostSelect.fontObject = "MonDKPSmallCenter"
-    CostSelect.text, CostSelect.arg1, CostSelect.checked, CostSelect.isNotRadio = L["FIRSTBIDDER"], "First Bidder", "First Bidder" == MonDKP_DB.modes.CostSelection, false
+    CostSelect.text, CostSelect.arg1, CostSelect.checked, CostSelect.isNotRadio = L["FIRSTBIDDER"], "First Bidder", "First Bidder" == core.DB.modes.CostSelection, false
     UIDropDownMenu_AddButton(CostSelect)
-    CostSelect.text, CostSelect.arg1, CostSelect.checked, CostSelect.isNotRadio = L["SECONDBIDDER"], "Second Bidder", "Second Bidder" == MonDKP_DB.modes.CostSelection, false
+    CostSelect.text, CostSelect.arg1, CostSelect.checked, CostSelect.isNotRadio = L["SECONDBIDDER"], "Second Bidder", "Second Bidder" == core.DB.modes.CostSelection, false
     UIDropDownMenu_AddButton(CostSelect)
   end)
 
@@ -449,7 +449,7 @@ function MonDKP:DKPModes_Main()
 
   -- Dropdown Menu Function
   function f.DKPModesMain.CostSelection:SetValue(arg1)
-    MonDKP_DB.modes.CostSelection = arg1
+    core.DB.modes.CostSelection = arg1
 
     if arg1 == "First Bidder" then
       LocalCostSel = L["FIRSTBIDDER"]
@@ -476,13 +476,13 @@ function MonDKP:DKPModes_Main()
   f.DKPModesMain.CostSelectionHeader:SetFontObject("MonDKPSmallLeft")
   f.DKPModesMain.CostSelectionHeader:SetText(L["COSTAUTOUPDATEVALUE"])
 
-  if not (MonDKP_DB.modes.mode == "Minimum Bid Values" or (MonDKP_DB.modes.mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid")) then
+  if not (core.DB.modes.mode == "Minimum Bid Values" or (core.DB.modes.mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid")) then
     f.DKPModesMain.CostSelection:Hide()
     f.DKPModesMain.CostSelectionHeader:Hide();
   end
 
   -- Artificial Inflation Editbox
-  if not MonDKP_DB.modes.Inflation then MonDKP_DB.modes.Inflation = 0 end
+  if not core.DB.modes.Inflation then core.DB.modes.Inflation = 0 end
   f.DKPModesMain.Inflation = CreateFrame("EditBox", nil, f.DKPModesMain)
     f.DKPModesMain.Inflation:SetAutoFocus(false)
     f.DKPModesMain.Inflation:SetMultiLine(false)
@@ -498,18 +498,18 @@ function MonDKP:DKPModes_Main()
     f.DKPModesMain.Inflation:SetTextColor(1, 1, 1, 1)
     f.DKPModesMain.Inflation:SetFontObject("MonDKPSmallRight")
     f.DKPModesMain.Inflation:SetTextInsets(10, 15, 5, 5)
-    f.DKPModesMain.Inflation:SetText(MonDKP_DB.modes.Inflation)
+    f.DKPModesMain.Inflation:SetText(core.DB.modes.Inflation)
     f.DKPModesMain.Inflation:Hide();
     f.DKPModesMain.Inflation:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
-      MonDKP_DB.modes.Inflation = f.DKPModesMain.Inflation:GetNumber()
+      core.DB.modes.Inflation = f.DKPModesMain.Inflation:GetNumber()
       self:ClearFocus()
     end)
     f.DKPModesMain.Inflation:SetScript("OnTabPressed", function(self)    -- clears focus on esc
-      MonDKP_DB.modes.Inflation = f.DKPModesMain.Inflation:GetNumber()
+      core.DB.modes.Inflation = f.DKPModesMain.Inflation:GetNumber()
       self:ClearFocus()
     end)
     f.DKPModesMain.Inflation:SetScript("OnEnterPressed", function(self)    -- clears focus on esc
-      MonDKP_DB.modes.Inflation = f.DKPModesMain.Inflation:GetNumber()
+      core.DB.modes.Inflation = f.DKPModesMain.Inflation:GetNumber()
       self:ClearFocus()
     end)
     f.DKPModesMain.Inflation:SetScript("OnEnter", function(self)
@@ -528,7 +528,7 @@ function MonDKP:DKPModes_Main()
     f.DKPModesMain.Inflation.Header:SetPoint("BOTTOM", f.DKPModesMain.Inflation, "TOP", -20, 2);
     f.DKPModesMain.Inflation.Header:SetText(L["INFLATION"])
 
-    if MonDKP_DB.modes.mode == "Zero Sum" then
+    if core.DB.modes.mode == "Zero Sum" then
       f.DKPModesMain.Inflation:Show()
       f.DKPModesMain.Inflation.Header:Show()
     end
@@ -541,19 +541,19 @@ function MonDKP:DKPModes_Main()
   local BidType = UIDropDownMenu_CreateInfo()
     BidType.func = self.SetValue
     BidType.fontObject = "MonDKPSmallCenter"
-    BidType.text, BidType.arg1, BidType.checked, BidType.isNotRadio = L["STATIC"], "Static", "Static" == MonDKP_DB.modes.ZeroSumBidType, false
+    BidType.text, BidType.arg1, BidType.checked, BidType.isNotRadio = L["STATIC"], "Static", "Static" == core.DB.modes.ZeroSumBidType, false
     UIDropDownMenu_AddButton(BidType)
-    BidType.text, BidType.arg1, BidType.checked, BidType.isNotRadio = L["MINIMUMBID"], "Minimum Bid", "Minimum Bid" == MonDKP_DB.modes.ZeroSumBidType, false
+    BidType.text, BidType.arg1, BidType.checked, BidType.isNotRadio = L["MINIMUMBID"], "Minimum Bid", "Minimum Bid" == core.DB.modes.ZeroSumBidType, false
     UIDropDownMenu_AddButton(BidType)
   end)
 
   f.DKPModesMain.ZeroSumType:SetPoint("TOPLEFT", f.DKPModesMain.Inflation, "BOTTOMLEFT", -20, -20)
   UIDropDownMenu_SetWidth(f.DKPModesMain.ZeroSumType, 150)
-  UIDropDownMenu_SetText(f.DKPModesMain.ZeroSumType, MonDKP_DB.modes.ZeroSumBidType)
+  UIDropDownMenu_SetText(f.DKPModesMain.ZeroSumType, core.DB.modes.ZeroSumBidType)
 
   -- Dropdown Menu Function
   function f.DKPModesMain.ZeroSumType:SetValue(newValue)
-    MonDKP_DB.modes.ZeroSumBidType = newValue;
+    core.DB.modes.ZeroSumBidType = newValue;
     if newValue == "Static" then
       f.DKPModesMain.CostSelection:Hide();
       f.DKPModesMain.CostSelectionHeader:Hide();
@@ -562,7 +562,7 @@ function MonDKP:DKPModes_Main()
       f.DKPModesMain.AllowNegativeBidders:Hide()
       f.DKPModesMain.MaxBidBehaviorDropDown:Hide();
       f.DKPModesMain.MaxBidBehaviorHeader:Hide();
-      MonDKP_DB.modes.MaxBehavior = "Max DKP";
+      core.DB.modes.MaxBehavior = "Max DKP";
     else
       f.DKPModesMain.CostSelection:Show();
       f.DKPModesMain.CostSelectionHeader:Show();
@@ -592,7 +592,7 @@ function MonDKP:DKPModes_Main()
   f.DKPModesMain.ZeroSumTypeHeader:SetFontObject("MonDKPSmallLeft")
   f.DKPModesMain.ZeroSumTypeHeader:SetText(L["BIDMETHOD"])
 
-  if MonDKP_DB.modes.mode ~= "Zero Sum" then
+  if core.DB.modes.mode ~= "Zero Sum" then
     f.DKPModesMain.ZeroSumType:Hide()
     f.DKPModesMain.ZeroSumTypeHeader:Hide();
   end
@@ -605,31 +605,31 @@ function MonDKP:DKPModes_Main()
   local CostValue = UIDropDownMenu_CreateInfo()
     CostValue.func = self.SetValue
     CostValue.fontObject = "MonDKPSmallCenter"
-    CostValue.text, CostValue.arg1, CostValue.checked, CostValue.isNotRadio = L["INTEGER"], "Integer", "Integer" == MonDKP_DB.modes.costvalue, false
+    CostValue.text, CostValue.arg1, CostValue.checked, CostValue.isNotRadio = L["INTEGER"], "Integer", "Integer" == core.DB.modes.costvalue, false
     UIDropDownMenu_AddButton(CostValue)
-    CostValue.text, CostValue.arg1, CostValue.checked, CostValue.isNotRadio = L["PERCENT"], "Percent", "Percent" == MonDKP_DB.modes.costvalue, false
+    CostValue.text, CostValue.arg1, CostValue.checked, CostValue.isNotRadio = L["PERCENT"], "Percent", "Percent" == core.DB.modes.costvalue, false
     UIDropDownMenu_AddButton(CostValue)
   end)
   
   f.DKPModesMain.ItemCostDropDown:SetPoint("TOPLEFT", f.DKPModesMain.ModesDropDown, "BOTTOMLEFT", 0, -50)
   UIDropDownMenu_SetWidth(f.DKPModesMain.ItemCostDropDown, 150)
-  UIDropDownMenu_SetText(f.DKPModesMain.ItemCostDropDown, L[MonDKP_DB.modes.costvalue])
+  UIDropDownMenu_SetText(f.DKPModesMain.ItemCostDropDown, L[core.DB.modes.costvalue])
 
   -- Dropdown Menu Function
   function f.DKPModesMain.ItemCostDropDown:SetValue(arg1)
     if arg1 == "Integer" then
-      MonDKP_DB.modes.costvalue = "Integer"
+      core.DB.modes.costvalue = "Integer"
       f.DKPModesMain.SubZeroBidding:Show()
-      f.DKPModesMain.SubZeroBidding:SetChecked(MonDKP_DB.modes.SubZeroBidding)
-      if MonDKP_DB.modes.SubZeroBidding == true then
+      f.DKPModesMain.SubZeroBidding:SetChecked(core.DB.modes.SubZeroBidding)
+      if core.DB.modes.SubZeroBidding == true then
         f.DKPModesMain.AllowNegativeBidders:Show()
-        f.DKPModesMain.AllowNegativeBidders:SetChecked(MonDKP_DB.modes.AllowNegativeBidders)
+        f.DKPModesMain.AllowNegativeBidders:SetChecked(core.DB.modes.AllowNegativeBidders)
       end
     elseif arg1 == "Percent" then
-      MonDKP_DB.modes.costvalue = "Percent"
+      core.DB.modes.costvalue = "Percent"
       f.DKPModesMain.SubZeroBidding:Hide()
       f.DKPModesMain.AllowNegativeBidders:Hide()
-      MonDKP_DB.modes.SubZeroBidding = false;
+      core.DB.modes.SubZeroBidding = false;
       f.DKPModesMain.SubZeroBidding:SetChecked(false)
     end
 
@@ -652,28 +652,28 @@ function MonDKP:DKPModes_Main()
   f.DKPModesMain.ItemCostHeader:SetFontObject("MonDKPSmallLeft")
   f.DKPModesMain.ItemCostHeader:SetText(L["ITEMCOSTTYPES"])
 
-  if MonDKP_DB.modes.mode == "Minimum Bid Values" then
+  if core.DB.modes.mode == "Minimum Bid Values" then
     f.DKPModesMain.ItemCostDropDown:Hide();
     f.DKPModesMain.ItemCostHeader:Hide();
-    MonDKP_DB.modes.costvalue = "Integer";
+    core.DB.modes.costvalue = "Integer";
     f.DKPModesMain.MaxBidBehaviorDropDown:Show();
     f.DKPModesMain.MaxBidBehaviorHeader:Show();
-  elseif MonDKP_DB.modes.mode == "Roll Based Bidding" then
+  elseif core.DB.modes.mode == "Roll Based Bidding" then
     f.DKPModesMain.MaxBidBehaviorDropDown:Hide();
     f.DKPModesMain.MaxBidBehaviorHeader:Hide();
-    MonDKP_DB.modes.MaxBehavior = "Max DKP";
-elseif MonDKP_DB.modes.mode == "Static Item Values" then
+    core.DB.modes.MaxBehavior = "Max DKP";
+elseif core.DB.modes.mode == "Static Item Values" then
     f.DKPModesMain.MaxBidBehaviorDropDown:Hide();
     f.DKPModesMain.MaxBidBehaviorHeader:Hide();
-    MonDKP_DB.modes.MaxBehavior = "Max DKP";
-  elseif MonDKP_DB.modes.mode == "Zero Sum" then
+    core.DB.modes.MaxBehavior = "Max DKP";
+  elseif core.DB.modes.mode == "Zero Sum" then
     f.DKPModesMain.ItemCostDropDown:Hide();
     f.DKPModesMain.ItemCostHeader:Hide();
-    MonDKP_DB.modes.costvalue = "Integer";
-    if MonDKP_DB.modes.ZeroSumBidType == "Static" then
+    core.DB.modes.costvalue = "Integer";
+    if core.DB.modes.ZeroSumBidType == "Static" then
       f.DKPModesMain.MaxBidBehaviorDropDown:Hide();
       f.DKPModesMain.MaxBidBehaviorHeader:Hide();
-      MonDKP_DB.modes.MaxBehavior = "Max DKP";      
+      core.DB.modes.MaxBehavior = "Max DKP";      
     else
       f.DKPModesMain.MaxBidBehaviorDropDown:Show();
       f.DKPModesMain.MaxBidBehaviorHeader:Show();    
@@ -682,7 +682,7 @@ elseif MonDKP_DB.modes.mode == "Static Item Values" then
 
   -- Sub Zero Bidding Checkbox
   f.DKPModesMain.SubZeroBidding = CreateFrame("CheckButton", nil, f.DKPModesMain, "UICheckButtonTemplate");
-  f.DKPModesMain.SubZeroBidding:SetChecked(MonDKP_DB.modes.SubZeroBidding)
+  f.DKPModesMain.SubZeroBidding:SetChecked(core.DB.modes.SubZeroBidding)
   f.DKPModesMain.SubZeroBidding:SetScale(0.6);
   f.DKPModesMain.SubZeroBidding.text:SetText("  |cff5151de"..L["SUBZEROBIDDING"].."|r");
   f.DKPModesMain.SubZeroBidding.text:SetScale(1.5);
@@ -690,14 +690,14 @@ elseif MonDKP_DB.modes.mode == "Static Item Values" then
   f.DKPModesMain.SubZeroBidding:SetPoint("TOP", f.DKPModesMain.ModesDropDown, "BOTTOMLEFT", 60, 0);
   f.DKPModesMain.SubZeroBidding:SetScript("OnClick", function(self)
     if self:GetChecked() == true then
-      MonDKP_DB.modes.SubZeroBidding = true;
+      core.DB.modes.SubZeroBidding = true;
       MonDKP:Print("Sub Zero Bidding |cff00ff00"..L["ENABLED"].."|r")
       f.DKPModesMain.AllowNegativeBidders:Show()
-      f.DKPModesMain.AllowNegativeBidders:SetChecked(MonDKP_DB.modes.AllowNegativeBidders)
+      f.DKPModesMain.AllowNegativeBidders:SetChecked(core.DB.modes.AllowNegativeBidders)
     else
-      MonDKP_DB.modes.SubZeroBidding = false;
+      core.DB.modes.SubZeroBidding = false;
       MonDKP:Print("Sub Zero Bidding |cffff0000"..L["DISABLED"].."|r")
-      MonDKP_DB.modes.AllowNegativeBidders = false
+      core.DB.modes.AllowNegativeBidders = false
       f.DKPModesMain.AllowNegativeBidders:Hide()
     end
     PlaySound(808);
@@ -711,13 +711,13 @@ elseif MonDKP_DB.modes.mode == "Static Item Values" then
   f.DKPModesMain.SubZeroBidding:SetScript("OnLeave", function(self)
     GameTooltip:Hide()
   end)
-  if MonDKP_DB.modes.costvalue == "Percent" or (MonDKP_DB.modes.mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
+  if core.DB.modes.costvalue == "Percent" or (core.DB.modes.mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
     f.DKPModesMain.SubZeroBidding:Hide()
   end
   
   -- Allow Bids below zero Checkbox
   f.DKPModesMain.AllowNegativeBidders = CreateFrame("CheckButton", nil, f.DKPModesMain, "UICheckButtonTemplate");
-  f.DKPModesMain.AllowNegativeBidders:SetChecked(MonDKP_DB.modes.AllowNegativeBidders)
+  f.DKPModesMain.AllowNegativeBidders:SetChecked(core.DB.modes.AllowNegativeBidders)
   f.DKPModesMain.AllowNegativeBidders:SetScale(0.6);
   f.DKPModesMain.AllowNegativeBidders.text:SetText("  |cff5151de"..L["ALLOWNEGATIVEBIDDERS"].."|r");
   f.DKPModesMain.AllowNegativeBidders.text:SetScale(1.5);
@@ -725,10 +725,10 @@ elseif MonDKP_DB.modes.mode == "Static Item Values" then
   f.DKPModesMain.AllowNegativeBidders:SetPoint("TOPLEFT", f.DKPModesMain.SubZeroBidding, "BOTTOMLEFT", 0, 0);
   f.DKPModesMain.AllowNegativeBidders:SetScript("OnClick", function(self)
     if self:GetChecked() == true then
-      MonDKP_DB.modes.AllowNegativeBidders = true;
+      core.DB.modes.AllowNegativeBidders = true;
       MonDKP:Print("Allow Negative Bidders |cff00ff00"..L["ENABLED"].."|r")
     else
-      MonDKP_DB.modes.AllowNegativeBidders = false;
+      core.DB.modes.AllowNegativeBidders = false;
       MonDKP:Print("Allow Negative Bidders |cffff0000"..L["DISABLED"].."|r")
     end
     PlaySound(808);
@@ -742,7 +742,7 @@ elseif MonDKP_DB.modes.mode == "Static Item Values" then
   f.DKPModesMain.AllowNegativeBidders:SetScript("OnLeave", function(self)
     GameTooltip:Hide()
   end)
-  if (MonDKP_DB.modes.costvalue == "Percent" or (MonDKP_DB.modes.mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static")) or MonDKP_DB.modes.SubZeroBidding == false then
+  if (core.DB.modes.costvalue == "Percent" or (core.DB.modes.mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static")) or core.DB.modes.SubZeroBidding == false then
     f.DKPModesMain.AllowNegativeBidders:Hide()
   end
 
@@ -758,7 +758,7 @@ elseif MonDKP_DB.modes.mode == "Static Item Values" then
   f.DKPModesMain.RollContainer:SetBackdropColor(0,0,0,0.9)
   f.DKPModesMain.RollContainer:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
   f.DKPModesMain.RollContainer:Hide();
-    if MonDKP_DB.modes.mode == "Roll Based Bidding" then
+    if core.DB.modes.mode == "Roll Based Bidding" then
       f.DKPModesMain.RollContainer:Show()
     end
 
@@ -786,23 +786,23 @@ elseif MonDKP_DB.modes.mode == "Static Item Values" then
       f.DKPModesMain.RollContainer.rollMin:SetTextColor(1, 1, 1, 1)
       f.DKPModesMain.RollContainer.rollMin:SetFontObject("MonDKPSmallRight")
       f.DKPModesMain.RollContainer.rollMin:SetTextInsets(10, 15, 5, 5)
-      f.DKPModesMain.RollContainer.rollMin:SetText(MonDKP_DB.modes.rolls.min)
+      f.DKPModesMain.RollContainer.rollMin:SetText(core.DB.modes.rolls.min)
       f.DKPModesMain.RollContainer.rollMin:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
-        MonDKP_DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      MonDKP_DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      MonDKP_DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
+        core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
         self:ClearFocus()
       end)
       f.DKPModesMain.RollContainer.rollMin:SetScript("OnTabPressed", function(self)    -- clears focus on esc
-        MonDKP_DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      MonDKP_DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      MonDKP_DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
+        core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
           f.DKPModesMain.RollContainer.rollMax:SetFocus()
       end)
       f.DKPModesMain.RollContainer.rollMin:SetScript("OnEnterPressed", function(self)    -- clears focus on esc
-        MonDKP_DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      MonDKP_DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      MonDKP_DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
+        core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
         self:ClearFocus()
       end)
       f.DKPModesMain.RollContainer.rollMin:SetScript("OnEnter", function(self)
@@ -844,23 +844,23 @@ elseif MonDKP_DB.modes.mode == "Static Item Values" then
       f.DKPModesMain.RollContainer.rollMax:SetTextColor(1, 1, 1, 1)
       f.DKPModesMain.RollContainer.rollMax:SetFontObject("MonDKPSmallRight")
       f.DKPModesMain.RollContainer.rollMax:SetTextInsets(10, 15, 5, 5)
-      f.DKPModesMain.RollContainer.rollMax:SetText(MonDKP_DB.modes.rolls.max)
+      f.DKPModesMain.RollContainer.rollMax:SetText(core.DB.modes.rolls.max)
       f.DKPModesMain.RollContainer.rollMax:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
-        MonDKP_DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      MonDKP_DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      MonDKP_DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
+        core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
         self:ClearFocus()
       end)
       f.DKPModesMain.RollContainer.rollMax:SetScript("OnTabPressed", function(self)    -- clears focus on esc
-          MonDKP_DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      MonDKP_DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      MonDKP_DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
+          core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
         f.DKPModesMain.RollContainer.AddMax:SetFocus()
       end)
       f.DKPModesMain.RollContainer.rollMax:SetScript("OnEnterPressed", function(self)    -- clears focus on esc
-        MonDKP_DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      MonDKP_DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      MonDKP_DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
+        core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
         self:ClearFocus()
       end)
       f.DKPModesMain.RollContainer.rollMax:SetScript("OnEnter", function(self)
@@ -884,24 +884,24 @@ elseif MonDKP_DB.modes.mode == "Static Item Values" then
     f.DKPModesMain.RollContainer.rollMin.perc:SetFontObject("MonDKPSmallLeft");
     f.DKPModesMain.RollContainer.rollMin.perc:SetPoint("LEFT", f.DKPModesMain.RollContainer.rollMin, "RIGHT", -15, 0);
     f.DKPModesMain.RollContainer.rollMin.perc:SetText("%")
-    f.DKPModesMain.RollContainer.rollMin.perc:SetShown(MonDKP_DB.modes.rolls.UsePerc);
+    f.DKPModesMain.RollContainer.rollMin.perc:SetShown(core.DB.modes.rolls.UsePerc);
 
     f.DKPModesMain.RollContainer.rollMax.perc = f.DKPModesMain.RollContainer.rollMax:CreateFontString(nil, "OVERLAY")
     f.DKPModesMain.RollContainer.rollMax.perc:SetFontObject("MonDKPSmallLeft");
     f.DKPModesMain.RollContainer.rollMax.perc:SetPoint("LEFT", f.DKPModesMain.RollContainer.rollMax, "RIGHT", -15, 0);
     f.DKPModesMain.RollContainer.rollMax.perc:SetText("%")
-    f.DKPModesMain.RollContainer.rollMax.perc:SetShown(MonDKP_DB.modes.rolls.UsePerc);
+    f.DKPModesMain.RollContainer.rollMax.perc:SetShown(core.DB.modes.rolls.UsePerc);
 
       -- Percent Rolls Checkbox
     f.DKPModesMain.RollContainer.UsePerc = CreateFrame("CheckButton", nil, f.DKPModesMain.RollContainer, "UICheckButtonTemplate");
-    f.DKPModesMain.RollContainer.UsePerc:SetChecked(MonDKP_DB.modes.rolls.UsePerc)
+    f.DKPModesMain.RollContainer.UsePerc:SetChecked(core.DB.modes.rolls.UsePerc)
     f.DKPModesMain.RollContainer.UsePerc:SetScale(0.6);
     f.DKPModesMain.RollContainer.UsePerc.text:SetText("  |cff5151de"..L["USEPERCENTAGE"].."|r");
     f.DKPModesMain.RollContainer.UsePerc.text:SetScale(1.5);
     f.DKPModesMain.RollContainer.UsePerc.text:SetFontObject("MonDKPSmallLeft")
     f.DKPModesMain.RollContainer.UsePerc:SetPoint("TOP", f.DKPModesMain.RollContainer.rollMin, "BOTTOMLEFT", 0, -10);
     f.DKPModesMain.RollContainer.UsePerc:SetScript("OnClick", function(self)
-      MonDKP_DB.modes.rolls.UsePerc = self:GetChecked();
+      core.DB.modes.rolls.UsePerc = self:GetChecked();
       f.DKPModesMain.RollContainer.rollMin.perc:SetShown(self:GetChecked())
       f.DKPModesMain.RollContainer.rollMax.perc:SetShown(self:GetChecked())
       if f.DKPModesMain.RollContainer.rollMax:GetNumber() == 0 then
@@ -936,23 +936,23 @@ elseif MonDKP_DB.modes.mode == "Static Item Values" then
       f.DKPModesMain.RollContainer.AddMax:SetTextColor(1, 1, 1, 1)
       f.DKPModesMain.RollContainer.AddMax:SetFontObject("MonDKPSmallRight")
       f.DKPModesMain.RollContainer.AddMax:SetTextInsets(10, 15, 5, 5)
-      f.DKPModesMain.RollContainer.AddMax:SetText(MonDKP_DB.modes.rolls.AddToMax)
+      f.DKPModesMain.RollContainer.AddMax:SetText(core.DB.modes.rolls.AddToMax)
       f.DKPModesMain.RollContainer.AddMax:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
-        MonDKP_DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      MonDKP_DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      MonDKP_DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
+        core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
           self:ClearFocus()
       end)
       f.DKPModesMain.RollContainer.AddMax:SetScript("OnTabPressed", function(self)    -- clears focus on esc
-        MonDKP_DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      MonDKP_DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      MonDKP_DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
+        core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
           f.DKPModesMain.RollContainer.rollMin:SetFocus()
       end)
       f.DKPModesMain.RollContainer.AddMax:SetScript("OnEnterPressed", function(self)    -- clears focus on esc
-        MonDKP_DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      MonDKP_DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      MonDKP_DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
+        core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
           self:ClearFocus()
       end)
       f.DKPModesMain.RollContainer.AddMax:SetScript("OnEnter", function(self)
@@ -976,11 +976,11 @@ elseif MonDKP_DB.modes.mode == "Static Item Values" then
   f.DKPModesMain.BroadcastSettings = self:CreateButton("BOTTOMRIGHT", f.DKPModesMain, "BOTTOMRIGHT", -30, 30, L["BROADCASTSETTINGS"]);
   f.DKPModesMain.BroadcastSettings:SetSize(110,25)
   f.DKPModesMain.BroadcastSettings:SetScript("OnClick", function()
-    MonDKP_DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-    MonDKP_DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-    MonDKP_DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
+    core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+    core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+    core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
 
-    if (MonDKP_DB.modes.rolls.min > MonDKP_DB.modes.rolls.max and MonDKP_DB.modes.rolls.max ~= 0 and MonDKP_DB.modes.rolls.UserPerc == false) or (MonDKP_DB.modes.rolls.UsePerc and (MonDKP_DB.modes.rolls.min < 0 or MonDKP_DB.modes.rolls.max > 100 or MonDKP_DB.modes.rolls.min > MonDKP_DB.modes.rolls.max)) then
+    if (core.DB.modes.rolls.min > core.DB.modes.rolls.max and core.DB.modes.rolls.max ~= 0 and core.DB.modes.rolls.UserPerc == false) or (core.DB.modes.rolls.UsePerc and (core.DB.modes.rolls.min < 0 or core.DB.modes.rolls.max > 100 or core.DB.modes.rolls.min > core.DB.modes.rolls.max)) then
       StaticPopupDialogs["NOTIFY_ROLLS"] = {
         text = "|CFFFF0000"..L["WARNING"].."|r: "..L["INVALIDROLLRANGE"],
         button1 = L["OK"],
@@ -999,18 +999,18 @@ elseif MonDKP_DB.modes.mode == "Static Item Values" then
       button2 = L["NO"],
       OnAccept = function()
         local temptable1 = {}
-        table.insert(temptable1, MonDKP_DB.modes)
-        table.insert(temptable1, MonDKP_DB.DKPBonus)
-        table.insert(temptable1, MonDKP_DB.raiders)
+        table.insert(temptable1, core.DB.modes)
+        table.insert(temptable1, core.DB.DKPBonus)
+        table.insert(temptable1, core.DB.raiders)
         MonDKP.Sync:SendData("MonDKPDKPModes", temptable1)
         MonDKP:Print(L["DKPMODESENTCONF"])
         local temptable2 = {}
-              table.insert(temptable2, MonDKP_DB.MinBidBySlot)
-              table.insert(temptable2, MonDKP_MinBids)
+              table.insert(temptable2, core.DB.MinBidBySlot)
+              table.insert(temptable2, MonDKP:GetTable(MonDKP_Player_MinBids, true))
               MonDKP.Sync:SendData("MonDKPMinBid", temptable2)
         local temptable3 = {}
-              table.insert(temptable3, MonDKP_DB.MaxBidBySlot)
-              table.insert(temptable3, MonDKP_MaxBids)
+              table.insert(temptable3, core.DB.MaxBidBySlot)
+              table.insert(temptable3, MonDKP:GetTable(MonDKP_Player_MaxBids, true))
               MonDKP.Sync:SendData("MonDKPMaxBid", temptable3)
       end,
       timeout = 0,

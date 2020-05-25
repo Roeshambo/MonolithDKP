@@ -21,10 +21,10 @@ function MonDKP:AdjustDKP(value)
 	if (#core.SelectedData > 0 and adjustReason and adjustReason ~= L["OTHER"].." - "..L["ENTEROTHERREASONHERE"]) then
 		if core.IsOfficer then
 			local tempString = "";       -- stores list of changes
-			local dkpHistoryString = ""   -- stores list for MonDKP_DKPHistory
+			local dkpHistoryString = ""   -- stores list for MonDKP:GetTable(MonDKP_Player_DKPHistory, true)
 			for i=1, #core.SelectedData do
 				local current;
-				local search = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[i]["player"])
+				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), core.SelectedData[i]["player"])
 				if search then
 					if not IsInRaid() then
 						if i < #core.SelectedData then
@@ -34,16 +34,16 @@ function MonDKP:AdjustDKP(value)
 						end
 					end
 					dkpHistoryString = dkpHistoryString..core.SelectedData[i]["player"]..","
-					current = MonDKP_DKPTable[search[1][1]].dkp
-					MonDKP_DKPTable[search[1][1]].dkp = MonDKP_round(tonumber(current + value), MonDKP_DB.modes.rounding)
+					current = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp
+					MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp = MonDKP_round(tonumber(current + value), core.DB.modes.rounding)
 					if value > 0 then
-						MonDKP_DKPTable[search[1][1]]["lifetime_gained"] = MonDKP_round(tonumber(MonDKP_DKPTable[search[1][1]]["lifetime_gained"] + value), MonDKP_DB.modes.rounding)
+						MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]]["lifetime_gained"] = MonDKP_round(tonumber(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]]["lifetime_gained"] + value), core.DB.modes.rounding)
 					end
 				end
 			end
 			local newIndex = curOfficer.."-"..curTime
-			tinsert(MonDKP_DKPHistory, 1, {players=dkpHistoryString, dkp=value, reason=adjustReason, date=curTime, index=newIndex})
-			MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP_DKPHistory[1])
+			tinsert(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), 1, {players=dkpHistoryString, dkp=value, reason=adjustReason, date=curTime, index=newIndex})
+			MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[1])
 
 			if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
 				MonDKP:DKPHistory_Update(true)
@@ -85,7 +85,7 @@ local function DecayDKP(amount, deductionType, GetSelections)
 	local curTime = time()
 	local curOfficer = UnitName("player")
 
-	for key, value in ipairs(MonDKP_DKPTable) do
+	for key, value in ipairs(MonDKP:GetTable(MonDKP_Player_DKPTable, true)) do
 		local dkp = tonumber(value["dkp"])
 		local player = value["player"]
 		local amount = amount;
@@ -100,8 +100,8 @@ local function DecayDKP(amount, deductionType, GetSelections)
 				if deductionType == "percent" then
 					deducted = dkp * amount
 					dkp = dkp - deducted
-					value["dkp"] = MonDKP_round(tonumber(dkp), MonDKP_DB.modes.rounding);
-					dkpString = dkpString.."-"..MonDKP_round(deducted, MonDKP_DB.modes.rounding)..",";
+					value["dkp"] = MonDKP_round(tonumber(dkp), core.DB.modes.rounding);
+					dkpString = dkpString.."-"..MonDKP_round(deducted, core.DB.modes.rounding)..",";
 					playerString = playerString..player..",";
 				elseif deductionType == "points" then
 					-- do stuff for flat point deductions
@@ -110,8 +110,8 @@ local function DecayDKP(amount, deductionType, GetSelections)
 				if deductionType == "percent" then
 					deducted = dkp * amount
 					dkp = (deducted - dkp) * -1
-					value["dkp"] = MonDKP_round(tonumber(dkp), MonDKP_DB.modes.rounding)
-					dkpString = dkpString..MonDKP_round(-deducted, MonDKP_DB.modes.rounding)..",";
+					value["dkp"] = MonDKP_round(tonumber(dkp), core.DB.modes.rounding)
+					dkpString = dkpString..MonDKP_round(-deducted, core.DB.modes.rounding)..",";
 					playerString = playerString..player..",";
 				elseif deductionType == "points" then
 					-- do stuff for flat point deductions
@@ -124,8 +124,8 @@ local function DecayDKP(amount, deductionType, GetSelections)
 	if tonumber(amount) < 0 then amount = amount * -1 end		-- flips value to positive if officer accidently used a negative number
 
 	local newIndex = curOfficer.."-"..curTime
-	tinsert(MonDKP_DKPHistory, 1, {players=playerString, dkp=dkpString, reason=L["WEEKLYDECAY"], date=curTime, index=newIndex})
-	MonDKP.Sync:SendData("MonDKPDecay", MonDKP_DKPHistory[1])
+	tinsert(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), 1, {players=playerString, dkp=dkpString, reason=L["WEEKLYDECAY"], date=curTime, index=newIndex})
+	MonDKP.Sync:SendData("MonDKPDecay", MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[1])
 	if MonDKP.ConfigTab6.history then
 		MonDKP:DKPHistory_Update(true)
 	end
@@ -233,17 +233,17 @@ function MonDKP:AdjustDKPTab_Create()
 
 		UIDropDownMenu_SetText(MonDKP.ConfigTab2.reasonDropDown, curReason)
 
-		if (curReason == L["ONTIMEBONUS"]) then MonDKP.ConfigTab2.addDKP:SetNumber(MonDKP_DB.DKPBonus.OnTimeBonus); MonDKP.ConfigTab2.BossKilledDropdown:Hide()
+		if (curReason == L["ONTIMEBONUS"]) then MonDKP.ConfigTab2.addDKP:SetNumber(core.DB.DKPBonus.OnTimeBonus); MonDKP.ConfigTab2.BossKilledDropdown:Hide()
 		elseif (curReason == L["BOSSKILLBONUS"]) then
-			MonDKP.ConfigTab2.addDKP:SetNumber(MonDKP_DB.DKPBonus.BossKillBonus);
+			MonDKP.ConfigTab2.addDKP:SetNumber(core.DB.DKPBonus.BossKillBonus);
 			MonDKP.ConfigTab2.BossKilledDropdown:Show()
 			UIDropDownMenu_SetText(MonDKP.ConfigTab2.BossKilledDropdown, core.CurrentRaidZone..": "..core.LastKilledBoss)
-		elseif (curReason == L["RAIDCOMPLETIONBONUS"]) then MonDKP.ConfigTab2.addDKP:SetNumber(MonDKP_DB.DKPBonus.CompletionBonus); MonDKP.ConfigTab2.BossKilledDropdown:Hide()
+		elseif (curReason == L["RAIDCOMPLETIONBONUS"]) then MonDKP.ConfigTab2.addDKP:SetNumber(core.DB.DKPBonus.CompletionBonus); MonDKP.ConfigTab2.BossKilledDropdown:Hide()
 		elseif (curReason == L["NEWBOSSKILLBONUS"]) then
-			MonDKP.ConfigTab2.addDKP:SetNumber(MonDKP_DB.DKPBonus.NewBossKillBonus);
+			MonDKP.ConfigTab2.addDKP:SetNumber(core.DB.DKPBonus.NewBossKillBonus);
 			MonDKP.ConfigTab2.BossKilledDropdown:Show()
 			UIDropDownMenu_SetText(MonDKP.ConfigTab2.BossKilledDropdown, core.CurrentRaidZone..": "..core.LastKilledBoss)
-		elseif (curReason == L["UNEXCUSEDABSENCE"]) then MonDKP.ConfigTab2.addDKP:SetNumber(MonDKP_DB.DKPBonus.UnexcusedAbsence); MonDKP.ConfigTab2.BossKilledDropdown:Hide()
+		elseif (curReason == L["UNEXCUSEDABSENCE"]) then MonDKP.ConfigTab2.addDKP:SetNumber(core.DB.DKPBonus.UnexcusedAbsence); MonDKP.ConfigTab2.BossKilledDropdown:Hide()
 		else MonDKP.ConfigTab2.addDKP:SetText(""); MonDKP.ConfigTab2.BossKilledDropdown:Hide() end
 
 		if (curReason == L["OTHER"]) then
@@ -370,8 +370,8 @@ function MonDKP:AdjustDKPTab_Create()
 			return;
 		end
 
-		MonDKP_DB.bossargs["LastKilledBoss"] = core.LastKilledBoss;
-		MonDKP_DB.bossargs["CurrentRaidZone"] = core.CurrentRaidZone;
+		core.DB.bossargs["LastKilledBoss"] = core.LastKilledBoss;
+		core.DB.bossargs["CurrentRaidZone"] = core.CurrentRaidZone;
 
 		if curReason ~= L["BOSSKILLBONUS"] and curReason ~= L["NEWBOSSKILLBONUS"] then
 			MonDKP.ConfigTab2.reasonDropDown:SetValue(L["BOSSKILLBONUS"])
@@ -444,13 +444,13 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.adjustButton:SetSize(90,25)
 	MonDKP.ConfigTab2.adjustButton:SetScript("OnClick", function()
 		if #core.SelectedData > 0 and curReason and MonDKP.ConfigTab2.otherReason:GetText() then
-			local selected = L["AREYOUSURE"].." "..MonDKP_round(MonDKP.ConfigTab2.addDKP:GetNumber(), MonDKP_DB.modes.rounding).." "..L["DKPTOFOLLOWING"]..": \n\n";
+			local selected = L["AREYOUSURE"].." "..MonDKP_round(MonDKP.ConfigTab2.addDKP:GetNumber(), core.DB.modes.rounding).." "..L["DKPTOFOLLOWING"]..": \n\n";
 
 			for i=1, #core.SelectedData do
-				local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, core.SelectedData[i].player)
+				local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), core.SelectedData[i].player)
 
 				if classSearch then
-					c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+					c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[classSearch[1][1]].class)
 				else
 					c = { hex="ffffff" }
 				end
@@ -504,7 +504,7 @@ function MonDKP:AdjustDKPTab_Create()
 	MonDKP.ConfigTab2.decayDKP:SetTextColor(1, 1, 1, 1)
 	MonDKP.ConfigTab2.decayDKP:SetFontObject("MonDKPNormalRight")
 	MonDKP.ConfigTab2.decayDKP:SetTextInsets(10, 15, 5, 5)
-	MonDKP.ConfigTab2.decayDKP:SetNumber(tonumber(MonDKP_DB.DKPBonus.DecayPercentage))
+	MonDKP.ConfigTab2.decayDKP:SetNumber(tonumber(core.DB.DKPBonus.DecayPercentage))
 	MonDKP.ConfigTab2.decayDKP:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
 		self:ClearFocus()
 	end)
@@ -555,14 +555,14 @@ function MonDKP:AdjustDKPTab_Create()
 
 	-- add to negative dkp checkbox
 	MonDKP.ConfigTab2.AddNegative = CreateFrame("CheckButton", nil, MonDKP.ConfigTab2, "UICheckButtonTemplate");
-	MonDKP.ConfigTab2.AddNegative:SetChecked(MonDKP_DB.modes.AddToNegative)
+	MonDKP.ConfigTab2.AddNegative:SetChecked(core.DB.modes.AddToNegative)
 	MonDKP.ConfigTab2.AddNegative:SetScale(0.6);
 	MonDKP.ConfigTab2.AddNegative.text:SetText("  |cff5151de"..L["ADDNEGVALUES"].."|r");
 	MonDKP.ConfigTab2.AddNegative.text:SetScale(1.5);
 	MonDKP.ConfigTab2.AddNegative.text:SetFontObject("MonDKPSmallLeft")
 	MonDKP.ConfigTab2.AddNegative:SetPoint("TOP", MonDKP.ConfigTab2.SelectedOnlyCheck, "BOTTOM", 0, 0);
 	MonDKP.ConfigTab2.AddNegative:SetScript("OnClick", function(self)
-		MonDKP_DB.modes.AddToNegative = self:GetChecked();
+		core.DB.modes.AddToNegative = self:GetChecked();
 		PlaySound(808)
 	end)
 	MonDKP.ConfigTab2.AddNegative:SetScript("OnEnter", function(self)
@@ -702,7 +702,7 @@ function MonDKP:AdjustDKPTab_Create()
 				return;
 			end
 			if not core.RaidInProgress then				
-				if MonDKP_DB.DKPBonus.GiveRaidStart and self:GetText() ~= L["CONTINUERAID"] then
+				if core.DB.DKPBonus.GiveRaidStart and self:GetText() ~= L["CONTINUERAID"] then
 					StaticPopupDialogs["START_RAID_BONUS"] = {
 						text = L["RAIDTIMERBONUSCONFIRM"],
 						button1 = L["YES"],
@@ -801,7 +801,7 @@ function MonDKP:AdjustDKPTab_Create()
 		end)
 
 		-- Award Interval Editbox
-		if not MonDKP_DB.modes.increment then MonDKP_DB.modes.increment = 60 end
+		if not core.DB.modes.increment then core.DB.modes.increment = 60 end
 		MonDKP.ConfigTab2.RaidTimerContainer.interval = CreateFrame("EditBox", nil, MonDKP.ConfigTab2.RaidTimerContainer)
 		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab2.RaidTimerContainer, "BOTTOMLEFT", 35, 225)     
 		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetAutoFocus(false)
@@ -817,10 +817,10 @@ function MonDKP:AdjustDKPTab_Create()
 		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetTextColor(1, 1, 1, 1)
 		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetFontObject("MonDKPSmallRight")
 		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetTextInsets(10, 15, 5, 5)
-		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetNumber(tonumber(MonDKP_DB.modes.increment))
+		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetNumber(tonumber(core.DB.modes.increment))
 		MonDKP.ConfigTab2.RaidTimerContainer.interval:SetScript("OnTextChanged", function(self)    -- clears focus on esc
 			if tonumber(self:GetNumber()) then
-				MonDKP_DB.modes.increment = self:GetNumber();
+				core.DB.modes.increment = self:GetNumber();
 			else
 				StaticPopupDialogs["ALERT_NUMBER"] = {
 					text = L["INCREMENTINVALIDWARN"],
@@ -864,7 +864,7 @@ function MonDKP:AdjustDKPTab_Create()
 	    MonDKP.ConfigTab2.RaidTimerContainer.intervalHeader:SetText(L["INTERVAL"]..":")
 
 	    -- Award Value Editbox
-	    if not MonDKP_DB.DKPBonus.IntervalBonus then MonDKP_DB.DKPBonus.IntervalBonus = 15 end
+	    if not core.DB.DKPBonus.IntervalBonus then core.DB.DKPBonus.IntervalBonus = 15 end
 		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue = CreateFrame("EditBox", nil, MonDKP.ConfigTab2.RaidTimerContainer)
 		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetPoint("LEFT", MonDKP.ConfigTab2.RaidTimerContainer.interval, "RIGHT", 10, 0)     
 		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetAutoFocus(false)
@@ -880,10 +880,10 @@ function MonDKP:AdjustDKPTab_Create()
 		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetTextColor(1, 1, 1, 1)
 		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetFontObject("MonDKPSmallRight")
 		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetTextInsets(10, 15, 5, 5)
-		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetNumber(tonumber(MonDKP_DB.DKPBonus.IntervalBonus))
+		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetNumber(tonumber(core.DB.DKPBonus.IntervalBonus))
 		MonDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetScript("OnTextChanged", function(self)    -- clears focus on esc
 			if tonumber(self:GetNumber()) then
-				MonDKP_DB.DKPBonus.IntervalBonus = self:GetNumber();
+				core.DB.DKPBonus.IntervalBonus = self:GetNumber();
 			else
 				StaticPopupDialogs["ALERT_NUMBER"] = {
 					text = L["INCREMENTINVALIDWARN"],
@@ -927,7 +927,7 @@ function MonDKP:AdjustDKPTab_Create()
     	
     	-- Give On Time Bonus Checkbox
 		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus = CreateFrame("CheckButton", nil, MonDKP.ConfigTab2.RaidTimerContainer, "UICheckButtonTemplate");
-		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:SetChecked(MonDKP_DB.DKPBonus.GiveRaidStart)
+		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:SetChecked(core.DB.DKPBonus.GiveRaidStart)
 		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:SetScale(0.6);
 		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus.text:SetText("  |cff5151de"..L["GIVEONTIMEBONUS"].."|r");
 		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus.text:SetScale(1.5);
@@ -935,10 +935,10 @@ function MonDKP:AdjustDKPTab_Create()
 		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:SetPoint("TOPLEFT", MonDKP.ConfigTab2.RaidTimerContainer.interval, "BOTTOMLEFT", 0, -10);
 		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:SetScript("OnClick", function(self)
 			if self:GetChecked() then
-				MonDKP_DB.DKPBonus.GiveRaidStart = true;
+				core.DB.DKPBonus.GiveRaidStart = true;
 				PlaySound(808)
 			else
-				MonDKP_DB.DKPBonus.GiveRaidStart = false;
+				core.DB.DKPBonus.GiveRaidStart = false;
 			end
 		end)
 		MonDKP.ConfigTab2.RaidTimerContainer.StartBonus:SetScript("OnEnter", function(self)
@@ -953,7 +953,7 @@ function MonDKP:AdjustDKPTab_Create()
 
 		-- Give Raid End Bonus Checkbox
 		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus = CreateFrame("CheckButton", nil, MonDKP.ConfigTab2.RaidTimerContainer, "UICheckButtonTemplate");
-		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:SetChecked(MonDKP_DB.DKPBonus.GiveRaidEnd)
+		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:SetChecked(core.DB.DKPBonus.GiveRaidEnd)
 		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:SetScale(0.6);
 		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus.text:SetText("  |cff5151de"..L["GIVEENDBONUS"].."|r");
 		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus.text:SetScale(1.5);
@@ -961,10 +961,10 @@ function MonDKP:AdjustDKPTab_Create()
 		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:SetPoint("TOP", MonDKP.ConfigTab2.RaidTimerContainer.StartBonus, "BOTTOM", 0, 2);
 		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:SetScript("OnClick", function(self)
 			if self:GetChecked() then
-				MonDKP_DB.DKPBonus.GiveRaidEnd = true;
+				core.DB.DKPBonus.GiveRaidEnd = true;
 				PlaySound(808)
 			else
-				MonDKP_DB.DKPBonus.GiveRaidEnd = false;
+				core.DB.DKPBonus.GiveRaidEnd = false;
 			end
 		end)
 		MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus:SetScript("OnEnter", function(self)
@@ -979,7 +979,7 @@ function MonDKP:AdjustDKPTab_Create()
 
 		-- Include Standby Checkbox
 		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude = CreateFrame("CheckButton", nil, MonDKP.ConfigTab2.RaidTimerContainer, "UICheckButtonTemplate");
-		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:SetChecked(MonDKP_DB.DKPBonus.IncStandby)
+		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:SetChecked(core.DB.DKPBonus.IncStandby)
 		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:SetScale(0.6);
 		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude.text:SetText("  |cff5151de"..L["INCLUDESTANDBY"].."|r");
 		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude.text:SetScale(1.5);
@@ -987,10 +987,10 @@ function MonDKP:AdjustDKPTab_Create()
 		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:SetPoint("TOP", MonDKP.ConfigTab2.RaidTimerContainer.EndRaidBonus, "BOTTOM", 0, 2);
 		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:SetScript("OnClick", function(self)
 			if self:GetChecked() then
-				MonDKP_DB.DKPBonus.IncStandby = true;
+				core.DB.DKPBonus.IncStandby = true;
 				PlaySound(808)
 			else
-				MonDKP_DB.DKPBonus.IncStandby = false;
+				core.DB.DKPBonus.IncStandby = false;
 			end
 		end)
 		MonDKP.ConfigTab2.RaidTimerContainer.StandbyInclude:SetScript("OnEnter", function(self)

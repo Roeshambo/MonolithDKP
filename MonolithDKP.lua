@@ -9,7 +9,7 @@ function MonDKP_RestoreFilterOptions()  		-- restores default filter selections
 	MonDKP.UIConfig.search:SetText(L["SEARCH"])
 	MonDKP.UIConfig.search:SetTextColor(0.3, 0.3, 0.3, 1)
 	MonDKP.UIConfig.search:ClearFocus()
-	core.WorkingTable = CopyTable(MonDKP_DKPTable)
+	core.WorkingTable = CopyTable(MonDKP:GetTable(MonDKP_Player_DKPTable, true))
 	core.CurView = "all"
 	core.CurSubView = "all"
 	for i=1, 9 do
@@ -47,8 +47,8 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
 		OptionsLoaded = true;
 	end
 
-	if #MonDKP_Whitelist > 0 and core.IsOfficer then 				-- broadcasts whitelist any time the window is opened if one exists (help ensure everyone has the information even if they were offline when it was created)
-		MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP_Whitelist)   -- Only officers propagate the whitelist, and it is only accepted by players that are NOT the GM (prevents overwriting new Whitelist set by GM, if any.)
+	if #MonDKP:GetTable(MonDKP_Player_Whitelist) > 0 and core.IsOfficer then 				-- broadcasts whitelist any time the window is opened if one exists (help ensure everyone has the information even if they were offline when it was created)
+		MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP:GetTable(MonDKP_Player_Whitelist))   -- Only officers propagate the whitelist, and it is only accepted by players that are NOT the GM (prevents overwriting new Whitelist set by GM, if any.)
 	end
 
 	if core.CurSubView == "raid" then
@@ -63,7 +63,7 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
 		MonDKP:ViewLimited()
 	end
 
-	core.MonDKPUI:SetScale(MonDKP_DB.defaults.MonDKPScaleSize)
+	core.MonDKPUI:SetScale(core.DB.defaults.MonDKPScaleSize)
 	if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
 		MonDKP:DKPHistory_Update(true)
 	elseif MonDKP.ConfigTab5 and MonDKP.ConfigTab5:IsShown() then
@@ -98,7 +98,7 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
 		end
 		parentTable = core.WorkingTable;
 	else
-		parentTable = MonDKP_DKPTable;
+		parentTable = MonDKP:GetTable(MonDKP_Player_DKPTable, true);
 	end
 
 	core.WorkingTable = {}
@@ -357,7 +357,7 @@ function MonDKP:CreateMenu()
 	SortButtons.dkp.t = SortButtons.dkp:CreateFontString(nil, "OVERLAY")
 	SortButtons.dkp.t:SetFontObject("MonDKPNormal")
 	SortButtons.dkp.t:SetTextColor(1, 1, 1, 1);
-	if MonDKP_DB.modes.mode == "Roll Based Bidding" then
+	if core.DB.modes.mode == "Roll Based Bidding" then
 		SortButtons.dkp.t:SetPoint("RIGHT", SortButtons.dkp, "RIGHT", -50, 0);
 		SortButtons.dkp.t:SetText(L["TOTALDKP"]);
 
@@ -506,7 +506,7 @@ function MonDKP:CreateMenu()
 	---------------------------------------
 	-- CHANGE LOG WINDOW
 	---------------------------------------
-	if MonDKP_DB.defaults.HideChangeLogs < core.BuildNumber then
+	if core.DB.defaults.HideChangeLogs < core.BuildNumber then
 		MonDKP.ChangeLogDisplay = CreateFrame("Frame", "MonDKP_ChangeLogDisplay", UIParent, "ShadowOverlaySmallTemplate");
 
 		MonDKP.ChangeLogDisplay:SetPoint("TOP", UIParent, "TOP", 0, -200);
@@ -574,9 +574,9 @@ function MonDKP:CreateMenu()
 		MonDKP.ChangeLogDisplay.DontShowCheck:SetPoint("LEFT", MonDKP.ChangeLogDisplay.ChangeLogHeader, "RIGHT", 10, 0);
 		MonDKP.ChangeLogDisplay.DontShowCheck:SetScript("OnClick", function(self)
 			if self:GetChecked() then
-				MonDKP_DB.defaults.HideChangeLogs = core.BuildNumber
+				core.DB.defaults.HideChangeLogs = core.BuildNumber
 			else
-				MonDKP_DB.defaults.HideChangeLogs = 0
+				core.DB.defaults.HideChangeLogs = 0
 			end
 		end)
 
