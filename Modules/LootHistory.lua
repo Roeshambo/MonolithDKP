@@ -382,8 +382,9 @@ end
 
 local LootHistTimer = LootHistTimer or CreateFrame("StatusBar", nil, UIParent)
 function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call, runs set assigned for when a filter is selected in dropdown.
-	if not MonDKP.UIConfig:IsShown() then return end
-
+	if not MonDKP.UIConfig:IsShown() then 
+		return 
+	end
 	local thedate;
 	local linesToUse = 1;
 	local LootTable = {}
@@ -394,11 +395,9 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		curDropDownMenuFilterCategory = L["NOFILTER"]
 		CreateSortBox()
 	end
-	
 	if filter then
 		MonDKP:LootHistory_Reset()
 	end
-
 	if filter and filter ~= L["NOFILTER"] and filter ~= L["DELETEDENTRY"] then
 		-- items or players
 		
@@ -426,15 +425,11 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 			end
 		end
 	end
-
 	MonDKP.ConfigTab5.inst:SetText(L["LOOTHISTINST1"]);
 	if core.IsOfficer == true then
-		MonDKP.ConfigTab5.inst:SetText(MonDKP.ConfigTab5.inst:GetText().."\n"..L["LOOTHISTINST2"])
-		MonDKP.ConfigTab6.inst:SetText(L["LOOTHISTINST3"])
+		MonDKP.ConfigTab5.inst:SetText(L["LOOTHISTINST1"].."\n"..L["LOOTHISTINST2"].."\n"..L["LOOTHISTINST3"])
 	end
-
 	if CurrentLimit > #LootTable then CurrentLimit = #LootTable end;
-
 	if filter and filter ~= L["NOFILTER"] then
 		CurrentLimit = #LootTable
 	end
@@ -683,7 +678,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 				end
 			end
 		end
- 	end)
+	 end)
 	if CurrentLimit < #LootTable and not MonDKP.ConfigTab5.LoadHistory then
 	 	-- Load More History Button
 		MonDKP.ConfigTab5.LoadHistory = self:CreateButton("TOP", MonDKP.ConfigTab5, "BOTTOM", 110, 0, string.format(L["LOAD50MORE"].."...", ButtonText));

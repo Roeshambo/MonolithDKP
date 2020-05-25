@@ -20,7 +20,7 @@ function MonDKP_Profile_Create(player, dkp, gained, spent)
 		tempName = strsub(tempName, 1, string.find(tempName, "-")-1)			-- required to remove server name from player (can remove in classic if this is not an issue)
 		if tempName == player then
 			class = tempClass
-			table.insert(MonDKP_DKPTable, { player=player, lifetime_spent=spent, lifetime_gained=gained, class=class, dkp=dkp, rank=10, spec=L["NOSPECREPORTED"], role=L["NOROLEDETECTED"], rankName="None", previous_dkp=0, })
+			table.insert(MonDKP:GetTable(MonDKP_Player_DKPTable, true), { player=player, lifetime_spent=spent, lifetime_gained=gained, class=class, dkp=dkp, rank=10, spec=L["NOSPECREPORTED"], role=L["NOROLEDETECTED"], rankName="None", previous_dkp=0, })
 
 			MonDKP:FilterDKPTable(core.currentSort, "reset")
 			MonDKP:ClassGraph_Update()
@@ -41,8 +41,8 @@ function MonDKP_Profile_Create(player, dkp, gained, spent)
 		for i=1, GroupSize do
 			tempName,_,_,_,_,tempClass = GetRaidRosterInfo(i)
 			if tempName == player then
-				if not MonDKP:Table_Search(MonDKP_DKPTable, tempName, "player") then
-					tinsert(MonDKP_DKPTable, { player=player, class=tempClass, dkp=dkp, previous_dkp=0, lifetime_gained=gained, lifetime_spent=spent, rank=10, rankName="None", spec=L["NOSPECREPORTED"], role=L["NOROLEDETECTED"], })
+				if not MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), tempName, "player") then
+					tinsert(MonDKP:GetTable(MonDKP_Player_DKPTable, true), { player=player, class=tempClass, dkp=dkp, previous_dkp=0, lifetime_gained=gained, lifetime_spent=spent, rank=10, rankName="None", spec=L["NOSPECREPORTED"], role=L["NOROLEDETECTED"], })
 					MonDKP:FilterDKPTable(core.currentSort, "reset")
 					MonDKP:ClassGraph_Update()
 					created = true
@@ -53,7 +53,7 @@ function MonDKP_Profile_Create(player, dkp, gained, spent)
 	end
 
 	if not created then
-		tinsert(MonDKP_DKPTable, { player=player, class=class, dkp=dkp, previous_dkp=0, lifetime_gained=gained, lifetime_spent=spent, rank=10, rankName="None", spec=L["NOSPECREPORTED"], role=L["NOROLEDETECTED"], })
+		tinsert(MonDKP:GetTable(MonDKP_Player_DKPTable, true), { player=player, class=class, dkp=dkp, previous_dkp=0, lifetime_gained=gained, lifetime_spent=spent, rank=10, rankName="None", spec=L["NOSPECREPORTED"], role=L["NOROLEDETECTED"], })
 	end
 
 	return created
@@ -208,23 +208,19 @@ function MonDKP_BroadcastFull_Init()
 
 	core.Broadcast.confirmButton:SetScript("OnClick", function()
 		local tempTable
-		
 		if core.Broadcast.mergeCheckbox:GetChecked() == false and core.Broadcast.fullCheckbox:GetChecked() == false then
 			MonDKP:Print(L["BROADCASTWHICHDATA"])
 			return
 		end
-
 		if core.Broadcast.playerCheckbox:GetChecked() == true and player == nil then
 			MonDKP:Print(L["PLAYERVALIDATE"])
 			return
 		end
-
 		if core.Broadcast.fullCheckbox:GetChecked() == true then
-			tempTable = { DKPTable=MonDKP_DKPTable, DKP=MonDKP_DKPHistory, Loot=MonDKP_Loot, Archive=MonDKP_Archive, MinBids=MonDKP_MinBids }
+			tempTable = { DKPTable=MonDKP:GetTable(MonDKP_Player_DKPTable, true), DKP=MonDKP:GetTable(MonDKP_Player_DKPHistory, true), Loot=MonDKP:GetTable(MonDKP_Player_Loot, true), Archive=MonDKP:GetTable(MonDKP_Player_Archive, true), MinBids=MonDKP:GetTable(MonDKP_Player_MinBids, true) }
 		elseif core.Broadcast.mergeCheckbox:GetChecked() == true then
 			tempTable = MonDKP_MergeTable_Create()
 		end
-
 		if core.Broadcast.playerCheckbox:GetChecked() == true and player ~= nil then
 			if core.Broadcast.mergeCheckbox:GetChecked() == true then
 			 	MonDKP.Sync:SendData("MonDKPMerge", tempTable, player)
@@ -239,8 +235,8 @@ function MonDKP_BroadcastFull_Init()
 					OnAccept = function()
 						MonDKP.Sync:SendData("MonDKPAllTabs", tempTable, player)
 						core.Broadcast:Hide()
-						MonDKP_DKPHistory.seed = 0
-						MonDKP_Loot.seed = 0
+						MonDKP:GetTable(MonDKP_Player_DKPHistory, true).seed = 0
+						MonDKP:GetTable(MonDKP_Player_Loot, true).seed = 0
 						MonDKP_BroadcastFull_Status()
 					end,
 					timeout = 0,
@@ -264,8 +260,8 @@ function MonDKP_BroadcastFull_Init()
 					OnAccept = function()
 						MonDKP.Sync:SendData("MonDKPAllTabs", tempTable, player)
 						core.Broadcast:Hide()
-						MonDKP_DKPHistory.seed = 0
-						MonDKP_Loot.seed = 0
+						MonDKP:GetTable(MonDKP_Player_DKPHistory, true).seed = 0
+						MonDKP:GetTable(MonDKP_Player_Loot, true).seed = 0
 						MonDKP_BroadcastFull_Status()
 					end,
 					timeout = 0,
@@ -277,7 +273,6 @@ function MonDKP_BroadcastFull_Init()
 			end
 		end
 	end)
-
 	core.Broadcast.cancelButton:SetScript("OnClick", function()
 		core.Broadcast:Hide()
 	end)
@@ -466,8 +461,8 @@ end
 function MonDKP_SyncDeleted()
 	local deleted = {}
 
-	for k,v in pairs(MonDKP_Archive) do
-		if MonDKP_Archive[k].deleted then
+	for k,v in pairs(MonDKP:GetTable(MonDKP_Player_Archive, true)) do
+		if MonDKP:GetTable(MonDKP_Player_Archive, true)[k].deleted then
 			table.insert(deleted, { player=k, deleted=v.deleted, edited=v.edited })
 		end
 	end
@@ -482,24 +477,24 @@ function MonDKP_MergeTable_Create()
 	local tempLoot = {}
 	local profiles = {}
 
-	for i=1, #MonDKP_DKPHistory do
-		if MonDKP_DKPHistory[i].date > (time() - 1209600) and MonDKP_DKPHistory[i].date > MonDKP_DB.defaults.installed210 then
-			table.insert(tempDKP, MonDKP_DKPHistory[i])
+	for i=1, #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) do
+		if MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].date > (time() - 1209600) and MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].date > core.DB.defaults.installed210 then
+			table.insert(tempDKP, MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i])
 		else
 			break
 		end
 	end
 
-	for i=1, #MonDKP_Loot do
-		if MonDKP_Loot[i].date > (time() - 1209600) and MonDKP_Loot[i].date > MonDKP_DB.defaults.installed210 then
-			table.insert(tempLoot, MonDKP_Loot[i])
+	for i=1, #MonDKP:GetTable(MonDKP_Player_Loot, true) do
+		if MonDKP:GetTable(MonDKP_Player_Loot, true)[i].date > (time() - 1209600) and MonDKP:GetTable(MonDKP_Player_Loot, true)[i].date > core.DB.defaults.installed210 then
+			table.insert(tempLoot, MonDKP:GetTable(MonDKP_Player_Loot, true)[i])
 		else
 			break
 		end
 	end
 
-	for i=1, #MonDKP_DKPTable do
-		table.insert(profiles, { player=MonDKP_DKPTable[i].player, class=MonDKP_DKPTable[i].class })
+	for i=1, #MonDKP:GetTable(MonDKP_Player_DKPTable, true) do
+		table.insert(profiles, { player=MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].player, class=MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].class })
 	end
 
 	local tempTable = { DKP=tempDKP, Loot=tempLoot, Profiles=profiles }

@@ -122,7 +122,6 @@ function MonDKP:ConfigMenuTabs()
 	---------------------------------------
 	-- TabMenu
 	---------------------------------------
-
 	MonDKP.UIConfig.TabMenu = CreateFrame("Frame", "MonDKPMonDKP.ConfigTabMenu", MonDKP.UIConfig);
 	MonDKP.UIConfig.TabMenu:SetPoint("TOPRIGHT", MonDKP.UIConfig, "TOPRIGHT", -25, -25); --Moves the entire tabframe (defaults -25, -25)
 	MonDKP.UIConfig.TabMenu:SetSize(535, 510);  --default: 477,510
@@ -158,7 +157,6 @@ function MonDKP:ConfigMenuTabs()
 	---------------------------------------
 	-- MENU TAB 1
 	---------------------------------------
-
 	MonDKP.ConfigTab1.text = MonDKP.ConfigTab1:CreateFontString(nil, "OVERLAY")   -- Filters header
 	MonDKP.ConfigTab1.text:ClearAllPoints();
 	MonDKP.ConfigTab1.text:SetFontObject("MonDKPLargeCenter")
@@ -246,19 +244,16 @@ function MonDKP:ConfigMenuTabs()
 	---------------------------------------
 	-- Adjust DKP TAB
 	---------------------------------------
-
 	MonDKP:AdjustDKPTab_Create()
 
 	---------------------------------------
 	-- Price  TAB
 	---------------------------------------
-
 	MonDKP:PriceTab_Create()
 
 	---------------------------------------
 	-- Manage DKP TAB
 	---------------------------------------
-
 	MonDKP.ConfigTab3.header = MonDKP.ConfigTab3:CreateFontString(nil, "OVERLAY")
 	MonDKP.ConfigTab3.header:ClearAllPoints();
 	MonDKP.ConfigTab3.header:SetFontObject("MonDKPLargeCenter");
@@ -272,39 +267,33 @@ function MonDKP:ConfigMenuTabs()
 	---------------------------------------
 	-- Loot History TAB
 	---------------------------------------
-
 	MonDKP.ConfigTab5.text = MonDKP.ConfigTab5:CreateFontString(nil, "OVERLAY")
 	MonDKP.ConfigTab5.text:ClearAllPoints();
 	MonDKP.ConfigTab5.text:SetFontObject("MonDKPLargeLeft");
 	MonDKP.ConfigTab5.text:SetPoint("TOPLEFT", MonDKP.ConfigTab5, "TOPLEFT", 15, -10);
 	MonDKP.ConfigTab5.text:SetText(L["LOOTHISTORY"]);
 	MonDKP.ConfigTab5.text:SetScale(1.2)
-
 	MonDKP.ConfigTab5.inst = MonDKP.ConfigTab5:CreateFontString(nil, "OVERLAY")
 	MonDKP.ConfigTab5.inst:ClearAllPoints();
 	MonDKP.ConfigTab5.inst:SetFontObject("MonDKPSmallRight");
 	MonDKP.ConfigTab5.inst:SetTextColor(0.3, 0.3, 0.3, 0.7)
 	MonDKP.ConfigTab5.inst:SetPoint("TOPRIGHT", MonDKP.ConfigTab5, "TOPRIGHT", -40, -43);
 	MonDKP.ConfigTab5.inst:SetText(L["LOOTHISTINST1"]);
-
 	-- Populate Loot History (LootHistory.lua)
 	local looter = {}
 	MonDKP.ConfigTab5.looter = looter
 	local lootFrame = {}
 	MonDKP.ConfigTab5.lootFrame = lootFrame
 	for i=1, #MonDKP:GetTable(MonDKP_Player_Loot, true) do
-	MonDKP.ConfigTab5.lootFrame[i] = CreateFrame("Frame", "MonDKPLootHistoryFrame"..i, MonDKP.ConfigTab5);
+		MonDKP.ConfigTab5.lootFrame[i] = CreateFrame("Frame", "MonDKPLootHistoryFrame"..i, MonDKP.ConfigTab5);
 	end
-
 	if #MonDKP:GetTable(MonDKP_Player_Loot, true) > 0 then
 		MonDKP:LootHistory_Update(L["NOFILTER"])
 		CreateSortBox();
 	end
-
 	---------------------------------------
 	-- DKP History Tab
 	---------------------------------------
-
 	MonDKP.ConfigTab6.text = MonDKP.ConfigTab6:CreateFontString(nil, "OVERLAY")
 	MonDKP.ConfigTab6.text:ClearAllPoints();
 	MonDKP.ConfigTab6.text:SetFontObject("MonDKPLargeLeft");
@@ -317,11 +306,9 @@ function MonDKP:ConfigMenuTabs()
 	MonDKP.ConfigTab6.inst:SetFontObject("MonDKPSmallRight");
 	MonDKP.ConfigTab6.inst:SetTextColor(0.3, 0.3, 0.3, 0.7)
 	MonDKP.ConfigTab6.inst:SetPoint("TOPRIGHT", MonDKP.ConfigTab6, "TOPRIGHT", -40, -43);
-	
 	if #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) > 0 then
 		MonDKP:DKPHistory_Update()
 	end
 	DKPHistoryFilterBox_Create()
-
 end
 	

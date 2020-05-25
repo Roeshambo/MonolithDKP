@@ -7,23 +7,23 @@ local function ZeroSumDistribution()
 	if IsInRaid() and core.IsOfficer then
 		local curTime = time();
 		local distribution, balance;
-		local reason = MonDKP_DB.bossargs.CurrentRaidZone..": "..MonDKP_DB.bossargs.LastKilledBoss
+		local reason = core.DB.bossargs.CurrentRaidZone..": "..core.DB.bossargs.LastKilledBoss
 		local players = "";
 		local VerifyTable = {};
 		local curOfficer = UnitName("player")
 
-		if MonDKP_DB.modes.ZeroSumStandby then
-			for i=1, #MonDKP_Standby do
-				tinsert(VerifyTable, MonDKP_Standby[i].player)
+		if core.DB.modes.ZeroSumStandby then
+			for i=1, #MonDKP:GetTable(MonDKP_Player_Standby, true) do
+				tinsert(VerifyTable, MonDKP:GetTable(MonDKP_Player_Standby, true)[i].player)
 			end
 		end		
 
 		for i=1, 40 do
 			local tempName, _rank, _subgroup, _level, _class, _fileName, zone, online = GetRaidRosterInfo(i)
 			local search = MonDKP:Table_Search(VerifyTable, tempName)
-			local search2 = MonDKP:Table_Search(MonDKP_DKPTable, tempName)
-			local OnlineOnly = MonDKP_DB.modes.OnlineOnly
-			local limitToZone = MonDKP_DB.modes.SameZoneOnly
+			local search2 = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), tempName)
+			local OnlineOnly = core.DB.modes.OnlineOnly
+			local limitToZone = core.DB.modes.SameZoneOnly
 			local isSameZone = zone == GetRealZoneText()
 
 			if not search and search2 and (not OnlineOnly or online) and (not limitToZone or isSameZone) then
@@ -32,34 +32,34 @@ local function ZeroSumDistribution()
 		end
 
 		balance = tonumber(core.ZeroSumBank.Balance:GetText())
-		distribution = MonDKP_round(balance / #VerifyTable, MonDKP_DB.modes.rounding) + MonDKP_DB.modes.Inflation
+		distribution = MonDKP_round(balance / #VerifyTable, core.DB.modes.rounding) + core.DB.modes.Inflation
 
 		for i=1, #VerifyTable do
 			local name = VerifyTable[i]
-			local search = MonDKP:Table_Search(MonDKP_DKPTable, name)
+			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), name)
 
 			if search then
-				MonDKP_DKPTable[search[1][1]].dkp = MonDKP_DKPTable[search[1][1]].dkp + distribution
+				MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp + distribution
 				players = players..name..","
 			end
 		end
 		
 		local newIndex = curOfficer.."-"..curTime
-		tinsert(MonDKP_DKPHistory, 1, {players=players, dkp=distribution, reason=reason, date=curTime, index=newIndex})
+		tinsert(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), 1, {players=players, dkp=distribution, reason=reason, date=curTime, index=newIndex})
 		if MonDKP.ConfigTab6.history then
 			MonDKP:DKPHistory_Update(true)
 		end
 
-		MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP_DKPHistory[1])
+		MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[1])
 		MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..distribution.." "..L["AMONG"].." "..#VerifyTable.." "..L["PLAYERSFORREASON"]..": "..reason)
 		MonDKP:Print("Raid DKP Adjusted by "..distribution.." "..L["AMONG"].." "..#VerifyTable.." "..L["PLAYERSFORREASON"]..": "..reason)
 		
 		table.wipe(VerifyTable)
-		table.wipe(MonDKP_DB.modes.ZeroSumBank)
-		MonDKP_DB.modes.ZeroSumBank.balance = 0
+		table.wipe(core.DB.modes.ZeroSumBank)
+		core.DB.modes.ZeroSumBank.balance = 0
 		core.ZeroSumBank.LootFrame.LootList:SetText("")
 		DKPTable_Update()
-		MonDKP.Sync:SendData("MonDKPZSumBank", MonDKP_DB.modes.ZeroSumBank)
+		MonDKP.Sync:SendData("MonDKPZSumBank", core.DB.modes.ZeroSumBank)
 		MonDKP:ZeroSumBank_Update()
 		core.ZeroSumBank:Hide();
 	else
@@ -68,14 +68,14 @@ local function ZeroSumDistribution()
 end
 
 function MonDKP:ZeroSumBank_Update()
-	core.ZeroSumBank.Boss:SetText(MonDKP_DB.bossargs.LastKilledBoss.." in "..MonDKP_DB.bossargs.CurrentRaidZone)
-	core.ZeroSumBank.Balance:SetText(MonDKP_DB.modes.ZeroSumBank.balance)
+	core.ZeroSumBank.Boss:SetText(core.DB.bossargs.LastKilledBoss.." in "..core.DB.bossargs.CurrentRaidZone)
+	core.ZeroSumBank.Balance:SetText(core.DB.modes.ZeroSumBank.balance)
 
-	for i=1, #MonDKP_DB.modes.ZeroSumBank do
+	for i=1, #core.DB.modes.ZeroSumBank do
  		if i==1 then
- 			core.ZeroSumBank.LootFrame.LootList:SetText(MonDKP_DB.modes.ZeroSumBank[i].loot.." "..L["FOR"].." "..MonDKP_DB.modes.ZeroSumBank[i].cost.." "..L["DKP"].."\n")
+ 			core.ZeroSumBank.LootFrame.LootList:SetText(core.DB.modes.ZeroSumBank[i].loot.." "..L["FOR"].." "..core.DB.modes.ZeroSumBank[i].cost.." "..L["DKP"].."\n")
  		else
- 			core.ZeroSumBank.LootFrame.LootList:SetText(core.ZeroSumBank.LootFrame.LootList:GetText()..MonDKP_DB.modes.ZeroSumBank[i].loot.." "..L["FOR"].." "..MonDKP_DB.modes.ZeroSumBank[i].cost.." "..L["DKP"].."\n")
+ 			core.ZeroSumBank.LootFrame.LootList:SetText(core.ZeroSumBank.LootFrame.LootList:GetText()..core.DB.modes.ZeroSumBank[i].loot.." "..L["FOR"].." "..core.DB.modes.ZeroSumBank[i].cost.." "..L["DKP"].."\n")
  		end
  	end
  	
@@ -88,7 +88,7 @@ end
 function MonDKP:ZeroSumBank_Create()
 	local f = CreateFrame("Frame", "MonDKP_DKPZeroSumBankFrame", UIParent, "ShadowOverlaySmallTemplate");
 
-	if not MonDKP_DB.modes.ZeroSumBank then MonDKP_DB.modes.ZeroSumBank = 0 end
+	if not core.DB.modes.ZeroSumBank then core.DB.modes.ZeroSumBank = 0 end
 
 	f:SetPoint("TOP", UIParent, "TOP", 400, -50);
 	f:SetSize(325, 350);
@@ -180,7 +180,7 @@ function MonDKP:ZeroSumBank_Create()
 	f.Distribute:SetNormalFontObject("MonDKPSmallCenter");
 	f.Distribute:SetHighlightFontObject("MonDKPSmallCenter");
 	f.Distribute:SetScript("OnClick", function (self)
-		if MonDKP_DB.modes.ZeroSumBank.balance > 0 or tonumber(f.Balance:GetText()) > 0 then
+		if core.DB.modes.ZeroSumBank.balance > 0 or tonumber(f.Balance:GetText()) > 0 then
 			StaticPopupDialogs["CONFIRM_ADJUST1"] = {
 				text = L["DISTRIBUTEALLDKPCONF"],
 				button1 = L["YES"],
@@ -210,14 +210,14 @@ function MonDKP:ZeroSumBank_Create()
 
 	-- Include Standby Checkbox
 	f.IncludeStandby = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
-	f.IncludeStandby:SetChecked(MonDKP_DB.modes.ZeroSumStandby)
+	f.IncludeStandby:SetChecked(core.DB.modes.ZeroSumStandby)
 	f.IncludeStandby:SetScale(0.6);
 	f.IncludeStandby.text:SetText("  |cff5151de"..L["INCLUDESTANDBY"].."|r");
 	f.IncludeStandby.text:SetScale(1.5);
 	f.IncludeStandby.text:SetFontObject("MonDKPSmallLeft")
 	f.IncludeStandby:SetPoint("TOPLEFT", f.Distribute, "BOTTOMLEFT", -15, -10);
 	f.IncludeStandby:SetScript("OnClick", function(self)
-		MonDKP_DB.modes.ZeroSumStandby = self:GetChecked();
+		core.DB.modes.ZeroSumStandby = self:GetChecked();
 		PlaySound(808)
 	end)
 	f.IncludeStandby:SetScript("OnEnter", function(self)

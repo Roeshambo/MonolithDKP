@@ -82,7 +82,7 @@ end
 function MonDKP:Options()
   local default = {}
   MonDKP.ConfigTab4.default = default;
-
+  MonDKP:CheckOfficer()
   MonDKP.ConfigTab4.header = MonDKP.ConfigTab4:CreateFontString(nil, "OVERLAY")
   MonDKP.ConfigTab4.header:SetFontObject("MonDKPLargeCenter");
   MonDKP.ConfigTab4.header:SetPoint("TOPLEFT", MonDKP.ConfigTab4, "TOPLEFT", 15, -10);
@@ -178,7 +178,6 @@ function MonDKP:Options()
     if not core.IsOfficer then
       MonDKP.ConfigTab4.ModesButton:Hide()
     end
-
     MonDKP.ConfigTab4.default[1]:SetText(core.DB.DKPBonus.OnTimeBonus)
     MonDKP.ConfigTab4.default[1].tooltipText = L["ONTIMEBONUS"]
     MonDKP.ConfigTab4.default[1].tooltipDescription = L["ONTIMEBONUSTTDESC"]
@@ -256,7 +255,6 @@ function MonDKP:Options()
     MonDKP.ConfigTab4.DefaultMinBids.description = MonDKP.ConfigTab4.DefaultMinBids:CreateFontString(nil, "OVERLAY")
     MonDKP.ConfigTab4.DefaultMinBids.description:SetFontObject("MonDKPSmallRight");
     MonDKP.ConfigTab4.DefaultMinBids.description:SetPoint("TOPLEFT", MonDKP.ConfigTab4.DefaultMinBids, "TOPLEFT", 15, 15);
-
       -- DEFAULT min bids Create EditBoxes
       local SlotBox = {}
       MonDKP.ConfigTab4.DefaultMinBids.SlotBox = SlotBox;
@@ -357,7 +355,6 @@ function MonDKP:Options()
       end
 
       local prefix;
-
       if core.DB.modes.mode == "Minimum Bid Values" then
         prefix = L["MINIMUMBID"];
         MonDKP.ConfigTab4.DefaultMinBids.description:SetText("|CFFcca600"..L["DEFAULTMINBIDVALUES"].."|r");
@@ -383,7 +380,6 @@ function MonDKP:Options()
           prefix = L["PERCENTCOST"]
         end
       end
-
       MonDKP.ConfigTab4.DefaultMinBids.SlotBox[1].Header:SetText(L["HEAD"]..": ")
       MonDKP.ConfigTab4.DefaultMinBids.SlotBox[1]:SetText(core.DB.MinBidBySlot.Head)
       MonDKP.ConfigTab4.DefaultMinBids.SlotBox[1].tooltipText = L["HEAD"]
@@ -475,7 +471,6 @@ function MonDKP:Options()
           MonDKP.ConfigTab4.DefaultMinBids.SlotBox[i]:SetTextInsets(0, 15, 0, 0)
         end
       end
-
       -- Broadcast Minimum Bids Button
       MonDKP.ConfigTab4.BroadcastMinBids = self:CreateButton("TOP", MonDKP.ConfigTab4, "BOTTOM", 30, 30, L["BCASTVALUES"]);
       MonDKP.ConfigTab4.BroadcastMinBids:ClearAllPoints();
@@ -510,7 +505,6 @@ function MonDKP:Options()
       MonDKP.ConfigTab4.BroadcastMinBids:SetScript("OnLeave", function()
         GameTooltip:Hide()
       end)
-    
     -- Default Maximum Bids Container Frame
     if core.DB.modes.mode == "Minimum Bid Values" or (core.DB.modes.mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
       MonDKP.ConfigTab4.DefaultMaxBids = CreateFrame("Frame", nil, MonDKP.ConfigTab4);
@@ -716,7 +710,6 @@ function MonDKP:Options()
           MonDKP.ConfigTab4.DefaultMaxBids.SlotBox[i]:SetTextInsets(0, 15, 0, 0)
         end
       end
-
       -- Broadcast Maximum Bids Button
       MonDKP.ConfigTab4.BroadcastMaxBids = self:CreateButton("TOP", MonDKP.ConfigTab4, "BOTTOM", 30, 30, L["BCASTVALUES"]);
       MonDKP.ConfigTab4.BroadcastMaxBids:ClearAllPoints();
@@ -1266,23 +1259,23 @@ function MonDKP:Options()
       button1 = L["YES"],
       button2 = L["NO"],
       OnAccept = function()
-        MonDKP:GetTable(MonDKP_Player_Whitelist) = nil
-        MonDKP:GetTable(MonDKP_Player_DKPTable, true) = nil
-        MonDKP:GetTable(MonDKP_Player_Loot, true) = nil
-        MonDKP:GetTable(MonDKP_Player_DKPHistory, true) = nil
-        MonDKP:GetTable(MonDKP_Player_Archive, true) = nil
-        MonDKP:GetTable(MonDKP_Player_Standby, true) = nil
-        MonDKP:GetTable(MonDKP_Player_MinBids, true) = nil
-        MonDKP:GetTable(MonDKP_Player_MaxBids, true) = nil
+        MonDKP:SetTable(MonDKP_Player_Whitelist, false, nil);
+        MonDKP:SetTable(MonDKP_Player_DKPTable, true, nil);
+        MonDKP:SetTable(MonDKP_Player_Loot, true, nil);
+        MonDKP:SetTable(MonDKP_Player_DKPHistory, true, nil);
+        MonDKP:SetTable(MonDKP_Player_Archive, true, nil);
+        MonDKP:SetTable(MonDKP_Player_Standby, true, nil);
+        MonDKP:SetTable(MonDKP_Player_MinBids, true, nil);
+        MonDKP:SetTable(MonDKP_Player_MaxBids, true, nil);
 
-        MonDKP:GetTable(MonDKP_Player_DKPTable, true) = {}
-        MonDKP:GetTable(MonDKP_Player_Loot, true) = {}
-        MonDKP:GetTable(MonDKP_Player_DKPHistory, true) = {}
-        MonDKP:GetTable(MonDKP_Player_Archive, true) = {}
-        MonDKP:GetTable(MonDKP_Player_Whitelist) = {}
-        MonDKP:GetTable(MonDKP_Player_Standby, true) = {}
-        MonDKP:GetTable(MonDKP_Player_MinBids, true) = {}
-        MonDKP:GetTable(MonDKP_Player_MaxBids, true) = {}
+        MonDKP:SetTable(MonDKP_Player_DKPTable, true, {});
+        MonDKP:SetTable(MonDKP_Player_Loot, true, {});
+        MonDKP:SetTable(MonDKP_Player_DKPHistory, true, {});
+        MonDKP:SetTable(MonDKP_Player_Archive, true, {});
+        MonDKP:SetTable(MonDKP_Player_Whitelist, false, {});
+        MonDKP:SetTable(MonDKP_Player_Standby, true, {});
+        MonDKP:SetTable(MonDKP_Player_MinBids, true, {});
+        MonDKP:SetTable(MonDKP_Player_MaxBids, true, {});
         MonDKP:LootHistory_Reset()
         MonDKP:FilterDKPTable(core.currentSort, "reset")
         MonDKP:StatusVerify_Update()
@@ -1299,4 +1292,5 @@ function MonDKP:Options()
   MonDKP.ConfigTab4.OptionsFooterFrame = CreateFrame("Frame", nil, MonDKP.ConfigTab4);
   MonDKP.ConfigTab4.OptionsFooterFrame:SetPoint("TOPLEFT", MonDKP.ConfigTab4.moveTimer, "BOTTOMLEFT")
   MonDKP.ConfigTab4.OptionsFooterFrame:SetSize(420, 50);
+  
 end

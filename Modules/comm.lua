@@ -319,11 +319,11 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                   button1 = L["YES"],
                   button2 = L["NO"],
                   OnAccept = function()
-                    MonDKP:GetTable(MonDKP_Player_DKPTable, true) = deserialized.DKPTable
-                    MonDKP:GetTable(MonDKP_Player_DKPHistory, true) = deserialized.DKP
-                    MonDKP:GetTable(MonDKP_Player_Loot, true) = deserialized.Loot
-                    MonDKP:GetTable(MonDKP_Player_Archive, true) = deserialized.Archive
-                    MonDKP:GetTable(MonDKP_Player_MinBids, true) = deserialized.MinBids
+                    MonDKP:SetTable(MonDKP_Player_DKPTable, true, deserialized.DKPTable);
+                    MonDKP:SetTable(MonDKP_Player_DKPHistory, true, deserialized.DKP);
+                    MonDKP:SetTable(MonDKP_Player_Loot, true, deserialized.Loot);
+                    MonDKP:SetTable(MonDKP_Player_Archive, true, deserialized.Archive);
+                    MonDKP:SetTable(MonDKP_Player_MinBids, true, deserialized.MinBids);
                     
                     if MonDKP.ConfigTab6 and MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
                       MonDKP:DKPHistory_Update(true)
@@ -349,12 +349,12 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 }
                 StaticPopup_Show ("FULL_TABS_ALERT")
               else
-                MonDKP:GetTable(MonDKP_Player_DKPTable, true) = deserialized.DKPTable
-                MonDKP:GetTable(MonDKP_Player_DKPHistory, true) = deserialized.DKP
-                MonDKP:GetTable(MonDKP_Player_Loot, true) = deserialized.Loot
-                MonDKP:GetTable(MonDKP_Player_MinBids, true) = deserialized.MinBids
-                MonDKP:GetTable(MonDKP_Player_Archive, true) = deserialized.Archive
-                
+                MonDKP:SetTable(MonDKP_Player_DKPTable, true, deserialized.DKPTable);
+                MonDKP:SetTable(MonDKP_Player_DKPHistory, true, deserialized.DKP);
+                MonDKP:SetTable(MonDKP_Player_Loot, true, deserialized.Loot);
+                MonDKP:SetTable(MonDKP_Player_Archive, true, deserialized.Archive);
+                MonDKP:SetTable(MonDKP_Player_MinBids, true, deserialized.MinBids);
+            
                 if MonDKP.ConfigTab6 and MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
                   MonDKP:DKPHistory_Update(true)
                 elseif MonDKP.ConfigTab5 and MonDKP.ConfigTab5:IsShown() then
@@ -712,9 +712,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 end
               end
             elseif prefix == "MonDKPWhitelist" and MonDKP:GetGuildRankIndex(UnitName("player")) > 1 then -- only applies if not GM
-              MonDKP:GetTable(MonDKP_Player_Whitelist) = deserialized;
+              MonDKP:SetTable(MonDKP_Player_Whitelist, false, deserialized);
             elseif prefix == "MonDKPStand" then
-              MonDKP:GetTable(MonDKP_Player_Standby,true) = deserialized;
+              MonDKP:GetTable(MonDKP_Player_Standby,true, deserialized);
             elseif prefix == "MonDKPSetPrice" then
               local mode = core.DB.modes.mode;
 

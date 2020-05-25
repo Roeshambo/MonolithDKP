@@ -63,7 +63,7 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
 		MonDKP:ViewLimited()
 	end
 
-	core.MonDKPUI:SetScale(core.DB.defaults.MonDKPScaleSize)
+	core.MonDKPUI:SetScale(MonDKP_DB.defaults.MonDKPScaleSize)
 	if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
 		MonDKP:DKPHistory_Update(true)
 	elseif MonDKP.ConfigTab5 and MonDKP.ConfigTab5:IsShown() then
@@ -260,7 +260,6 @@ function MonDKP:CreateMenu()
 	MonDKP.UIConfig.closeBtn = CreateFrame("Button", nil, MonDKP.UIConfig, "UIPanelCloseButton")
 	MonDKP.UIConfig.closeBtn:SetPoint("CENTER", MonDKP.UIConfig.closeContainer, "TOPRIGHT", -14, -14)
 	tinsert(UISpecialFrames, MonDKP.UIConfig:GetName()); -- Sets frame to close on "Escape"
-
 	---------------------------------------
 	-- Create and Populate Tab Menu and DKP Table
 	---------------------------------------
@@ -271,7 +270,6 @@ function MonDKP:CreateMenu()
 	---------------------------------------
 	-- DKP Table Header and Sort Buttons
 	---------------------------------------
-
 	MonDKP.DKPTable_Headers = CreateFrame("Frame", "MonDKPDKPTableHeaders", MonDKP.UIConfig)
 	MonDKP.DKPTable_Headers:SetSize(500, 22)
 	MonDKP.DKPTable_Headers:SetPoint("BOTTOMLEFT", MonDKP.DKPTable, "TOPLEFT", 0, 1)
@@ -286,7 +284,6 @@ function MonDKP:CreateMenu()
 	---------------------------------------
 	-- Sort Buttons
 	--------------------------------------- 
-
 	SortButtons.player = CreateFrame("Button", "$ParentSortButtonPlayer", MonDKP.DKPTable_Headers)
 	SortButtons.class = CreateFrame("Button", "$ParentSortButtonClass", MonDKP.DKPTable_Headers)
 	SortButtons.dkp = CreateFrame("Button", "$ParentSortButtonDkp", MonDKP.DKPTable_Headers)
@@ -357,7 +354,7 @@ function MonDKP:CreateMenu()
 	SortButtons.dkp.t = SortButtons.dkp:CreateFontString(nil, "OVERLAY")
 	SortButtons.dkp.t:SetFontObject("MonDKPNormal")
 	SortButtons.dkp.t:SetTextColor(1, 1, 1, 1);
-	if core.DB.modes.mode == "Roll Based Bidding" then
+	if MonDKP_DB.modes.mode == "Roll Based Bidding" then
 		SortButtons.dkp.t:SetPoint("RIGHT", SortButtons.dkp, "RIGHT", -50, 0);
 		SortButtons.dkp.t:SetText(L["TOTALDKP"]);
 
@@ -371,7 +368,6 @@ function MonDKP:CreateMenu()
 		SortButtons.dkp.t:SetPoint("CENTER", SortButtons.dkp, "CENTER", 20, 0);
 		SortButtons.dkp.t:SetText(L["TOTALDKP"]);
 	end
-
 	----- Counter below DKP Table
 	MonDKP.DKPTable.counter = CreateFrame("Frame", "MonDKPDisplayFrameCounter", MonDKP.UIConfig);
 	MonDKP.DKPTable.counter:SetPoint("TOP", MonDKP.DKPTable, "BOTTOM", 0, 0)
@@ -390,7 +386,6 @@ function MonDKP:CreateMenu()
 	------------------------------
 	-- Search Box
 	------------------------------
-
 	MonDKP.UIConfig.search = CreateFrame("EditBox", nil, MonDKP.UIConfig)
 	MonDKP.UIConfig.search:SetPoint("BOTTOMLEFT", MonDKP.UIConfig, "BOTTOMLEFT", 50, 18)
 	MonDKP.UIConfig.search:SetAutoFocus(false)
@@ -454,7 +449,6 @@ function MonDKP:CreateMenu()
 	---------------------------------------
 	-- Expand / Collapse Arrow
 	---------------------------------------
-
 	MonDKP.UIConfig.expand = CreateFrame("Frame", "MonDKPTitle", MonDKP.UIConfig)
 	MonDKP.UIConfig.expand:SetPoint("LEFT", MonDKP.UIConfig, "RIGHT", 0, 0)
 	MonDKP.UIConfig.expand:SetBackdrop({
@@ -506,7 +500,7 @@ function MonDKP:CreateMenu()
 	---------------------------------------
 	-- CHANGE LOG WINDOW
 	---------------------------------------
-	if core.DB.defaults.HideChangeLogs < core.BuildNumber then
+	if MonDKP_DB.defaults.HideChangeLogs < core.BuildNumber then
 		MonDKP.ChangeLogDisplay = CreateFrame("Frame", "MonDKP_ChangeLogDisplay", UIParent, "ShadowOverlaySmallTemplate");
 
 		MonDKP.ChangeLogDisplay:SetPoint("TOP", UIParent, "TOP", 0, -200);
@@ -574,9 +568,9 @@ function MonDKP:CreateMenu()
 		MonDKP.ChangeLogDisplay.DontShowCheck:SetPoint("LEFT", MonDKP.ChangeLogDisplay.ChangeLogHeader, "RIGHT", 10, 0);
 		MonDKP.ChangeLogDisplay.DontShowCheck:SetScript("OnClick", function(self)
 			if self:GetChecked() then
-				core.DB.defaults.HideChangeLogs = core.BuildNumber
+				MonDKP_DB.defaults.HideChangeLogs = core.BuildNumber
 			else
-				core.DB.defaults.HideChangeLogs = 0
+				MonDKP_DB.defaults.HideChangeLogs = 0
 			end
 		end)
 
@@ -607,6 +601,5 @@ function MonDKP:CreateMenu()
 	MonDKP.UIConfig:Hide(); -- hide menu after creation until called.
 	MonDKP:FilterDKPTable(core.currentSort)   -- initial sort and populates data values in DKPTable.Rows{} MonDKP:FilterDKPTable() -> MonDKP:SortDKPTable() -> DKPTable_Update()
 	core.Initialized = true
-	
 	return MonDKP.UIConfig;
 end
