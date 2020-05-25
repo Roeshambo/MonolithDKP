@@ -6,26 +6,26 @@ local L = core.L;
 local function SetItemPrice(cost, loot)
 	local itemName,itemLink,_,_,_,_,_,_,_,itemIcon = GetItemInfo(loot)
 	local cost = cost;
-	local mode = MonDKP_DB.modes.mode;
+	local mode = core.DB.modes.mode;
 
-	if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
-		local search = MonDKP:Table_Search(MonDKP_MinBids, itemName)
+	if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
+		local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_MinBids, true), itemName)
 		local newItem = {item=itemName, minbid=cost, link=itemLink, icon=itemIcon, disenchants=0}
 
 		if not search then
-			tinsert(MonDKP_MinBids, newItem)
+			tinsert(MonDKP:GetTable(MonDKP_Player_MinBids, true), newItem)
 		elseif search then
-			if MonDKP_MinBids[search[1][1]].minbid ~= itemName then
-				MonDKP_MinBids[search[1][1]].minbid = MonDKP_round(cost, MonDKP_DB.modes.rounding);
-				MonDKP_MinBids[search[1][1]].link = itemLink;
-				MonDKP_MinBids[search[1][1]].icon = itemIcon;
+			if MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].minbid ~= itemName then
+				MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].minbid = MonDKP_round(cost, core.DB.modes.rounding);
+				MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].link = itemLink;
+				MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].icon = itemIcon;
 				if cost == 0 then
-					MonDKP_MinBids[search[1][1]].disenchants = 0;
+					MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].disenchants = 0;
 				end
-				newItem = MonDKP_MinBids[search[1][1]];
+				newItem = MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]];
 			end
 		end
-		core.PriceTable = MonDKP_MinBids;
+		core.PriceTable = MonDKP:GetTable(MonDKP_Player_MinBids, true);
 		MonDKP:PriceTable_Update(0);
 		MonDKP.Sync:SendData("MonDKPSetPrice", newItem);
 	end
@@ -39,7 +39,7 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 	local curBoss = boss;
 	local loot = loot;
 	local BidsEntry = {};
-	local mode = MonDKP_DB.modes.mode;
+	local mode = core.DB.modes.mode;
 	local curOfficer = UnitName("player")
 	local bids;
 	local search_reassign;
@@ -47,22 +47,22 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 
 	MonDKP:StatusVerify_Update()
 	if core.IsOfficer then
-		if MonDKP_DB.modes.costvalue == "Percent" then
-			local search = MonDKP:Table_Search(MonDKP_DKPTable, winner);
+		if core.DB.modes.costvalue == "Percent" then
+			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), winner);
 
-			if MonDKP_DB.modes.mode == "Roll Based Bidding" then
+			if core.DB.modes.mode == "Roll Based Bidding" then
 				if search then
-					cost = MonDKP_DKPTable[search[1][1]].dkp * (cost / 100)
-					cost = MonDKP_round(cost, MonDKP_DB.modes.rounding);
+					cost = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp * (cost / 100)
+					cost = MonDKP_round(cost, core.DB.modes.rounding);
 				else
 					print(L["ERROR"])
 				end
 			else
-				cost = MonDKP_DKPTable[search[1][1]].dkp * (cost / 100)
-				cost = MonDKP_round(cost, MonDKP_DB.modes.rounding);
+				cost = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp * (cost / 100)
+				cost = MonDKP_round(cost, core.DB.modes.rounding);
 			end
 		else
-			cost = MonDKP_round(cost, MonDKP_DB.modes.rounding)
+			cost = MonDKP_round(cost, core.DB.modes.rounding)
 		end
 
 		if cost > 0 then
@@ -70,11 +70,11 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 		end
 
 		if reassign then
-			search_reassign = MonDKP:Table_Search(MonDKP_Loot, reassign, "index")
+			search_reassign = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_Loot, true), reassign, "index")
 
 			if search_reassign then
-				local deleted = CopyTable(MonDKP_Loot[search_reassign[1][1]])
-				local reimburse = MonDKP:Table_Search(MonDKP_DKPTable, deleted.player, "player")
+				local deleted = CopyTable(MonDKP:GetTable(MonDKP_Player_Loot, true)[search_reassign[1][1]])
+				local reimburse = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), deleted.player, "player")
 				local newIndex = curOfficer.."-"..curTime-2
 				deleted.cost = deleted.cost * -1
 				deleted.deletes = reassign
@@ -84,15 +84,15 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 					bids = CopyTable(deleted.bids);
 					deleted.bids = nil;
 				end
-				MonDKP_Loot[search_reassign[1][1]].deletedby = newIndex
-				MonDKP_DKPTable[reimburse[1][1]].dkp = MonDKP_DKPTable[reimburse[1][1]].dkp + deleted.cost
-				MonDKP_DKPTable[reimburse[1][1]].lifetime_spent = MonDKP_DKPTable[reimburse[1][1]].lifetime_spent + deleted.cost
-				table.insert(MonDKP_Loot, 1, deleted)
-				MonDKP.Sync:SendData("MonDKPDelLoot", MonDKP_Loot[1])
+				MonDKP:GetTable(MonDKP_Player_Loot, true)[search_reassign[1][1]].deletedby = newIndex
+				MonDKP:GetTable(MonDKP_Player_DKPTable, true)[reimburse[1][1]].dkp = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[reimburse[1][1]].dkp + deleted.cost
+				MonDKP:GetTable(MonDKP_Player_DKPTable, true)[reimburse[1][1]].lifetime_spent = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[reimburse[1][1]].lifetime_spent + deleted.cost
+				table.insert(MonDKP:GetTable(MonDKP_Player_Loot, true), 1, deleted)
+				MonDKP.Sync:SendData("MonDKPDelLoot", MonDKP:GetTable(MonDKP_Player_Loot, true)[1])
 			end
 		end
 
-		if MonDKP_DB.modes.StoreBids and not reassign then
+		if core.DB.modes.StoreBids and not reassign then
 			local Bids_Submitted = MonDKP:BidsSubmitted_Get();
 			local newIndex = curOfficer.."-"..curTime
 
@@ -107,41 +107,41 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 			end
 			if Bids_Submitted[1] then
 				if Bids_Submitted[1].bid then
-					tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=newIndex, bids={ }})
+					tinsert(MonDKP:GetTable(MonDKP_Player_Loot, true), 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=newIndex, bids={ }})
 					for k,v in pairs(BidsEntry) do
-						table.insert(MonDKP_Loot[1].bids, {bidder=k, bid=v});
+						table.insert(MonDKP:GetTable(MonDKP_Player_Loot, true)[1].bids, {bidder=k, bid=v});
 					end
 				elseif Bids_Submitted[1].dkp then
-					tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=newIndex, dkp={ }})
+					tinsert(MonDKP:GetTable(MonDKP_Player_Loot, true), 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=newIndex, dkp={ }})
 					for k,v in pairs(BidsEntry) do
-						table.insert(MonDKP_Loot[1].dkp, {bidder=k, dkp=v});
+						table.insert(MonDKP:GetTable(MonDKP_Player_Loot, true)[1].dkp, {bidder=k, dkp=v});
 					end
 				elseif Bids_Submitted[1].roll then
-					tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=newIndex, rolls={ }})
+					tinsert(MonDKP:GetTable(MonDKP_Player_Loot, true), 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=newIndex, rolls={ }})
 					for k,v in pairs(BidsEntry) do
-						table.insert(MonDKP_Loot[1].rolls, {bidder=k, roll=v});
+						table.insert(MonDKP:GetTable(MonDKP_Player_Loot, true)[1].rolls, {bidder=k, roll=v});
 					end
 				end
 			else
-				tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=newIndex})
+				tinsert(MonDKP:GetTable(MonDKP_Player_Loot, true), 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=newIndex})
 			end
 		else
 			local newIndex = curOfficer.."-"..curTime
-			tinsert(MonDKP_Loot, 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=newIndex})
+			tinsert(MonDKP:GetTable(MonDKP_Player_Loot, true), 1, {player=winner, loot=loot, zone=curZone, date=curTime, boss=curBoss, cost=cost, index=newIndex})
 			if reassign then
-				local search = MonDKP:Table_Search(MonDKP_Loot, reassign, "index")
+				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_Loot, true), reassign, "index")
 
-				if search and MonDKP_Loot[search[1][1]].player ~= winner then
-					MonDKP_Loot[1].reassigned = true
+				if search and MonDKP:GetTable(MonDKP_Player_Loot, true)[search[1][1]].player ~= winner then
+					MonDKP:GetTable(MonDKP_Player_Loot, true)[1].reassigned = true
 				end
 			end 
 			if type(bids) == "table" then
-				MonDKP_Loot[1].bids = bids
+				MonDKP:GetTable(MonDKP_Player_Loot, true)[1].bids = bids
 			end
 		end
 		MonDKP:BidsSubmitted_Clear()
-		MonDKP.Sync:SendData("MonDKPLootDist", MonDKP_Loot[1])
-		MonDKP:DKPTable_Set(winner, "dkp", MonDKP_round(cost, MonDKP_DB.modes.rounding), true)
+		MonDKP.Sync:SendData("MonDKPLootDist", MonDKP:GetTable(MonDKP_Player_Loot, true)[1])
+		MonDKP:DKPTable_Set(winner, "dkp", MonDKP_round(cost, core.DB.modes.rounding), true)
 		MonDKP:LootHistory_Reset();
 		MonDKP:LootHistory_Update(L["NOFILTER"])
 
@@ -159,39 +159,39 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 			MonDKP:BroadcastStopBidTimer()
 			
 			SendChatMessage(L["CONGRATS"].." "..winner.." "..L["ON"].." "..loot.." @ "..-cost.." "..L["DKP"], "RAID_WARNING")
-			if MonDKP_DB.modes.AnnounceAward then
+			if core.DB.modes.AnnounceAward then
 				SendChatMessage(L["CONGRATS"].." "..winner.." "..L["ON"].." "..loot.." @ "..-cost.." "..L["DKP"], "GUILD")
         	end
 			
-			if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
-				local search = MonDKP:Table_Search(MonDKP_MinBids, itemName)
+			if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
+				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_MinBids, true), itemName)
 				local val = MonDKP:GetMinBid(loot);
 
 				if not search and core.BiddingWindow.cost:GetNumber() ~= tonumber(val) then
-					tinsert(MonDKP_MinBids, {item=itemName, minbid=core.BiddingWindow.cost:GetNumber(), link=itemLink, icon=itemIcon})
+					tinsert(MonDKP:GetTable(MonDKP_Player_MinBids, true), {item=itemName, minbid=core.BiddingWindow.cost:GetNumber(), link=itemLink, icon=itemIcon})
 					core.BiddingWindow.CustomMinBid:SetShown(true);
 					core.BiddingWindow.CustomMinBid:SetChecked(true);
 				elseif search and core.BiddingWindow.cost:GetNumber() ~= tonumber(val) and core.BiddingWindow.CustomMinBid:GetChecked() == true then
-					if MonDKP_MinBids[search[1][1]].minbid ~= core.BiddingWindow.cost:GetText() then
-						MonDKP_MinBids[search[1][1]].minbid = MonDKP_round(core.BiddingWindow.cost:GetNumber(), MonDKP_DB.modes.rounding);
-						MonDKP_MinBids[search[1][1]].link = itemLink;
-						MonDKP_MinBids[search[1][1]].icon = itemIcon;
+					if MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].minbid ~= core.BiddingWindow.cost:GetText() then
+						MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].minbid = MonDKP_round(core.BiddingWindow.cost:GetNumber(), core.DB.modes.rounding);
+						MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].link = itemLink;
+						MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].icon = itemIcon;
 						core.BiddingWindow.CustomMinBid:SetShown(true);
 						core.BiddingWindow.CustomMinBid:SetChecked(true);
 				    end
 				end
 				
 				if search and core.BiddingWindow.CustomMinBid:GetChecked() == false then
-					table.remove(MonDKP_MinBids, search[1][1])
+					table.remove(MonDKP:GetTable(MonDKP_Player_MinBids, true), search[1][1])
 					core.BiddingWindow.CustomMinBid:SetShown(false);
 				end
 			end
 				
 			if mode == "Zero Sum" and not reassign then
-				MonDKP_DB.modes.ZeroSumBank.balance = MonDKP_DB.modes.ZeroSumBank.balance + -tonumber(cost)
-				table.insert(MonDKP_DB.modes.ZeroSumBank, { loot = loot, cost = -tonumber(cost) })
+				core.DB.modes.ZeroSumBank.balance = core.DB.modes.ZeroSumBank.balance + -tonumber(cost)
+				table.insert(core.DB.modes.ZeroSumBank, { loot = loot, cost = -tonumber(cost) })
 				MonDKP:ZeroSumBank_Update()
-				MonDKP.Sync:SendData("MonDKPZSumBank", MonDKP_DB.modes.ZeroSumBank)
+				MonDKP.Sync:SendData("MonDKPZSumBank", core.DB.modes.ZeroSumBank)
 			end
 			core.BiddingWindow:Hide()
 			ClearBidWindow()
@@ -327,19 +327,19 @@ function MonDKP:AwardConfirm(player, cost, boss, zone, loot, reassign)
 	local class, search;
 	local PlayerList = {};
 	local curSelected = 0;
-	local mode = MonDKP_DB.modes.mode;
+	local mode = core.DB.modes.mode;
 	
 --[[ 	if cost == 0 then
 		cost = MonDKP:GetMinBid(itemLink)
 	end ]]
 	
 	if player then
-		search = MonDKP:Table_Search(MonDKP_DKPTable, player)
-		class = MonDKP:GetCColors(MonDKP_DKPTable[search[1][1]].class)
+		search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), player)
+		class = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].class)
 	end
 
-	for i=1, #MonDKP_DKPTable do
-		table.insert(PlayerList, MonDKP_DKPTable[i].player)
+	for i=1, #MonDKP:GetTable(MonDKP_Player_DKPTable, true) do
+		table.insert(PlayerList, MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].player)
 	end
 	table.sort(PlayerList, function(a, b)
 		return a < b
@@ -349,7 +349,7 @@ function MonDKP:AwardConfirm(player, cost, boss, zone, loot, reassign)
 	core.AwardConfirm = core.AwardConfirm or AwardConfirm_Create()
 	core.AwardConfirm:SetShown(not core.AwardConfirm:IsShown())
 
-	if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
+	if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
 		core.AwardConfirm.setPriceButton:SetShown(true);
 	end
 
@@ -392,11 +392,11 @@ function MonDKP:AwardConfirm(player, cost, boss, zone, loot, reassign)
 			filterName.func = self.SetValue
 			for i=ranges[menuList], ranges[menuList]+19 do
 				if PlayerList[i] then
-					local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, PlayerList[i])
+					local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), PlayerList[i])
 				    local c;
 
 				    if classSearch then
-				     	c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+				     	c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[classSearch[1][1]].class)
 				    else
 				     	c = { hex="444444" }
 				    end

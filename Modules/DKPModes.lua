@@ -23,8 +23,8 @@ end
 
 function MonDKP:DKPModesFrame_Create()
 	local f = CreateFrame("Frame", "MonDKP_DKPModesFrame", UIParent);
-	local ActiveMode = MonDKP_DB.modes.mode;
-	local ActiveCostType = MonDKP_DB.modes.costvalue;
+	local ActiveMode = core.DB.modes.mode;
+	local ActiveCostType = core.DB.modes.costvalue;
 
 	if not core.IsOfficer then
 		MonDKP:Print(L["NOPERMISSION"])
@@ -92,11 +92,11 @@ function MonDKP:DKPModesFrame_Create()
 	f:Hide()
 
 	f:SetScript("OnHide", function()
-		MonDKP_DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-		MonDKP_DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()
-		MonDKP_DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
+		core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+		core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()
+		core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
 
-		if (MonDKP_DB.modes.rolls.min > MonDKP_DB.modes.rolls.max and MonDKP_DB.modes.rolls.max ~= 0 and MonDKP_DB.modes.rolls.UserPerc == false) or (MonDKP_DB.modes.rolls.UsePerc and (MonDKP_DB.modes.rolls.min < 0 or MonDKP_DB.modes.rolls.max > 100 or MonDKP_DB.modes.rolls.min > MonDKP_DB.modes.rolls.max)) then
+		if (core.DB.modes.rolls.min > core.DB.modes.rolls.max and core.DB.modes.rolls.max ~= 0 and core.DB.modes.rolls.UserPerc == false) or (core.DB.modes.rolls.UsePerc and (core.DB.modes.rolls.min < 0 or core.DB.modes.rolls.max > 100 or core.DB.modes.rolls.min > core.DB.modes.rolls.max)) then
 			StaticPopupDialogs["NOTIFY_ROLLS"] = {
 				text = "|CFFFF0000"..L["WARNING"].."|r: "..L["INVALIDROLLPARAM"],
 				button1 = L["OK"],

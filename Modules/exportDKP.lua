@@ -10,7 +10,7 @@ local function GenerateDKPTables(table, format)
 	local ExportDefinition;
 
 	if format == "HTML" then
-		if table == MonDKP_DKPTable then
+		if table == MonDKP:GetTable(MonDKP_Player_DKPTable, true) then
 			ExportString = "<html>\n<script>\nfunction openTab(tabName) {\n   var i;\n   var x = document.getElementsByClassName(\"tab\");\n   for (i = 0; i < x.length; i++) {\n      x[i].style.display = \"none\";\n   }\n   document.getElementById(tabName).style.display = \"block\";\n}\n</script>\n";
 			ExportString = ExportString.."<script>var whTooltips = {colorLinks: true, iconizeLinks: true, renameLinks: true};</script><script src=\"https://wow.zamimg.com/widgets/power.js\"></script>\n"
 			ExportString = ExportString.."<style>\nhtml { background-color: #000; };\n.divTable{ display: table; float: left; margin: 10px 10px; }\n.divTableRow { display: table-row; background-color: #000}\n.divTableRow:hover { background-color: #222; }\n.divTableHeading { background-color: #EEE; display: table-header-group; }\n.divTableCell, .divTableHead { border: 1px solid #999999; display: table-cell; padding: 3px 10px; }\n";
@@ -21,162 +21,162 @@ local function GenerateDKPTables(table, format)
 
 			ExportString = ExportString.."<div id=\"DKP\" class=\"tab\"><div class=\"divTable\" style=\"width: 30%;border: 1px solid #000;\">\n   <div class=\"divTableBody\">\n      <div class=\"divTableRow\">\n         <div class=\"divPlayerHeader\">Player</div>\n         <div class=\"divClassHeader\">Class</div>\n         <div class=\"divDKPHeader\">DKP</div>\n      </div>\n"
 
-			for i=1, #MonDKP_DKPTable do
-				ExportString = ExportString.."      <div class=\"divTableRow\">\n         <div class=\"divPlayer\">"..MonDKP_DKPTable[i].player.."</div>\n         <div class=\"divClass\" style=\"width: 150px;\"><img src=\"https://wow.zamimg.com/images/wow/icons/large/classicon_"..strlower(MonDKP_DKPTable[i].class)..".jpg\" height=\"24\" width=\"24\" /></div>\n         <div class=\"divDKP\">"..MonDKP_DKPTable[i].dkp.."</div>\n      </div>\n"
+			for i=1, #MonDKP:GetTable(MonDKP_Player_DKPTable, true) do
+				ExportString = ExportString.."      <div class=\"divTableRow\">\n         <div class=\"divPlayer\">"..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].player.."</div>\n         <div class=\"divClass\" style=\"width: 150px;\"><img src=\"https://wow.zamimg.com/images/wow/icons/large/classicon_"..strlower(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].class)..".jpg\" height=\"24\" width=\"24\" /></div>\n         <div class=\"divDKP\">"..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].dkp.."</div>\n      </div>\n"
 			end
 
 			ExportString = ExportString.."   </div>\n</div>\n</div>"
-		elseif table == MonDKP_DKPHistory then
+		elseif table == MonDKP:GetTable(MonDKP_Player_DKPHistory, true) then
 			local numrows;
 
-			if #MonDKP_DKPHistory > 200 then
+			if #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) > 200 then
 				numrows = 200;
 			else
-				numrows = #MonDKP_DKPHistory
+				numrows = #MonDKP:GetTable(MonDKP_Player_DKPHistory, true)
 			end
 
 			ExportString = "<div id=\"DKPHistory\" class=\"tab\" style=\"display:none;\"><div class=\"divTable\" style=\"width: 95%;border: 1px solid #000;\">\n   <div class=\"divTableBody\">\n      <div class=\"divTableRow\">\n         <div class=\"divPlayerHeader\">Players</div>\n         <div class=\"divClassHeader\" style=\"width: 4%;\">DKP</div>\n         <div class=\"divDKPHeader\">Date/Reason</div>\n      </div>\n"
 
 			for i=1, numrows do
-				ExportString = ExportString.."      <div class=\"divTableRow\">\n         <div class=\"divPlayer\" style=\"font-size: 0.7em; width: 71%;\">"..gsub(MonDKP_DKPHistory[i].players, ",", ", ").."</div>\n         <div class=\"divClass\" style=\"width: 4%;\">"..MonDKP_DKPHistory[i].dkp.."</div>\n         <div class=\"divDKP\" style=\"width: 25%; font-size: 0.7em;\">"..MonDKP_DKPHistory[i].reason.."<br />("..date("%m/%d/%y %H:%M:%S", MonDKP_DKPHistory[i].date)..") </div>\n      </div>\n"
+				ExportString = ExportString.."      <div class=\"divTableRow\">\n         <div class=\"divPlayer\" style=\"font-size: 0.7em; width: 71%;\">"..gsub(MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].players, ",", ", ").."</div>\n         <div class=\"divClass\" style=\"width: 4%;\">"..MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].dkp.."</div>\n         <div class=\"divDKP\" style=\"width: 25%; font-size: 0.7em;\">"..MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].reason.."<br />("..date("%m/%d/%y %H:%M:%S", MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].date)..") </div>\n      </div>\n"
 			end
 			ExportString = ExportString.."   </div>\n</div>\n</div>"
 
-		elseif table == MonDKP_Loot then
+		elseif table == MonDKP:GetTable(MonDKP_Player_Loot, true) then
 			local numrows;
 
-			if #MonDKP_Loot > 200 then
+			if #MonDKP:GetTable(MonDKP_Player_Loot, true) > 200 then
 				numrows = 200;
 			else
-				numrows = #MonDKP_Loot
+				numrows = #MonDKP:GetTable(MonDKP_Player_Loot, true)
 			end
 			ExportString = "<div id=\"LootHistory\" class=\"tab\" style=\"display:none;\"><div class=\"divTable\" style=\"width: 50%;border: 1px solid #000;\">\n   <div class=\"divTableBody\">\n      <div class=\"divTableRow\">\n         <div class=\"divPlayerHeader\">Loot</div>\n         <div class=\"divClassHeader\">Player</div>\n         <div class=\"divDKPHeader\">From</div>\n      </div>\n"
 			for i=1, numrows do
-				local cur = MonDKP_Loot[i].loot
+				local cur = MonDKP:GetTable(MonDKP_Player_Loot, true)[i].loot
 				local itemNumber = strsub(cur, string.find(cur, "Hitem:")+6, string.find(cur, ":", string.find(cur, "Hitem:")+6)-1)
-				ExportString = ExportString.."      <div class=\"divTableRow\">\n         <div class=\"divPlayer\" style=\"width: 40%;\"><a href=\"https://classic.wowhead.com/item="..itemNumber.."\" data-wowhead=\"item="..itemNumber.."\"></a> ("..MonDKP_Loot[i].cost.." DKP)</div>\n         <div class=\"divClass\" style=\"width: 20%;\">"..MonDKP_Loot[i].player.."</div>\n         <div class=\"divDKP\" style=\"width: 40%; font-size: 0.7em;\">"..MonDKP_Loot[i].zone..": "..MonDKP_Loot[i].boss.."<br />("..date("%m/%d/%y %H:%M:%S", MonDKP_Loot[i].date)..") </div>\n      </div>\n"
+				ExportString = ExportString.."      <div class=\"divTableRow\">\n         <div class=\"divPlayer\" style=\"width: 40%;\"><a href=\"https://classic.wowhead.com/item="..itemNumber.."\" data-wowhead=\"item="..itemNumber.."\"></a> ("..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].cost.." DKP)</div>\n         <div class=\"divClass\" style=\"width: 20%;\">"..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].player.."</div>\n         <div class=\"divDKP\" style=\"width: 40%; font-size: 0.7em;\">"..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].zone..": "..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].boss.."<br />("..date("%m/%d/%y %H:%M:%S", MonDKP:GetTable(MonDKP_Player_Loot, true)[i].date)..") </div>\n      </div>\n"
 			end
 			ExportString = ExportString.."   </div>\n</div>\n</div>\n</html>"
 		end
 	elseif format == "CSV" then
-		if table == MonDKP_DKPTable then
+		if table == MonDKP:GetTable(MonDKP_Player_DKPTable, true) then
 			Headers = "player,class,DKP,previousDKP,lifetimeGained,lifetimeSpent\n"
 			ExportString = Headers.."";
-			for i=1, #MonDKP_DKPTable do
-				if i == #MonDKP_DKPTable then
-					ExportString = ExportString..MonDKP_DKPTable[i].player..","..MonDKP_DKPTable[i].class..","..MonDKP_DKPTable[i].dkp..","..MonDKP_DKPTable[i].previous_dkp..","..MonDKP_DKPTable[i].lifetime_gained..","..MonDKP_DKPTable[i].lifetime_spent;
+			for i=1, #MonDKP:GetTable(MonDKP_Player_DKPTable, true) do
+				if i == #MonDKP:GetTable(MonDKP_Player_DKPTable, true) then
+					ExportString = ExportString..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].player..","..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].class..","..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].dkp..","..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].previous_dkp..","..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].lifetime_gained..","..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].lifetime_spent;
 				else
-					ExportString = ExportString..MonDKP_DKPTable[i].player..","..MonDKP_DKPTable[i].class..","..MonDKP_DKPTable[i].dkp..","..MonDKP_DKPTable[i].previous_dkp..","..MonDKP_DKPTable[i].lifetime_gained..","..MonDKP_DKPTable[i].lifetime_spent.."\n";
+					ExportString = ExportString..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].player..","..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].class..","..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].dkp..","..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].previous_dkp..","..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].lifetime_gained..","..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].lifetime_spent.."\n";
 				end
 			end
-		elseif table == MonDKP_DKPHistory then
+		elseif table == MonDKP:GetTable(MonDKP_Player_DKPHistory, true) then
 			local numrows;
 
-			if #MonDKP_DKPHistory > 200 then
+			if #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) > 200 then
 				numrows = 200;
 			else
-				numrows = #MonDKP_DKPHistory
+				numrows = #MonDKP:GetTable(MonDKP_Player_DKPHistory, true)
 			end
 
 			Headers = "player,DKP,date,reason\n"
 			ExportString = Headers.."";
 			for i=1, numrows do
-				local PlayerString = strsub(MonDKP_DKPHistory[i].players, 1, -2)
+				local PlayerString = strsub(MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].players, 1, -2)
 
 				if i == numrows then
-					ExportString = ExportString.."\""..PlayerString.."\""..","..MonDKP_DKPHistory[i].dkp..","..MonDKP_DKPHistory[i].date..",".."\""..MonDKP_DKPHistory[i].reason.."\"";
+					ExportString = ExportString.."\""..PlayerString.."\""..","..MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].dkp..","..MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].date..",".."\""..MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].reason.."\"";
 				else
-					ExportString = ExportString.."\""..PlayerString.."\""..","..MonDKP_DKPHistory[i].dkp..","..MonDKP_DKPHistory[i].date..",".."\""..MonDKP_DKPHistory[i].reason.."\"".."\n";
+					ExportString = ExportString.."\""..PlayerString.."\""..","..MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].dkp..","..MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].date..",".."\""..MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].reason.."\"".."\n";
 				end
 			end
-		elseif table == MonDKP_Loot then
+		elseif table == MonDKP:GetTable(MonDKP_Player_Loot, true) then
 			local numrows;
 
-			if #MonDKP_Loot > 200 then
+			if #MonDKP:GetTable(MonDKP_Player_Loot, true) > 200 then
 				numrows = 200;
 			else
-				numrows = #MonDKP_Loot
+				numrows = #MonDKP:GetTable(MonDKP_Player_Loot, true)
 			end
 			
 			Headers = "player,itemName,itemNumber,zone,boss,date,cost\n"
 			ExportString = Headers.."";
 			for i=1, numrows do
-				local cur = MonDKP_Loot[i].loot
+				local cur = MonDKP:GetTable(MonDKP_Player_Loot, true)[i].loot
 				local itemNumber = strsub(cur, string.find(cur, "Hitem:")+6, string.find(cur, ":", string.find(cur, "Hitem:")+6)-1)
 				local itemName = strsub(cur, string.find(cur, "::|h%[")+5, string.find(cur, "%]", string.find(cur, "::|h%[")+5)-1)
 				
 				if i == numrows then
-					ExportString = ExportString..MonDKP_Loot[i].player..",".."\""..itemName.."\""..","..itemNumber..",".."\""..MonDKP_Loot[i].zone.."\""..","..MonDKP_Loot[i].boss..","..MonDKP_Loot[i].date..","..MonDKP_Loot[i].cost;
+					ExportString = ExportString..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].player..",".."\""..itemName.."\""..","..itemNumber..",".."\""..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].zone.."\""..","..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].boss..","..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].date..","..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].cost;
 				else
-					ExportString = ExportString..MonDKP_Loot[i].player..",".."\""..itemName.."\""..","..itemNumber..",".."\""..MonDKP_Loot[i].zone.."\""..","..MonDKP_Loot[i].boss..","..MonDKP_Loot[i].date..","..MonDKP_Loot[i].cost.."\n";
+					ExportString = ExportString..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].player..",".."\""..itemName.."\""..","..itemNumber..",".."\""..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].zone.."\""..","..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].boss..","..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].date..","..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].cost.."\n";
 				end
 			end
 		end
 	elseif format == "XML" then
-		if table == MonDKP_DKPTable then
+		if table == MonDKP:GetTable(MonDKP_Player_DKPTable, true) then
 			ExportString = "<dkptable>\n";
-			for i=1, #MonDKP_DKPTable do
-				ExportString = ExportString.."    <dkpentry>\n        <player>"..MonDKP_DKPTable[i].player.."</player>\n        <class>"..MonDKP_DKPTable[i].class.."</class>\n        <dkp>"..MonDKP_DKPTable[i].dkp.."</dkp>\n        <lifetimegained>"..MonDKP_DKPTable[i].lifetime_gained.."</lifetimegained>\n        <lifetimespent>"..MonDKP_DKPTable[i].lifetime_spent.."</lifetimespent>\n    </dkpentry>\n";
+			for i=1, #MonDKP:GetTable(MonDKP_Player_DKPTable, true) do
+				ExportString = ExportString.."    <dkpentry>\n        <player>"..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].player.."</player>\n        <class>"..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].class.."</class>\n        <dkp>"..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].dkp.."</dkp>\n        <lifetimegained>"..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].lifetime_gained.."</lifetimegained>\n        <lifetimespent>"..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].lifetime_spent.."</lifetimespent>\n    </dkpentry>\n";
 			end
 			ExportString = ExportString.."</dkptable>"
-		elseif table == MonDKP_DKPHistory then
+		elseif table == MonDKP:GetTable(MonDKP_Player_DKPHistory, true) then
 			local numrows;
 
-			if #MonDKP_DKPHistory > 200 then
+			if #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) > 200 then
 				numrows = 200;
 			else
-				numrows = #MonDKP_DKPHistory
+				numrows = #MonDKP:GetTable(MonDKP_Player_DKPHistory, true)
 			end
 
 			ExportString = "<dkphistory>\n";
 			for i=1, numrows do
 				local deletes;
 				local deletedby;
-				if MonDKP_DKPHistory[i].deletes == nil then 
+				if MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].deletes == nil then 
 					deletes = ''
 				else
-					deletes = MonDKP_DKPHistory[i].deletes
+					deletes = MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].deletes
 				end
 	
-				if MonDKP_DKPHistory[i].deletedby == nil then 
+				if MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].deletedby == nil then 
 					deletedby = ''
 				else
-					deletedby = MonDKP_DKPHistory[i].deletedby
+					deletedby = MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].deletedby
 				end
 	
-				ExportString = ExportString.."    <historyentry>\n        <playerstring>"..MonDKP_DKPHistory[i].players.."</playerstring>\n        <dkp>"..MonDKP_DKPHistory[i].dkp.."</dkp>\n        <timestamp>"..MonDKP_DKPHistory[i].date.."</timestamp>\n        <reason>"..MonDKP_DKPHistory[i].reason.."</reason>\n        <deletes>"..deletes.."</deletes>\n        <deletedby>"..deletedby.."</deletedby>\n    </historyentry>\n";
+				ExportString = ExportString.."    <historyentry>\n        <playerstring>"..MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].players.."</playerstring>\n        <dkp>"..MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].dkp.."</dkp>\n        <timestamp>"..MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].date.."</timestamp>\n        <reason>"..MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].reason.."</reason>\n        <deletes>"..deletes.."</deletes>\n        <deletedby>"..deletedby.."</deletedby>\n    </historyentry>\n";
 			end
 			ExportString = ExportString.."</dkphistory>";
-		elseif table == MonDKP_Loot then
+		elseif table == MonDKP:GetTable(MonDKP_Player_Loot, true) then
 			local numrows;
 
-			if #MonDKP_Loot > 200 then
+			if #MonDKP:GetTable(MonDKP_Player_Loot, true) > 200 then
 				numrows = 200;
 			else
-				numrows = #MonDKP_Loot
+				numrows = #MonDKP:GetTable(MonDKP_Player_Loot, true)
 			end
 			
 			ExportString = "<loothistory>\n";
 			for i=1, numrows do
-				local cur = MonDKP_Loot[i].loot
+				local cur = MonDKP:GetTable(MonDKP_Player_Loot, true)[i].loot
 				local itemNumber = strsub(cur, string.find(cur, "Hitem:")+6, string.find(cur, ":", string.find(cur, "Hitem:")+6)-1)
 				local itemName = strsub(cur, string.find(cur, "::|h%[")+5, string.find(cur, "%]", string.find(cur, "::|h%[")+5)-1)
 				
 				local deletes;
 				local deletedby;
-				if MonDKP_Loot[i].deletes == nil then 
+				if MonDKP:GetTable(MonDKP_Player_Loot, true)[i].deletes == nil then 
 					deletes = ''
 				else
-					deletes = MonDKP_Loot[i].deletes
+					deletes = MonDKP:GetTable(MonDKP_Player_Loot, true)[i].deletes
 				end
 	
-				if MonDKP_Loot[i].deletedby == nil then 
+				if MonDKP:GetTable(MonDKP_Player_Loot, true)[i].deletedby == nil then 
 					deletedby = ''
 				else
-					deletedby = MonDKP_Loot[i].deletedby
+					deletedby = MonDKP:GetTable(MonDKP_Player_Loot, true)[i].deletedby
 				end
 	
-				ExportString = ExportString.."    <lootentry>\n        <player>"..MonDKP_Loot[i].player.."</player>\n        <itemname>"..itemName.."</itemname>\n        <itemnumber>"..itemNumber.."</itemnumber>\n        <zone>"..MonDKP_Loot[i].zone.."</zone>\n        <boss>"..MonDKP_Loot[i].boss.."</boss>\n        <timestamp>"..MonDKP_Loot[i].date.."</timestamp>\n        <cost>"..MonDKP_Loot[i].cost.."</cost>\n        <deletes>"..deletes.."</deletes>\n        <deletedby>"..deletedby.."</deletedby>\n    </lootentry>\n";
+				ExportString = ExportString.."    <lootentry>\n        <player>"..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].player.."</player>\n        <itemname>"..itemName.."</itemname>\n        <itemnumber>"..itemNumber.."</itemnumber>\n        <zone>"..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].zone.."</zone>\n        <boss>"..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].boss.."</boss>\n        <timestamp>"..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].date.."</timestamp>\n        <cost>"..MonDKP:GetTable(MonDKP_Player_Loot, true)[i].cost.."</cost>\n        <deletes>"..deletes.."</deletes>\n        <deletedby>"..deletedby.."</deletedby>\n    </lootentry>\n";
 			end
 			ExportString = ExportString.."</loothistory>";
 		end
@@ -333,7 +333,7 @@ function MonDKPExportBox_Show(text)
 		f.GenerateDKPButton:SetSize(150, 24)
 		f.GenerateDKPButton:SetScript("OnClick", function()
 			if CurFormat then
-				GenerateDKPTables(MonDKP_DKPTable, CurFormat)
+				GenerateDKPTables(MonDKP:GetTable(MonDKP_Player_DKPTable, true), CurFormat)
 			else
 				StaticPopup_Show ("NO_FORMAT")
 			end
@@ -343,7 +343,7 @@ function MonDKPExportBox_Show(text)
 		f.GenerateDKPHistoryButton:SetSize(150, 24)
 		f.GenerateDKPHistoryButton:SetScript("OnClick", function()
 			if CurFormat then
-				GenerateDKPTables(MonDKP_DKPHistory, CurFormat)
+				GenerateDKPTables(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), CurFormat)
 			else
 				StaticPopup_Show ("NO_FORMAT")
 			end
@@ -353,7 +353,7 @@ function MonDKPExportBox_Show(text)
 		f.GenerateDKPLootButton:SetSize(150, 24)
 		f.GenerateDKPLootButton:SetScript("OnClick", function()
 			if CurFormat then
-				GenerateDKPTables(MonDKP_Loot, CurFormat)
+				GenerateDKPTables(MonDKP:GetTable(MonDKP_Player_Loot, true), CurFormat)
 			else
 				StaticPopup_Show ("NO_FORMAT")
 			end

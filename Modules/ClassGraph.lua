@@ -20,10 +20,10 @@ function MonDKP:ClassGraph()
 	local BarWidth = 25
 
 	for k, v in pairs(core.classes) do
-		local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, v)
+		local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), v)
 		if classSearch and #classSearch > 0 then
 			tinsert(classCount, #classSearch)
-			local classPerc = MonDKP_round(#classSearch / #MonDKP_DKPTable, 4);
+			local classPerc = MonDKP_round(#classSearch / #MonDKP:GetTable(MonDKP_Player_DKPTable, true), 4);
 			tinsert(perc, classPerc * 100)
 			local adjustBar = BarMaxHeight * classPerc;
 			tinsert(perc_height, adjustBar)
@@ -122,10 +122,10 @@ function MonDKP:ClassGraph_Update()
 	local BarWidth = 25
 
 	for k, v in pairs(core.classes) do
-		local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, v)
+		local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), v)
 		if classSearch and #classSearch > 0 then
 			tinsert(classCount, #classSearch)
-			local classPerc = MonDKP_round(#classSearch / #MonDKP_DKPTable, 4);
+			local classPerc = MonDKP_round(#classSearch / #MonDKP:GetTable(MonDKP_Player_DKPTable, true), 4);
 			tinsert(perc, classPerc * 100)
 			local adjustBar = BarMaxHeight * classPerc;
 			tinsert(perc_height, adjustBar)

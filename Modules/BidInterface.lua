@@ -23,11 +23,11 @@ function MonDKP:LootTable_Set(lootList)
 end
 
 local function SortBidTable()
-  mode = MonDKP_DB.modes.mode;
+  mode = core.DB.modes.mode;
   table.sort(Bids_Submitted, function(a, b)
-      if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+      if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
         return a["bid"] > b["bid"]
-      elseif mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
+      elseif mode == "Static Item Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
         return a["dkp"] > b["dkp"]
       elseif mode == "Roll Based Bidding" then
         return a["roll"] > b["roll"]
@@ -36,24 +36,24 @@ local function SortBidTable()
 end
 
 local function RollMinMax_Get()
-  local search = MonDKP:Table_Search(MonDKP_DKPTable, UnitName("player"))
+  local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), UnitName("player"))
   local minRoll;
   local maxRoll;
 
-  if MonDKP_DB.modes.rolls.UsePerc then
-    if MonDKP_DB.modes.rolls.min == 0 or MonDKP_DB.modes.rolls.min == 1 then
+  if core.DB.modes.rolls.UsePerc then
+    if core.DB.modes.rolls.min == 0 or core.DB.modes.rolls.min == 1 then
       minRoll = 1;
     else
-      minRoll = MonDKP_DKPTable[search[1][1]].dkp * (MonDKP_DB.modes.rolls.min / 100);
+      minRoll = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp * (core.DB.modes.rolls.min / 100);
     end
-    maxRoll = MonDKP_DKPTable[search[1][1]].dkp * (MonDKP_DB.modes.rolls.max / 100) + MonDKP_DB.modes.rolls.AddToMax;
-  elseif not MonDKP_DB.modes.rolls.UsePerc then
-    minRoll = MonDKP_DB.modes.rolls.min;
+    maxRoll = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp * (core.DB.modes.rolls.max / 100) + core.DB.modes.rolls.AddToMax;
+  elseif not core.DB.modes.rolls.UsePerc then
+    minRoll = core.DB.modes.rolls.min;
 
-    if MonDKP_DB.modes.rolls.max == 0 then
-      maxRoll = MonDKP_DKPTable[search[1][1]].dkp + MonDKP_DB.modes.rolls.AddToMax;
+    if core.DB.modes.rolls.max == 0 then
+      maxRoll = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp + core.DB.modes.rolls.AddToMax;
     else
-      maxRoll = MonDKP_DB.modes.rolls.max + MonDKP_DB.modes.rolls.AddToMax;
+      maxRoll = core.DB.modes.rolls.max + core.DB.modes.rolls.AddToMax;
     end
   end
   if tonumber(minRoll) < 1 then minRoll = 1 end
@@ -64,7 +64,7 @@ end
 
 local function UpdateBidderWindow()
 	local i = 1;
-	local mode = MonDKP_DB.modes.mode;
+	local mode = core.DB.modes.mode;
 	local _,link,_,_,_,_,_,_,_,icon = GetItemInfo(CurrItemForBid)
 
 	if not core.BidInterface then
@@ -103,7 +103,7 @@ local function UpdateBidderWindow()
 		core.BidInterface.lootContainer:SetSize(43*i, 35)
 	end
 
-	if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+	if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
 		core.BidInterface.MinBidHeader:SetText(L["MINIMUMBID"]..":")
 		core.BidInterface.SubmitBid:SetPoint("LEFT", core.BidInterface.Bid, "RIGHT", 8, 0)
 		core.BidInterface.SubmitBid:SetText(L["SUBMITBID"])
@@ -128,7 +128,7 @@ local function UpdateBidderWindow()
 
 
 	core.BidInterface.item:SetText(CurrItemForBid)
-	core.BidInterface.Boss:SetText(MonDKP_DB.bossargs.LastKilledBoss)
+	core.BidInterface.Boss:SetText(core.DB.bossargs.LastKilledBoss)
 end
 
 function BidInterface_Update()
@@ -155,16 +155,16 @@ function BidInterface_Update()
     for i=1, showRows do
         row = core.BidInterface.bidTable.Rows[i]
         index = offset + i
-        local dkp_total = MonDKP:Table_Search(MonDKP_DKPTable, Bids_Submitted[i].player)
+        local dkp_total = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), Bids_Submitted[i].player)
         local c
         if dkp_total then
-          c = MonDKP:GetCColors(MonDKP_DKPTable[dkp_total[1][1]].class)
+          c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[dkp_total[1][1]].class)
         else
           local createProfile = MonDKP_Profile_Create(Bids_Submitted[i].player)
 
           if createProfile then
-            dkp_total = MonDKP:Table_Search(MonDKP_DKPTable, Bids_Submitted[i].player)
-            c = MonDKP:GetCColors(MonDKP_DKPTable[dkp_total[1][1]].class)
+            dkp_total = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), Bids_Submitted[i].player)
+            c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[dkp_total[1][1]].class)
           else       -- if unable to create profile, feeds grey color
             c = { r="aa", g="aa", b="aa"}
           end
@@ -176,27 +176,27 @@ function BidInterface_Update()
             row.Strings[1].rowCounter:SetText(index)
             row.Strings[1]:SetText(Bids_Submitted[i].player.." |cff666666("..rank..")|r")
             row.Strings[1]:SetTextColor(c.r, c.g, c.b, 1)
-            if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+            if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
               row.Strings[2]:SetText(Bids_Submitted[i].bid)
-              row.Strings[3]:SetText(MonDKP_round(MonDKP_DKPTable[dkp_total[1][1]].dkp, MonDKP_DB.modes.rounding))
+              row.Strings[3]:SetText(MonDKP_round(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[dkp_total[1][1]].dkp, core.DB.modes.rounding))
             elseif mode == "Roll Based Bidding" then
               local minRoll;
               local maxRoll;
 
-              if MonDKP_DB.modes.rolls.UsePerc then
-                if MonDKP_DB.modes.rolls.min == 0 or MonDKP_DB.modes.rolls.min == 1 then
+              if core.DB.modes.rolls.UsePerc then
+                if core.DB.modes.rolls.min == 0 or core.DB.modes.rolls.min == 1 then
                   minRoll = 1;
                 else
-                  minRoll = MonDKP_DKPTable[dkp_total[1][1]].dkp * (MonDKP_DB.modes.rolls.min / 100);
+                  minRoll = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[dkp_total[1][1]].dkp * (core.DB.modes.rolls.min / 100);
                 end
-                maxRoll = MonDKP_DKPTable[dkp_total[1][1]].dkp * (MonDKP_DB.modes.rolls.max / 100) + MonDKP_DB.modes.rolls.AddToMax;
-              elseif not MonDKP_DB.modes.rolls.UsePerc then
-                minRoll = MonDKP_DB.modes.rolls.min;
+                maxRoll = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[dkp_total[1][1]].dkp * (core.DB.modes.rolls.max / 100) + core.DB.modes.rolls.AddToMax;
+              elseif not core.DB.modes.rolls.UsePerc then
+                minRoll = core.DB.modes.rolls.min;
 
-                if MonDKP_DB.modes.rolls.max == 0 then
-                  maxRoll = MonDKP_DKPTable[dkp_total[1][1]].dkp + MonDKP_DB.modes.rolls.AddToMax;
+                if core.DB.modes.rolls.max == 0 then
+                  maxRoll = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[dkp_total[1][1]].dkp + core.DB.modes.rolls.AddToMax;
                 else
-                  maxRoll = MonDKP_DB.modes.rolls.max + MonDKP_DB.modes.rolls.AddToMax;
+                  maxRoll = core.DB.modes.rolls.max + core.DB.modes.rolls.AddToMax;
                 end
               end
               if tonumber(minRoll) < 1 then minRoll = 1 end
@@ -204,8 +204,8 @@ function BidInterface_Update()
 
               row.Strings[2]:SetText(Bids_Submitted[i].roll..Bids_Submitted[i].range)
               row.Strings[3]:SetText(math.floor(minRoll).."-"..math.floor(maxRoll))
-            elseif mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
-              row.Strings[3]:SetText(MonDKP_round(Bids_Submitted[i].dkp, MonDKP_DB.modes.rounding))
+            elseif mode == "Static Item Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
+              row.Strings[3]:SetText(MonDKP_round(Bids_Submitted[i].dkp, core.DB.modes.rounding))
             end
         else
             row:Hide()
@@ -217,18 +217,18 @@ end
 function MonDKP:BidInterface_Toggle()
   core.BidInterface = core.BidInterface or MonDKP:BidInterface_Create()
   local f = core.BidInterface;
-  local mode = MonDKP_DB.modes.mode;
+  local mode = core.DB.modes.mode;
 
-  if MonDKP_DB.bidintpos then
+  if core.DB.bidintpos then
     core.BidInterface:ClearAllPoints()
-    local a = MonDKP_DB.bidintpos
+    local a = core.DB.bidintpos
     core.BidInterface:SetPoint(a.point, a.relativeTo, a.relativePoint, a.x, a.y)
   end
 
   if core.BidInterface:IsShown() then core.BidInterface:Hide(); end
   if MonDKP.BidTimer.OpenBid and MonDKP.BidTimer.OpenBid:IsShown() then MonDKP.BidTimer.OpenBid:Hide() end
-  if MonDKP_DB.modes.BroadcastBids and not core.BiddingWindow then
-    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+  if core.DB.modes.BroadcastBids and not core.BiddingWindow then
+    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
       core.BidInterface:SetHeight(532);
     else
       core.BidInterface:SetHeight(504);
@@ -237,18 +237,18 @@ function MonDKP:BidInterface_Toggle()
     for k, v in pairs(f.headerButtons) do
       v:SetHighlightTexture("Interface\\BUTTONS\\BlueGrad64_faded.blp");
       if k == "player" then
-        if mode == "Minimum Bid Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+        if mode == "Minimum Bid Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
           v:SetSize((width/2)-1, height)
           v:Show()
-        elseif mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
+        elseif mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
           v:SetSize((width*0.75)-1, height)
           v:Show()
         end
       else
-        if mode == "Minimum Bid Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+        if mode == "Minimum Bid Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
           v:SetSize((width/4)-1, height)
           v:Show();
-        elseif mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
+        elseif mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
           if k == "bid" then
             v:Hide()
           else
@@ -259,20 +259,20 @@ function MonDKP:BidInterface_Toggle()
       end
     end
 
-    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
       f.headerButtons.bid.t:SetText(L["BID"]);
       f.headerButtons.bid.t:Show();
-    elseif mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
+    elseif mode == "Static Item Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
       f.headerButtons.bid.t:Hide(); 
     elseif mode == "Roll Based Bidding" then
       f.headerButtons.bid.t:SetText(L["PLAYERROLL"])
       f.headerButtons.bid.t:Show()
     end
 
-    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
       f.headerButtons.dkp.t:SetText(L["TOTALDKP"]);
       f.headerButtons.dkp.t:Show();
-    elseif mode == "Static Item Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
+    elseif mode == "Static Item Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
       f.headerButtons.dkp.t:SetText(L["DKP"]);
       f.headerButtons.dkp.t:Show()
     elseif mode == "Roll Based Bidding" then
@@ -281,7 +281,7 @@ function MonDKP:BidInterface_Toggle()
     end
   end
 
-  if MonDKP_DB.modes.BroadcastBids then
+  if core.DB.modes.BroadcastBids then
     local pass, err = pcall(BidInterface_Update)
 
     if not pass then
@@ -303,15 +303,15 @@ function MonDKP:BidInterface_Toggle()
     end
   end
 
-  if not MonDKP_DB.modes.BroadcastBids or core.BiddingWindow then
-    if MonDKP_DB.modes.mode == "Minimum Bid Values" or (MonDKP_DB.modes.mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+  if not core.DB.modes.BroadcastBids or core.BiddingWindow then
+    if core.DB.modes.mode == "Minimum Bid Values" or (core.DB.modes.mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
       core.BidInterface:SetHeight(259);
     else
       core.BidInterface:SetHeight(231);
     end
     core.BidInterface.bidTable:Hide();
   else
-    if MonDKP_DB.modes.mode == "Minimum Bid Values" or (MonDKP_DB.modes.mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+    if core.DB.modes.mode == "Minimum Bid Values" or (core.DB.modes.mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
       core.BidInterface:SetHeight(532);
     else
       core.BidInterface:SetHeight(504);
@@ -378,12 +378,12 @@ function MonDKP:CurrItem_Set(item, value, icon, value2)
     core.BidInterface.Bid:SetNumber(value);
   end
 
-  if MonDKP_DB.modes.mode ~= "Roll Based Bidding" then
+  if core.DB.modes.mode ~= "Roll Based Bidding" then
     core.BidInterface.SubmitBid:SetScript("OnClick", function()
       local message;
 
       if core.BidInterface.Bid:IsShown() then
-        message = "!bid "..MonDKP_round(core.BidInterface.Bid:GetNumber(), MonDKP_DB.modes.rounding)
+        message = "!bid "..MonDKP_round(core.BidInterface.Bid:GetNumber(), core.DB.modes.rounding)
       else
         message = "!bid";
       end
@@ -395,7 +395,7 @@ function MonDKP:CurrItem_Set(item, value, icon, value2)
       MonDKP.Sync:SendData("MonDKPBidder", "!bid cancel")
       core.BidInterface.Bid:ClearFocus();
     end)
-  elseif MonDKP_DB.modes.mode == "Roll Based Bidding" then
+  elseif core.DB.modes.mode == "Roll Based Bidding" then
     core.BidInterface.SubmitBid:SetScript("OnClick", function()
       local min, max = RollMinMax_Get()
 
@@ -403,15 +403,15 @@ function MonDKP:CurrItem_Set(item, value, icon, value2)
     end)
   end
 
-  if not MonDKP_DB.modes.BroadcastBids or core.BidInProgress then
-    if MonDKP_DB.modes.mode == "Minimum Bid Values" or (MonDKP_DB.modes.mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+  if not core.DB.modes.BroadcastBids or core.BidInProgress then
+    if core.DB.modes.mode == "Minimum Bid Values" or (core.DB.modes.mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
       core.BidInterface:SetHeight(259);
     else
       core.BidInterface:SetHeight(231);
     end
     core.BidInterface.bidTable:Hide();
   else
-    if MonDKP_DB.modes.mode == "Minimum Bid Values" or (MonDKP_DB.modes.mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+    if core.DB.modes.mode == "Minimum Bid Values" or (core.DB.modes.mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
       core.BidInterface:SetHeight(532);
     else
       core.BidInterface:SetHeight(504);
@@ -446,9 +446,9 @@ end
 
 function MonDKP:BidInterface_Create()
   local f = CreateFrame("Frame", "MonDKP_BidderWindow", UIParent, "ShadowOverlaySmallTemplate");
-  local mode = MonDKP_DB.modes.mode;
+  local mode = core.DB.modes.mode;
   f:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 700, -200);
-  if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+  if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
     f:SetSize(400, 532);
   else
     f:SetSize(400, 504);
@@ -470,14 +470,14 @@ function MonDKP:BidInterface_Create()
   f:SetScript("OnDragStop", function()
     f:StopMovingOrSizing();
     local point, relativeTo, relativePoint, xOff, yOff = f:GetPoint(1)
-    if not MonDKP_DB.bidintpos then
-      MonDKP_DB.bidintpos = {}
+    if not core.DB.bidintpos then
+      core.DB.bidintpos = {}
     end
-    MonDKP_DB.bidintpos.point = point;
-    MonDKP_DB.bidintpos.relativeTo = relativeTo;
-    MonDKP_DB.bidintpos.relativePoint = relativePoint;
-    MonDKP_DB.bidintpos.x = xOff;
-    MonDKP_DB.bidintpos.y = yOff;
+    core.DB.bidintpos.point = point;
+    core.DB.bidintpos.relativeTo = relativeTo;
+    core.DB.bidintpos.relativePoint = relativePoint;
+    core.DB.bidintpos.x = xOff;
+    core.DB.bidintpos.y = yOff;
   end);
   f:SetScript("OnMouseDown", function(self)
     self:SetFrameLevel(10)
@@ -550,7 +550,7 @@ function MonDKP:BidInterface_Create()
   f.MinBid:SetPoint("LEFT", f.MinBidHeader, "RIGHT", 8, 0);
   f.MinBid:SetSize(200, 28)
 
-  if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+  if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
     f.MaxBidHeader = f:CreateFontString(nil, "OVERLAY")
     f.MaxBidHeader:SetFontObject("MonDKPLargeRight");
     f.MaxBidHeader:SetScale(0.7)
@@ -567,7 +567,7 @@ function MonDKP:BidInterface_Create()
   f.BidHeader:SetFontObject("MonDKPLargeRight");
   f.BidHeader:SetScale(0.7)
   f.BidHeader:SetText(L["BID"]..":")
-  if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+  if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
     f.BidHeader:SetPoint("TOPRIGHT", f.MaxBidHeader, "BOTTOMRIGHT", 0, -20);
   else
     f.BidHeader:SetPoint("TOPRIGHT", f.MinBidHeader, "BOTTOMRIGHT", 0, -20);
@@ -622,9 +622,9 @@ function MonDKP:BidInterface_Create()
   f.BidMax:SetNormalFontObject("MonDKPSmallCenter");
   f.BidMax:SetHighlightFontObject("MonDKPSmallCenter");
   f.BidMax:SetScript("OnClick", function()
-    local behavior = MonDKP_DB.modes.MaxBehavior
+    local behavior = core.DB.modes.MaxBehavior
     local itemValue = 0
-    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
       local value, text = strsplit(" ", f.MaxBid:GetText())
       itemValue = tonumber(value)
     else
@@ -632,9 +632,9 @@ function MonDKP:BidInterface_Create()
     end
 
     local dkp = 0
-    local search = MonDKP:Table_Search(MonDKP_DKPTable, UnitName("player"), "player")
+    local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), UnitName("player"), "player")
     if search then
-      dkp = MonDKP_DKPTable[search[1][1]].dkp;
+      dkp = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp;
     end
 
     if behavior == "Max DKP" or itemValue == 0  then
@@ -660,9 +660,9 @@ function MonDKP:BidInterface_Create()
   f.BidHalf:SetNormalFontObject("MonDKPSmallCenter");
   f.BidHalf:SetHighlightFontObject("MonDKPSmallCenter");
   f.BidHalf:SetScript("OnClick", function()
-    local behavior = MonDKP_DB.modes.MaxBehavior
+    local behavior = core.DB.modes.MaxBehavior
     local itemValue = 0
-    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
       local value, text = strsplit(" ", f.MaxBid:GetText())
       itemValue = tonumber(value)
     else
@@ -670,9 +670,9 @@ function MonDKP:BidInterface_Create()
     end
 
     local dkp = 0
-    local search = MonDKP:Table_Search(MonDKP_DKPTable, UnitName("player"), "player")
+    local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), UnitName("player"), "player")
     if search then
-      dkp = MonDKP_DKPTable[search[1][1]].dkp;
+      dkp = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp;
     end
 
     if behavior == "Max DKP" or itemValue == 0  then
@@ -723,12 +723,12 @@ function MonDKP:BidInterface_Create()
     core.BidInterface:Hide()
   end)
 
-  if MonDKP_DB.defaults.AutoOpenBid == nil then
-    MonDKP_DB.defaults.AutoOpenBid = true
+  if core.DB.defaults.AutoOpenBid == nil then
+    core.DB.defaults.AutoOpenBid = true
   end
 
   f.AutoOpenCheckbox = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
-  f.AutoOpenCheckbox:SetChecked(MonDKP_DB.defaults.AutoOpenBid)
+  f.AutoOpenCheckbox:SetChecked(core.DB.defaults.AutoOpenBid)
   f.AutoOpenCheckbox:SetScale(0.6);
   f.AutoOpenCheckbox.text:SetText("|cff5151de"..L["AUTOOPEN"].."|r");
   f.AutoOpenCheckbox.text:SetScale(1.4);
@@ -737,7 +737,7 @@ function MonDKP:BidInterface_Create()
   f.AutoOpenCheckbox.text:SetFontObject("MonDKPSmallLeft")
   f.AutoOpenCheckbox:SetPoint("TOP", f.CancelBid, "BOTTOMRIGHT", 5, -53)
   f.AutoOpenCheckbox:SetScript("OnClick", function(self)
-    MonDKP_DB.defaults.AutoOpenBid = self:GetChecked()
+    core.DB.defaults.AutoOpenBid = self:GetChecked()
   end)
   f.AutoOpenCheckbox:SetScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_LEFT");
@@ -779,7 +779,7 @@ function MonDKP:BidInterface_Create()
   -- Header Buttons
   --------------------------------------- 
   f.headerButtons = {}
-  mode = MonDKP_DB.modes.mode;
+  mode = core.DB.modes.mode;
 
   f.BidTable_Headers = CreateFrame("Frame", "MonDKPBidderTableHeaders", f.bidTable)
   f.BidTable_Headers:SetSize(370, 22)
@@ -817,9 +817,9 @@ function MonDKP:BidInterface_Create()
   f.headerButtons.dkp.t:SetTextColor(1, 1, 1, 1);
   f.headerButtons.dkp.t:SetPoint("CENTER", f.headerButtons.dkp, "CENTER", 0, 0);
 
-  if not MonDKP_DB.modes.BroadcastBids then
+  if not core.DB.modes.BroadcastBids then
     f.bidTable:Hide();
-    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Minimum Bid") then
+    if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
       f:SetHeight(259);
     else
       f:SetHeight(231);
