@@ -48,7 +48,7 @@ end
 
 function MonDKP:ProcessDisenchant(loot)
 	local itemName,itemLink,_,_,_,_,_,_,_,itemIcon = GetItemInfo(loot)
-	local mode = MonDKP_DB.modes.mode;
+	local mode = core.DB.modes.mode;
 
 	if core.BiddingWindow and core.BiddingWindow:IsShown() then  -- can only process through bidding process
 		if _G["MonDKPBiddingStartBiddingButton"] then
@@ -62,9 +62,9 @@ function MonDKP:ProcessDisenchant(loot)
 		core.BidInProgress = false;
 		MonDKP:BroadcastStopBidTimer()
 
-		if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and MonDKP_DB.modes.ZeroSumBidType == "Static") then
-			local search = MonDKP:Table_Search(MonDKP_MinBids, itemName);
-			local numOfDisenchants = MonDKP_MinBids[search[1][1]]["disenchants"] or 0;
+		if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
+			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_MinBids, true), itemName);
+			local numOfDisenchants = MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]]["disenchants"] or 0;
 			local updatedDisenchants = numOfDisenchants + 1;
 			local cost = core.BiddingWindow.cost:GetNumber();
 
@@ -77,7 +77,7 @@ function MonDKP:ProcessDisenchant(loot)
 
 			--Adjust Price
 			if updatedDisenchants >= 3 then
-				cost = MonDKP_round(cost/2, MonDKP_DB.modes.rounding);
+				cost = MonDKP_round(cost/2, core.DB.modes.rounding);
 				if cost < 5 then
 					cost = 5
 				end
@@ -87,16 +87,16 @@ function MonDKP:ProcessDisenchant(loot)
 
 			if not search then
 
-				tinsert(MonDKP_MinBids, newItem)
+				tinsert(MonDKP:GetTable(MonDKP_Player_MinBids, true), newItem)
 				core.BiddingWindow.CustomMinBid:SetShown(true);
 				core.BiddingWindow.CustomMinBid:SetChecked(true);
 			else
 
-				MonDKP_MinBids[search[1][1]].minbid = cost;
-				MonDKP_MinBids[search[1][1]].link = itemLink;
-				MonDKP_MinBids[search[1][1]].icon = itemIcon;
-				MonDKP_MinBids[search[1][1]].disenchants = updatedDisenchants;
-				newItem = MonDKP_MinBids[search[1][1]];
+				MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].minbid = cost;
+				MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].link = itemLink;
+				MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].icon = itemIcon;
+				MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].disenchants = updatedDisenchants;
+				newItem = MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]];
 			end
 
 			MonDKP.Sync:SendData("MonDKPSetPrice", newItem);
