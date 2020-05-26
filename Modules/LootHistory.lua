@@ -553,7 +553,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		    		awardOfficer = strsplit("-", LootTable[i].index)
 		    	end
 
-		    	local awarded_by_search = MonDKP:Table_Search(MonDKP_DKPTable, awardOfficer, "player")
+		    	local awarded_by_search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), awardOfficer, "player")
 		    	if awarded_by_search then
 			     	c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[awarded_by_search[1][1]].class)
 			    else
