@@ -526,6 +526,11 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		-- Verify DB Schemas
 		------------------------------------------------
 		if not VerifyDBSchema(MonDKP_DB) then MonDKP_DB =  UpgradeDBSchema(MonDKP_DB, MonDKP_DB, false, "MonDKP_DB") end;
+		
+		-- Verify that the DB table has been initialized.
+		MonDKP:SetTable(MonDKP_DB, false, InitializeMonDKPDB(MonDKP:GetTable(MonDKP_DB)))
+		core.DB 				= MonDKP:GetTable(MonDKP_DB); --Player specific DB
+
 		if not VerifyDBSchema(MonDKP_DKPTable) then MonDKP_DKPTable =  UpgradeDBSchema(MonDKP_DKPTable, MonDKP_DKPTable, true, "MonDKP_DKPTable") end;
 		if not VerifyDBSchema(MonDKP_Loot) then MonDKP_Loot =  UpgradeDBSchema(MonDKP_Loot, MonDKP_Loot, true, "MonDKP_Loot") end;
 		if not VerifyDBSchema(MonDKP_DKPHistory) then MonDKP_DKPHistory =  UpgradeDBSchema(MonDKP_DKPHistory, MonDKP_DKPHistory, true, "MonDKP_DKPHistory") end;
@@ -535,11 +540,11 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not VerifyDBSchema(MonDKP_Standby) then MonDKP_Standby =  UpgradeDBSchema(MonDKP_Standby, MonDKP_Standby, true, "MonDKP_Standby") end;
 		if not VerifyDBSchema(MonDKP_Archive) then MonDKP_Archive =  UpgradeDBSchema(MonDKP_Archive, MonDKP_Archive, true, "MonDKP_Archive") end;
 		
-		
+
+
 		------------------------------------
 	    --	Import SavedVariables
 	    ------------------------------------
-		core.DB 				= MonDKP:GetTable(MonDKP_DB); --Player specific DB
 		core.WorkingTable 		= MonDKP:GetTable(MonDKP_DKPTable, true); -- imports full DKP table to WorkingTable for list manipulation
 		core.PriceTable			= MonDKP:GetTable(MonDKP_MinBids, true);
 
@@ -584,6 +589,11 @@ function MonDKP:GetTable(dbTable, hasTeams)
 		dbTable = InitializeGuild(dbTable,realmName,guildName);
 
 		if hasTeams then
+			
+			if not dbTable[realmName][guildName][core.DB.defaults.CurrentTeam] then
+				dbTable[realmName][guildName][core.DB.defaults.CurrentTeam] = {}
+			end
+
 			return dbTable[realmName][guildName][core.DB.defaults.CurrentTeam];
 		else
 			return dbTable[realmName][guildName];
@@ -644,15 +654,6 @@ function UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
 			if not defaultTable.defaults.CurrentTeam then defaultTable.defaults.CurrentTeam = "0" end;
 			if not defaultTable.teams then defaultTable.teams = {} end;
 			newDbTable[core.defaultTable] = defaultTable;
-
-			local configTable = InitializeMonDKPDB(MonDKP:GetTable(newDbTable));
-			if not configTable.defaults.CurrentTeam then configTable.defaults.CurrentTeam = "0" end;
-			if not configTable.teams then configTable.teams = {} end;
-
-			if IsInGuild() then
-				if not configTable.teams["0"] then configTable.teams["0"] = {name=MonDKP:GetGuildName()} end;
-			end
-			
 		end
 	end
 	-- Set Current Build Number
@@ -708,6 +709,12 @@ function InitializeMonDKPDB(dbTable)
 	if not dbTable.defaults.HideChangeLogs then dbTable.defaults.HideChangeLogs = 0 end
 	if not dbTable.modes.AntiSnipe then dbTable.modes.AntiSnipe = 0 end
 	if not dbTable.defaults.CurrentGuild then dbTable.defaults.CurrentGuild = {} end
+	if not dbTable.defaults.CurrentTeam then dbTable.defaults.CurrentTeam = "0" end;
+	if not dbTable.teams then dbTable.teams = {} end;
+
+	if IsInGuild() then
+		if not dbTable.teams["0"] then dbTable.teams["0"] = {name=MonDKP:GetGuildName()} end;
+	end
 
 	return dbTable;
 end
