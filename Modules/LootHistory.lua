@@ -260,11 +260,14 @@ function CreateSortBox()
 				-- for i = 1+(3-1)*20 = 41 ,  1+(3-1)*20+(20-1) = 60 do
 				for i=1+(menuList-1)*displayLimit, 1+(menuList-1)*displayLimit+(displayLimit-1) do
 					if PlayerList[i] then
-						local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, PlayerList[i])
+						
+						local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), PlayerList[i])
 						local c;
 
 						if classSearch then
-							c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+							-- MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[classSearch[1][1]].class)
+
+							c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[classSearch[1][1]].class)
 						else
 							c = { hex="444444" }
 						end
@@ -494,11 +497,11 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 
 		    local feedString;
 
-		    local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, LootTable[i]["player"])
+		    local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), LootTable[i]["player"])
 		    local c, lootCost;
 
 		    if classSearch then
-		     	c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+		     	c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[classSearch[1][1]].class)
 		    else
 		     	c = { hex="444444" }
 		    end
