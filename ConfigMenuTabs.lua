@@ -284,10 +284,10 @@ function MonDKP:ConfigMenuTabs()
 	MonDKP.ConfigTab5.looter = looter
 	local lootFrame = {}
 	MonDKP.ConfigTab5.lootFrame = lootFrame
-	for i=1, #MonDKP:GetTable(MonDKP_Player_Loot, true) do
+	for i=1, #MonDKP:GetTable(MonDKP_Loot, true) do
 		MonDKP.ConfigTab5.lootFrame[i] = CreateFrame("Frame", "MonDKPLootHistoryFrame"..i, MonDKP.ConfigTab5);
 	end
-	if #MonDKP:GetTable(MonDKP_Player_Loot, true) > 0 then
+	if #MonDKP:GetTable(MonDKP_Loot, true) > 0 then
 		MonDKP:LootHistory_Update(L["NOFILTER"])
 		CreateSortBox();
 	end
@@ -306,7 +306,7 @@ function MonDKP:ConfigMenuTabs()
 	MonDKP.ConfigTab6.inst:SetFontObject("MonDKPSmallRight");
 	MonDKP.ConfigTab6.inst:SetTextColor(0.3, 0.3, 0.3, 0.7)
 	MonDKP.ConfigTab6.inst:SetPoint("TOPRIGHT", MonDKP.ConfigTab6, "TOPRIGHT", -40, -43);
-	if #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) > 0 then
+	if #MonDKP:GetTable(MonDKP_DKPHistory, true) > 0 then
 		MonDKP:DKPHistory_Update()
 	end
 	DKPHistoryFilterBox_Create()

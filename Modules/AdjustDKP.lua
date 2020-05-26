@@ -21,10 +21,10 @@ function MonDKP:AdjustDKP(value)
 	if (#core.SelectedData > 0 and adjustReason and adjustReason ~= L["OTHER"].." - "..L["ENTEROTHERREASONHERE"]) then
 		if core.IsOfficer then
 			local tempString = "";       -- stores list of changes
-			local dkpHistoryString = ""   -- stores list for MonDKP:GetTable(MonDKP_Player_DKPHistory, true)
+			local dkpHistoryString = ""   -- stores list for MonDKP:GetTable(MonDKP_DKPHistory, true)
 			for i=1, #core.SelectedData do
 				local current;
-				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), core.SelectedData[i]["player"])
+				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), core.SelectedData[i]["player"])
 				if search then
 					if not IsInRaid() then
 						if i < #core.SelectedData then
@@ -34,16 +34,16 @@ function MonDKP:AdjustDKP(value)
 						end
 					end
 					dkpHistoryString = dkpHistoryString..core.SelectedData[i]["player"]..","
-					current = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp
-					MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp = MonDKP_round(tonumber(current + value), core.DB.modes.rounding)
+					current = MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].dkp
+					MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].dkp = MonDKP_round(tonumber(current + value), core.DB.modes.rounding)
 					if value > 0 then
-						MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]]["lifetime_gained"] = MonDKP_round(tonumber(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]]["lifetime_gained"] + value), core.DB.modes.rounding)
+						MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]]["lifetime_gained"] = MonDKP_round(tonumber(MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]]["lifetime_gained"] + value), core.DB.modes.rounding)
 					end
 				end
 			end
 			local newIndex = curOfficer.."-"..curTime
-			tinsert(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), 1, {players=dkpHistoryString, dkp=value, reason=adjustReason, date=curTime, index=newIndex})
-			MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[1])
+			tinsert(MonDKP:GetTable(MonDKP_DKPHistory, true), 1, {players=dkpHistoryString, dkp=value, reason=adjustReason, date=curTime, index=newIndex})
+			MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP:GetTable(MonDKP_DKPHistory, true)[1])
 
 			if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
 				MonDKP:DKPHistory_Update(true)
@@ -85,7 +85,7 @@ local function DecayDKP(amount, deductionType, GetSelections)
 	local curTime = time()
 	local curOfficer = UnitName("player")
 
-	for key, value in ipairs(MonDKP:GetTable(MonDKP_Player_DKPTable, true)) do
+	for key, value in ipairs(MonDKP:GetTable(MonDKP_DKPTable, true)) do
 		local dkp = tonumber(value["dkp"])
 		local player = value["player"]
 		local amount = amount;
@@ -124,8 +124,8 @@ local function DecayDKP(amount, deductionType, GetSelections)
 	if tonumber(amount) < 0 then amount = amount * -1 end		-- flips value to positive if officer accidently used a negative number
 
 	local newIndex = curOfficer.."-"..curTime
-	tinsert(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), 1, {players=playerString, dkp=dkpString, reason=L["WEEKLYDECAY"], date=curTime, index=newIndex})
-	MonDKP.Sync:SendData("MonDKPDecay", MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[1])
+	tinsert(MonDKP:GetTable(MonDKP_DKPHistory, true), 1, {players=playerString, dkp=dkpString, reason=L["WEEKLYDECAY"], date=curTime, index=newIndex})
+	MonDKP.Sync:SendData("MonDKPDecay", MonDKP:GetTable(MonDKP_DKPHistory, true)[1])
 	if MonDKP.ConfigTab6.history then
 		MonDKP:DKPHistory_Update(true)
 	end
@@ -447,10 +447,10 @@ function MonDKP:AdjustDKPTab_Create()
 			local selected = L["AREYOUSURE"].." "..MonDKP_round(MonDKP.ConfigTab2.addDKP:GetNumber(), core.DB.modes.rounding).." "..L["DKPTOFOLLOWING"]..": \n\n";
 
 			for i=1, #core.SelectedData do
-				local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), core.SelectedData[i].player)
+				local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), core.SelectedData[i].player)
 
 				if classSearch then
-					c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[classSearch[1][1]].class)
+					c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[classSearch[1][1]].class)
 				else
 					c = { hex="ffffff" }
 				end

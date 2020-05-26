@@ -15,7 +15,7 @@ end
 
 function MonDKP_Standby_Announce(bossName)
 	core.StandbyActive = true; -- activates opt in
-	table.wipe(MonDKP:GetTable(MonDKP_Player_Standby, true));
+	table.wipe(MonDKP:GetTable(MonDKP_Standby, true));
 	if MonDKP:CheckRaidLeader() then
 		SendChatMessage(bossName..L["STANDBYOPTINBEGIN"], "GUILD") -- only raid leader announces
 	end
@@ -46,11 +46,11 @@ function MonDKP_Standby_Handler(text, ...)
 		if cmd and cmd:gsub("%s+", "") ~= "nil" and cmd:gsub("%s+", "") ~= "" then
 			-- if it's !standby *name*
 			cmd = cmd:gsub("%s+", "") -- removes unintended spaces from string
-			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), cmd)
-			local verify = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_Standby, true), cmd)
+			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), cmd)
+			local verify = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Standby, true), cmd)
 
 			if search and not verify then
-				table.insert(MonDKP:GetTable(MonDKP_Player_Standby, true), MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]])
+				table.insert(MonDKP:GetTable(MonDKP_Standby, true), MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]])
 				response = "MonolithDKP: "..cmd.." "..L["STANDBYWHISPERRESP1"]
 			elseif search and verify then
 				response = "MonolithDKP: "..cmd.." "..L["STANDBYWHISPERRESP2"]
@@ -59,11 +59,11 @@ function MonDKP_Standby_Handler(text, ...)
 			end
 		else
 			-- if it's just !standby
-			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), name)
-			local verify = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_Standby, true), name)
+			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), name)
+			local verify = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Standby, true), name)
 
 			if search and not verify then
-				table.insert(MonDKP:GetTable(MonDKP_Player_Standby, true), MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]])
+				table.insert(MonDKP:GetTable(MonDKP_Standby, true), MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]])
 				response = "MonolithDKP: "..L["STANDBYWHISPERRESP4"]
 			elseif search and verify then
 				response = "MonolithDKP: "..L["STANDBYWHISPERRESP5"]

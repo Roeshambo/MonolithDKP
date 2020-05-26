@@ -79,12 +79,12 @@ MonDKP.Commands = {
       item = name.." "..item;
 	  local itemName,_,_,_,_,_,_,_,_,_ = GetItemInfo(item)
 	  local cost = 0;
-	  local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_MinBids, true), itemName)
+	  local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_MinBids, true), itemName)
 
 	  if not search then
 		cost = MonDKP:GetMinBid(item)
 	  else
-		cost = MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].minbid;
+		cost = MonDKP:GetTable(MonDKP_MinBids, true)[search[1][1]].minbid;
 	  end
 
 	  MonDKP:AwardConfirm(nil, cost, core.DB.bossargs.LastKilledBoss, core.DB.bossargs.CurrentRaidZone, item)
@@ -216,7 +216,7 @@ function DoGuildUpdate()
 			MonDKP:SortLootTable()
 			MonDKP:SortDKPHistoryTable()
 			MonDKP:Print(L["VERSION"].." "..core.MonVersion..", "..L["CREATEDMAINTAIN"].." Kyliee@BloodsailBuccaneers-Classic");
-			MonDKP:Print(L["LOADED"].." "..#MonDKP:GetTable(MonDKP_Player_DKPTable, true).." "..L["PLAYERRECORDS"]..", "..#MonDKP:GetTable(MonDKP_Player_Loot, true).." "..L["LOOTHISTRECORDS"].." "..#MonDKP:GetTable(MonDKP_Player_DKPHistory, true).." "..L["DKPHISTRECORDS"]..".");
+			MonDKP:Print(L["LOADED"].." "..#MonDKP:GetTable(MonDKP_DKPTable, true).." "..L["PLAYERRECORDS"]..", "..#MonDKP:GetTable(MonDKP_Loot, true).." "..L["LOOTHISTRECORDS"].." "..#MonDKP:GetTable(MonDKP_DKPHistory, true).." "..L["DKPHISTRECORDS"]..".");
 			MonDKP:Print(L["USE"].." /dkp ? "..L["SUBMITBUGS"].." @ https://github.com/Roeshambo/MonolithDKP/issues");
 			MonDKP.Sync:SendData("MonDKPBuild", tostring(core.BuildNumber)) -- broadcasts build number to guild to check if a newer version is available
 
@@ -227,12 +227,12 @@ function DoGuildUpdate()
 			end
 
 			local seed
-			if #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) > 0 and #MonDKP:GetTable(MonDKP_Player_Loot, true) > 0 and strfind(MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[1].index, "-") and strfind(MonDKP:GetTable(MonDKP_Player_Loot, true)[1].index, "-") then
-				local off1,date1 = strsplit("-", MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[1].index)
-				local off2,date2 = strsplit("-", MonDKP:GetTable(MonDKP_Player_Loot, true)[1].index)
+			if #MonDKP:GetTable(MonDKP_DKPHistory, true) > 0 and #MonDKP:GetTable(MonDKP_Loot, true) > 0 and strfind(MonDKP:GetTable(MonDKP_DKPHistory, true)[1].index, "-") and strfind(MonDKP:GetTable(MonDKP_Loot, true)[1].index, "-") then
+				local off1,date1 = strsplit("-", MonDKP:GetTable(MonDKP_DKPHistory, true)[1].index)
+				local off2,date2 = strsplit("-", MonDKP:GetTable(MonDKP_Loot, true)[1].index)
 				
 				if MonDKP:ValidateSender(off1) and MonDKP:ValidateSender(off2) and tonumber(date1) > core.DB.defaults.installed210 and tonumber(date2) > core.DB.defaults.installed210 then
-					seed = MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[1].index..","..MonDKP:GetTable(MonDKP_Player_Loot, true)[1].index  -- seed is only sent if the seed dates are post 2.1 installation and the posting officer is an officer in the current guild
+					seed = MonDKP:GetTable(MonDKP_DKPHistory, true)[1].index..","..MonDKP:GetTable(MonDKP_Loot, true)[1].index  -- seed is only sent if the seed dates are post 2.1 installation and the posting officer is an officer in the current guild
 				else
 					seed = "start"
 				end
@@ -525,16 +525,6 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		------------------------------------------------
 		-- Verify DB Schemas
 		------------------------------------------------
-		if not VerifyDBSchema(MonDKP_Player_DB) then MonDKP_Player_DB =  UpgradeDBSchema(MonDKP_Player_DB, MonDKP_DB, false, "MonDKP_DB") end;
-		if not VerifyDBSchema(MonDKP_Player_DKPTable) then MonDKP_Player_DKPTable =  UpgradeDBSchema(MonDKP_Player_DKPTable, MonDKP_DKPTable, true, "MonDKP_DKPTable") end;
-		if not VerifyDBSchema(MonDKP_Player_Loot) then MonDKP_Player_Loot =  UpgradeDBSchema(MonDKP_Player_Loot, MonDKP_Loot, true, "MonDKP_Loot") end;
-		if not VerifyDBSchema(MonDKP_Player_DKPHistory) then MonDKP_Player_DKPHistory =  UpgradeDBSchema(MonDKP_Player_DKPHistory, MonDKP_DKPHistory, true, "MonDKP_DKPHistory") end;
-		if not VerifyDBSchema(MonDKP_Player_MinBids) then MonDKP_Player_MinBids =  UpgradeDBSchema(MonDKP_Player_MinBids, MonDKP_MinBids, true, "MonDKP_MinBids") end;
-		if not VerifyDBSchema(MonDKP_Player_MaxBids) then MonDKP_Player_MaxBids =  UpgradeDBSchema(MonDKP_Player_MaxBids, MonDKP_MaxBids, true, "MonDKP_MaxBids") end;
-		if not VerifyDBSchema(MonDKP_Player_Whitelist) then MonDKP_Player_Whitelist =  UpgradeDBSchema(MonDKP_Player_Whitelist, MonDKP_Whitelist, false, "MonDKP_Whitelist") end;
-		if not VerifyDBSchema(MonDKP_Player_Standby) then MonDKP_Player_Standby =  UpgradeDBSchema(MonDKP_Player_Standby, MonDKP_Standby, true, "MonDKP_Standby") end;
-		if not VerifyDBSchema(MonDKP_Player_Archive) then MonDKP_Player_Archive =  UpgradeDBSchema(MonDKP_Player_Archive, MonDKP_Archive, true, "MonDKP_Archive") end;
-		
 		if not VerifyDBSchema(MonDKP_DB) then MonDKP_DB =  UpgradeDBSchema(MonDKP_DB, MonDKP_DB, false, "MonDKP_DB") end;
 		if not VerifyDBSchema(MonDKP_DKPTable) then MonDKP_DKPTable =  UpgradeDBSchema(MonDKP_DKPTable, MonDKP_DKPTable, true, "MonDKP_DKPTable") end;
 		if not VerifyDBSchema(MonDKP_Loot) then MonDKP_Loot =  UpgradeDBSchema(MonDKP_Loot, MonDKP_Loot, true, "MonDKP_Loot") end;
@@ -545,16 +535,17 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not VerifyDBSchema(MonDKP_Standby) then MonDKP_Standby =  UpgradeDBSchema(MonDKP_Standby, MonDKP_Standby, true, "MonDKP_Standby") end;
 		if not VerifyDBSchema(MonDKP_Archive) then MonDKP_Archive =  UpgradeDBSchema(MonDKP_Archive, MonDKP_Archive, true, "MonDKP_Archive") end;
 		
+		
 		------------------------------------
 	    --	Import SavedVariables
 	    ------------------------------------
-		core.DB 				= MonDKP:GetTable(MonDKP_Player_DB); --Player specific DB
-		core.WorkingTable 		= MonDKP:GetTable(MonDKP_Player_DKPTable, true); -- imports full DKP table to WorkingTable for list manipulation
-		core.PriceTable			= MonDKP:GetTable(MonDKP_Player_MinBids, true);
+		core.DB 				= MonDKP:GetTable(MonDKP_DB); --Player specific DB
+		core.WorkingTable 		= MonDKP:GetTable(MonDKP_DKPTable, true); -- imports full DKP table to WorkingTable for list manipulation
+		core.PriceTable			= MonDKP:GetTable(MonDKP_MinBids, true);
 
-		if not MonDKP:GetTable(MonDKP_Player_DKPHistory, true).seed then MonDKP:GetTable(MonDKP_Player_DKPHistory, true).seed = 0 end
-		if not MonDKP:GetTable(MonDKP_Player_Loot, true).seed then MonDKP:GetTable(MonDKP_Player_Loot, true).seed = 0 end
-		if MonDKP:GetTable(MonDKP_Player_DKPTable, true).seed then MonMonDKP:GetTable(MonDKP_Player_DKPTable, true)DKP_DKPTable.seed = nil end
+		if not MonDKP:GetTable(MonDKP_DKPHistory, true).seed then MonDKP:GetTable(MonDKP_DKPHistory, true).seed = 0 end
+		if not MonDKP:GetTable(MonDKP_Loot, true).seed then MonDKP:GetTable(MonDKP_Loot, true).seed = 0 end
+		if MonDKP:GetTable(MonDKP_DKPTable, true).seed then MonMonDKP:GetTable(MonDKP_DKPTable, true)DKP_DKPTable.seed = nil end
 
 
 		core.CurrentRaidZone	= core.DB.bossargs.CurrentRaidZone;	-- stores raid zone as a redundency
@@ -574,10 +565,10 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 
 		if MonDKP.BidTimer then MonDKP.BidTimer:SetScript("OnUpdate", nil) end
 
-		if #MonDKP:GetTable(MonDKP_Player_Loot, true) > core.DB.defaults.HistoryLimit then
+		if #MonDKP:GetTable(MonDKP_Loot, true) > core.DB.defaults.HistoryLimit then
 			MonDKP:PurgeLootHistory()									-- purges Loot History entries that exceed the "HistoryLimit" option variable (oldest entries) and populates MonDKP_Archive with deleted values
 		end
-		if #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) > core.DB.defaults.DKPHistoryLimit then
+		if #MonDKP:GetTable(MonDKP_DKPHistory, true) > core.DB.defaults.DKPHistoryLimit then
 			MonDKP:PurgeDKPHistory()									-- purges DKP History entries that exceed the "DKPHistoryLimit" option variable (oldest entries) and populates MonDKP_Archive with deleted values
 		end
 	end
@@ -647,7 +638,13 @@ function UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
 	-- Build 20205 (2.2.5) Changes
 	if newDbTable.dbinfo.build < 20205 then
 		if newDbTable.dbinfo.name == "MonDKP_DB" then
-			
+
+			local defaultTable = {}
+			defaultTable = InitializeMonDKPDB(MonDKP:GetTable(defaultTable))
+			if not defaultTable.defaults.CurrentTeam then defaultTable.defaults.CurrentTeam = "0" end;
+			if not defaultTable.teams then defaultTable.teams = {} end;
+			newDbTable[core.defaultTable] = defaultTable;
+
 			local configTable = InitializeMonDKPDB(MonDKP:GetTable(newDbTable));
 			if not configTable.defaults.CurrentTeam then configTable.defaults.CurrentTeam = "0" end;
 			if not configTable.teams then configTable.teams = {} end;
@@ -655,6 +652,7 @@ function UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
 			if IsInGuild() then
 				if not configTable.teams["0"] then configTable.teams["0"] = {name=MonDKP:GetGuildName()} end;
 			end
+			
 		end
 	end
 	-- Set Current Build Number
@@ -733,9 +731,9 @@ function InitPlayerTable(globalTable, hasTeams, tableName)
 		else
 			playerTable[realmName][guildName] = CopyTable(globalTable);
 		end
-	else
-		playerTable[core.defaultTable] = {};
 	end
+	-- Init Default Table
+	playerTable[core.defaultTable] = {};
 	return playerTable;
 end
 

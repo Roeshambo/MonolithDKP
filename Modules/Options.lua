@@ -484,7 +484,7 @@ function MonDKP:Options()
           OnAccept = function()
             local temptable = {}
             table.insert(temptable, core.DB.MinBidBySlot)
-            table.insert(temptable, MonDKP:GetTable(MonDKP_Player_MinBids, true))
+            table.insert(temptable, MonDKP:GetTable(MonDKP_MinBids, true))
             MonDKP.Sync:SendData("MonDKPMinBid", temptable)
             MonDKP:Print(L["MINBIDVALUESSENT"])
           end,
@@ -723,7 +723,7 @@ function MonDKP:Options()
           OnAccept = function()
             local temptable = {}
             table.insert(temptable, core.DB.MaxBidBySlot)
-            table.insert(temptable, MonDKP:GetTable(MonDKP_Player_MaxBids, true))
+            table.insert(temptable, MonDKP:GetTable(MonDKP_MaxBids, true))
             MonDKP.Sync:SendData("MonDKPMaxBid", temptable)
             MonDKP:Print(L["MAXBIDVALUESSENT"])
           end,
@@ -1259,23 +1259,23 @@ function MonDKP:Options()
       button1 = L["YES"],
       button2 = L["NO"],
       OnAccept = function()
-        MonDKP:SetTable(MonDKP_Player_Whitelist, false, nil);
-        MonDKP:SetTable(MonDKP_Player_DKPTable, true, nil);
-        MonDKP:SetTable(MonDKP_Player_Loot, true, nil);
-        MonDKP:SetTable(MonDKP_Player_DKPHistory, true, nil);
-        MonDKP:SetTable(MonDKP_Player_Archive, true, nil);
-        MonDKP:SetTable(MonDKP_Player_Standby, true, nil);
-        MonDKP:SetTable(MonDKP_Player_MinBids, true, nil);
-        MonDKP:SetTable(MonDKP_Player_MaxBids, true, nil);
+        MonDKP:SetTable(MonDKP_Whitelist, false, nil);
+        MonDKP:SetTable(MonDKP_DKPTable, true, nil);
+        MonDKP:SetTable(MonDKP_Loot, true, nil);
+        MonDKP:SetTable(MonDKP_DKPHistory, true, nil);
+        MonDKP:SetTable(MonDKP_Archive, true, nil);
+        MonDKP:SetTable(MonDKP_Standby, true, nil);
+        MonDKP:SetTable(MonDKP_MinBids, true, nil);
+        MonDKP:SetTable(MonDKP_MaxBids, true, nil);
 
-        MonDKP:SetTable(MonDKP_Player_DKPTable, true, {});
-        MonDKP:SetTable(MonDKP_Player_Loot, true, {});
-        MonDKP:SetTable(MonDKP_Player_DKPHistory, true, {});
-        MonDKP:SetTable(MonDKP_Player_Archive, true, {});
-        MonDKP:SetTable(MonDKP_Player_Whitelist, false, {});
-        MonDKP:SetTable(MonDKP_Player_Standby, true, {});
-        MonDKP:SetTable(MonDKP_Player_MinBids, true, {});
-        MonDKP:SetTable(MonDKP_Player_MaxBids, true, {});
+        MonDKP:SetTable(MonDKP_DKPTable, true, {});
+        MonDKP:SetTable(MonDKP_Loot, true, {});
+        MonDKP:SetTable(MonDKP_DKPHistory, true, {});
+        MonDKP:SetTable(MonDKP_Archive, true, {});
+        MonDKP:SetTable(MonDKP_Whitelist, false, {});
+        MonDKP:SetTable(MonDKP_Standby, true, {});
+        MonDKP:SetTable(MonDKP_MinBids, true, {});
+        MonDKP:SetTable(MonDKP_MaxBids, true, {});
         MonDKP:LootHistory_Reset()
         MonDKP:FilterDKPTable(core.currentSort, "reset")
         MonDKP:StatusVerify_Update()

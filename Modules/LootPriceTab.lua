@@ -63,8 +63,8 @@ function MonDKP:ProcessDisenchant(loot)
 		MonDKP:BroadcastStopBidTimer()
 
 		if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
-			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_MinBids, true), itemName);
-			local numOfDisenchants = MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]]["disenchants"] or 0;
+			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_MinBids, true), itemName);
+			local numOfDisenchants = MonDKP:GetTable(MonDKP_MinBids, true)[search[1][1]]["disenchants"] or 0;
 			local updatedDisenchants = numOfDisenchants + 1;
 			local cost = core.BiddingWindow.cost:GetNumber();
 
@@ -87,16 +87,16 @@ function MonDKP:ProcessDisenchant(loot)
 
 			if not search then
 
-				tinsert(MonDKP:GetTable(MonDKP_Player_MinBids, true), newItem)
+				tinsert(MonDKP:GetTable(MonDKP_MinBids, true), newItem)
 				core.BiddingWindow.CustomMinBid:SetShown(true);
 				core.BiddingWindow.CustomMinBid:SetChecked(true);
 			else
 
-				MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].minbid = cost;
-				MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].link = itemLink;
-				MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].icon = itemIcon;
-				MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].disenchants = updatedDisenchants;
-				newItem = MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]];
+				MonDKP:GetTable(MonDKP_MinBids, true)[search[1][1]].minbid = cost;
+				MonDKP:GetTable(MonDKP_MinBids, true)[search[1][1]].link = itemLink;
+				MonDKP:GetTable(MonDKP_MinBids, true)[search[1][1]].icon = itemIcon;
+				MonDKP:GetTable(MonDKP_MinBids, true)[search[1][1]].disenchants = updatedDisenchants;
+				newItem = MonDKP:GetTable(MonDKP_MinBids, true)[search[1][1]];
 			end
 
 			MonDKP.Sync:SendData("MonDKPSetPrice", newItem);

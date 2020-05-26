@@ -1006,11 +1006,11 @@ elseif core.DB.modes.mode == "Static Item Values" then
         MonDKP:Print(L["DKPMODESENTCONF"])
         local temptable2 = {}
               table.insert(temptable2, core.DB.MinBidBySlot)
-              table.insert(temptable2, MonDKP:GetTable(MonDKP_Player_MinBids, true))
+              table.insert(temptable2, MonDKP:GetTable(MonDKP_MinBids, true))
               MonDKP.Sync:SendData("MonDKPMinBid", temptable2)
         local temptable3 = {}
               table.insert(temptable3, core.DB.MaxBidBySlot)
-              table.insert(temptable3, MonDKP:GetTable(MonDKP_Player_MaxBids, true))
+              table.insert(temptable3, MonDKP:GetTable(MonDKP_MaxBids, true))
               MonDKP.Sync:SendData("MonDKPMaxBid", temptable3)
       end,
       timeout = 0,

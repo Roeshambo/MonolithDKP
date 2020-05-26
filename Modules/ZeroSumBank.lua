@@ -13,15 +13,15 @@ local function ZeroSumDistribution()
 		local curOfficer = UnitName("player")
 
 		if core.DB.modes.ZeroSumStandby then
-			for i=1, #MonDKP:GetTable(MonDKP_Player_Standby, true) do
-				tinsert(VerifyTable, MonDKP:GetTable(MonDKP_Player_Standby, true)[i].player)
+			for i=1, #MonDKP:GetTable(MonDKP_Standby, true) do
+				tinsert(VerifyTable, MonDKP:GetTable(MonDKP_Standby, true)[i].player)
 			end
 		end		
 
 		for i=1, 40 do
 			local tempName, _rank, _subgroup, _level, _class, _fileName, zone, online = GetRaidRosterInfo(i)
 			local search = MonDKP:Table_Search(VerifyTable, tempName)
-			local search2 = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), tempName)
+			local search2 = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), tempName)
 			local OnlineOnly = core.DB.modes.OnlineOnly
 			local limitToZone = core.DB.modes.SameZoneOnly
 			local isSameZone = zone == GetRealZoneText()
@@ -36,21 +36,21 @@ local function ZeroSumDistribution()
 
 		for i=1, #VerifyTable do
 			local name = VerifyTable[i]
-			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), name)
+			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), name)
 
 			if search then
-				MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp + distribution
+				MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].dkp = MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].dkp + distribution
 				players = players..name..","
 			end
 		end
 		
 		local newIndex = curOfficer.."-"..curTime
-		tinsert(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), 1, {players=players, dkp=distribution, reason=reason, date=curTime, index=newIndex})
+		tinsert(MonDKP:GetTable(MonDKP_DKPHistory, true), 1, {players=players, dkp=distribution, reason=reason, date=curTime, index=newIndex})
 		if MonDKP.ConfigTab6.history then
 			MonDKP:DKPHistory_Update(true)
 		end
 
-		MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[1])
+		MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP:GetTable(MonDKP_DKPHistory, true)[1])
 		MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..distribution.." "..L["AMONG"].." "..#VerifyTable.." "..L["PLAYERSFORREASON"]..": "..reason)
 		MonDKP:Print("Raid DKP Adjusted by "..distribution.." "..L["AMONG"].." "..#VerifyTable.." "..L["PLAYERSFORREASON"]..": "..reason)
 		

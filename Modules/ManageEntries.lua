@@ -10,31 +10,31 @@ local function Remove_Entries()
 	local deleted = {}
 
 	for i=1, #core.SelectedData do
-		local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), core.SelectedData[i]["player"]);
+		local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), core.SelectedData[i]["player"]);
 		local flag = false -- flag = only create archive entry if they appear anywhere in the history. If there's no history, there's no reason anyone would have it.
 		local curTime = time()
 
 		if search then
-			local path = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]]
+			local path = MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]]
 
-			for i=1, #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) do
-				if strfind(MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].players, ","..path.player..",") or strfind(MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].players, path.player..",") == 1 then
+			for i=1, #MonDKP:GetTable(MonDKP_DKPHistory, true) do
+				if strfind(MonDKP:GetTable(MonDKP_DKPHistory, true)[i].players, ","..path.player..",") or strfind(MonDKP:GetTable(MonDKP_DKPHistory, true)[i].players, path.player..",") == 1 then
 					flag = true
 				end
 			end
 
-			for i=1, #MonDKP:GetTable(MonDKP_Player_Loot, true) do
-				if MonDKP:GetTable(MonDKP_Player_Loot, true)[i].player == path.player then
+			for i=1, #MonDKP:GetTable(MonDKP_Loot, true) do
+				if MonDKP:GetTable(MonDKP_Loot, true)[i].player == path.player then
 					flag = true
 				end
 			end
 			
 			if flag then 		-- above 2 loops flags character if they have any loot/dkp history. Only inserts to archive and broadcasts if found. Other players will not have the entry if no history exists
-				if not MonDKP:GetTable(MonDKP_Player_Archive, true)[core.SelectedData[i].player] then
-					MonDKP:GetTable(MonDKP_Player_Archive, true)[core.SelectedData[i].player] = { dkp=0, lifetime_spent=0, lifetime_gained=0, deleted=true, edited=curTime }
+				if not MonDKP:GetTable(MonDKP_Archive, true)[core.SelectedData[i].player] then
+					MonDKP:GetTable(MonDKP_Archive, true)[core.SelectedData[i].player] = { dkp=0, lifetime_spent=0, lifetime_gained=0, deleted=true, edited=curTime }
 				else
-					MonDKP:GetTable(MonDKP_Player_Archive, true)[core.SelectedData[i].player].deleted = true
-					MonDKP:GetTable(MonDKP_Player_Archive, true)[core.SelectedData[i].player].edited = curTime
+					MonDKP:GetTable(MonDKP_Archive, true)[core.SelectedData[i].player].deleted = true
+					MonDKP:GetTable(MonDKP_Archive, true)[core.SelectedData[i].player].edited = curTime
 				end
 				table.insert(deleted, { player=path.player, deleted=true })
 			end
@@ -47,12 +47,12 @@ local function Remove_Entries()
 			end
 			numPlayers = numPlayers + 1
 
-			tremove(MonDKP:GetTable(MonDKP_Player_DKPTable, true), search[1][1])
+			tremove(MonDKP:GetTable(MonDKP_DKPTable, true), search[1][1])
 
-			local search2 = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_Standby, true), core.SelectedData[i].player, "player");
+			local search2 = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Standby, true), core.SelectedData[i].player, "player");
 
 			if search2 then
-				table.remove(MonDKP:GetTable(MonDKP_Player_Standby, true), search2[1][1])
+				table.remove(MonDKP:GetTable(MonDKP_Standby, true), search2[1][1])
 			end
 		end
 	end
@@ -102,8 +102,8 @@ function AddRaidToDKPTable()
 				end
 			end
 			if tempName and InGuild then
-				if not MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), tempName) then
-					tinsert(MonDKP:GetTable(MonDKP_Player_DKPTable, true), {
+				if not MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), tempName) then
+					tinsert(MonDKP:GetTable(MonDKP_DKPTable, true), {
 						player=tempName,
 						class=tempClass,
 						dkp=0,
@@ -122,9 +122,9 @@ function AddRaidToDKPTable()
 					else
 						addedUsers = addedUsers..", |cff"..c.hex..tempName.."|r"
 					end
-					if MonDKP:GetTable(MonDKP_Player_Archive, true)[tempName] and MonDKP:GetTable(MonDKP_Player_Archive, true)[tempName].deleted then
-						MonDKP:GetTable(MonDKP_Player_Archive, true)[tempName].deleted = "Recovered"
-						MonDKP:GetTable(MonDKP_Player_Archive, true)[tempName].edited = curTime
+					if MonDKP:GetTable(MonDKP_Archive, true)[tempName] and MonDKP:GetTable(MonDKP_Archive, true)[tempName].deleted then
+						MonDKP:GetTable(MonDKP_Archive, true)[tempName].deleted = "Recovered"
+						MonDKP:GetTable(MonDKP_Archive, true)[tempName].edited = curTime
 						FlagRecovery = true
 					end
 				end
@@ -158,10 +158,10 @@ local function AddGuildToDKPTable(rank, level)
 	for i=1, guildSize do
 		name,rankName,rankIndex,charLevel,_,_,_,_,_,_,class = GetGuildRosterInfo(i)
 		name = strsub(name, 1, string.find(name, "-")-1)			-- required to remove server name from player (can remove in classic if this is not an issue)
-		local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), name)
+		local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), name)
 
 		if not search and (level == nil or charLevel >= level) and (rank == nil or rankIndex == rank) then
-			tinsert(MonDKP:GetTable(MonDKP_Player_DKPTable, true), {
+			tinsert(MonDKP:GetTable(MonDKP_DKPTable, true), {
 				player=name,
 				class=class,
 				dkp=0,
@@ -180,9 +180,9 @@ local function AddGuildToDKPTable(rank, level)
 			else
 				addedUsers = addedUsers..", |cff"..c.hex..name.."|r"
 			end
-			if MonDKP:GetTable(MonDKP_Player_Archive, true)[name] and MonDKP:GetTable(MonDKP_Player_Archive, true)[name].deleted then
-				MonDKP:GetTable(MonDKP_Player_Archive, true)[name].deleted = "Recovered"
-				MonDKP:GetTable(MonDKP_Player_Archive, true)[name].edited = curTime
+			if MonDKP:GetTable(MonDKP_Archive, true)[name] and MonDKP:GetTable(MonDKP_Archive, true)[name].deleted then
+				MonDKP:GetTable(MonDKP_Archive, true)[name].deleted = "Recovered"
+				MonDKP:GetTable(MonDKP_Archive, true)[name].edited = curTime
 				FlagRecovery = true
 			end
 		end
@@ -207,10 +207,10 @@ local function AddTargetToDKPTable()
 	local c;
 	local curTime = time()
 
-	local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), name)
+	local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), name)
 
 	if not search then
-		tinsert(MonDKP:GetTable(MonDKP_Player_DKPTable, true), {
+		tinsert(MonDKP:GetTable(MonDKP_DKPTable, true), {
 			player=name,
 			class=class,
 			dkp=0,
@@ -232,9 +232,9 @@ local function AddTargetToDKPTable()
 		else
 			MonDKP:ClassGraph()
 		end
-		if MonDKP:GetTable(MonDKP_Player_Archive, true)[name] and MonDKP:GetTable(MonDKP_Player_Archive, true)[name].deleted then
-			MonDKP:GetTable(MonDKP_Player_Archive, true)[name].deleted = "Recovered"
-			MonDKP:GetTable(MonDKP_Player_Archive, true)[name].edited = curTime
+		if MonDKP:GetTable(MonDKP_Archive, true)[name] and MonDKP:GetTable(MonDKP_Archive, true)[name].deleted then
+			MonDKP:GetTable(MonDKP_Archive, true)[name].deleted = "Recovered"
+			MonDKP:GetTable(MonDKP_Archive, true)[name].edited = curTime
 			MonDKP:Print(L["YOUHAVERECOVERED"])
 		end
 	end
@@ -252,21 +252,21 @@ end
 
 function MonDKP:reset_prev_dkp(player)
 	if player then
-		local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), player, "player")
+		local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), player, "player")
 
 		if search then
-			MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].previous_dkp = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp
+			MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].previous_dkp = MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].dkp
 		end
 	else
-		for i=1, #MonDKP:GetTable(MonDKP_Player_DKPTable, true) do
-			MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].previous_dkp = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].dkp
+		for i=1, #MonDKP:GetTable(MonDKP_DKPTable, true) do
+			MonDKP:GetTable(MonDKP_DKPTable, true)[i].previous_dkp = MonDKP:GetTable(MonDKP_DKPTable, true)[i].dkp
 		end
 	end
 end
 
 local function UpdateWhitelist()
 	if #core.SelectedData > 0 then
-		table.wipe(MonDKP:GetTable(MonDKP_Player_Whitelist))
+		table.wipe(MonDKP:GetTable(MonDKP_Whitelist))
 		for i=1, #core.SelectedData do
 			local validate = MonDKP:ValidateSender(core.SelectedData[i].player)
 
@@ -284,30 +284,30 @@ local function UpdateWhitelist()
 			end
 		end
 		for i=1, #core.SelectedData do
-			table.insert(MonDKP:GetTable(MonDKP_Player_Whitelist), core.SelectedData[i].player)
+			table.insert(MonDKP:GetTable(MonDKP_Whitelist), core.SelectedData[i].player)
 		end
 
-		local verifyLeadAdded = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_Whitelist), UnitName("player"))
+		local verifyLeadAdded = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Whitelist), UnitName("player"))
 
 		if not verifyLeadAdded then
 			local pname = UnitName("player");
-			table.insert(MonDKP:GetTable(MonDKP_Player_Whitelist), pname)		-- verifies leader is included in white list. Adds if they aren't
+			table.insert(MonDKP:GetTable(MonDKP_Whitelist), pname)		-- verifies leader is included in white list. Adds if they aren't
 		end
 	else
-		table.wipe(MonDKP:GetTable(MonDKP_Player_Whitelist))
+		table.wipe(MonDKP:GetTable(MonDKP_Whitelist))
 	end
-	MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP:GetTable(MonDKP_Player_Whitelist))
+	MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP:GetTable(MonDKP_Whitelist))
 	MonDKP:Print(L["WHITELISTBROADCASTED"])
 end
 
 local function ViewWhitelist()
-	if #MonDKP:GetTable(MonDKP_Player_Whitelist) > 0 then
+	if #MonDKP:GetTable(MonDKP_Whitelist) > 0 then
 		core.SelectedData = {}
-		for i=1, #MonDKP:GetTable(MonDKP_Player_Whitelist) do
-			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), MonDKP:GetTable(MonDKP_Player_Whitelist)[i])
+		for i=1, #MonDKP:GetTable(MonDKP_Whitelist) do
+			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), MonDKP:GetTable(MonDKP_Whitelist)[i])
 
 			if search then
-				table.insert(core.SelectedData, MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]])
+				table.insert(core.SelectedData, MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]])
 			end
 		end
 		MonDKP:FilterDKPTable(core.currentSort, "reset")
@@ -372,10 +372,10 @@ function MonDKP:ManageEntries()
 			local selected = L["CONFIRMREMOVESELECT"]..": \n\n";
 
 			for i=1, #core.SelectedData do
-				local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), core.SelectedData[i].player)
+				local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), core.SelectedData[i].player)
 
 			    if classSearch then
-			     	c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[classSearch[1][1]].class)
+			     	c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[classSearch[1][1]].class)
 			    else
 			     	c = { hex="ffffff" }
 			    end
@@ -588,12 +588,12 @@ function MonDKP:ManageEntries()
 				local count = 0;
 				local i = 1;
 
-				while i <= #MonDKP:GetTable(MonDKP_Player_DKPTable, true) do
-					local search = MonDKP:TableStrFind(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].player, "players")
+				while i <= #MonDKP:GetTable(MonDKP_DKPTable, true) do
+					local search = MonDKP:TableStrFind(MonDKP:GetTable(MonDKP_DKPHistory, true), MonDKP:GetTable(MonDKP_DKPTable, true)[i].player, "players")
 
-					if MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].dkp == 0 and not search then
-						c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].class)
-						name = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].player;
+					if MonDKP:GetTable(MonDKP_DKPTable, true)[i].dkp == 0 and not search then
+						c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[i].class)
+						name = MonDKP:GetTable(MonDKP_DKPTable, true)[i].player;
 
 						if purgeString == nil then
 							purgeString = "|cff"..c.hex..name.."|r"; 
@@ -602,7 +602,7 @@ function MonDKP:ManageEntries()
 						end
 
 						count = count + 1;
-						table.remove(MonDKP:GetTable(MonDKP_Player_DKPTable, true), i)
+						table.remove(MonDKP:GetTable(MonDKP_DKPTable, true), i)
 					else
 						i=i+1;
 					end
@@ -692,7 +692,7 @@ function MonDKP:ManageEntries()
 			GameTooltip:Hide()
 		end)
 		MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:SetScript("OnClick", function ()	-- confirmation dialog to add user(s)
-			if #MonDKP:GetTable(MonDKP_Player_Whitelist) > 0 then
+			if #MonDKP:GetTable(MonDKP_Whitelist) > 0 then
 				ViewWhitelist()
 			else
 				StaticPopupDialogs["ADD_GUILD_MEMBERS"] = {
@@ -722,7 +722,7 @@ function MonDKP:ManageEntries()
 			GameTooltip:Hide()
 		end)
 		MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetScript("OnClick", function ()	-- confirmation dialog to add user(s)
-			MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP:GetTable(MonDKP_Player_Whitelist))
+			MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP:GetTable(MonDKP_Whitelist))
 			MonDKP:Print(L["WHITELISTBROADCASTED"])
 		end);
 

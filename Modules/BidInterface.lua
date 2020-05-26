@@ -36,7 +36,7 @@ local function SortBidTable()
 end
 
 local function RollMinMax_Get()
-  local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), UnitName("player"))
+  local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), UnitName("player"))
   local minRoll;
   local maxRoll;
 
@@ -44,14 +44,14 @@ local function RollMinMax_Get()
     if core.DB.modes.rolls.min == 0 or core.DB.modes.rolls.min == 1 then
       minRoll = 1;
     else
-      minRoll = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp * (core.DB.modes.rolls.min / 100);
+      minRoll = MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].dkp * (core.DB.modes.rolls.min / 100);
     end
-    maxRoll = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp * (core.DB.modes.rolls.max / 100) + core.DB.modes.rolls.AddToMax;
+    maxRoll = MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].dkp * (core.DB.modes.rolls.max / 100) + core.DB.modes.rolls.AddToMax;
   elseif not core.DB.modes.rolls.UsePerc then
     minRoll = core.DB.modes.rolls.min;
 
     if core.DB.modes.rolls.max == 0 then
-      maxRoll = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp + core.DB.modes.rolls.AddToMax;
+      maxRoll = MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].dkp + core.DB.modes.rolls.AddToMax;
     else
       maxRoll = core.DB.modes.rolls.max + core.DB.modes.rolls.AddToMax;
     end
@@ -155,16 +155,16 @@ function BidInterface_Update()
     for i=1, showRows do
         row = core.BidInterface.bidTable.Rows[i]
         index = offset + i
-        local dkp_total = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), Bids_Submitted[i].player)
+        local dkp_total = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), Bids_Submitted[i].player)
         local c
         if dkp_total then
-          c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[dkp_total[1][1]].class)
+          c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[dkp_total[1][1]].class)
         else
           local createProfile = MonDKP_Profile_Create(Bids_Submitted[i].player)
 
           if createProfile then
-            dkp_total = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), Bids_Submitted[i].player)
-            c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[dkp_total[1][1]].class)
+            dkp_total = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), Bids_Submitted[i].player)
+            c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[dkp_total[1][1]].class)
           else       -- if unable to create profile, feeds grey color
             c = { r="aa", g="aa", b="aa"}
           end
@@ -178,7 +178,7 @@ function BidInterface_Update()
             row.Strings[1]:SetTextColor(c.r, c.g, c.b, 1)
             if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
               row.Strings[2]:SetText(Bids_Submitted[i].bid)
-              row.Strings[3]:SetText(MonDKP_round(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[dkp_total[1][1]].dkp, core.DB.modes.rounding))
+              row.Strings[3]:SetText(MonDKP_round(MonDKP:GetTable(MonDKP_DKPTable, true)[dkp_total[1][1]].dkp, core.DB.modes.rounding))
             elseif mode == "Roll Based Bidding" then
               local minRoll;
               local maxRoll;
@@ -187,14 +187,14 @@ function BidInterface_Update()
                 if core.DB.modes.rolls.min == 0 or core.DB.modes.rolls.min == 1 then
                   minRoll = 1;
                 else
-                  minRoll = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[dkp_total[1][1]].dkp * (core.DB.modes.rolls.min / 100);
+                  minRoll = MonDKP:GetTable(MonDKP_DKPTable, true)[dkp_total[1][1]].dkp * (core.DB.modes.rolls.min / 100);
                 end
-                maxRoll = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[dkp_total[1][1]].dkp * (core.DB.modes.rolls.max / 100) + core.DB.modes.rolls.AddToMax;
+                maxRoll = MonDKP:GetTable(MonDKP_DKPTable, true)[dkp_total[1][1]].dkp * (core.DB.modes.rolls.max / 100) + core.DB.modes.rolls.AddToMax;
               elseif not core.DB.modes.rolls.UsePerc then
                 minRoll = core.DB.modes.rolls.min;
 
                 if core.DB.modes.rolls.max == 0 then
-                  maxRoll = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[dkp_total[1][1]].dkp + core.DB.modes.rolls.AddToMax;
+                  maxRoll = MonDKP:GetTable(MonDKP_DKPTable, true)[dkp_total[1][1]].dkp + core.DB.modes.rolls.AddToMax;
                 else
                   maxRoll = core.DB.modes.rolls.max + core.DB.modes.rolls.AddToMax;
                 end
@@ -632,9 +632,9 @@ function MonDKP:BidInterface_Create()
     end
 
     local dkp = 0
-    local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), UnitName("player"), "player")
+    local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), UnitName("player"), "player")
     if search then
-      dkp = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp;
+      dkp = MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].dkp;
     end
 
     if behavior == "Max DKP" or itemValue == 0  then
@@ -670,9 +670,9 @@ function MonDKP:BidInterface_Create()
     end
 
     local dkp = 0
-    local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), UnitName("player"), "player")
+    local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), UnitName("player"), "player")
     if search then
-      dkp = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp;
+      dkp = MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].dkp;
     end
 
     if behavior == "Max DKP" or itemValue == 0  then

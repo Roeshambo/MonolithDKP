@@ -108,27 +108,27 @@ local function DisplayUserHistory(self, player)
 	local PlayerTable = {}
 	local c, PlayerSearch, PlayerSearch2, LifetimeSearch, RowCount, curDate;
 
-	PlayerSearch = MonDKP:TableStrFind(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), player, "players")
-	PlayerSearch2 = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_Loot, true), player, "player")
-	LifetimeSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), player, "player")
+	PlayerSearch = MonDKP:TableStrFind(MonDKP:GetTable(MonDKP_DKPHistory, true), player, "players")
+	PlayerSearch2 = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Loot, true), player, "player")
+	LifetimeSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), player, "player")
 
-	c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[LifetimeSearch[1][1]].class)
+	c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[LifetimeSearch[1][1]].class)
 
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
 	GameTooltip:SetText(L["RECENTHISTORYFOR"].." |cff"..c.hex..player.."|r\n", 0.25, 0.75, 0.90, 1, true);
 
 	if PlayerSearch then
 		for i=1, #PlayerSearch do
-			if not MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[PlayerSearch[i][1]].deletes and not MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[PlayerSearch[i][1]].deletedby and not MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[PlayerSearch[i][1]].hidden then
-				tinsert(PlayerTable, {reason = MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[PlayerSearch[i][1]].reason, date = MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[PlayerSearch[i][1]].date, dkp = MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[PlayerSearch[i][1]].dkp})
+			if not MonDKP:GetTable(MonDKP_DKPHistory, true)[PlayerSearch[i][1]].deletes and not MonDKP:GetTable(MonDKP_DKPHistory, true)[PlayerSearch[i][1]].deletedby and not MonDKP:GetTable(MonDKP_DKPHistory, true)[PlayerSearch[i][1]].hidden then
+				tinsert(PlayerTable, {reason = MonDKP:GetTable(MonDKP_DKPHistory, true)[PlayerSearch[i][1]].reason, date = MonDKP:GetTable(MonDKP_DKPHistory, true)[PlayerSearch[i][1]].date, dkp = MonDKP:GetTable(MonDKP_DKPHistory, true)[PlayerSearch[i][1]].dkp})
 			end
 		end
 	end
 
 	if PlayerSearch2 then
 		for i=1, #PlayerSearch2 do
-			if not MonDKP:GetTable(MonDKP_Player_Loot, true)[PlayerSearch2[i][1]].deletes and not MonDKP:GetTable(MonDKP_Player_Loot, true)[PlayerSearch2[i][1]].deletedby and not MonDKP:GetTable(MonDKP_Player_Loot, true)[PlayerSearch2[i][1]].hidden then
-				tinsert(PlayerTable, {loot = MonDKP:GetTable(MonDKP_Player_Loot, true)[PlayerSearch2[i][1]].loot, date = MonDKP:GetTable(MonDKP_Player_Loot, true)[PlayerSearch2[i][1]].date, zone = MonDKP:GetTable(MonDKP_Player_Loot, true)[PlayerSearch2[i][1]].zone, boss = MonDKP:GetTable(MonDKP_Player_Loot, true)[PlayerSearch2[i][1]].boss, cost = MonDKP:GetTable(MonDKP_Player_Loot, true)[PlayerSearch2[i][1]].cost})
+			if not MonDKP:GetTable(MonDKP_Loot, true)[PlayerSearch2[i][1]].deletes and not MonDKP:GetTable(MonDKP_Loot, true)[PlayerSearch2[i][1]].deletedby and not MonDKP:GetTable(MonDKP_Loot, true)[PlayerSearch2[i][1]].hidden then
+				tinsert(PlayerTable, {loot = MonDKP:GetTable(MonDKP_Loot, true)[PlayerSearch2[i][1]].loot, date = MonDKP:GetTable(MonDKP_Loot, true)[PlayerSearch2[i][1]].date, zone = MonDKP:GetTable(MonDKP_Loot, true)[PlayerSearch2[i][1]].zone, boss = MonDKP:GetTable(MonDKP_Loot, true)[PlayerSearch2[i][1]].boss, cost = MonDKP:GetTable(MonDKP_Loot, true)[PlayerSearch2[i][1]].cost})
 			end
 		end
 	end
@@ -163,8 +163,8 @@ local function DisplayUserHistory(self, player)
 			end
 		end
 		GameTooltip:AddDoubleLine(" ", " ", 1.0, 1.0, 1.0);
-		GameTooltip:AddLine("  |cff00ff00"..L["LIFETIMEEARNED"]..": "..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[LifetimeSearch[1][1]].lifetime_gained.."|r", 1.0, 1.0, 1.0, true);
-		GameTooltip:AddLine("  |cffff0000"..L["LIFETIMESPENT"]..": "..MonDKP:GetTable(MonDKP_Player_DKPTable, true)[LifetimeSearch[1][1]].lifetime_spent.."|r", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("  |cff00ff00"..L["LIFETIMEEARNED"]..": "..MonDKP:GetTable(MonDKP_DKPTable, true)[LifetimeSearch[1][1]].lifetime_gained.."|r", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("  |cffff0000"..L["LIFETIMESPENT"]..": "..MonDKP:GetTable(MonDKP_DKPTable, true)[LifetimeSearch[1][1]].lifetime_spent.."|r", 1.0, 1.0, 1.0, true);
 	else
 		GameTooltip:AddLine("No DKP Entries", 1.0, 1.0, 1.0, true);
 	end
@@ -178,15 +178,15 @@ local function EditStandbyList(row, arg1)
 			local copy = CopyTable(core.SelectedData)
 
 			for i=1, #copy do
-				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_Standby, true), copy[i].player)
+				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Standby, true), copy[i].player)
 
 				if arg1 == "add" then
 					if not search then
-						table.insert(MonDKP:GetTable(MonDKP_Player_Standby, true), copy[i])
+						table.insert(MonDKP:GetTable(MonDKP_Standby, true), copy[i])
 					end
 				elseif arg1 == "remove" then          
 					if search then
-						table.remove(MonDKP:GetTable(MonDKP_Player_Standby, true), search[1][1])
+						table.remove(MonDKP:GetTable(MonDKP_Standby, true), search[1][1])
 						core.SelectedData = {}
 						if core.CurView == "limited" then
 							table.remove(core.WorkingTable, search[1][1])
@@ -196,12 +196,12 @@ local function EditStandbyList(row, arg1)
 			end
 		else
 			if arg1 == "add" then
-				table.insert(MonDKP:GetTable(MonDKP_Player_Standby, true), core.WorkingTable[row])
+				table.insert(MonDKP:GetTable(MonDKP_Standby, true), core.WorkingTable[row])
 			elseif arg1 == "remove" then
-				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_Standby, true), core.WorkingTable[row].player)
+				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Standby, true), core.WorkingTable[row].player)
 
 				if search then
-					table.remove(MonDKP:GetTable(MonDKP_Player_Standby, true), search[1][1])
+					table.remove(MonDKP:GetTable(MonDKP_Standby, true), search[1][1])
 					core.SelectedData = {}
 					if core.CurView == "limited" then
 						table.remove(core.WorkingTable, search[1][1])
@@ -209,23 +209,23 @@ local function EditStandbyList(row, arg1)
 				end
 			end
 		end
-		MonDKP.Sync:SendData("MonDKPStand", MonDKP:GetTable(MonDKP_Player_Standby, true))
+		MonDKP.Sync:SendData("MonDKPStand", MonDKP:GetTable(MonDKP_Standby, true))
 		DKPTable_Update()
 	else
-		table.wipe(MonDKP:GetTable(MonDKP_Player_Standby, true))
+		table.wipe(MonDKP:GetTable(MonDKP_Standby, true))
 		core.WorkingTable = {}
 		DKPTable_Update()
-		MonDKP.Sync:SendData("MonDKPStand", MonDKP:GetTable(MonDKP_Player_Standby, true))
+		MonDKP.Sync:SendData("MonDKPStand", MonDKP:GetTable(MonDKP_Standby, true))
 	end
 	if #core.WorkingTable == 0 then
-		core.WorkingTable = CopyTable(MonDKP:GetTable(MonDKP_Player_DKPTable, true));
+		core.WorkingTable = CopyTable(MonDKP:GetTable(MonDKP_DKPTable, true));
 		core.CurView = "all"
 		MonDKP:FilterDKPTable(core.currentSort, "reset")
 	end
 end
 
 function MonDKP:ViewLimited(raid, standby, raiders)
-	if #MonDKP:GetTable(MonDKP_Player_Standby, true) == 0 and standby and not raid and not raiders then
+	if #MonDKP:GetTable(MonDKP_Standby, true) == 0 and standby and not raid and not raiders then
 		MonDKP:Print(L["NOPLAYERINSTANDBY"])
 		core.CurView = "all"
 		core.CurSubView = "all"
@@ -235,7 +235,7 @@ function MonDKP:ViewLimited(raid, standby, raiders)
 		
 		if (not IsInGroup() and not IsInRaid()) and raid then
 			MonDKP:Print(L["NOPARTYORRAID"])
-			core.WorkingTable = CopyTable(MonDKP:GetTable(MonDKP_Player_DKPTable, true))
+			core.WorkingTable = CopyTable(MonDKP:GetTable(MonDKP_DKPTable, true))
 			core.CurView = "all"
 			core.CurSubView = "all"
 			for i=1, 9 do
@@ -246,7 +246,7 @@ function MonDKP:ViewLimited(raid, standby, raiders)
 		end
 
 		if raid then
-			for k,v in pairs(MonDKP:GetTable(MonDKP_Player_DKPTable, true)) do
+			for k,v in pairs(MonDKP:GetTable(MonDKP_DKPTable, true)) do
 				if type(v) == "table" then
 					for i=1, 40 do
 						tempName,_,_,_,_,tempClass = GetRaidRosterInfo(i)
@@ -259,12 +259,12 @@ function MonDKP:ViewLimited(raid, standby, raiders)
 		end
 
 		if standby then
-			for i=1, #MonDKP:GetTable(MonDKP_Player_Standby, true) do
-				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), MonDKP:GetTable(MonDKP_Player_Standby, true)[i].player)
-				local search2 = MonDKP:Table_Search(tempTable, MonDKP:GetTable(MonDKP_Player_Standby, true)[i].player)
+			for i=1, #MonDKP:GetTable(MonDKP_Standby, true) do
+				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), MonDKP:GetTable(MonDKP_Standby, true)[i].player)
+				local search2 = MonDKP:Table_Search(tempTable, MonDKP:GetTable(MonDKP_Standby, true)[i].player)
 				
 				if search and not search2 then
-					table.insert(tempTable, MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]])
+					table.insert(tempTable, MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]])
 				end
 			end
 		end
@@ -276,7 +276,7 @@ function MonDKP:ViewLimited(raid, standby, raiders)
 			for i=1, guildSize do
 				name,_,rankIndex = GetGuildRosterInfo(i)
 				name = strsub(name, 1, string.find(name, "-")-1)      -- required to remove server name from player (can remove in classic if this is not an issue)
-				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), name)
+				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), name)
 
 				if search then
 					local rankList = GetGuildRankList()
@@ -284,7 +284,7 @@ function MonDKP:ViewLimited(raid, standby, raiders)
 					local match_rank = MonDKP:Table_Search(core.DB.raiders, rankList[rankIndex+1].name)
 
 					if match_rank then
-						table.insert(tempTable, MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]])
+						table.insert(tempTable, MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]])
 					end
 				end
 			end
@@ -303,7 +303,7 @@ function MonDKP:ViewLimited(raid, standby, raiders)
 		core.CurView = "limited"
 		DKPTable_Update()
 	elseif core.CurView == "limited" then
-		core.WorkingTable = CopyTable(MonDKP:GetTable(MonDKP_Player_DKPTable, true))
+		core.WorkingTable = CopyTable(MonDKP:GetTable(MonDKP_DKPTable, true))
 		core.CurView = "all"
 		core.CurSubView = "all"
 		for i=1, 9 do
@@ -317,7 +317,7 @@ local function RightClickMenu(self)
 	local menu;
 	local disabled;
 
-	if #MonDKP:GetTable(MonDKP_Player_Standby, true) < 1 then disabled = true else disabled = false end
+	if #MonDKP:GetTable(MonDKP_Standby, true) < 1 then disabled = true else disabled = false end
 
 	menu = {
 		{ text = L["MULTIPLESELECT"], isTitle = true, notCheckable = true}, --1
@@ -428,7 +428,7 @@ local function RightClickMenu(self)
 			InviteUnit(core.WorkingTable[self.index].player)
 		end }
 
-		local StandbySearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_Standby, true), core.WorkingTable[self.index].player)
+		local StandbySearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Standby, true), core.WorkingTable[self.index].player)
 		
 		if StandbySearch then
 			menu[10].menuList = {
@@ -508,7 +508,7 @@ local function RightClickMenu(self)
 		end
 	end }
 
-	if #MonDKP:GetTable(MonDKP_Player_Standby, true) == 0 then
+	if #MonDKP:GetTable(MonDKP_Standby, true) == 0 then
 		menu[6].menuList[2] = { text = L["VIEWSTANDBY"], notCheckable = true, disabled = true, }
 		menu[6].menuList[3] = { text = L["VIEWRAIDSTANDBY"], notCheckable = true, disabled = true}
 	end
@@ -558,7 +558,7 @@ local function RightClickMenu(self)
 	for i=1, guildSize do
 		name,_,rankIndex = GetGuildRosterInfo(i)
 		name = strsub(name, 1, string.find(name, "-")-1)      -- required to remove server name from player (can remove in classic if this is not an issue)
-		local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), name)
+		local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), name)
 
 		if search then
 			local rankList = GetGuildRankList()
@@ -566,7 +566,7 @@ local function RightClickMenu(self)
 			local match_rank = MonDKP:Table_Search(core.DB.raiders, rankList[rankIndex+1].name)
 
 			if match_rank then
-				table.insert(tempTable, MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]])
+				table.insert(tempTable, MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]])
 			end
 		end
 	end
@@ -651,10 +651,10 @@ function DKPTable_Update()
 		local tempTable = {}
 
 		for i=1, #core.WorkingTable do
-			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), core.WorkingTable[i].player)
+			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), core.WorkingTable[i].player)
 
 			if search then
-				table.insert(tempTable, MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]])
+				table.insert(tempTable, MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]])
 			end
 		end
 		core.WorkingTable = CopyTable(tempTable)
@@ -670,8 +670,8 @@ function DKPTable_Update()
 		row = MonDKP.DKPTable.Rows[i];
 		row:Hide();
 	end
-	--[[for i=1, #MonDKP:GetTable(MonDKP_Player_DKPTable, true) do
-		if MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].dkp < 0 then MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].dkp = 0 end  -- cleans negative numbers from SavedVariables
+	--[[for i=1, #MonDKP:GetTable(MonDKP_DKPTable, true) do
+		if MonDKP:GetTable(MonDKP_DKPTable, true)[i].dkp < 0 then MonDKP:GetTable(MonDKP_DKPTable, true)[i].dkp = 0 end  -- cleans negative numbers from SavedVariables
 	end--]]
 	for i=1, core.TableNumRows do     -- show rows if they have values
 		row = MonDKP.DKPTable.Rows[i]
@@ -685,10 +685,10 @@ function DKPTable_Update()
 			local CurPlayer = core.WorkingTable[index].player;
 			
 			if core.CenterSort == "rank" then
-				local SetRank = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), core.WorkingTable[index].player, "player")
+				local SetRank = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), core.WorkingTable[index].player, "player")
 				rank, rankIndex = MonDKP:GetGuildRank(core.WorkingTable[index].player)
-				MonDKP:GetTable(MonDKP_Player_DKPTable, true)[SetRank[1][1]].rank = rankIndex or 20;
-				MonDKP:GetTable(MonDKP_Player_DKPTable, true)[SetRank[1][1]].rankName = rank or "None";
+				MonDKP:GetTable(MonDKP_DKPTable, true)[SetRank[1][1]].rank = rankIndex or 20;
+				MonDKP:GetTable(MonDKP_DKPTable, true)[SetRank[1][1]].rankName = rank or "None";
 			end
 			row.DKPInfo[1]:SetText(core.WorkingTable[index].player)
 			row.DKPInfo[1].rowCounter:SetText(index)
@@ -703,16 +703,16 @@ function DKPTable_Update()
 					row.DKPInfo[2]:SetText(core.WorkingTable[index].spec)
 				else
 					row.DKPInfo[2]:SetText(L["NOSPECREPORTED"])
-					local SetSpec = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), core.WorkingTable[index].player, "player")		-- writes "No Spec Reported" to players profile if spec field doesn't exist
-					MonDKP:GetTable(MonDKP_Player_DKPTable, true)[SetSpec[1][1]].spec = L["NOSPECREPORTED"]
+					local SetSpec = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), core.WorkingTable[index].player, "player")		-- writes "No Spec Reported" to players profile if spec field doesn't exist
+					MonDKP:GetTable(MonDKP_DKPTable, true)[SetSpec[1][1]].spec = L["NOSPECREPORTED"]
 				end
 			elseif core.CenterSort == "role" then
 				if core.WorkingTable[index].role then
 					row.DKPInfo[2]:SetText(core.WorkingTable[index].role)
 				else
 					row.DKPInfo[2]:SetText(L["NOROLEDETECTED"])
-					local SetRole = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), core.WorkingTable[index].player, "player")		-- writes "No Role Detected" to players profile if role field doesn't exist
-					MonDKP:GetTable(MonDKP_Player_DKPTable, true)[SetRole[1][1]].role = L["NOROLEDETECTED"]
+					local SetRole = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), core.WorkingTable[index].player, "player")		-- writes "No Role Detected" to players profile if role field doesn't exist
+					MonDKP:GetTable(MonDKP_DKPTable, true)[SetRole[1][1]].role = L["NOROLEDETECTED"]
 				end
 			end
 			
@@ -852,7 +852,7 @@ function MonDKP:DKPTable_Create()
 	MonDKP.DKPTable.SeedVerify:SetScript("OnMouseDown", function()  -- broadcast button
 		if core.IsOfficer then	
 			local seed
-			if #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) > 0 and #MonDKP:GetTable(MonDKP_Player_Loot, true) > 0 then seed = MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[1].index..","..MonDKP:GetTable(MonDKP_Player_Loot, true)[1].index else seed = "start" end
+			if #MonDKP:GetTable(MonDKP_DKPHistory, true) > 0 and #MonDKP:GetTable(MonDKP_Loot, true) > 0 then seed = MonDKP:GetTable(MonDKP_DKPHistory, true)[1].index..","..MonDKP:GetTable(MonDKP_Loot, true)[1].index else seed = "start" end
 			MonDKP.Sync:SendData("MonDKPQuery", seed) 	-- requests role and spec data and sets current seeds
 			MonDKP_BroadcastFull_Init() 	-- launches Broadcast UI
 		end

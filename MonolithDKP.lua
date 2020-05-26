@@ -9,7 +9,7 @@ function MonDKP_RestoreFilterOptions()  		-- restores default filter selections
 	MonDKP.UIConfig.search:SetText(L["SEARCH"])
 	MonDKP.UIConfig.search:SetTextColor(0.3, 0.3, 0.3, 1)
 	MonDKP.UIConfig.search:ClearFocus()
-	core.WorkingTable = CopyTable(MonDKP:GetTable(MonDKP_Player_DKPTable, true))
+	core.WorkingTable = CopyTable(MonDKP:GetTable(MonDKP_DKPTable, true))
 	core.CurView = "all"
 	core.CurSubView = "all"
 	for i=1, 9 do
@@ -47,8 +47,8 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
 		OptionsLoaded = true;
 	end
 
-	if #MonDKP:GetTable(MonDKP_Player_Whitelist) > 0 and core.IsOfficer then 				-- broadcasts whitelist any time the window is opened if one exists (help ensure everyone has the information even if they were offline when it was created)
-		MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP:GetTable(MonDKP_Player_Whitelist))   -- Only officers propagate the whitelist, and it is only accepted by players that are NOT the GM (prevents overwriting new Whitelist set by GM, if any.)
+	if #MonDKP:GetTable(MonDKP_Whitelist) > 0 and core.IsOfficer then 				-- broadcasts whitelist any time the window is opened if one exists (help ensure everyone has the information even if they were offline when it was created)
+		MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP:GetTable(MonDKP_Whitelist))   -- Only officers propagate the whitelist, and it is only accepted by players that are NOT the GM (prevents overwriting new Whitelist set by GM, if any.)
 	end
 
 	if core.CurSubView == "raid" then
@@ -98,7 +98,7 @@ function MonDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTabl
 		end
 		parentTable = core.WorkingTable;
 	else
-		parentTable = MonDKP:GetTable(MonDKP_Player_DKPTable, true);
+		parentTable = MonDKP:GetTable(MonDKP_DKPTable, true);
 	end
 
 	core.WorkingTable = {}

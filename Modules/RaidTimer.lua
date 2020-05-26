@@ -33,11 +33,11 @@ function SecondsToClock(seconds)
 end
 
 function MonDKP:AwardPlayer(name, amount)
-	local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), name, "player")
+	local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), name, "player")
 	local path;
 
 	if search then
-		path = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]]
+		path = MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]]
 		path.dkp = path.dkp + amount
 		path.lifetime_gained = path.lifetime_gained + amount;
 	end
@@ -56,7 +56,7 @@ local function AwardRaid(amount, reason)
 
 	for i=1, 40 do
 		local tempName, _rank, _subgroup, _level, _class, _fileName, zone, online = GetRaidRosterInfo(i)
-		local search_DKP = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), tempName)
+		local search_DKP = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), tempName)
 		local OnlineOnly = core.DB.modes.OnlineOnly
 		local limitToZone = core.DB.modes.SameZoneOnly
 		local isSameZone = zone == GetRealZoneText()
@@ -67,15 +67,15 @@ local function AwardRaid(amount, reason)
 		end
 	end
 
-	if #MonDKP:GetTable(MonDKP_Player_Standby, true) > 0 and core.DB.DKPBonus.IncStandby then
+	if #MonDKP:GetTable(MonDKP_Standby, true) > 0 and core.DB.DKPBonus.IncStandby then
 		local i = 1
 
-		while i <= #MonDKP:GetTable(MonDKP_Player_Standby, true) do
-			if strfind(tempList, MonDKP:GetTable(MonDKP_Player_Standby, true)[i].player) then
-				table.remove(MonDKP:GetTable(MonDKP_Player_Standby, true), i)
+		while i <= #MonDKP:GetTable(MonDKP_Standby, true) do
+			if strfind(tempList, MonDKP:GetTable(MonDKP_Standby, true)[i].player) then
+				table.remove(MonDKP:GetTable(MonDKP_Standby, true), i)
 			else
-				MonDKP:AwardPlayer(MonDKP:GetTable(MonDKP_Player_Standby, true)[i].player, amount)
-				tempList = tempList..MonDKP:GetTable(MonDKP_Player_Standby, true)[i].player..",";
+				MonDKP:AwardPlayer(MonDKP:GetTable(MonDKP_Standby, true)[i].player, amount)
+				tempList = tempList..MonDKP:GetTable(MonDKP_Standby, true)[i].player..",";
 				i=i+1
 			end
 		end
@@ -83,14 +83,14 @@ local function AwardRaid(amount, reason)
 
 	if tempList ~= "" then
 		local newIndex = curOfficer.."-"..curTime
-		tinsert(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), 1, {players=tempList, dkp=amount, reason=reason, date=curTime, index=newIndex})
+		tinsert(MonDKP:GetTable(MonDKP_DKPHistory, true), 1, {players=tempList, dkp=amount, reason=reason, date=curTime, index=newIndex})
 
 		if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
 			MonDKP:DKPHistory_Update(true)
 		end
 		DKPTable_Update()
 
-		MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[1])
+		MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP:GetTable(MonDKP_DKPHistory, true)[1])
 
 		MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..amount.." "..L["FORREASON"]..": "..reason)
 		MonDKP:Print(L["RAIDDKPADJUSTBY"].." "..amount.." "..L["FORREASON"]..": "..reason)

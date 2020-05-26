@@ -26,17 +26,17 @@ local history = {};
 local menuFrame = CreateFrame("Frame", "MonDKPDeleteDKPMenuFrame", UIParent, "UIDropDownMenuTemplate")
 
 function MonDKP:SortDKPHistoryTable()             -- sorts the DKP History Table by date/time
-  table.sort(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), function(a, b)
+  table.sort(MonDKP:GetTable(MonDKP_DKPHistory, true), function(a, b)
     return a["date"] > b["date"]
   end)
 end
 
 local function GetSortOptions()
 	local PlayerList = {}
-	for i=1, #MonDKP:GetTable(MonDKP_Player_DKPTable, true) do
-		local playerSearch = MonDKP:Table_Search(PlayerList, MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].player)
+	for i=1, #MonDKP:GetTable(MonDKP_DKPTable, true) do
+		local playerSearch = MonDKP:Table_Search(PlayerList, MonDKP:GetTable(MonDKP_DKPTable, true)[i].player)
 		if not playerSearch then
-			tinsert(PlayerList, MonDKP:GetTable(MonDKP_Player_DKPTable, true)[i].player)
+			tinsert(PlayerList, MonDKP:GetTable(MonDKP_DKPTable, true)[i].player)
 		end
 	end
 	table.sort(PlayerList, function(a, b)
@@ -107,11 +107,11 @@ function DKPHistoryFilterBox_Create()
 			filterName.func = self.FilterSetValue
 			for i=ranges[menuList], ranges[menuList]+19 do
 				if PlayerList[i] then
-					local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), PlayerList[i])
+					local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), PlayerList[i])
 				    local c;
 
 				    if classSearch then
-				     	c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[classSearch[1][1]].class)
+				     	c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[classSearch[1][1]].class)
 				    else
 				     	c = { hex="444444" }
 				    end
@@ -153,7 +153,7 @@ function DKPHistoryFilterBox_Create()
 end
 
 local function MonDKPDeleteDKPEntry(index, timestamp, item)  -- index = entry index (Roeshambo-1), item = # of the entry on DKP History tab; may be different than the key of DKPHistory if hidden fields exist
-	-- pop confirmation. If yes, cycles through MonDKP:GetTable(MonDKP_Player_DKPHistory, true).players and every name it finds, it refunds them (or strips them of) dkp.
+	-- pop confirmation. If yes, cycles through MonDKP:GetTable(MonDKP_DKPHistory, true).players and every name it finds, it refunds them (or strips them of) dkp.
 	-- if deleted is the weekly decay,     curdkp * (100 / (100 - decayvalue))
 	local reason_header = MonDKP.ConfigTab6.history[item].d:GetText();
 	if strfind(reason_header, L["OTHER"].."- ") then reason_header = reason_header:gsub(L["OTHER"].." -- ", "") end
@@ -171,31 +171,31 @@ local function MonDKPDeleteDKPEntry(index, timestamp, item)  -- index = entry in
 
 		-- add new entry and add "delted_by" field to entry being "deleted". make new entry exact opposite of "deleted" entry
 		-- new entry gets "deletes", old entry gets "deleted_by", deletes = deleted_by index. and vice versa
-			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), index, "index")
+			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPHistory, true), index, "index")
 
 			if search then
-				local players = {strsplit(",", strsub(MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[search[1][1]].players, 1, -2))} 	-- cuts off last "," from string to avoid creating an empty value
+				local players = {strsplit(",", strsub(MonDKP:GetTable(MonDKP_DKPHistory, true)[search[1][1]].players, 1, -2))} 	-- cuts off last "," from string to avoid creating an empty value
 				local dkp, mod;
 				local dkpString = "";
 				local curOfficer = UnitName("player")
 				local curTime = time()
 				local newIndex = curOfficer.."-"..curTime
 
-				if strfind(MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[search[1][1]].dkp, "%-%d*%.?%d+%%") then 		-- determines if it's a mass decay
-					dkp = {strsplit(",", MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[search[1][1]].dkp)}
+				if strfind(MonDKP:GetTable(MonDKP_DKPHistory, true)[search[1][1]].dkp, "%-%d*%.?%d+%%") then 		-- determines if it's a mass decay
+					dkp = {strsplit(",", MonDKP:GetTable(MonDKP_DKPHistory, true)[search[1][1]].dkp)}
 					mod = "perc";
 				else
-					dkp = MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[search[1][1]].dkp
+					dkp = MonDKP:GetTable(MonDKP_DKPHistory, true)[search[1][1]].dkp
 					mod = "whole"
 				end
 
 				for i=1, #players do
 					if mod == "perc" then
-						local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), players[i])
+						local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), players[i])
 
 						if search then
 							local inverted = tonumber(dkp[i]) * -1
-							MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp + inverted
+							MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].dkp = MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].dkp + inverted
 							dkpString = dkpString..inverted..",";
 
 							if i == #players then
@@ -203,15 +203,15 @@ local function MonDKPDeleteDKPEntry(index, timestamp, item)  -- index = entry in
 							end
 						end
 					else
-						local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), players[i])
+						local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), players[i])
 
 						if search then
 							local inverted = tonumber(dkp) * -1
 
-							MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].dkp + inverted
+							MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].dkp = MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].dkp + inverted
 
 							if tonumber(dkp) > 0 then
-								MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].lifetime_gained = MonDKP:GetTable(MonDKP_Player_DKPTable, true)[search[1][1]].lifetime_gained + inverted
+								MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].lifetime_gained = MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].lifetime_gained + inverted
 							end
 							
 							dkpString = inverted;
@@ -219,9 +219,9 @@ local function MonDKPDeleteDKPEntry(index, timestamp, item)  -- index = entry in
 					end
 				end
 				
-				MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[search[1][1]].deletedby = newIndex
-				table.insert(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), 1, { players=MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[search[1][1]].players, dkp=dkpString, date=curTime, reason="Delete Entry", index=newIndex, deletes=index })
-				MonDKP.Sync:SendData("MonDKPDelSync", MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[1])
+				MonDKP:GetTable(MonDKP_DKPHistory, true)[search[1][1]].deletedby = newIndex
+				table.insert(MonDKP:GetTable(MonDKP_DKPHistory, true), 1, { players=MonDKP:GetTable(MonDKP_DKPHistory, true)[search[1][1]].players, dkp=dkpString, date=curTime, reason="Delete Entry", index=newIndex, deletes=index })
+				MonDKP.Sync:SendData("MonDKPDelSync", MonDKP:GetTable(MonDKP_DKPHistory, true)[1])
 
 				if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
 					MonDKP:DKPHistory_Update(true)
@@ -241,7 +241,7 @@ end
 
 local function RightClickDKPMenu(self, index, timestamp, item)
 	local header
-	local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), index, "index")
+	local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPHistory, true), index, "index")
 
 	if search then
 		menu = {
@@ -267,21 +267,21 @@ function MonDKP:DKPHistory_Update(reset)
 	end
 
 	if filter and filter ~= L["DELETEDENTRY"] then
-		for i=1, #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) do
-			if not MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].deletes and not MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].deletedby and MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].reason ~= "Migration Correction" and (strfind(MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].players, ","..filter..",") or strfind(MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].players, filter..",") == 1) then
-				table.insert(DKPHistory, MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i])
+		for i=1, #MonDKP:GetTable(MonDKP_DKPHistory, true) do
+			if not MonDKP:GetTable(MonDKP_DKPHistory, true)[i].deletes and not MonDKP:GetTable(MonDKP_DKPHistory, true)[i].deletedby and MonDKP:GetTable(MonDKP_DKPHistory, true)[i].reason ~= "Migration Correction" and (strfind(MonDKP:GetTable(MonDKP_DKPHistory, true)[i].players, ","..filter..",") or strfind(MonDKP:GetTable(MonDKP_DKPHistory, true)[i].players, filter..",") == 1) then
+				table.insert(DKPHistory, MonDKP:GetTable(MonDKP_DKPHistory, true)[i])
 			end
 		end
 	elseif filter and filter == L["DELETEDENTRY"] then
-		for i=1, #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) do
-			if MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].deletes then
-				table.insert(DKPHistory, MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i])
+		for i=1, #MonDKP:GetTable(MonDKP_DKPHistory, true) do
+			if MonDKP:GetTable(MonDKP_DKPHistory, true)[i].deletes then
+				table.insert(DKPHistory, MonDKP:GetTable(MonDKP_DKPHistory, true)[i])
 			end
 		end
 	elseif not filter then
-		for i=1, #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) do
-			if not MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].deletes and not MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].hidden and not MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i].deletedby then
-				table.insert(DKPHistory, MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[i])
+		for i=1, #MonDKP:GetTable(MonDKP_DKPHistory, true) do
+			if not MonDKP:GetTable(MonDKP_DKPHistory, true)[i].deletes and not MonDKP:GetTable(MonDKP_DKPHistory, true)[i].hidden and not MonDKP:GetTable(MonDKP_DKPHistory, true)[i].deletedby then
+				table.insert(DKPHistory, MonDKP:GetTable(MonDKP_DKPHistory, true)[i])
 			end
 		end
 	end
@@ -314,11 +314,11 @@ function MonDKP:DKPHistory_Update(reset)
 
 			if not MonDKP.ConfigTab6.history[i] then
 				if i==1 then
-					MonDKP.ConfigTab6.history[i] = CreateFrame("Frame", "MonDKP:GetTable(MonDKP_Player_DKPHistory, true)Tab", MonDKP.ConfigTab6);
+					MonDKP.ConfigTab6.history[i] = CreateFrame("Frame", "MonDKP:GetTable(MonDKP_DKPHistory, true)Tab", MonDKP.ConfigTab6);
 					MonDKP.ConfigTab6.history[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab6, "TOPLEFT", 0, -45)
 					MonDKP.ConfigTab6.history[i]:SetWidth(400)
 				else
-					MonDKP.ConfigTab6.history[i] = CreateFrame("Frame", "MonDKP:GetTable(MonDKP_Player_DKPHistory, true)Tab", MonDKP.ConfigTab6);
+					MonDKP.ConfigTab6.history[i] = CreateFrame("Frame", "MonDKP:GetTable(MonDKP_DKPHistory, true)Tab", MonDKP.ConfigTab6);
 					MonDKP.ConfigTab6.history[i]:SetPoint("TOPLEFT", MonDKP.ConfigTab6.history[i-1], "BOTTOMLEFT", 0, 0)
 					MonDKP.ConfigTab6.history[i]:SetWidth(400)
 				end
@@ -350,18 +350,18 @@ function MonDKP:DKPHistory_Update(reset)
 			local delete_on_date, delete_day, delete_timeofday, delete_year, delete_month, delete_day, delOfficer;
 
 			if filter == L["DELETEDENTRY"] then
-				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPHistory, true), DKPHistory[i].deletes, "index")
+				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPHistory, true), DKPHistory[i].deletes, "index")
 
 				if search then
-					delOfficer,_ = strsplit("-", MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[search[1][1]].deletedby)
-					players = MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[search[1][1]].players;
-					if strfind(MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[search[1][1]].reason, L["OTHER"].." - ") == 1 then
-						reason = MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[search[1][1]].reason:gsub(L["OTHER"].." -- ", "");
+					delOfficer,_ = strsplit("-", MonDKP:GetTable(MonDKP_DKPHistory, true)[search[1][1]].deletedby)
+					players = MonDKP:GetTable(MonDKP_DKPHistory, true)[search[1][1]].players;
+					if strfind(MonDKP:GetTable(MonDKP_DKPHistory, true)[search[1][1]].reason, L["OTHER"].." - ") == 1 then
+						reason = MonDKP:GetTable(MonDKP_DKPHistory, true)[search[1][1]].reason:gsub(L["OTHER"].." -- ", "");
 					else
-						reason = MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[search[1][1]].reason
+						reason = MonDKP:GetTable(MonDKP_DKPHistory, true)[search[1][1]].reason
 					end
-					dkp = MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[search[1][1]].dkp;
-					date = MonDKP:FormatTime(MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[search[1][1]].date);
+					dkp = MonDKP:GetTable(MonDKP_DKPHistory, true)[search[1][1]].dkp;
+					date = MonDKP:FormatTime(MonDKP:GetTable(MonDKP_DKPHistory, true)[search[1][1]].date);
 					delete_on_date = MonDKP:FormatTime(DKPHistory[i].date)
 					delete_day = strsub(delete_on_date, 1, 8)
 					delete_timeofday = strsub(delete_on_date, 10)
@@ -389,10 +389,10 @@ function MonDKP:DKPHistory_Update(reset)
 			end
 
 			for k=1, #player_table do
-				classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), player_table[k])
+				classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), player_table[k])
 
 				if classSearch then
-					c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[classSearch[1][1]].class)
+					c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[classSearch[1][1]].class)
 					if k < #player_table then
 						playerString = playerString.."|cff"..c.hex..player_table[k].."|r, "
 					elseif k == #player_table then
@@ -428,9 +428,9 @@ function MonDKP:DKPHistory_Update(reset)
 				MonDKP.ConfigTab6.history[i].h:Hide()
 			end
 
-			local officer_search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), curOfficer, "player")
+			local officer_search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), curOfficer, "player")
 	    	if officer_search then
-		     	c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[officer_search[1][1]].class)
+		     	c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[officer_search[1][1]].class)
 		    else
 		     	c = { hex="444444" }
 		    end
@@ -468,9 +468,9 @@ function MonDKP:DKPHistory_Update(reset)
 					MonDKP.ConfigTab6.history[i].b:SetPoint("BOTTOMRIGHT", MonDKP.ConfigTab6.history[i], "BOTTOMRIGHT", 0, 0)
 					MonDKP.ConfigTab6.history[i].b:SetScript("OnEnter", function(self)
 				    	local col
-				    	local s = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Player_DKPTable, true), delOfficer, "player")
+				    	local s = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), delOfficer, "player")
 				    	if s then
-				    		col = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_Player_DKPTable, true)[s[1][1]].class)
+				    		col = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[s[1][1]].class)
 				    	else
 				    		col = { hex="444444"}
 				    	end
