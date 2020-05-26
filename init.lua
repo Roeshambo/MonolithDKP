@@ -4,7 +4,6 @@ local MonDKP = core.MonDKP;
 local L = core.L;
 local waitTable = {};
 local waitFrame = nil;
-local addon_loaded = false;
 local lockouts = CreateFrame("Frame", "LockoutsFrame");
 
 --------------------------------------
@@ -88,7 +87,7 @@ MonDKP.Commands = {
 		cost = MonDKP:GetTable(MonDKP_Player_MinBids, true)[search[1][1]].minbid;
 	  end
 
-	  MonDKP:AwardConfirm(nil, cost, MonDKP_DB.bossargs.LastKilledBoss, MonDKP_DB.bossargs.CurrentRaidZone, item)
+	  MonDKP:AwardConfirm(nil, cost, core.DB.bossargs.LastKilledBoss, core.DB.bossargs.CurrentRaidZone, item)
     else
       MonDKP:Print(L["NOPERMISSION"])
     end
@@ -204,7 +203,6 @@ end
 
 function DoInit(event, arg1)
 	MonDKP:OnInitialize(event, arg1);
-	addon_loaded = true;
 end
 
 function DoGuildUpdate()
@@ -229,7 +227,7 @@ function DoGuildUpdate()
 			end
 
 			local seed
-			if #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) > 0 and #MonDKP_Loot > 0 and strfind(MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[1].index, "-") and strfind(MonDKP:GetTable(MonDKP_Player_Loot, true)[1].index, "-") then
+			if #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) > 0 and #MonDKP:GetTable(MonDKP_Player_Loot, true) > 0 and strfind(MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[1].index, "-") and strfind(MonDKP:GetTable(MonDKP_Player_Loot, true)[1].index, "-") then
 				local off1,date1 = strsplit("-", MonDKP:GetTable(MonDKP_Player_DKPHistory, true)[1].index)
 				local off2,date2 = strsplit("-", MonDKP:GetTable(MonDKP_Player_Loot, true)[1].index)
 				
@@ -259,14 +257,18 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		self:UnregisterEvent("CHAT_MSG_RAID_LEADER")
 		return
 	end
-	if event == "CHAT_MSG_GUILD" and not MonDKP_DB.modes.channels.guild and not MonDKP_DB.modes.StandbyOptIn then
+	if event == "CHAT_MSG_GUILD" and not core.DB.modes.channels.guild and not core.DB.modes.StandbyOptIn then
 		self:UnregisterEvent("CHAT_MSG_GUILD")
 		return
 	end
 
 	if event == "ADDON_LOADED" then
 		if (arg1 ~= "MonolithDKP") then return end
-		MonDKP_wait(2.5, DoInit, event, arg1);
+		core.InitStart = false
+		core.IsOfficer = nil
+		core.Initialized = false
+		MonDKP_wait(2, DoInit, event, arg1);
+		---DoInit(event,arg1);
 		self:UnregisterEvent("ADDON_LOADED")
 	elseif event == "BOSS_KILL" then
 		MonDKP:CheckOfficer()
@@ -276,25 +278,25 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			if MonDKP:Table_Search(core.EncounterList, arg1) then
 				MonDKP.ConfigTab2.BossKilledDropdown:SetValue(arg1)
 
-				if MonDKP_DB.modes.StandbyOptIn then
+				if core.DB.modes.StandbyOptIn then
 					MonDKP_Standby_Announce(boss_name)
 				end
 
-				if MonDKP_DB.modes.AutoAward then
-					if not MonDKP_DB.modes.StandbyOptIn and MonDKP_DB.DKPBonus.IncStandby then
-						MonDKP:AutoAward(3, MonDKP_DB.DKPBonus.BossKillBonus, MonDKP_DB.bossargs.CurrentRaidZone..": "..MonDKP_DB.bossargs.LastKilledBoss)
+				if core.DB.modes.AutoAward then
+					if not core.DB.modes.StandbyOptIn and core.DB.DKPBonus.IncStandby then
+						MonDKP:AutoAward(3, core.DB.DKPBonus.BossKillBonus, core.DB.bossargs.CurrentRaidZone..": "..core.DB.bossargs.LastKilledBoss)
 					else
-						MonDKP:AutoAward(1, MonDKP_DB.DKPBonus.BossKillBonus, MonDKP_DB.bossargs.CurrentRaidZone..": "..MonDKP_DB.bossargs.LastKilledBoss)
+						MonDKP:AutoAward(1, core.DB.DKPBonus.BossKillBonus, core.DB.bossargs.CurrentRaidZone..": "..core.DB.bossargs.LastKilledBoss)
 					end
 				end
 			else
 				MonDKP:Print("Event ID: "..arg1.." - > "..boss_name.." Killed. Please report this Event ID at https://www.curseforge.com/wow/addons/monolith-dkp to update raid event handlers.")
 			end
 		elseif IsInRaid() then
-			MonDKP_DB.bossargs.LastKilledBoss = ...;
+			core.DB.bossargs.LastKilledBoss = ...;
 		end
 	elseif event == "ENCOUNTER_START" then
-		if MonDKP_DB.defaults.AutoLog and IsInRaid() then
+		if core.DB.defaults.AutoLog and IsInRaid() then
 			if not LoggingCombat() then
 				LoggingCombat(1)
 				MonDKP:Print(L["NOWLOGGINGCOMBAT"])
@@ -304,16 +306,16 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		if IsInRaid() and core.Initialized then 					-- only processes combat log events if in raid
 			MonDKP:CheckOfficer()
 			if core.IsOfficer then
-				if not MonDKP:Table_Search(MonDKP_DB.bossargs.RecentZones, GetRealZoneText()) then 	-- only adds it if it doesn't already exist in the table
-					if #MonDKP_DB.bossargs.RecentZones > 14 then
-						for i=15, #MonDKP_DB.bossargs.RecentZones do  		-- trims the tail end of the stack
-							table.remove(MonDKP_DB.bossargs.RecentZones, i)
+				if not MonDKP:Table_Search(core.DB.bossargs.RecentZones, GetRealZoneText()) then 	-- only adds it if it doesn't already exist in the table
+					if #core.DB.bossargs.RecentZones > 14 then
+						for i=15, #core.DB.bossargs.RecentZones do  		-- trims the tail end of the stack
+							table.remove(core.DB.bossargs.RecentZones, i)
 						end
 					end
-					table.insert(MonDKP_DB.bossargs.RecentZones, 1, GetRealZoneText())
+					table.insert(core.DB.bossargs.RecentZones, 1, GetRealZoneText())
 				end
 			end
-			if MonDKP_DB.defaults.AutoLog and MonDKP:Table_Search(core.ZoneList, GetRealZoneText()) then
+			if core.DB.defaults.AutoLog and MonDKP:Table_Search(core.ZoneList, GetRealZoneText()) then
 				if not LoggingCombat() then
 					LoggingCombat(1)
 					MonDKP:Print(L["NOWLOGGINGCOMBAT"])
@@ -331,7 +333,6 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			end
 		end
 	elseif event == "GUILD_ROSTER_UPDATE" then
-		if not addon_loaded then return end
 		DoGuildUpdate();
 		if IsInGuild() and core.InitStart then
 			self:UnregisterEvent("GUILD_ROSTER_UPDATE")
@@ -346,7 +347,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		local num = GetNumSavedInstances()
 		local raidString, reset, newreset, days, hours, mins, maxPlayers, numEncounter, curLength;
 
-		if not MonDKP_DB.Lockouts then MonDKP_DB.Lockouts = {Three = 0, Five = 1570032000, Seven = 1569945600} end
+		if not core.DB.Lockouts then core.DB.Lockouts = {Three = 0, Five = 1570032000, Seven = 1569945600} end
 
 		for i=1, num do 		-- corrects reset timestamp for any raids where an active lockout exists
 			_,_,reset,_,_,_,_,_,maxPlayers,_,numEncounter = GetSavedInstanceInfo(i)
@@ -360,17 +361,17 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 				curLength = "Three"
 			end
 
-			if MonDKP_DB.Lockouts[curLength] < newreset then
-				MonDKP_DB.Lockouts[curLength] = newreset
+			if core.DB.Lockouts[curLength] < newreset then
+				core.DB.Lockouts[curLength] = newreset
 			end
 		end
 
 		-- Updates lockout timer if no lockouts were found to do so.
-		while MonDKP_DB.Lockouts.Three < time() do MonDKP_DB.Lockouts.Three = MonDKP_DB.Lockouts.Three + 259200 end
-		while MonDKP_DB.Lockouts.Five < time() do MonDKP_DB.Lockouts.Five = MonDKP_DB.Lockouts.Five + 432000 end
-		while MonDKP_DB.Lockouts.Seven < time() do MonDKP_DB.Lockouts.Seven = MonDKP_DB.Lockouts.Seven + 604800 end
+		while core.DB.Lockouts.Three < time() do core.DB.Lockouts.Three = core.DB.Lockouts.Three + 259200 end
+		while core.DB.Lockouts.Five < time() do core.DB.Lockouts.Five = core.DB.Lockouts.Five + 432000 end
+		while core.DB.Lockouts.Seven < time() do core.DB.Lockouts.Seven = core.DB.Lockouts.Seven + 604800 end
 
-		for k,v in pairs(MonDKP_DB.Lockouts) do
+		for k,v in pairs(core.DB.Lockouts) do
 			reset = v - time();
 			days = math.floor(reset / 86400)
 			hours = math.floor(math.floor(reset % 86400) / 3600)
@@ -395,7 +396,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		MonDKP:CheckOfficer()
 		if core.IsOfficer then
 			arg1 = strlower(arg1)
-			if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "！dkp") == 1) and MonDKP_DB.modes.channels.guild then
+			if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "！dkp") == 1) and core.DB.modes.channels.guild then
 				MonDKP_CHAT_MSG_WHISPER(arg1, ...)
 			elseif string.find(arg1, "!standby") == 1 and core.StandbyActive then
 				MonDKP_Standby_Handler(arg1, ...)
@@ -417,13 +418,13 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			if arg1 == "UNIT_DIED" and not strfind(arg2, "Player") and not strfind(arg2, "Pet-") then
 				MonDKP:CheckOfficer()
 				if core.IsOfficer then
-					if not MonDKP:Table_Search(MonDKP_DB.bossargs.LastKilledNPC, arg3) then 	-- only adds it if it doesn't already exist in the table
-						if #MonDKP_DB.bossargs.LastKilledNPC > 14 then
-							for i=15, #MonDKP_DB.bossargs.LastKilledNPC do  		-- trims the tail end of the stack
-								table.remove(MonDKP_DB.bossargs.LastKilledNPC, i)
+					if not MonDKP:Table_Search(core.DB.bossargs.LastKilledNPC, arg3) then 	-- only adds it if it doesn't already exist in the table
+						if #core.DB.bossargs.LastKilledNPC > 14 then
+							for i=15, #core.DB.bossargs.LastKilledNPC do  		-- trims the tail end of the stack
+								table.remove(core.DB.bossargs.LastKilledNPC, i)
 							end
 						end
-						table.insert(MonDKP_DB.bossargs.LastKilledNPC, 1, arg3)
+						table.insert(core.DB.bossargs.LastKilledNPC, 1, arg3)
 					end
 				end
 			end
@@ -518,25 +519,13 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	end
 
 	if(event == "ADDON_LOADED") then
-    	core.Initialized = false
-    	core.InitStart = false
-    	core.IsOfficer = nil
 		C_Timer.After(5, function ()
 			core.MonDKPUI = MonDKP.UIConfig or MonDKP:CreateMenu();		-- creates main menu after 5 seconds (trying to initialize after raid frames are loaded)
 		end)
-    	if not MonDKP_DKPTable then MonDKP_DKPTable = {} end;
-		if not MonDKP_Loot then MonDKP_Loot = {} end;
-		if not MonDKP_DKPHistory then MonDKP_DKPHistory = {} end;
-		if not MonDKP_MinBids then MonDKP_MinBids = {} end;
-		if not MonDKP_MaxBids then MonDKP_MaxBids = {} end;
-		if not MonDKP_Whitelist then MonDKP_Whitelist = {} end;
-		if not MonDKP_Standby then MonDKP_Standby = {} end;
-		if not MonDKP_Archive then MonDKP_Archive = {} end;
-		if not MonDKP_DB then MonDKP_DB = {} end
-
 		------------------------------------------------
 		-- Verify DB Schemas
 		------------------------------------------------
+		if not VerifyDBSchema(MonDKP_Player_DB) then MonDKP_Player_DB =  UpgradeDBSchema(MonDKP_Player_DB, MonDKP_DB, false, "MonDKP_DB") end;
 		if not VerifyDBSchema(MonDKP_Player_DKPTable) then MonDKP_Player_DKPTable =  UpgradeDBSchema(MonDKP_Player_DKPTable, MonDKP_DKPTable, true, "MonDKP_DKPTable") end;
 		if not VerifyDBSchema(MonDKP_Player_Loot) then MonDKP_Player_Loot =  UpgradeDBSchema(MonDKP_Player_Loot, MonDKP_Loot, true, "MonDKP_Loot") end;
 		if not VerifyDBSchema(MonDKP_Player_DKPHistory) then MonDKP_Player_DKPHistory =  UpgradeDBSchema(MonDKP_Player_DKPHistory, MonDKP_DKPHistory, true, "MonDKP_DKPHistory") end;
@@ -545,56 +534,24 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		if not VerifyDBSchema(MonDKP_Player_Whitelist) then MonDKP_Player_Whitelist =  UpgradeDBSchema(MonDKP_Player_Whitelist, MonDKP_Whitelist, false, "MonDKP_Whitelist") end;
 		if not VerifyDBSchema(MonDKP_Player_Standby) then MonDKP_Player_Standby =  UpgradeDBSchema(MonDKP_Player_Standby, MonDKP_Standby, true, "MonDKP_Standby") end;
 		if not VerifyDBSchema(MonDKP_Player_Archive) then MonDKP_Player_Archive =  UpgradeDBSchema(MonDKP_Player_Archive, MonDKP_Archive, true, "MonDKP_Archive") end;
-		if not VerifyDBSchema(MonDKP_Player_DB) then MonDKP_Player_DB =  UpgradeDBSchema(MonDKP_Player_DB, MonDKP_DB, false, "MonDKP_DB") end;
-
+		
+		if not VerifyDBSchema(MonDKP_DB) then MonDKP_DB =  UpgradeDBSchema(MonDKP_DB, MonDKP_DB, false, "MonDKP_DB") end;
+		if not VerifyDBSchema(MonDKP_DKPTable) then MonDKP_DKPTable =  UpgradeDBSchema(MonDKP_DKPTable, MonDKP_DKPTable, true, "MonDKP_DKPTable") end;
+		if not VerifyDBSchema(MonDKP_Loot) then MonDKP_Loot =  UpgradeDBSchema(MonDKP_Loot, MonDKP_Loot, true, "MonDKP_Loot") end;
+		if not VerifyDBSchema(MonDKP_DKPHistory) then MonDKP_DKPHistory =  UpgradeDBSchema(MonDKP_DKPHistory, MonDKP_DKPHistory, true, "MonDKP_DKPHistory") end;
+		if not VerifyDBSchema(MonDKP_MinBids) then MonDKP_MinBids =  UpgradeDBSchema(MonDKP_MinBids, MonDKP_MinBids, true, "MonDKP_MinBids") end;
+		if not VerifyDBSchema(MonDKP_MaxBids) then MonDKP_MaxBids =  UpgradeDBSchema(MonDKP_MaxBids, MonDKP_MaxBids, true, "MonDKP_MaxBids") end;
+		if not VerifyDBSchema(MonDKP_Whitelist) then MonDKP_Whitelist =  UpgradeDBSchema(MonDKP_Whitelist, MonDKP_Whitelist, false, "MonDKP_Whitelist") end;
+		if not VerifyDBSchema(MonDKP_Standby) then MonDKP_Standby =  UpgradeDBSchema(MonDKP_Standby, MonDKP_Standby, true, "MonDKP_Standby") end;
+		if not VerifyDBSchema(MonDKP_Archive) then MonDKP_Archive =  UpgradeDBSchema(MonDKP_Archive, MonDKP_Archive, true, "MonDKP_Archive") end;
+		
 		------------------------------------
 	    --	Import SavedVariables
 	    ------------------------------------
 		core.DB 				= MonDKP:GetTable(MonDKP_Player_DB); --Player specific DB
 		core.WorkingTable 		= MonDKP:GetTable(MonDKP_Player_DKPTable, true); -- imports full DKP table to WorkingTable for list manipulation
 		core.PriceTable			= MonDKP:GetTable(MonDKP_Player_MinBids, true);
-		if not core.DB.DKPBonus or not core.DB.DKPBonus.OnTimeBonus then
-			core.DB.DKPBonus = {
-    			OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, DecayPercentage = 20, GiveRaidStart = false, IncStandby = false,
-    		}
-		end
-		if not core.DB.defaults or not core.DB.defaults.HistoryLimit then
-			core.DB.defaults = {
-    			HistoryLimit = 2500, DKPHistoryLimit = 2500, BidTimerSize = 1.0, MonDKPScaleSize = 1.0, supressNotifications = false, TooltipHistoryCount = 15, SupressTells = true,
-    		}
-    	end
-    	if not core.DB.defaults.ChatFrames then 
-    		core.DB.defaults.ChatFrames = {}
-    		for i = 1, NUM_CHAT_WINDOWS do
-				local name = GetChatWindowInfo(i)
 
-				if name ~= "" then
-					core.DB.defaults.ChatFrames[name] = true
-				end
-			end
-    	end
-		if not core.DB.raiders then core.DB.raiders = {} end
-		if not core.DB.MinBidBySlot or not core.DB.MinBidBySlot.Head then
-			core.DB.MinBidBySlot = {
-    			Head = 70, Neck = 70, Shoulders = 70, Cloak = 70, Chest = 70, Bracers = 70, Hands = 70, Belt = 70, Legs = 70, Boots = 70, Ring = 70, Trinket = 70, OneHanded = 70, TwoHanded = 70, OffHand = 70, Range = 70, Other = 70,
-    		}
-    	end
-    	if not core.DB.MaxBidBySlot or not core.DB.MaxBidBySlot.Head then
-			core.DB.MaxBidBySlot = {
-    			Head = 0, Neck = 0, Shoulders = 0, Cloak = 0, Chest = 0, Bracers = 0, Hands = 0, Belt = 0, Legs = 0, Boots = 0, Ring = 0, Trinket = 0, OneHanded = 0, TwoHanded = 0, OffHand = 0, Range = 0, Other = 0,
-    		}
-    	end
-		if not core.DB.bossargs then core.DB.bossargs = { CurrentRaidZone = "Molten Core", LastKilledBoss = "Lucifron" } end
-		if not core.DB.modes or not core.DB.modes.mode then core.DB.modes = { mode = "Minimum Bid Values", SubZeroBidding = false, rounding = 0, AddToNegative = false, increment = 60, ZeroSumBidType = "Static", AllowNegativeBidders = false } end;
-		if not core.DB.modes.ZeroSumBank then core.DB.modes.ZeroSumBank = { balance = 0 } end
-		if not core.DB.modes.channels then core.DB.modes.channels = { raid = true, whisper = true, guild = true } end
-		if not core.DB.modes.costvalue then core.DB.modes.costvalue = "Integer" end
-		if not core.DB.modes.rolls or not core.DB.modes.rolls.min then core.DB.modes.rolls = { min = 1, max = 100, UsePerc = false, AddToMax = 0 } end
-		if not core.DB.bossargs.LastKilledNPC then core.DB.bossargs.LastKilledNPC = {} end
-		if not core.DB.bossargs.RecentZones then core.DB.bossargs.RecentZones = {} end
-		if not core.DB.defaults.HideChangeLogs then core.DB.defaults.HideChangeLogs = 0 end
-		if not core.DB.modes.AntiSnipe then core.DB.modes.AntiSnipe = 0 end
-		if not core.DB.defaults.CurrentGuild then core.DB.defaults.CurrentGuild = {} end
 		if not MonDKP:GetTable(MonDKP_Player_DKPHistory, true).seed then MonDKP:GetTable(MonDKP_Player_DKPHistory, true).seed = 0 end
 		if not MonDKP:GetTable(MonDKP_Player_Loot, true).seed then MonDKP:GetTable(MonDKP_Player_Loot, true).seed = 0 end
 		if MonDKP:GetTable(MonDKP_Player_DKPTable, true).seed then MonMonDKP:GetTable(MonDKP_Player_DKPTable, true)DKP_DKPTable.seed = nil end
@@ -617,16 +574,10 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 
 		if MonDKP.BidTimer then MonDKP.BidTimer:SetScript("OnUpdate", nil) end
 
-		-- Debug Test Adding another Team
-		if IsInGuild() then
-			MonDKP:GetTable(MonDKP_Player_DKPTable)["1"] = {}
-			core.WorkingTable = MonDKP:GetTable(MonDKP_Player_DKPTable)["1"];
-		end
-
-		if #MonDKP_Loot > core.DB.defaults.HistoryLimit then
+		if #MonDKP:GetTable(MonDKP_Player_Loot, true) > core.DB.defaults.HistoryLimit then
 			MonDKP:PurgeLootHistory()									-- purges Loot History entries that exceed the "HistoryLimit" option variable (oldest entries) and populates MonDKP_Archive with deleted values
 		end
-		if #MonDKP_DKPHistory > core.DB.defaults.DKPHistoryLimit then
+		if #MonDKP:GetTable(MonDKP_Player_DKPHistory, true) > core.DB.defaults.DKPHistoryLimit then
 			MonDKP:PurgeDKPHistory()									-- purges DKP History entries that exceed the "DKPHistoryLimit" option variable (oldest entries) and populates MonDKP_Archive with deleted values
 		end
 	end
@@ -636,13 +587,18 @@ function MonDKP:GetTable(dbTable, hasTeams)
 	hasTeams = hasTeams or false;
 
 	if IsInGuild() then
+		local realmName = MonDKP:GetRealmName();
+		local guildName = MonDKP:GetGuildName();
+
+		dbTable = InitializeGuild(dbTable,realmName,guildName);
+
 		if hasTeams then
-			return dbTable[MonDKP:GetRealmName()][MonDKP:GetGuildName()][core.DB.defaults.CurrentTeam];
+			return dbTable[realmName][guildName][core.DB.defaults.CurrentTeam];
 		else
-			return dbTable[MonDKP:GetRealmName()][MonDKP:GetGuildName()];
+			return dbTable[realmName][guildName];
 		end
 	else
-		return dbTable;
+		return dbTable[core.defaultTable];
 	end
 end
 
@@ -650,13 +606,18 @@ function MonDKP:SetTable(dbTable, hasTeams, value)
 	hasTeams = hasTeams or false;
 
 	if IsInGuild() then
+		local realmName = MonDKP:GetRealmName();
+		local guildName = MonDKP:GetGuildName();
+
+		dbTable = InitializeGuild(dbTable,realmName,guildName);
+
 		if hasTeams then
-			dbTable[MonDKP:GetRealmName()][MonDKP:GetGuildName()][core.DB.defaults.CurrentTeam] = value;
+			dbTable[realmName][guildName][core.DB.defaults.CurrentTeam] = value;
 		else
-			dbTable[MonDKP:GetRealmName()][MonDKP:GetGuildName()] = value;
+			dbTable[realmName][guildName] = value;
 		end
 	else
-		dbTable = value;
+		dbTable[core.defaultTable] = value;
 	end
 end
 
@@ -670,31 +631,32 @@ function VerifyDBSchema(dbTable)
 	elseif dbTable.dbinfo.build == core.BuildNumber then
 		verified = true;
 	end
+
 	return verified;
 end
 
 function UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
-
 	-- Initialize the Database for a Pre-2.2 Database
 	local retOK, hasInfo = pcall(tableHasKey,oldDbTable,"dbinfo");
 	if (not retOK) or (retOK and not hasInfo) then
 		newDbTable = InitPlayerTable(oldDbTable, hasTeams, tableName)
 	end
-	
 	--Set Prior Build
 	newDbTable.dbinfo.priorbuild = newDbTable.dbinfo.build;
 
 	-- Build 20205 (2.2.5) Changes
 	if newDbTable.dbinfo.build < 20205 then
 		if newDbTable.dbinfo.name == "MonDKP_DB" then
+			
+			local configTable = InitializeMonDKPDB(MonDKP:GetTable(newDbTable));
+			if not configTable.defaults.CurrentTeam then configTable.defaults.CurrentTeam = "0" end;
+			if not configTable.teams then configTable.teams = {} end;
+
 			if IsInGuild() then
-				if not MonDKP:GetTable(newDbTable).defaults.CurrentTeam then MonDKP:GetTable(newDbTable).defaults.CurrentTeam = "0" end;
-				if not MonDKP:GetTable(newDbTable).teams then MonDKP:GetTable(newDbTable).teams = {} end;
-				if not MonDKP:GetTable(newDbTable).teams["0"] then MonDKP:GetTable(newDbTable).teams["0"] = {name=MonDKP:GetGuildName()} end;
+				if not configTable.teams["0"] then configTable.teams["0"] = {name=MonDKP:GetGuildName()} end;
 			end
 		end
 	end
-
 	-- Set Current Build Number
 	newDbTable.dbinfo.build = core.BuildNumber;
 	return newDbTable;
@@ -704,26 +666,95 @@ function tableHasKey(table,key)
 	return table[key] ~= nil;
 end
 
+function InitializeMonDKPDB(dbTable)
+	if not dbTable.DKPBonus or not dbTable.DKPBonus.OnTimeBonus then
+		dbTable.DKPBonus = {
+			OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, DecayPercentage = 20, GiveRaidStart = false, IncStandby = false,
+		}
+	end
+
+	if not dbTable.defaults or not dbTable.defaults.HistoryLimit then
+		dbTable.defaults = {
+			HistoryLimit = 2500, DKPHistoryLimit = 2500, BidTimerSize = 1.0, MonDKPScaleSize = 1.0, supressNotifications = false, TooltipHistoryCount = 15, SupressTells = true,
+		}
+	end
+	if not dbTable.defaults.ChatFrames then 
+		dbTable.defaults.ChatFrames = {}
+		for i = 1, NUM_CHAT_WINDOWS do
+			local name = GetChatWindowInfo(i)
+
+			if name ~= "" then
+				dbTable.defaults.ChatFrames[name] = true
+			end
+		end
+	end
+	if not dbTable.raiders then dbTable.raiders = {} end
+	if not dbTable.MinBidBySlot or not dbTable.MinBidBySlot.Head then
+		dbTable.MinBidBySlot = {
+			Head = 70, Neck = 70, Shoulders = 70, Cloak = 70, Chest = 70, Bracers = 70, Hands = 70, Belt = 70, Legs = 70, Boots = 70, Ring = 70, Trinket = 70, OneHanded = 70, TwoHanded = 70, OffHand = 70, Range = 70, Other = 70,
+		}
+	end
+	if not dbTable.MaxBidBySlot or not dbTable.MaxBidBySlot.Head then
+		dbTable.MaxBidBySlot = {
+			Head = 0, Neck = 0, Shoulders = 0, Cloak = 0, Chest = 0, Bracers = 0, Hands = 0, Belt = 0, Legs = 0, Boots = 0, Ring = 0, Trinket = 0, OneHanded = 0, TwoHanded = 0, OffHand = 0, Range = 0, Other = 0,
+		}
+	end
+	if not dbTable.bossargs then dbTable.bossargs = { CurrentRaidZone = "Molten Core", LastKilledBoss = "Lucifron" } end
+	if not dbTable.modes or not dbTable.modes.mode then dbTable.modes = { mode = "Minimum Bid Values", SubZeroBidding = false, rounding = 0, AddToNegative = false, increment = 60, ZeroSumBidType = "Static", AllowNegativeBidders = false } end;
+	if not dbTable.modes.ZeroSumBank then dbTable.modes.ZeroSumBank = { balance = 0 } end
+	if not dbTable.modes.channels then dbTable.modes.channels = { raid = true, whisper = true, guild = true } end
+	if not dbTable.modes.costvalue then dbTable.modes.costvalue = "Integer" end
+	if not dbTable.modes.rolls or not dbTable.modes.rolls.min then dbTable.modes.rolls = { min = 1, max = 100, UsePerc = false, AddToMax = 0 } end
+	if not dbTable.bossargs.LastKilledNPC then dbTable.bossargs.LastKilledNPC = {} end
+	if not dbTable.bossargs.RecentZones then dbTable.bossargs.RecentZones = {} end
+	if not dbTable.defaults.HideChangeLogs then dbTable.defaults.HideChangeLogs = 0 end
+	if not dbTable.modes.AntiSnipe then dbTable.modes.AntiSnipe = 0 end
+	if not dbTable.defaults.CurrentGuild then dbTable.defaults.CurrentGuild = {} end
+
+	return dbTable;
+end
 function InitPlayerTable(globalTable, hasTeams, tableName)
 	local playerTable = {};
-
+	playerTable = InitDbSchema(playerTable, tableName);
 	if IsInGuild() then
+
 		local realmName = MonDKP:GetRealmName();
 		local guildName = MonDKP:GetGuildName();
+		
 
-		playerTable[realmName] = {};
-		playerTable[realmName][guildName] = {};
+		playerTable = InitializeGuild(playerTable,realmName,guildName);
+
 		if  not globalTable then
 			globalTable = {};
 		end
+
 		if hasTeams then
 			playerTable[realmName][guildName]["0"] = CopyTable(globalTable);
 		else
 			playerTable[realmName][guildName] = CopyTable(globalTable);
 		end
+	else
+		playerTable[core.defaultTable] = {};
 	end
-	playerTable = InitDbSchema(playerTable, tableName);
 	return playerTable;
+end
+
+function InitializeGuild(dataTable, realmName, guildName)
+	local retOK1, hasInfo1 = pcall(tableHasKey,dataTable,realmName);
+	
+	if (not retOK1) or (retOK1 and not hasInfo1) then
+		dataTable[realmName] = {}
+	end
+	
+	if guildName ~= nil then
+		local retOK2, hasInfo2 = pcall(tableHasKey,dataTable[realmName],guildName);
+		
+		if (not retOK2) or (retOK2 and not hasInfo2) then
+			dataTable[realmName][guildName] = {}
+		end
+	end
+	
+ 	return dataTable
 end
 
 function InitDbSchema(dbTable, tableName)

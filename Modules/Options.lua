@@ -744,7 +744,7 @@ function MonDKP:Options()
       MonDKP.ConfigTab4.BroadcastMaxBids:SetScript("OnLeave", function()
         GameTooltip:Hide()
       end)
-  end
+    end
     -- Bid Timer Slider
     MonDKP.ConfigTab4.bidTimerSlider = CreateFrame("SLIDER", "$parentBidTimerSlider", MonDKP.ConfigTab4, "MonDKPOptionsSliderTemplate");
     if core.DB.modes.mode == "Minimum Bid Values" or (core.DB.modes.mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
@@ -794,7 +794,7 @@ function MonDKP:Options()
     end)
     MonDKP.ConfigTab4.bidTimer:SetPoint("TOP", MonDKP.ConfigTab4.bidTimerSlider, "BOTTOM", 0, -3)     
     MonDKP.ConfigTab4.bidTimer:SetText(MonDKP.ConfigTab4.bidTimerSlider:GetValue())
-  end
+  end -- the end
 
   -- Tooltip History Slider
   MonDKP.ConfigTab4.TooltipHistorySlider = CreateFrame("SLIDER", "$parentTooltipHistorySlider", MonDKP.ConfigTab4, "MonDKPOptionsSliderTemplate");

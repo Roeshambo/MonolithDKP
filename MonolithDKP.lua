@@ -63,7 +63,7 @@ function MonDKP:Toggle()        -- toggles IsShown() state of MonDKP.UIConfig, t
 		MonDKP:ViewLimited()
 	end
 
-	core.MonDKPUI:SetScale(MonDKP_DB.defaults.MonDKPScaleSize)
+	core.MonDKPUI:SetScale(core.DB.defaults.MonDKPScaleSize)
 	if MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
 		MonDKP:DKPHistory_Update(true)
 	elseif MonDKP.ConfigTab5 and MonDKP.ConfigTab5:IsShown() then
@@ -222,6 +222,7 @@ function MonDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable 
 end
 
 function MonDKP:CreateMenu()
+
 	MonDKP.UIConfig = CreateFrame("Frame", "MonDKPConfig", UIParent, "ShadowOverlaySmallTemplate")  --UIPanelDialogueTemplate, ShadowOverlaySmallTemplate
 	MonDKP.UIConfig:SetPoint("CENTER", UIParent, "CENTER", -250, 100);
 	MonDKP.UIConfig:SetSize(550, 590);
@@ -245,7 +246,6 @@ function MonDKP:CreateMenu()
 		if core.ModesWindow then core.ModesWindow:SetFrameLevel(6) end
 		if core.BiddingWindow then core.BiddingWindow:SetFrameLevel(2) end
 	end)
-
 	-- Close Button
 	MonDKP.UIConfig.closeContainer = CreateFrame("Frame", "MonDKPTitle", MonDKP.UIConfig)
 	MonDKP.UIConfig.closeContainer:SetPoint("CENTER", MonDKP.UIConfig, "TOPRIGHT", -4, 0)
@@ -263,7 +263,6 @@ function MonDKP:CreateMenu()
 	---------------------------------------
 	-- Create and Populate Tab Menu and DKP Table
 	---------------------------------------
-
 	MonDKP.TabMenu = MonDKP:ConfigMenuTabs();        -- Create and populate Config Menu Tabs
 	MonDKP:DKPTable_Create();                        -- Create DKPTable and populate rows
 	MonDKP.UIConfig.TabMenu:Hide()                   -- Hide menu until expanded
@@ -280,14 +279,12 @@ function MonDKP:CreateMenu()
 	MonDKP.DKPTable_Headers:SetBackdropColor(0,0,0,0.8);
 	MonDKP.DKPTable_Headers:SetBackdropBorderColor(1,1,1,0.5)
 	MonDKP.DKPTable_Headers:Show()
-
 	---------------------------------------
 	-- Sort Buttons
 	--------------------------------------- 
 	SortButtons.player = CreateFrame("Button", "$ParentSortButtonPlayer", MonDKP.DKPTable_Headers)
 	SortButtons.class = CreateFrame("Button", "$ParentSortButtonClass", MonDKP.DKPTable_Headers)
 	SortButtons.dkp = CreateFrame("Button", "$ParentSortButtonDkp", MonDKP.DKPTable_Headers)
-	 
 	SortButtons.class:SetPoint("BOTTOM", MonDKP.DKPTable_Headers, "BOTTOM", 0, 2)
 	SortButtons.player:SetPoint("RIGHT", SortButtons.class, "LEFT")
 	SortButtons.dkp:SetPoint("LEFT", SortButtons.class, "RIGHT")
@@ -302,7 +299,6 @@ function MonDKP:CreateMenu()
 			v:SetScript("OnClick", function(self) MonDKP:SortDKPTable(self.Id, "Clear") end)
 		end
 	end
-
 	SortButtons.player:SetSize((core.TableWidth*0.4)-1, core.TableRowHeight)
 	SortButtons.class:SetSize((core.TableWidth*0.2)-1, core.TableRowHeight)
 	SortButtons.dkp:SetSize((core.TableWidth*0.4)-1, core.TableRowHeight)
@@ -325,7 +321,6 @@ function MonDKP:CreateMenu()
 	UIDropDownMenu_JustifyText(SortButtons.class.t, "CENTER")
 	UIDropDownMenu_SetWidth(SortButtons.class.t, 80)
 	UIDropDownMenu_SetText(SortButtons.class.t, L["CLASS"])
-
 	UIDropDownMenu_Initialize(SortButtons.class.t, function(self, level, menuList)
 	local reason = UIDropDownMenu_CreateInfo()
 		reason.func = self.SetValue
@@ -339,10 +334,8 @@ function MonDKP:CreateMenu()
 		reason.text, reason.arg1, reason.arg2, reason.checked, reason.isNotRadio = L["ROLE"], "role", L["ROLE"], "role" == core.CenterSort, true
 		UIDropDownMenu_AddButton(reason)
 	end)
-
 	-- Dropdown Menu Function
 	function SortButtons.class.t:SetValue(newValue, arg2)
-		
 		core.CenterSort = newValue
 		SortButtons.class.Id = newValue;
 		UIDropDownMenu_SetText(SortButtons.class.t, arg2)
@@ -350,11 +343,10 @@ function MonDKP:CreateMenu()
 		core.currentSort = newValue;
 		CloseDropDownMenus()
 	end
-
 	SortButtons.dkp.t = SortButtons.dkp:CreateFontString(nil, "OVERLAY")
 	SortButtons.dkp.t:SetFontObject("MonDKPNormal")
 	SortButtons.dkp.t:SetTextColor(1, 1, 1, 1);
-	if MonDKP_DB.modes.mode == "Roll Based Bidding" then
+	if core.DB.modes.mode == "Roll Based Bidding" then
 		SortButtons.dkp.t:SetPoint("RIGHT", SortButtons.dkp, "RIGHT", -50, 0);
 		SortButtons.dkp.t:SetText(L["TOTALDKP"]);
 
@@ -382,7 +374,6 @@ function MonDKP:CreateMenu()
 	MonDKP.DKPTable.counter.s:SetFontObject("MonDKPTiny");
 	MonDKP.DKPTable.counter.s:SetTextColor(1, 1, 1, 0.7);
 	MonDKP.DKPTable.counter.s:SetPoint("CENTER", MonDKP.DKPTable.counter, "CENTER", 0, -15);
-
 	------------------------------
 	-- Search Box
 	------------------------------
@@ -445,7 +436,6 @@ function MonDKP:CreateMenu()
 	MonDKP.UIConfig.search:SetScript("OnLeave", function(self)
 		GameTooltip:Hide();
 	end)
-
 	---------------------------------------
 	-- Expand / Collapse Arrow
 	---------------------------------------
@@ -496,11 +486,10 @@ function MonDKP:CreateMenu()
 	MonDKP.UIConfig.Title:SetPoint("CENTER", MonDKP.UIConfig.TitleBar, "CENTER");
 	MonDKP.UIConfig.Title:SetSize(160, 48);
 	MonDKP.UIConfig.Title:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\mondkp-title-t.tga");
-
 	---------------------------------------
 	-- CHANGE LOG WINDOW
 	---------------------------------------
-	if MonDKP_DB.defaults.HideChangeLogs < core.BuildNumber then
+	if core.DB.defaults.HideChangeLogs < core.BuildNumber then
 		MonDKP.ChangeLogDisplay = CreateFrame("Frame", "MonDKP_ChangeLogDisplay", UIParent, "ShadowOverlaySmallTemplate");
 
 		MonDKP.ChangeLogDisplay:SetPoint("TOP", UIParent, "TOP", 0, -200);
@@ -568,9 +557,9 @@ function MonDKP:CreateMenu()
 		MonDKP.ChangeLogDisplay.DontShowCheck:SetPoint("LEFT", MonDKP.ChangeLogDisplay.ChangeLogHeader, "RIGHT", 10, 0);
 		MonDKP.ChangeLogDisplay.DontShowCheck:SetScript("OnClick", function(self)
 			if self:GetChecked() then
-				MonDKP_DB.defaults.HideChangeLogs = core.BuildNumber
+				core.DB.defaults.HideChangeLogs = core.BuildNumber
 			else
-				MonDKP_DB.defaults.HideChangeLogs = 0
+				core.DB.defaults.HideChangeLogs = 0
 			end
 		end)
 
@@ -585,7 +574,6 @@ function MonDKP:CreateMenu()
 		local logHeight = MonDKP.ChangeLogDisplay.ChangeLogHeader:GetHeight() + MonDKP.ChangeLogDisplay.Notes:GetHeight() + MonDKP.ChangeLogDisplay.VerNumber:GetHeight() + MonDKP.ChangeLogDisplay.ChangeLogText:GetHeight();
 		MonDKP.ChangeLogDisplay:SetSize(800, logHeight);  -- resize container
 	end
-
 	---------------------------------------
 	-- VERSION IDENTIFIER
 	---------------------------------------
