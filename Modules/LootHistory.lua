@@ -148,6 +148,16 @@ local function RightClickLootMenu(self, index)  -- called by right click functio
 	EasyMenu(menu, menuFrame, "cursor", 0 , 0, "MENU");
 end
 
+function MonDKP:ClearLootHistoryFrames() 
+	for i=1, #MonDKP.ConfigTab5.looter do
+		MonDKP.ConfigTab5.looter[i]:SetText("")
+	end
+
+	for i=1, #MonDKP.ConfigTab5.lootFrame do
+		MonDKP.ConfigTab5.lootFrame[i]:Hide()
+	end
+end
+
 
 function CreateSortBox()
 	local PlayerList = GetSortOptions();
@@ -353,6 +363,7 @@ function CreateSortBox()
     
     CloseDropDownMenus()
   end
+
 end
 
 local tooltip = CreateFrame('GameTooltip', "nil", UIParent, 'GameTooltipTemplate')
@@ -372,6 +383,8 @@ function MonDKP:LootHistory_Reset()
 	curDate = 1;
 	curZone = nil;
 	curBoss = nil;
+
+	MonDKP:ClearLootHistoryFrames() 
 
 	if MonDKP.DKPTable then
 		for i=1, #MonDKP:GetTable(MonDKP_Loot, true)+1 do

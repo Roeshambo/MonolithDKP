@@ -436,6 +436,74 @@ function MonDKP:CreateMenu()
 	MonDKP.UIConfig.search:SetScript("OnLeave", function(self)
 		GameTooltip:Hide();
 	end)
+
+	------------------------------
+	-- Team view changer Drop Down
+	------------------------------
+		MonDKP.UIConfig.TeamViewChangerDropDown = CreateFrame("FRAME", "MonDKPConfigReasonDropDown", MonDKP.UIConfig, "MonolithDKPUIDropDownMenuTemplate")
+		--MonDKP.ConfigTab3.TeamManagementContainer.TeamListDropDown:ClearAllPoints()
+		MonDKP.UIConfig.TeamViewChangerDropDown:SetPoint("BOTTOMLEFT", MonDKP.UIConfig, "BOTTOMLEFT", 340, 15)
+		-- tooltip on mouseOver
+		MonDKP.UIConfig.TeamViewChangerDropDown:SetScript("OnEnter", 
+			function(self) 
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText(L["TEAMLIST"], 0.25, 0.75, 0.90, 1, true);
+				GameTooltip:AddLine(L["TEAMLISTDESC"], 1.0, 1.0, 1.0, true);
+				GameTooltip:Show();
+			end
+		)
+		MonDKP.UIConfig.TeamViewChangerDropDown:SetScript("OnLeave",
+			function(self)
+				GameTooltip:Hide()
+			end
+		)
+		UIDropDownMenu_SetWidth(MonDKP.UIConfig.TeamViewChangerDropDown, 150)
+		UIDropDownMenu_SetText(MonDKP.UIConfig.TeamViewChangerDropDown, MonDKP:GetCurrentTeamName())
+
+		-- Create and bind the initialization function to the dropdown menu
+		UIDropDownMenu_Initialize(MonDKP.UIConfig.TeamViewChangerDropDown, 
+			function(self, level, menuList)
+
+				local dropDownMenuItem = UIDropDownMenu_CreateInfo()
+				dropDownMenuItem.func = self.SetValue
+				dropDownMenuItem.fontObject = "MonDKPSmallCenter"
+			
+				teamList = MonDKP:GetGuildTeamList()
+
+				for i=1, #teamList do
+					dropDownMenuItem.text = teamList[i][2]
+					dropDownMenuItem.arg1 = teamList[i][2] -- name
+					dropDownMenuItem.arg2 = teamList[i][1] -- index
+					dropDownMenuItem.checked = teamList[i][1] == tonumber(MonDKP:GetCurrentTeamIndex())
+					dropDownMenuItem.isNotRadio = true
+					UIDropDownMenu_AddButton(dropDownMenuItem)
+				end
+			end
+		)
+
+		-- Dropdown Menu on SetValue()
+		function MonDKP.UIConfig.TeamViewChangerDropDown:SetValue(arg1, arg2)
+			if tonumber(MonDKP:GetCurrentTeamIndex()) ~= arg2 then
+				MonDKP:SetCurrentTeam(arg2)
+				UIDropDownMenu_SetText(MonDKP.UIConfig.TeamViewChangerDropDown, arg1)
+
+				-- reset dkp table and update it
+				core.WorkingTable = MonDKP:GetTable(MonDKP_DKPTable, true);
+				DKPTable_Update()
+
+				-- reset dkp history table and update it
+				MonDKP:DKPHistory_Update(true)
+				-- reset loot history
+				MonDKP:LootHistory_Update(L["NOFILTER"])
+				-- update class graph
+				MonDKP:ClassGraph_Update()
+			else
+				CloseDropDownMenus()
+			end
+
+			CloseDropDownMenus()
+		end
+
 	---------------------------------------
 	-- Expand / Collapse Arrow
 	---------------------------------------
