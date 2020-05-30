@@ -102,6 +102,7 @@ function MonDKP:StopRaidTimer()
 		MonDKP.RaidTimer:SetScript("OnUpdate", nil)
 	end
 	core.RaidInProgress = false
+	core.RaidInPause = false
 	MonDKP.ConfigTab2.RaidTimerContainer.OutputHeader:SetText(L["RAIDENDED"]..":")
 	MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:SetText(L["INITRAID"])
 	MonDKP.ConfigTab2.RaidTimerContainer.Output:SetText("|cff00ff00"..strsub(MonDKP.ConfigTab2.RaidTimerContainer.Output:GetText(), 11, -3).."|r")
@@ -138,7 +139,7 @@ function MonDKP:StartRaidTimer(pause, syncTimer, syncSecondCount, syncMinuteCoun
 	MonDKP.RaidTimer = MonDKP.RaidTimer or CreateFrame("StatusBar", nil, UIParent)
 
 	if not syncTimer then
-		if not pause then
+		if not pause then -- pause == false
 			MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:SetText(L["ENDRAID"])
 			MonDKP.ConfigTab2.RaidTimerContainer.OutputHeader:SetText(L["TIMEELAPSED"]..":")
 			MonDKP.ConfigTab2.RaidTimerContainer.OutputHeader:Show();
@@ -157,7 +158,8 @@ function MonDKP:StartRaidTimer(pause, syncTimer, syncSecondCount, syncMinuteCoun
 			MonDKP.ConfigTab2.RaidTimerContainer.PauseTimer:Show();
 			increment = core.DB.modes.increment;
 			core.RaidInProgress = true
-		else
+			core.RaidInPause = false
+		else -- pause == true
 			MonDKP.RaidTimer:SetScript("OnUpdate", nil)
 			MonDKP.ConfigTab2.RaidTimerContainer.StartTimer:SetText(L["CONTINUERAID"])
 			MonDKP.ConfigTab2.RaidTimerContainer.OutputHeader:SetText(L["RAIDPAUSED"]..":")
@@ -165,6 +167,7 @@ function MonDKP:StartRaidTimer(pause, syncTimer, syncSecondCount, syncMinuteCoun
 			MonDKP.ConfigTab2.RaidTimerContainer.Output:SetText("|cffff0000"..strsub(MonDKP.ConfigTab2.RaidTimerContainer.Output:GetText(), 11, -3).."|r")
 			MonDKP.RaidTimerPopout.Output:SetText(MonDKP.ConfigTab2.RaidTimerContainer.Output:GetText())
 			core.RaidInProgress = false
+			core.RaidInPause = true
 			return;
 		end
 

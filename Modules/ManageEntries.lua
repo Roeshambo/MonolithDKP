@@ -3,6 +3,7 @@ local _G = _G;
 local MonDKP = core.MonDKP;
 local L = core.L;
 
+
 local function Remove_Entries()
 	MonDKP:StatusVerify_Update()
 	local numPlayers = 0;
@@ -250,6 +251,85 @@ function GetGuildRankList()
 	return tempTable;
 end
 
+-------
+-- TEAM FUNCTIONS
+-------
+
+function MonDKP:GetCurrentTeamIndex() 
+	local _tmpString = MonDKP:GetTable(MonDKP_DB, false)["defaults"]["CurrentTeam"]
+	return _tmpString
+end
+
+function MonDKP:GetCurrentTeamName()
+	_string = MonDKP:GetTable(MonDKP_DB)["teams"][MonDKP:GetCurrentTeamIndex()].name
+	return _string
+end
+
+function MonDKP:SetCurrentTeam(index)
+	MonDKP:GetTable(MonDKP_DB, false)["defaults"]["CurrentTeam"] = tostring(index)
+end
+
+function MonDKP:GetGuildTeamList() 
+	local _list = {};
+	local _tmp = MonDKP:GetTable(MonDKP_DB, false)["teams"]
+	local index = 1
+
+	for k,v in pairs(_tmp) do
+		if(type(v) == "table") then
+			for z,x in pairs(v) do
+				table.insert(_list, {tonumber(k), v.name})
+				index = index + 1
+			end
+		end
+	end
+	-- so, because team "index" is a string Lua doesn't give a flying fuck
+	-- about order of adding elements to "string" indexed table so we have to unfuck it
+	table.sort(_list,  
+		function(a, b)
+			return a[1] < b[1]
+		end
+	)
+
+	return _list
+end
+
+function ChangeTeamName(index, _name) 
+	MonDKP:GetTable(MonDKP_DB, false)["teams"][tostring(index)].name = _name;
+end
+
+local function AddNewTeamToGuild() 
+	local _index = 0
+	local _tmp = MonDKP:GetTable(MonDKP_DB, false)["teams"]
+	local realmName = MonDKP:GetRealmName();
+	local guildName = MonDKP:GetGuildName();
+
+	-- get the index of last team from MonDKP_DB
+	for k,v in pairs(_tmp) do
+		if(type(v) == "table") then
+			_index = _index + 1
+		end
+	end
+
+	-- add new team definition to MonDKP_DB with generic GuildName-index
+	MonDKP:GetTable(MonDKP_DB, false)["teams"][tostring(_index)] = { ["name"] = guildName.."-"..tostring(_index)}
+
+	------
+	-- add new team with new "index" to all "team" tables in saved variables
+	-- MonDKP_Loot, MonDKP_DKPTable, MonDKP_DKPHistory, MonDKP_MinBids, MonDKP_MaxBids, MonDKP_Standby, MonDKP_Archive
+	------
+		MonDKP:GetTable(MonDKP_Loot, false)[tostring(_index)] = {}
+		MonDKP:GetTable(MonDKP_DKPTable, false)[tostring(_index)] = {}
+		MonDKP:GetTable(MonDKP_DKPHistory, false)[tostring(_index)] = {}
+		MonDKP:GetTable(MonDKP_MinBids, false)[tostring(_index)] = {}
+		MonDKP:GetTable(MonDKP_MaxBids, false)[tostring(_index)] = {}
+		MonDKP:GetTable(MonDKP_Standby, false)[tostring(_index)] = {}
+		MonDKP:GetTable(MonDKP_Archive, false)[tostring(_index)] = {}
+end
+
+-------
+-- TEAM FUNCTIONS END
+-------
+
 function MonDKP:reset_prev_dkp(player)
 	if player then
 		local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), player, "player")
@@ -314,316 +394,397 @@ local function ViewWhitelist()
 	end
 end
 
+
+---------------------------------------
+-- Manage DKP TAB.Create()
+---------------------------------------
 function MonDKP:ManageEntries()
 
+	local CheckLeader = MonDKP:GetGuildRankIndex(UnitName("player"))
 	-- add raid to dkp table if they don't exist
-	MonDKP.ConfigTab3.add_raid_to_table = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 30, -90, L["ADDRAIDMEMBERS"]);
-	MonDKP.ConfigTab3.add_raid_to_table:SetSize(120,25);
-	MonDKP.ConfigTab3.add_raid_to_table:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["ADDRAIDMEMBERS"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["ADDRAIDMEMBERSTTDESC"], 1.0, 1.0, 1.0, true);
-		GameTooltip:Show();
-	end)
-	MonDKP.ConfigTab3.add_raid_to_table:SetScript("OnLeave", function(self)
-		GameTooltip:Hide()
-	end)
-	MonDKP.ConfigTab3.add_raid_to_table:SetScript("OnClick", function ()	-- confirmation dialog to remove user(s)
-		local selected = L["ADDRAIDMEMBERSCONFIRM"];
 
-		StaticPopupDialogs["ADD_RAID_ENTRIES"] = {
-		  text = selected,
-		  button1 = L["YES"],
-		  button2 = L["NO"],
-		  OnAccept = function()
-		      AddRaidToDKPTable()
-		  end,
-		  timeout = 0,
-		  whileDead = true,
-		  hideOnEscape = true,
-		  preferredIndex = 3,
-		}
-		StaticPopup_Show ("ADD_RAID_ENTRIES")
-	end);
+	----------------------------------
+	-- Header text above the buttons
+	----------------------------------
+		MonDKP.ConfigTab3.AddEntriesHeader = MonDKP.ConfigTab3:CreateFontString(nil, "OVERLAY")
+		MonDKP.ConfigTab3.AddEntriesHeader:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab3.add_raid_to_table, "TOPLEFT", -10, 10);
+		MonDKP.ConfigTab3.AddEntriesHeader:SetWidth(400)
+		MonDKP.ConfigTab3.AddEntriesHeader:SetFontObject("MonDKPNormalLeft")
+		MonDKP.ConfigTab3.AddEntriesHeader:SetText(L["ADDREMDKPTABLEENTRIES"]); 
 
-	MonDKP.ConfigTab3.AddEntriesHeader = MonDKP.ConfigTab3:CreateFontString(nil, "OVERLAY")
-	MonDKP.ConfigTab3.AddEntriesHeader:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab3.add_raid_to_table, "TOPLEFT", -10, 10);
-	MonDKP.ConfigTab3.AddEntriesHeader:SetWidth(400)
-	MonDKP.ConfigTab3.AddEntriesHeader:SetFontObject("MonDKPNormalLeft")
-	MonDKP.ConfigTab3.AddEntriesHeader:SetText(L["ADDREMDKPTABLEENTRIES"]); 
+	----------------------------------
+	-- add raid members button
+	----------------------------------
+		MonDKP.ConfigTab3.add_raid_to_table = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 30, -90, L["ADDRAIDMEMBERS"]);
+		MonDKP.ConfigTab3.add_raid_to_table:SetSize(120,25);
 
+		-- tooltip for add raid members button
+		MonDKP.ConfigTab3.add_raid_to_table:SetScript("OnEnter", 
+			function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText(L["ADDRAIDMEMBERS"], 0.25, 0.75, 0.90, 1, true);
+				GameTooltip:AddLine(L["ADDRAIDMEMBERSTTDESC"], 1.0, 1.0, 1.0, true);
+				GameTooltip:Show();
+			end
+		)
+		MonDKP.ConfigTab3.add_raid_to_table:SetScript("OnLeave", 
+			function(self)
+				GameTooltip:Hide()
+			end
+		)
+
+		-- confirmation dialog to remove user(s)
+		MonDKP.ConfigTab3.add_raid_to_table:SetScript("OnClick", 
+			function ()
+				local selected = L["ADDRAIDMEMBERSCONFIRM"];
+
+				StaticPopupDialogs["ADD_RAID_ENTRIES"] = {
+				text = selected,
+				button1 = L["YES"],
+				button2 = L["NO"],
+				OnAccept = function()
+					AddRaidToDKPTable()
+				end,
+				timeout = 0,
+				whileDead = true,
+				hideOnEscape = true,
+				preferredIndex = 3,
+				}
+				StaticPopup_Show ("ADD_RAID_ENTRIES")
+			end
+		);
+
+
+	
+	----------------------------------
 	-- remove selected entries button
-	MonDKP.ConfigTab3.remove_entries = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 170, -60, L["REMOVEENTRIES"]);
-	MonDKP.ConfigTab3.remove_entries:SetSize(120,25);
-	MonDKP.ConfigTab3.remove_entries:ClearAllPoints()
-	MonDKP.ConfigTab3.remove_entries:SetPoint("LEFT", MonDKP.ConfigTab3.add_raid_to_table, "RIGHT", 20, 0)
-	MonDKP.ConfigTab3.remove_entries:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["REMOVESELECTEDENTRIES"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["REMSELENTRIESTTDESC"], 1.0, 1.0, 1.0, true);
-		GameTooltip:AddLine(L["REMSELENTRIESTTWARN"], 1.0, 0, 0, true);
-		GameTooltip:Show();
-	end)
-	MonDKP.ConfigTab3.remove_entries:SetScript("OnLeave", function(self)
-		GameTooltip:Hide()
-	end)
-	MonDKP.ConfigTab3.remove_entries:SetScript("OnClick", function ()	-- confirmation dialog to remove user(s)
-		if #core.SelectedData > 0 then
-			local selected = L["CONFIRMREMOVESELECT"]..": \n\n";
+	----------------------------------
+		MonDKP.ConfigTab3.remove_entries = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 170, -60, L["REMOVEENTRIES"]);
+		MonDKP.ConfigTab3.remove_entries:SetSize(120,25);
+		MonDKP.ConfigTab3.remove_entries:ClearAllPoints()
+		MonDKP.ConfigTab3.remove_entries:SetPoint("LEFT", MonDKP.ConfigTab3.add_raid_to_table, "RIGHT", 20, 0)
+		MonDKP.ConfigTab3.remove_entries:SetScript("OnEnter", 
+			function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText(L["REMOVESELECTEDENTRIES"], 0.25, 0.75, 0.90, 1, true);
+				GameTooltip:AddLine(L["REMSELENTRIESTTDESC"], 1.0, 1.0, 1.0, true);
+				GameTooltip:AddLine(L["REMSELENTRIESTTWARN"], 1.0, 0, 0, true);
+				GameTooltip:Show();
+			end
+		)
+		MonDKP.ConfigTab3.remove_entries:SetScript("OnLeave", 
+			function(self)
+				GameTooltip:Hide()
+			end
+		)
+		-- confirmation dialog to remove user(s)
+		MonDKP.ConfigTab3.remove_entries:SetScript("OnClick", 
+			function ()	
+				if #core.SelectedData > 0 then
+					local selected = L["CONFIRMREMOVESELECT"]..": \n\n";
 
-			for i=1, #core.SelectedData do
-				local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), core.SelectedData[i].player)
+					for i=1, #core.SelectedData do
+						local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), core.SelectedData[i].player)
 
-			    if classSearch then
-			     	c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[classSearch[1][1]].class)
-			    else
-			     	c = { hex="ffffff" }
-			    end
-				if i == 1 then
-					selected = selected.."|cff"..c.hex..core.SelectedData[i].player.."|r"
+						if classSearch then
+							c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[classSearch[1][1]].class)
+						else
+							c = { hex="ffffff" }
+						end
+						if i == 1 then
+							selected = selected.."|cff"..c.hex..core.SelectedData[i].player.."|r"
+						else
+							selected = selected..", |cff"..c.hex..core.SelectedData[i].player.."|r"
+						end
+					end
+					selected = selected.."?"
+
+					StaticPopupDialogs["REMOVE_ENTRIES"] = {
+					text = selected,
+					button1 = L["YES"],
+					button2 = L["NO"],
+					OnAccept = function()
+						Remove_Entries()
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+					}
+					StaticPopup_Show ("REMOVE_ENTRIES")
 				else
-					selected = selected..", |cff"..c.hex..core.SelectedData[i].player.."|r"
+					MonDKP:Print(L["NOENTRIESSELECTED"])
 				end
 			end
-			selected = selected.."?"
-
-			StaticPopupDialogs["REMOVE_ENTRIES"] = {
-			  text = selected,
-			  button1 = L["YES"],
-			  button2 = L["NO"],
-			  OnAccept = function()
-			      Remove_Entries()
-			  end,
-			  timeout = 0,
-			  whileDead = true,
-			  hideOnEscape = true,
-			  preferredIndex = 3,
-			}
-			StaticPopup_Show ("REMOVE_ENTRIES")
-		else
-			MonDKP:Print(L["NOENTRIESSELECTED"])
-		end
-	end);
-
-	-- Reset previous DKP -- number showing how much a player has gained or lost since last clear
-	MonDKP.ConfigTab3.reset_previous_dkp = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 310, -60, L["RESETPREVIOUS"]);
-	MonDKP.ConfigTab3.reset_previous_dkp:SetSize(120,25);
-	MonDKP.ConfigTab3.reset_previous_dkp:ClearAllPoints()
-	MonDKP.ConfigTab3.reset_previous_dkp:SetPoint("LEFT", MonDKP.ConfigTab3.remove_entries, "RIGHT", 20, 0)
-	MonDKP.ConfigTab3.reset_previous_dkp:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["RESETPREVDKP"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["RESETPREVDKPTTDESC"], 1.0, 1.0, 1.0, true);
-		GameTooltip:AddLine(L["RESETPREVDKPTTWARN"], 1.0, 0, 0, true);
-		GameTooltip:Show();
-	end)
-	MonDKP.ConfigTab3.reset_previous_dkp:SetScript("OnLeave", function(self)
-		GameTooltip:Hide()
-	end)
-	MonDKP.ConfigTab3.reset_previous_dkp:SetScript("OnClick", function ()	-- confirmation dialog to remove user(s)
-		StaticPopupDialogs["RESET_PREVIOUS_DKP"] = {
-			text = L["RESETPREVCONFIRM"],
-			button1 = L["YES"],
-			button2 = L["NO"],
-			OnAccept = function()
-			    MonDKP:reset_prev_dkp()
-			end,
-			timeout = 0,
-			whileDead = true,
-			hideOnEscape = true,
-			preferredIndex = 3,
-		}
-		StaticPopup_Show ("RESET_PREVIOUS_DKP")
-	end);
+		);
+	----------------------------------
+	-- Reset previous DKP button -- number showing how much a player has gained or lost since last clear
+	----------------------------------
+		MonDKP.ConfigTab3.reset_previous_dkp = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 310, -60, L["RESETPREVIOUS"]);
+		MonDKP.ConfigTab3.reset_previous_dkp:SetSize(120,25);
+		MonDKP.ConfigTab3.reset_previous_dkp:ClearAllPoints()
+		MonDKP.ConfigTab3.reset_previous_dkp:SetPoint("LEFT", MonDKP.ConfigTab3.remove_entries, "RIGHT", 20, 0)
+		MonDKP.ConfigTab3.reset_previous_dkp:SetScript("OnEnter",
+			function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText(L["RESETPREVDKP"], 0.25, 0.75, 0.90, 1, true);
+				GameTooltip:AddLine(L["RESETPREVDKPTTDESC"], 1.0, 1.0, 1.0, true);
+				GameTooltip:AddLine(L["RESETPREVDKPTTWARN"], 1.0, 0, 0, true);
+				GameTooltip:Show();
+			end
+		)
+		MonDKP.ConfigTab3.reset_previous_dkp:SetScript("OnLeave", 
+			function(self)
+				GameTooltip:Hide()
+			end
+		)
+		-- confirmation dialog to remove user(s)
+		MonDKP.ConfigTab3.reset_previous_dkp:SetScript("OnClick",
+			function ()	
+				StaticPopupDialogs["RESET_PREVIOUS_DKP"] = {
+					text = L["RESETPREVCONFIRM"],
+					button1 = L["YES"],
+					button2 = L["NO"],
+					OnAccept = function()
+						MonDKP:reset_prev_dkp()
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopup_Show ("RESET_PREVIOUS_DKP")
+			end
+		);
 
 	local curIndex;
 	local curRank;
 
-	MonDKP.ConfigTab3.GuildRankDropDown = CreateFrame("FRAME", "MonDKPConfigReasonDropDown", MonDKP.ConfigTab3, "MonolithDKPUIDropDownMenuTemplate")
-	MonDKP.ConfigTab3.GuildRankDropDown:SetPoint("TOPLEFT", MonDKP.ConfigTab3.add_raid_to_table, "BOTTOMLEFT", -17, -15)
-	MonDKP.ConfigTab3.GuildRankDropDown:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["RANKLIST"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["RANKLISTTTDESC"], 1.0, 1.0, 1.0, true);
-		GameTooltip:Show();
-	end)
-	MonDKP.ConfigTab3.GuildRankDropDown:SetScript("OnLeave", function(self)
-		GameTooltip:Hide()
-	end)
-	UIDropDownMenu_SetWidth(MonDKP.ConfigTab3.GuildRankDropDown, 105)
-	UIDropDownMenu_SetText(MonDKP.ConfigTab3.GuildRankDropDown, "Select Rank")
+	----------------------------------
+	-- rank select dropDownMenu
+	----------------------------------
+		MonDKP.ConfigTab3.GuildRankDropDown = CreateFrame("FRAME", "MonDKPConfigReasonDropDown", MonDKP.ConfigTab3, "MonolithDKPUIDropDownMenuTemplate")
+		MonDKP.ConfigTab3.GuildRankDropDown:SetPoint("TOPLEFT", MonDKP.ConfigTab3.add_raid_to_table, "BOTTOMLEFT", -17, -15)
+		MonDKP.ConfigTab3.GuildRankDropDown:SetScript("OnEnter", 
+			function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText(L["RANKLIST"], 0.25, 0.75, 0.90, 1, true);
+				GameTooltip:AddLine(L["RANKLISTTTDESC"], 1.0, 1.0, 1.0, true);
+				GameTooltip:Show();
+			end
+		)
+		MonDKP.ConfigTab3.GuildRankDropDown:SetScript("OnLeave",
+			function(self)
+				GameTooltip:Hide()
+			end
+		)
+		UIDropDownMenu_SetWidth(MonDKP.ConfigTab3.GuildRankDropDown, 105)
+		UIDropDownMenu_SetText(MonDKP.ConfigTab3.GuildRankDropDown, "Select Rank")
 
-	-- Create and bind the initialization function to the dropdown menu
-	UIDropDownMenu_Initialize(MonDKP.ConfigTab3.GuildRankDropDown, function(self, level, menuList)
-	local rank = UIDropDownMenu_CreateInfo()
-		rank.func = self.SetValue
-		rank.fontObject = "MonDKPSmallCenter"
+		-- Create and bind the initialization function to the dropdown menu
+		UIDropDownMenu_Initialize(MonDKP.ConfigTab3.GuildRankDropDown, 
+			function(self, level, menuList)
+				local rank = UIDropDownMenu_CreateInfo()
+					rank.func = self.SetValue
+					rank.fontObject = "MonDKPSmallCenter"
 
-		local rankList = GetGuildRankList()
+					local rankList = GetGuildRankList()
 
-		for i=1, #rankList do
-			rank.text, rank.arg1, rank.arg2, rank.checked, rank.isNotRadio = rankList[i].name, rankList[i].name, rankList[i].index, rankList[i].name == curRank, true
-			UIDropDownMenu_AddButton(rank)
-		end
-	end)
-
-	-- Dropdown Menu Function
-	function MonDKP.ConfigTab3.GuildRankDropDown:SetValue(arg1, arg2)
-		if curRank ~= arg1 then
-			curRank = arg1
-			curIndex = arg2
-			UIDropDownMenu_SetText(MonDKP.ConfigTab3.GuildRankDropDown, arg1)
-		else
-			curRank = nil
-			curIndex = nil
-			UIDropDownMenu_SetText(MonDKP.ConfigTab3.GuildRankDropDown, L["SELECTRANK"])
-		end
-
-		CloseDropDownMenus()
-	end
-
-	-- Add Guild to DKP Table Button
-	MonDKP.ConfigTab3.AddGuildToDKP = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["ADDGUILDMEMBERS"]);
-	MonDKP.ConfigTab3.AddGuildToDKP:SetSize(120,25);
-	MonDKP.ConfigTab3.AddGuildToDKP:ClearAllPoints()
-	MonDKP.ConfigTab3.AddGuildToDKP:SetPoint("LEFT", MonDKP.ConfigTab3.GuildRankDropDown, "RIGHT", 2, 2)
-	MonDKP.ConfigTab3.AddGuildToDKP:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["ADDGUILDDKPTABLE"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["ADDGUILDDKPTABLETT"], 1.0, 1.0, 1.0, true);
-		GameTooltip:Show();
-	end)
-	MonDKP.ConfigTab3.AddGuildToDKP:SetScript("OnLeave", function(self)
-		GameTooltip:Hide()
-	end)
-	MonDKP.ConfigTab3.AddGuildToDKP:SetScript("OnClick", function ()	-- confirmation dialog to add user(s)
-		if curIndex ~= nil then
-			StaticPopupDialogs["ADD_GUILD_MEMBERS"] = {
-				text = L["ADDGUILDCONFIRM"].." \""..curRank.."\"?",
-				button1 = L["YES"],
-				button2 = L["NO"],
-				OnAccept = function()
-				    AddGuildToDKPTable(curIndex)
-				end,
-				timeout = 0,
-				whileDead = true,
-				hideOnEscape = true,
-				preferredIndex = 3,
-			}
-			StaticPopup_Show ("ADD_GUILD_MEMBERS")
-		else
-			StaticPopupDialogs["ADD_GUILD_MEMBERS"] = {
-				text = L["NORANKSELECTED"],
-				button1 = L["OK"],
-				timeout = 0,
-				whileDead = true,
-				hideOnEscape = true,
-				preferredIndex = 3,
-			}
-			StaticPopup_Show ("ADD_GUILD_MEMBERS")
-		end
-	end);
-
-	MonDKP.ConfigTab3.AddTargetToDKP = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["ADDTARGET"]);
-	MonDKP.ConfigTab3.AddTargetToDKP:SetSize(120,25);
-	MonDKP.ConfigTab3.AddTargetToDKP:ClearAllPoints()
-	MonDKP.ConfigTab3.AddTargetToDKP:SetPoint("LEFT", MonDKP.ConfigTab3.AddGuildToDKP, "RIGHT", 20, 0)
-	MonDKP.ConfigTab3.AddTargetToDKP:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["ADDTARGETTODKPTABLE"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["ADDTARGETTTDESC"], 1.0, 1.0, 1.0, true);
-		GameTooltip:Show();
-	end)
-	MonDKP.ConfigTab3.AddTargetToDKP:SetScript("OnLeave", function(self)
-		GameTooltip:Hide()
-	end)
-	MonDKP.ConfigTab3.AddTargetToDKP:SetScript("OnClick", function ()	-- confirmation dialog to add user(s)
-		if UnitIsPlayer("target") == true then
-			StaticPopupDialogs["ADD_TARGET_DKP"] = {
-				text = L["CONFIRMADDTARGET"].." "..UnitName("target").." "..L["TODKPLIST"],
-				button1 = L["YES"],
-				button2 = L["NO"],
-				OnAccept = function()
-				    AddTargetToDKPTable()
-				end,
-				timeout = 0,
-				whileDead = true,
-				hideOnEscape = true,
-				preferredIndex = 3,
-			}
-			StaticPopup_Show ("ADD_TARGET_DKP")
-		else
-			StaticPopupDialogs["ADD_TARGET_DKP"] = {
-				text = L["NOPLAYERTARGETED"],
-				button1 = L["OK"],
-				timeout = 0,
-				whileDead = true,
-				hideOnEscape = true,
-				preferredIndex = 3,
-			}
-			StaticPopup_Show ("ADD_TARGET_DKP")
-		end
-	end);
-
-	MonDKP.ConfigTab3.CleanList = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["PURGELIST"]);
-	MonDKP.ConfigTab3.CleanList:SetSize(120,25);
-	MonDKP.ConfigTab3.CleanList:ClearAllPoints()
-	MonDKP.ConfigTab3.CleanList:SetPoint("TOP", MonDKP.ConfigTab3.AddTargetToDKP, "BOTTOM", 0, -16)
-	MonDKP.ConfigTab3.CleanList:SetScript("OnEnter", function(self)
-		GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-		GameTooltip:SetText(L["PURGELIST"], 0.25, 0.75, 0.90, 1, true);
-		GameTooltip:AddLine(L["PURGELISTTTDESC"], 1.0, 1.0, 1.0, true);
-		GameTooltip:Show();
-	end)
-	MonDKP.ConfigTab3.CleanList:SetScript("OnLeave", function(self)
-		GameTooltip:Hide()
-	end)
-	MonDKP.ConfigTab3.CleanList:SetScript("OnClick", function()
-		StaticPopupDialogs["PURGE_CONFIRM"] = {
-			text = L["PURGECONFIRM"],
-			button1 = L["YES"],
-			button2 = L["NO"],
-			OnAccept = function()
-				local purgeString, c, name;
-				local count = 0;
-				local i = 1;
-
-				while i <= #MonDKP:GetTable(MonDKP_DKPTable, true) do
-					local search = MonDKP:TableStrFind(MonDKP:GetTable(MonDKP_DKPHistory, true), MonDKP:GetTable(MonDKP_DKPTable, true)[i].player, "players")
-
-					if MonDKP:GetTable(MonDKP_DKPTable, true)[i].dkp == 0 and not search then
-						c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[i].class)
-						name = MonDKP:GetTable(MonDKP_DKPTable, true)[i].player;
-
-						if purgeString == nil then
-							purgeString = "|cff"..c.hex..name.."|r"; 
-						else
-							purgeString = purgeString..", |cff"..c.hex..name.."|r"
-						end
-
-						count = count + 1;
-						table.remove(MonDKP:GetTable(MonDKP_DKPTable, true), i)
-					else
-						i=i+1;
+					for i=1, #rankList do
+						rank.text, rank.arg1, rank.arg2, rank.checked, rank.isNotRadio = rankList[i].name, rankList[i].name, rankList[i].index, rankList[i].name == curRank, true
+						UIDropDownMenu_AddButton(rank)
 					end
-				end
-				if count > 0 then
-					MonDKP:Print(L["PURGELIST"].." ("..count.."):")
-					MonDKP:Print(purgeString)
-					MonDKP:FilterDKPTable(core.currentSort, "reset")
-				end
-			end,
-			timeout = 0,
-			whileDead = true,
-			hideOnEscape = true,
-			preferredIndex = 3,
-		}
-		StaticPopup_Show ("PURGE_CONFIRM")
-	end)
+			end
+		)
 
-	MonDKP.ConfigTab3.WhitelistContainer = CreateFrame("Frame", nil, MonDKP.ConfigTab3);
-	MonDKP.ConfigTab3.WhitelistContainer:SetSize(475, 200);
-	MonDKP.ConfigTab3.WhitelistContainer:SetPoint("TOPLEFT", MonDKP.ConfigTab3.GuildRankDropDown, "BOTTOMLEFT", 20, -30)
+		-- Dropdown Menu Function
+		function MonDKP.ConfigTab3.GuildRankDropDown:SetValue(arg1, arg2)
+			if curRank ~= arg1 then
+				curRank = arg1
+				curIndex = arg2
+				UIDropDownMenu_SetText(MonDKP.ConfigTab3.GuildRankDropDown, arg1)
+			else
+				curRank = nil
+				curIndex = nil
+				UIDropDownMenu_SetText(MonDKP.ConfigTab3.GuildRankDropDown, L["SELECTRANK"])
+			end
+
+			CloseDropDownMenus()
+		end
+
+	----------------------------------
+	-- Add Guild to DKP Table Button
+	----------------------------------
+		MonDKP.ConfigTab3.AddGuildToDKP = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["ADDGUILDMEMBERS"]);
+		MonDKP.ConfigTab3.AddGuildToDKP:SetSize(120,25);
+		MonDKP.ConfigTab3.AddGuildToDKP:ClearAllPoints()
+		MonDKP.ConfigTab3.AddGuildToDKP:SetPoint("LEFT", MonDKP.ConfigTab3.GuildRankDropDown, "RIGHT", 2, 2)
+		MonDKP.ConfigTab3.AddGuildToDKP:SetScript("OnEnter", 
+			function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText(L["ADDGUILDDKPTABLE"], 0.25, 0.75, 0.90, 1, true);
+				GameTooltip:AddLine(L["ADDGUILDDKPTABLETT"], 1.0, 1.0, 1.0, true);
+				GameTooltip:Show();
+			end
+		)
+		MonDKP.ConfigTab3.AddGuildToDKP:SetScript("OnLeave", 
+			function(self)
+				GameTooltip:Hide()
+			end
+		)
+		-- confirmation dialog to add user(s)
+		MonDKP.ConfigTab3.AddGuildToDKP:SetScript("OnClick",
+			function ()	
+				if curIndex ~= nil then
+					StaticPopupDialogs["ADD_GUILD_MEMBERS"] = {
+						text = L["ADDGUILDCONFIRM"].." \""..curRank.."\"?",
+						button1 = L["YES"],
+						button2 = L["NO"],
+						OnAccept = function()
+							AddGuildToDKPTable(curIndex)
+						end,
+						timeout = 0,
+						whileDead = true,
+						hideOnEscape = true,
+						preferredIndex = 3,
+					}
+					StaticPopup_Show ("ADD_GUILD_MEMBERS")
+				else
+					StaticPopupDialogs["ADD_GUILD_MEMBERS"] = {
+						text = L["NORANKSELECTED"],
+						button1 = L["OK"],
+						timeout = 0,
+						whileDead = true,
+						hideOnEscape = true,
+						preferredIndex = 3,
+					}
+					StaticPopup_Show ("ADD_GUILD_MEMBERS")
+				end
+			end
+		);
+
+	----------------------------------
+	-- Add target to DKP list button
+	----------------------------------	
+		MonDKP.ConfigTab3.AddTargetToDKP = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["ADDTARGET"]);
+		MonDKP.ConfigTab3.AddTargetToDKP:SetSize(120,25);
+		MonDKP.ConfigTab3.AddTargetToDKP:ClearAllPoints()
+		MonDKP.ConfigTab3.AddTargetToDKP:SetPoint("LEFT", MonDKP.ConfigTab3.AddGuildToDKP, "RIGHT", 20, 0)
+		MonDKP.ConfigTab3.AddTargetToDKP:SetScript("OnEnter", 
+			function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText(L["ADDTARGETTODKPTABLE"], 0.25, 0.75, 0.90, 1, true);
+				GameTooltip:AddLine(L["ADDTARGETTTDESC"], 1.0, 1.0, 1.0, true);
+				GameTooltip:Show();
+			end
+		)
+		MonDKP.ConfigTab3.AddTargetToDKP:SetScript("OnLeave",
+			function(self)
+				GameTooltip:Hide()
+			end
+		)
+		MonDKP.ConfigTab3.AddTargetToDKP:SetScript("OnClick", 
+			function ()	-- confirmation dialog to add user(s)
+				if UnitIsPlayer("target") == true then
+					StaticPopupDialogs["ADD_TARGET_DKP"] = {
+						text = L["CONFIRMADDTARGET"].." "..UnitName("target").." "..L["TODKPLIST"],
+						button1 = L["YES"],
+						button2 = L["NO"],
+						OnAccept = function()
+							AddTargetToDKPTable()
+						end,
+						timeout = 0,
+						whileDead = true,
+						hideOnEscape = true,
+						preferredIndex = 3,
+					}
+					StaticPopup_Show ("ADD_TARGET_DKP")
+				else
+					StaticPopupDialogs["ADD_TARGET_DKP"] = {
+						text = L["NOPLAYERTARGETED"],
+						button1 = L["OK"],
+						timeout = 0,
+						whileDead = true,
+						hideOnEscape = true,
+						preferredIndex = 3,
+					}
+					StaticPopup_Show ("ADD_TARGET_DKP")
+				end
+			end
+		);
+
+	----------------------------------
+	-- Purge DKP list button
+	----------------------------------
+		MonDKP.ConfigTab3.CleanList = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["PURGELIST"]);
+		MonDKP.ConfigTab3.CleanList:SetSize(120,25);
+		MonDKP.ConfigTab3.CleanList:ClearAllPoints()
+		MonDKP.ConfigTab3.CleanList:SetPoint("TOP", MonDKP.ConfigTab3.AddTargetToDKP, "BOTTOM", 0, -16)
+		MonDKP.ConfigTab3.CleanList:SetScript("OnEnter", 
+			function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText(L["PURGELIST"], 0.25, 0.75, 0.90, 1, true);
+				GameTooltip:AddLine(L["PURGELISTTTDESC"], 1.0, 1.0, 1.0, true);
+				GameTooltip:Show();
+			end
+		)
+		MonDKP.ConfigTab3.CleanList:SetScript("OnLeave", 
+			function(self)
+				GameTooltip:Hide()
+			end
+		)
+		MonDKP.ConfigTab3.CleanList:SetScript("OnClick", 
+			function()
+				StaticPopupDialogs["PURGE_CONFIRM"] = {
+					text = L["PURGECONFIRM"],
+					button1 = L["YES"],
+					button2 = L["NO"],
+					OnAccept = function()
+						local purgeString, c, name;
+						local count = 0;
+						local i = 1;
+
+						while i <= #MonDKP:GetTable(MonDKP_DKPTable, true) do
+							local search = MonDKP:TableStrFind(MonDKP:GetTable(MonDKP_DKPHistory, true), MonDKP:GetTable(MonDKP_DKPTable, true)[i].player, "players")
+
+							if MonDKP:GetTable(MonDKP_DKPTable, true)[i].dkp == 0 and not search then
+								c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[i].class)
+								name = MonDKP:GetTable(MonDKP_DKPTable, true)[i].player;
+
+								if purgeString == nil then
+									purgeString = "|cff"..c.hex..name.."|r"; 
+								else
+									purgeString = purgeString..", |cff"..c.hex..name.."|r"
+								end
+
+								count = count + 1;
+								table.remove(MonDKP:GetTable(MonDKP_DKPTable, true), i)
+							else
+								i=i+1;
+							end
+						end
+						if count > 0 then
+							MonDKP:Print(L["PURGELIST"].." ("..count.."):")
+							MonDKP:Print(purgeString)
+							MonDKP:FilterDKPTable(core.currentSort, "reset")
+						end
+					end,
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopup_Show ("PURGE_CONFIRM")
+			end
+		)
+
+	----------------------------------
+	-- White list container
+	----------------------------------
+
+		MonDKP.ConfigTab3.WhitelistContainer = CreateFrame("Frame", nil, MonDKP.ConfigTab3);
+		MonDKP.ConfigTab3.WhitelistContainer:SetSize(475, 200);
+		MonDKP.ConfigTab3.WhitelistContainer:SetPoint("TOPLEFT", MonDKP.ConfigTab3.GuildRankDropDown, "BOTTOMLEFT", 20, -30)
 
 		-- Whitelist Header
 		MonDKP.ConfigTab3.WhitelistContainer.WhitelistHeader = MonDKP.ConfigTab3.WhitelistContainer:CreateFontString(nil, "OVERLAY")
@@ -632,104 +793,403 @@ function MonDKP:ManageEntries()
 		MonDKP.ConfigTab3.WhitelistContainer.WhitelistHeader:SetFontObject("MonDKPNormalLeft")
 		MonDKP.ConfigTab3.WhitelistContainer.WhitelistHeader:SetText(L["WHITELISTHEADER"]); 
 
+		-- Whitelist button
 		MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab3.WhitelistContainer, "BOTTOMLEFT", 15, 15, L["SETWHITELIST"]);
 		MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:ClearAllPoints()
 		MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:SetPoint("TOPLEFT", MonDKP.ConfigTab3.WhitelistContainer.WhitelistHeader, "BOTTOMLEFT", 10, -10)
-		MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:SetScript("OnEnter", function(self)
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-			GameTooltip:SetText(L["SETWHITELIST"], 0.25, 0.75, 0.90, 1, true);
-			GameTooltip:AddLine(L["SETWHITELISTTTDESC1"], 1.0, 1.0, 1.0, true);
-			GameTooltip:AddLine(L["SETWHITELISTTTDESC2"], 0.2, 1.0, 0.2, true);
-			GameTooltip:AddLine(L["SETWHITELISTTTWARN"], 1.0, 0, 0, true);
-			GameTooltip:Show();
-		end)
-		MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:SetScript("OnLeave", function(self)
-			GameTooltip:Hide()
-		end)
-		MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:SetScript("OnClick", function ()	-- confirmation dialog to add user(s)
-			if #core.SelectedData > 0 then
-				StaticPopupDialogs["ADD_GUILD_MEMBERS"] = {
-					text = L["CONFIRMWHITELIST"],
-					button1 = L["YES"],
-					button2 = L["NO"],
-					OnAccept = function()
-					    UpdateWhitelist()
-					end,
-					timeout = 0,
-					whileDead = true,
-					hideOnEscape = true,
-					preferredIndex = 3,
-				}
-				StaticPopup_Show ("ADD_GUILD_MEMBERS")
-			else
-				StaticPopupDialogs["ADD_GUILD_MEMBERS"] = {
-					text = L["CONFIRMWHITELISTCLEAR"],
-					button1 = L["YES"],
-					button2 = L["NO"],
-					OnAccept = function()
-					    UpdateWhitelist()
-					end,
-					timeout = 0,
-					whileDead = true,
-					hideOnEscape = true,
-					preferredIndex = 3,
-				}
-				StaticPopup_Show ("ADD_GUILD_MEMBERS")
+		MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:SetScript("OnEnter", 
+			function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText(L["SETWHITELIST"], 0.25, 0.75, 0.90, 1, true);
+				GameTooltip:AddLine(L["SETWHITELISTTTDESC1"], 1.0, 1.0, 1.0, true);
+				GameTooltip:AddLine(L["SETWHITELISTTTDESC2"], 0.2, 1.0, 0.2, true);
+				GameTooltip:AddLine(L["SETWHITELISTTTWARN"], 1.0, 0, 0, true);
+				GameTooltip:Show();
 			end
-		end);
-
-		-- View Whitelist Button
-		MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab3.WhitelistContainer, "BOTTOMLEFT", 15, 15, L["VIEWWHITELISTBTN"]);
-		MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:ClearAllPoints()
-		MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:SetPoint("LEFT", MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton, "RIGHT", 10, 0)
-		MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:SetScript("OnEnter", function(self)
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-			GameTooltip:SetText(L["VIEWWHITELISTBTN"], 0.25, 0.75, 0.90, 1, true);
-			GameTooltip:AddLine(L["VIEWWHITELISTTTDESC"], 1.0, 1.0, 1.0, true);
-			GameTooltip:Show();
-		end)
-		MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:SetScript("OnLeave", function(self)
-			GameTooltip:Hide()
-		end)
-		MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:SetScript("OnClick", function ()	-- confirmation dialog to add user(s)
-			if #MonDKP:GetTable(MonDKP_Whitelist) > 0 then
-				ViewWhitelist()
-			else
-				StaticPopupDialogs["ADD_GUILD_MEMBERS"] = {
-					text = L["WHITELISTEMPTY"],
-					button1 = L["OK"],
-					timeout = 0,
-					whileDead = true,
-					hideOnEscape = true,
-					preferredIndex = 3,
-				}
-				StaticPopup_Show ("ADD_GUILD_MEMBERS")
+		)
+		MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:SetScript("OnLeave", 
+			function(self)
+				GameTooltip:Hide()
 			end
-		end);
+		)
+		-- confirmation dialog to add user(s)
+		MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:SetScript("OnClick", 
+			function ()	
+				if #core.SelectedData > 0 then
+					StaticPopupDialogs["ADD_GUILD_MEMBERS"] = {
+						text = L["CONFIRMWHITELIST"],
+						button1 = L["YES"],
+						button2 = L["NO"],
+						OnAccept = function()
+							UpdateWhitelist()
+						end,
+						timeout = 0,
+						whileDead = true,
+						hideOnEscape = true,
+						preferredIndex = 3,
+					}
+					StaticPopup_Show ("ADD_GUILD_MEMBERS")
+				else
+					StaticPopupDialogs["ADD_GUILD_MEMBERS"] = {
+						text = L["CONFIRMWHITELISTCLEAR"],
+						button1 = L["YES"],
+						button2 = L["NO"],
+						OnAccept = function()
+							UpdateWhitelist()
+						end,
+						timeout = 0,
+						whileDead = true,
+						hideOnEscape = true,
+						preferredIndex = 3,
+					}
+					StaticPopup_Show ("ADD_GUILD_MEMBERS")
+				end
+			end
+		);
 
-		-- Broadcast Whitelist Button
-		MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab3.WhitelistContainer, "BOTTOMLEFT", 15, 15, L["SENDWHITELIST"]);
-		MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:ClearAllPoints()
-		MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetPoint("LEFT", MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton, "RIGHT", 30, 0)
-		MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetScript("OnEnter", function(self)
-			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-			GameTooltip:SetText(L["SENDWHITELIST"], 0.25, 0.75, 0.90, 1, true);
-			GameTooltip:AddLine(L["SENDWHITELISTTTDESC"], 1.0, 1.0, 1.0, true);
-			GameTooltip:AddLine(L["SENDWHITELISTTTWARN"], 1.0, 0, 0, true);
-			GameTooltip:Show();
-		end)
-		MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetScript("OnLeave", function(self)
-			GameTooltip:Hide()
-		end)
-		MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetScript("OnClick", function ()	-- confirmation dialog to add user(s)
-			MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP:GetTable(MonDKP_Whitelist))
-			MonDKP:Print(L["WHITELISTBROADCASTED"])
-		end);
+			----------------------------------
+			-- View Whitelist Button
+			----------------------------------
+		
+				MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab3.WhitelistContainer, "BOTTOMLEFT", 15, 15, L["VIEWWHITELISTBTN"]);
+				MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:ClearAllPoints()
+				MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:SetPoint("LEFT", MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton, "RIGHT", 10, 0)
+				MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:SetScript("OnEnter",
+					function(self)
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(L["VIEWWHITELISTBTN"], 0.25, 0.75, 0.90, 1, true);
+						GameTooltip:AddLine(L["VIEWWHITELISTTTDESC"], 1.0, 1.0, 1.0, true);
+						GameTooltip:Show();
+					end
+				)
+				MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:SetScript("OnLeave", 
+					function(self)
+						GameTooltip:Hide()
+					end
+				)
+				MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:SetScript("OnClick", 
+					function ()	-- confirmation dialog to add user(s)
+						if #MonDKP:GetTable(MonDKP_Whitelist) > 0 then
+							ViewWhitelist()
+						else
+							StaticPopupDialogs["ADD_GUILD_MEMBERS"] = {
+								text = L["WHITELISTEMPTY"],
+								button1 = L["OK"],
+								timeout = 0,
+								whileDead = true,
+								hideOnEscape = true,
+								preferredIndex = 3
+							}
+							StaticPopup_Show ("ADD_GUILD_MEMBERS")
+						end
+					end
+				);
 
-	local CheckLeader = MonDKP:GetGuildRankIndex(UnitName("player"))
-	if CheckLeader == 1 then
+			----------------------------------
+			-- Broadcast Whitelist Button
+			----------------------------------
+		
+				MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab3.WhitelistContainer, "BOTTOMLEFT", 15, 15, L["SENDWHITELIST"]);
+				MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:ClearAllPoints()
+				MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetPoint("LEFT", MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton, "RIGHT", 30, 0)
+				MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetScript("OnEnter", 
+					function(self)
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(L["SENDWHITELIST"], 0.25, 0.75, 0.90, 1, true);
+						GameTooltip:AddLine(L["SENDWHITELISTTTDESC"], 1.0, 1.0, 1.0, true);
+						GameTooltip:AddLine(L["SENDWHITELISTTTWARN"], 1.0, 0, 0, true);
+						GameTooltip:Show();
+					end
+				)
+				MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetScript("OnLeave",
+					function(self)
+						GameTooltip:Hide()
+					end
+				)
+				-- confirmation dialog to add user(s)
+				MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetScript("OnClick",
+					function ()	
+						MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP:GetTable(MonDKP_Whitelist))
+						MonDKP:Print(L["WHITELISTBROADCASTED"])
+					end
+				);
+
+		
+
+	----------------------------------
+	-- Guild team management section
+	----------------------------------
+
+	local selectedTeam;
+	local selectedTeamIndex;
+
+		----------------------------------
+		-- Teams Header
+		----------------------------------
+		MonDKP.ConfigTab3.TeamHeader = MonDKP.ConfigTab3:CreateFontString(nil, "OVERLAY")
+		MonDKP.ConfigTab3.TeamHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab3.WhitelistContainer, "BOTTOMLEFT", -10, -5);
+		MonDKP.ConfigTab3.TeamHeader:SetWidth(400)
+		MonDKP.ConfigTab3.TeamHeader:SetFontObject("MonDKPNormalLeft")
+		MonDKP.ConfigTab3.TeamHeader:SetText(L["TEAMMANAGEMENTHEADER"].." of "..MonDKP:GetGuildName()..""); 
+
+		----------------------------------
+		-- Drop down with lists of teams 
+		----------------------------------
+			MonDKP.ConfigTab3.TeamListDropDown = CreateFrame("FRAME", "MonDKPConfigReasonDropDown", MonDKP.ConfigTab3, "MonolithDKPUIDropDownMenuTemplate")
+			--MonDKP.ConfigTab3.TeamManagementContainer.TeamListDropDown:ClearAllPoints()
+			MonDKP.ConfigTab3.TeamListDropDown:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab3.TeamHeader, "BOTTOMLEFT", 0, -50)
+			-- tooltip on mouseOver
+			MonDKP.ConfigTab3.TeamListDropDown:SetScript("OnEnter", 
+				function(self) 
+					GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+					GameTooltip:SetText(L["TEAMLIST"], 0.25, 0.75, 0.90, 1, true);
+					GameTooltip:AddLine(L["TEAMLISTDESC"], 1.0, 1.0, 1.0, true);
+					GameTooltip:Show();
+				end
+			)
+			MonDKP.ConfigTab3.TeamListDropDown:SetScript("OnLeave",
+				function(self)
+					GameTooltip:Hide()
+				end
+			)
+			UIDropDownMenu_SetWidth(MonDKP.ConfigTab3.TeamListDropDown, 105)
+			UIDropDownMenu_SetText(MonDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
+
+			-- Create and bind the initialization function to the dropdown menu
+			UIDropDownMenu_Initialize(MonDKP.ConfigTab3.TeamListDropDown, 
+				function(self, level, menuList)
+					local dropDownMenuItem = UIDropDownMenu_CreateInfo()
+					dropDownMenuItem.func = self.SetValue
+					dropDownMenuItem.fontObject = "MonDKPSmallCenter"
+				
+					teamList = MonDKP:GetGuildTeamList()
+
+					for i=1, #teamList do
+						dropDownMenuItem.text = teamList[i][2]
+						dropDownMenuItem.arg1 = teamList[i][2]
+						dropDownMenuItem.arg2 = teamList[i][1]
+						dropDownMenuItem.checked = teamList[i][1] == selectedTeamIndex
+						dropDownMenuItem.isNotRadio = true
+						UIDropDownMenu_AddButton(dropDownMenuItem)
+					end
+				end
+			)
+
+			-- Dropdown Menu on SetValue()
+			function MonDKP.ConfigTab3.TeamListDropDown:SetValue(arg1, arg2)
+				if selectedTeamIndex ~= arg2 then
+					selectedTeam = arg1
+					selectedTeamIndex = arg2
+					UIDropDownMenu_SetText(MonDKP.ConfigTab3.TeamListDropDown, arg1)
+					MonDKP.ConfigTab3.TeamNameInput:SetText(arg1)
+				else
+					selectedTeam = nil
+					selectedTeamIndex = nil
+					MonDKP.ConfigTab3.TeamNameInput:SetText("")
+					UIDropDownMenu_SetText(MonDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
+				end
+
+				CloseDropDownMenus()
+			end
+
+		----------------------------------
+		-- Team name input box
+		----------------------------------
+			MonDKP.ConfigTab3.TeamNameInput = CreateFrame("EditBox", nil, MonDKP.ConfigTab3)
+			MonDKP.ConfigTab3.TeamNameInput:SetAutoFocus(false)
+			MonDKP.ConfigTab3.TeamNameInput:SetMultiLine(false)
+			MonDKP.ConfigTab3.TeamNameInput:SetSize(160, 24)
+			MonDKP.ConfigTab3.TeamNameInput:SetPoint("TOPRIGHT", MonDKP.ConfigTab3.TeamListDropDown, "TOPRIGHT", 160, 0)
+			MonDKP.ConfigTab3.TeamNameInput:SetBackdrop({
+				bgFile   = "Textures\\white.blp", tile = true,
+				edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile",
+				tile = true, 
+				tileSize = 32, 
+				edgeSize = 2
+			});
+			MonDKP.ConfigTab3.TeamNameInput:SetBackdropColor(0,0,0,0.9)
+			MonDKP.ConfigTab3.TeamNameInput:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
+			--MonDKP.ConfigTab3.TeamNameInput:SetMaxLetters(6)
+			MonDKP.ConfigTab3.TeamNameInput:SetTextColor(1, 1, 1, 1)
+			MonDKP.ConfigTab3.TeamNameInput:SetFontObject("MonDKPSmallRight")
+			MonDKP.ConfigTab3.TeamNameInput:SetTextInsets(10, 10, 5, 5)
+			MonDKP.ConfigTab3.TeamNameInput.tooltipText = L["TEAMNAMEINPUTTOOLTIP"]
+			MonDKP.ConfigTab3.TeamNameInput.tooltipDescription = L["TEAMNAMEINPUTTOOLTIPDESC"]
+			MonDKP.ConfigTab3.TeamNameInput:SetScript("OnEscapePressed", 
+				function(self)    -- clears focus on esc
+					self:HighlightText(0,0)
+					self:ClearFocus()
+				end
+			)
+			MonDKP.ConfigTab3.TeamNameInput:SetScript("OnEnterPressed", 
+				function(self)
+					self:HighlightText(0,0)
+					if (selectedTeamIndex == nil ) then
+						StaticPopupDialogs["RENAME_TEAM"] = {
+							text = L["NOTEAMCHOSEN"],
+							button1 = L["OK"],
+							timeout = 0,
+							whileDead = true,
+							hideOnEscape = true,
+							preferredIndex = 3
+						}
+						StaticPopup_Show ("RENAME_TEAM")
+					else
+						ChangeTeamName(selectedTeamIndex, self:GetText())
+						self:SetText("")
+						UIDropDownMenu_SetText(MonDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
+						selectedTeam = nil
+						selectedTeamIndex = nil
+						CloseDropDownMenus()
+						self:ClearFocus()
+					end
+				end
+			)
+			MonDKP.ConfigTab3.TeamNameInput:SetScript("OnEnter", 
+				function(self)
+					if (self.tooltipText) then
+						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+						GameTooltip:SetText(self.tooltipText, 0.25, 0.75, 0.90, 1, true);
+					end
+					if (self.tooltipDescription) then
+						GameTooltip:AddLine(self.tooltipDescription, 1.0, 1.0, 1.0, true);
+						GameTooltip:Show();
+					end
+					if (self.tooltipWarning) then
+						GameTooltip:AddLine(self.tooltipWarning, 1.0, 0, 0, true);
+						GameTooltip:Show();
+					end
+				end
+			)
+			MonDKP.ConfigTab3.TeamNameInput:SetScript("OnLeave",
+				function(self)
+					GameTooltip:Hide()
+				end
+			)
+
+			
+
+		----------------------------------
+		-- Rename selected team button
+		----------------------------------	
+			MonDKP.ConfigTab3.TeamRename = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["TEAMRENAME"]);
+			MonDKP.ConfigTab3.TeamRename:SetSize(120,25);
+			MonDKP.ConfigTab3.TeamRename:ClearAllPoints()
+			MonDKP.ConfigTab3.TeamRename:SetPoint("TOPRIGHT", MonDKP.ConfigTab3.TeamNameInput, "TOPRIGHT", 125, 0)
+			MonDKP.ConfigTab3.TeamRename:SetScript("OnEnter", 
+				function(self)
+					GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+					GameTooltip:SetText(L["TEAMRENAMESELECTED"], 0.25, 0.75, 0.90, 1, true);
+					GameTooltip:AddLine(L["TEAMRENAMESELECTEDESC"], 1.0, 1.0, 1.0, true);
+					GameTooltip:Show();
+				end
+			)
+			MonDKP.ConfigTab3.TeamRename:SetScript("OnLeave",
+				function(self)
+					GameTooltip:Hide()
+				end
+			)
+			-- rename team function
+			MonDKP.ConfigTab3.TeamRename:SetScript("OnClick", 
+				function ()	
+					if selectedTeamIndex == nil then
+						StaticPopupDialogs["RENAME_TEAM"] = {
+							text = L["NOTEAMCHOSEN"],
+							button1 = L["OK"],
+							timeout = 0,
+							whileDead = true,
+							hideOnEscape = true,
+							preferredIndex = 3
+						}
+						StaticPopup_Show ("RENAME_TEAM")
+					else
+						if CheckLeader == 1 then
+							ChangeTeamName(selectedTeamIndex, MonDKP.ConfigTab3.TeamNameInput:GetText())
+							MonDKP.ConfigTab3.TeamNameInput:SetText("")
+							UIDropDownMenu_SetText(MonDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
+							selectedTeam = nil
+							selectedTeamIndex = nil
+							CloseDropDownMenus()
+						else
+							StaticPopupDialogs["NOT_GUILD_MASTER"] = {
+								text = L["NOTGUILDMASTER"],
+								button1 = L["OK"],
+								timeout = 0,
+								whileDead = true,
+								hideOnEscape = true,
+								preferredIndex = 3
+							}
+							StaticPopup_Show ("NOT_GUILD_MASTER")	
+						end
+					end
+				end
+			);
+
+		----------------------------------
+		-- Add new team button
+		----------------------------------	
+		MonDKP.ConfigTab3.TeamAdd = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["TEAMADD"]);
+		MonDKP.ConfigTab3.TeamAdd:SetSize(120,25);
+		MonDKP.ConfigTab3.TeamAdd:ClearAllPoints()
+		MonDKP.ConfigTab3.TeamAdd:SetPoint("BOTTOM", MonDKP.ConfigTab3.TeamRename, "BOTTOM", 0, -40)
+		MonDKP.ConfigTab3.TeamAdd:SetScript("OnEnter", 
+			function(self)
+				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+				GameTooltip:SetText(L["TEAMADD"], 0.25, 0.75, 0.90, 1, true);
+				GameTooltip:AddLine(L["TEAMADDDESC"], 1.0, 1.0, 1.0, true);
+				GameTooltip:Show();
+			end
+		)
+		MonDKP.ConfigTab3.TeamAdd:SetScript("OnLeave",
+			function(self)
+				GameTooltip:Hide()
+			end
+		)
+		-- rename team function
+		MonDKP.ConfigTab3.TeamAdd:SetScript("OnClick", 
+			function ()	
+				if CheckLeader == 1 then
+					StaticPopupDialogs["ADD_TEAM"] = {
+						text = L["TEAMADDDIALOG"],
+						button1 = L["YES"],
+						button2 = L["NO"],
+						OnAccept = function()
+							AddNewTeamToGuild()
+							MonDKP.ConfigTab3.TeamNameInput:SetText("")
+							UIDropDownMenu_SetText(MonDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
+							CloseDropDownMenus()
+						end,
+						timeout = 0,
+						whileDead = true,
+						hideOnEscape = true,
+						preferredIndex = 3
+					}
+					StaticPopup_Show ("ADD_TEAM")	
+				else
+					StaticPopupDialogs["NOT_GUILD_MASTER"] = {
+						text = L["NOTGUILDMASTER"],
+						button1 = L["OK"],
+						timeout = 0,
+						whileDead = true,
+						hideOnEscape = true,
+						preferredIndex = 3
+					}
+					StaticPopup_Show ("NOT_GUILD_MASTER")	
+				end			
+			end
+		);
+
+		
+
+
+	-- TODO remove this later and uncomment check at the end
 		MonDKP.ConfigTab3.WhitelistContainer:Show()
-	else
-		MonDKP.ConfigTab3.WhitelistContainer:Hide()
-	end
+
+	-- only show whitelist and/or team management if player is a guild master
+		if CheckLeader == 1 then
+			MonDKP.ConfigTab3.WhitelistContainer:Show()
+		else
+			MonDKP.ConfigTab3.WhitelistContainer:Hide()
+		end
+	
 end
