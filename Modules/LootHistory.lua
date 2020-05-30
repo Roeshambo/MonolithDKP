@@ -260,11 +260,14 @@ function CreateSortBox()
 				-- for i = 1+(3-1)*20 = 41 ,  1+(3-1)*20+(20-1) = 60 do
 				for i=1+(menuList-1)*displayLimit, 1+(menuList-1)*displayLimit+(displayLimit-1) do
 					if PlayerList[i] then
-						local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, PlayerList[i])
+						
+						local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), PlayerList[i])
 						local c;
 
 						if classSearch then
-							c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+							-- MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[classSearch[1][1]].class)
+
+							c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[classSearch[1][1]].class)
 						else
 							c = { hex="444444" }
 						end
@@ -494,11 +497,11 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 
 		    local feedString;
 
-		    local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, LootTable[i]["player"])
+		    local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), LootTable[i]["player"])
 		    local c, lootCost;
 
 		    if classSearch then
-		     	c = MonDKP:GetCColors(MonDKP_DKPTable[classSearch[1][1]].class)
+		     	c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[classSearch[1][1]].class)
 		    else
 		     	c = { hex="444444" }
 		    end
@@ -550,9 +553,9 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		    		awardOfficer = strsplit("-", LootTable[i].index)
 		    	end
 
-		    	local awarded_by_search = MonDKP:Table_Search(MonDKP_DKPTable, awardOfficer, "player")
+		    	local awarded_by_search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), awardOfficer, "player")
 		    	if awarded_by_search then
-			     	c = MonDKP:GetCColors(MonDKP_DKPTable[awarded_by_search[1][1]].class)
+			     	c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[awarded_by_search[1][1]].class)
 			    else
 			     	c = { hex="444444" }
 			    end
@@ -583,11 +586,11 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		    		for j=1, #path do
 		    			local col;
 		    			local bidder = path[j].bidder
-		    			local s = MonDKP:Table_Search(MonDKP_DKPTable, bidder)
+		    			local s = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), bidder)
 		    			local path2 = path[j].bid or path[j].dkp or path[j].roll
 
 		    			if s then
-		    				col = MonDKP:GetCColors(MonDKP_DKPTable[s[1][1]].class)
+		    				col = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[s[1][1]].class)
 		    			else
 		    				col = { hex="444444" }
 		    			end
@@ -601,9 +604,9 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 		    	for j=1, #MonDKP:GetTable(MonDKP_Loot, true) do
 		    		if MonDKP:GetTable(MonDKP_Loot, true)[j]["loot"] == itemToLink and LootTable[i].date ~= MonDKP:GetTable(MonDKP_Loot, true)[j].date and not MonDKP:GetTable(MonDKP_Loot, true)[j].deletedby and not MonDKP:GetTable(MonDKP_Loot, true)[j].deletes then
 		    			local col;
-		    			local s = MonDKP:Table_Search(MonDKP_DKPTable, MonDKP:GetTable(MonDKP_Loot, true)[j].player)
+		    			local s = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), MonDKP:GetTable(MonDKP_Loot, true)[j].player)
 		    			if s then
-		    				col = MonDKP:GetCColors(MonDKP_DKPTable[s[1][1]].class)
+		    				col = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[s[1][1]].class)
 		    			else
 		    				col = { hex="444444" }
 		    			end
@@ -622,7 +625,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 				    local del_date1, del_date2, del_date3 = strsplit("/", strtrim(strsub(del_date, 1, 8), " "))
 			    	local s = MonDKP:Table_Search(MonDKP_DKPTable, delOfficer, "player")
 			    	if s then
-			    		col = MonDKP:GetCColors(MonDKP_DKPTable[s[1][1]].class)
+			    		col = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[s[1][1]].class)
 			    	else
 			    		col = { hex="444444"}
 			    	end
