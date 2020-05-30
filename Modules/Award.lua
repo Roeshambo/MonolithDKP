@@ -203,7 +203,7 @@ local function AwardConfirm_Create()
 	local f = CreateFrame("Frame", "MonDKP_AwardWindowConfirm", UIParent, "ShadowOverlaySmallTemplate");
 
 	f:SetPoint("TOP", UIParent, "TOP", 0, -200);
-	f:SetSize(400, 230);
+	f:SetSize(400, 270); -- + 40
 	f:SetClampedToScreen(true)
 	f:SetBackdrop( {
 		bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
@@ -222,105 +222,140 @@ local function AwardConfirm_Create()
 	f.confirmHeader:SetPoint("TOPLEFT", f, "TOPLEFT", 15, -15);
 	f.confirmHeader:SetText(L["CONFAWARD"])
 
-	f.playerHeader = f:CreateFontString(nil, "OVERLAY")
-	f.playerHeader:SetFontObject("MonDKPLargeRight");
-	f.playerHeader:SetScale(0.7)
-	f.playerHeader:SetPoint("TOPLEFT", f, "TOPLEFT", 120, -60);
-	f.playerHeader:SetText(L["PLAYER"]..":")
+	----------------------------------
+	-- Team row
+	----------------------------------
 
-	f.player = CreateFrame("FRAME", "MonDKPAwardConfirmPlayerDropDown", f, "MonolithDKPUIDropDownMenuTemplate")
-	f.player:SetPoint("LEFT", f.playerHeader, "RIGHT", -15, 0)
-	UIDropDownMenu_SetWidth(f.player, 150)
-	UIDropDownMenu_JustifyText(f.player, "LEFT")
+		f.teamHeader = f:CreateFontString(nil, "OVERLAY")
+		f.teamHeader:SetFontObject("MonDKPLargeRight");
+		f.teamHeader:SetScale(0.7)
+		f.teamHeader:SetPoint("TOPLEFT", f, "TOPLEFT", 120, -60);
+		f.teamHeader:SetText(L["TEAM"]..":")
 
+		f.team = CreateFrame("FRAME", "MonDKPAwardConfirmPlayerDropDown", f, "MonolithDKPUIDropDownMenuTemplate")
+		f.team:SetPoint("LEFT", f.teamHeader, "RIGHT", -15, 0)
+		UIDropDownMenu_SetWidth(f.team, 150)
+		UIDropDownMenu_JustifyText(f.team, "LEFT")
 
-	--[[f.player = f:CreateFontString(nil, "OVERLAY")
-	f.player:SetFontObject("MonDKPNormalLeft");
-	f.player:SetPoint("LEFT", f.playerHeader, "RIGHT", 5, 1);
-	f.player:SetSize(200, 28);--]]
+	----------------------------------
+	-- Player row
+	----------------------------------	
 
-	f.lootHeader = f:CreateFontString(nil, "OVERLAY")
-	f.lootHeader:SetFontObject("MonDKPLargeRight");
-	f.lootHeader:SetScale(0.7)
-	f.lootHeader:SetPoint("TOPRIGHT", f.playerHeader, "BOTTOMRIGHT", 0, -10);
-	f.lootHeader:SetText(L["ITEM"]..":")
+		f.playerHeader = f:CreateFontString(nil, "OVERLAY")
+		f.playerHeader:SetFontObject("MonDKPLargeRight");
+		f.playerHeader:SetScale(0.7)
+		f.playerHeader:SetPoint("TOPRIGHT", f.teamHeader, "BOTTOMRIGHT", 0, -10);
+		f.playerHeader:SetText(L["PLAYER"]..":")
 
-	f.lootIcon = f:CreateTexture(nil, "OVERLAY", nil);
-	f.lootIcon:SetPoint("LEFT", f.lootHeader, "RIGHT", 5, 0);
-	f.lootIcon:SetColorTexture(0, 0, 0, 1)
-	f.lootIcon:SetSize(20, 20);
+		f.player = CreateFrame("FRAME", "MonDKPAwardConfirmPlayerDropDown", f, "MonolithDKPUIDropDownMenuTemplate")
+		f.player:SetPoint("LEFT", f.playerHeader, "RIGHT", -15, 0)
+		UIDropDownMenu_SetWidth(f.player, 150)
+		UIDropDownMenu_JustifyText(f.player, "LEFT")
 
-	f.loot = f:CreateFontString(nil, "OVERLAY")
-	f.loot:SetFontObject("MonDKPNormalLeft");
-	f.loot:SetPoint("LEFT", f.lootIcon, "RIGHT", 5, 1);
-	f.loot:SetSize(200, 28);
+	----------------------------------
+	-- Item row
+	----------------------------------	
 
-	f.costHeader = f:CreateFontString(nil, "OVERLAY")
-	f.costHeader:SetFontObject("MonDKPLargeRight");
-	f.costHeader:SetScale(0.7)
-	f.costHeader:SetPoint("TOPRIGHT", f.lootHeader, "BOTTOMRIGHT", 0, -10);
-	f.costHeader:SetText(L["ITEMCOST"]..":")
+		f.lootHeader = f:CreateFontString(nil, "OVERLAY")
+		f.lootHeader:SetFontObject("MonDKPLargeRight");
+		f.lootHeader:SetScale(0.7)
+		f.lootHeader:SetPoint("TOPRIGHT", f.playerHeader, "BOTTOMRIGHT", 0, -10);
+		f.lootHeader:SetText(L["ITEM"]..":")
 
-	f.cost = CreateFrame("EditBox", nil, f)
-	f.cost:SetAutoFocus(false)
-	f.cost:SetMultiLine(false)
-	f.cost:SetPoint("LEFT", f.costHeader, "RIGHT", 5, 0)
-	f.cost:SetSize(50, 22)
-	f.cost:SetBackdrop({
-	  bgFile   = "Textures\\white.blp", tile = true,
-	  edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 1, edgeSize = 2, 
-	});
-	f.cost:SetBackdropColor(0,0,0,0.9)
-	f.cost:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
-	f.cost:SetMaxLetters(10)
-	f.cost:SetTextColor(1, 1, 1, 1)
-	f.cost:SetFontObject("MonDKPSmallRight")
-	f.cost:SetTextInsets(10,10,0,0)
-	f.cost:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
-		self:ClearFocus()
-	end)
-	f.cost:SetScript("OnTabPressed", function(self)    -- clears focus on tab
-		self:ClearFocus()
-	end)
-	f.cost:SetScript("OnEnterPressed", function(self)    -- clears focus on enter
-		self:ClearFocus()
-	end)
+		f.lootIcon = f:CreateTexture(nil, "OVERLAY", nil);
+		f.lootIcon:SetPoint("LEFT", f.lootHeader, "RIGHT", 5, 0);
+		f.lootIcon:SetColorTexture(0, 0, 0, 1)
+		f.lootIcon:SetSize(20, 20);
 
-	f.costFooter = f:CreateFontString(nil, "OVERLAY")
-	f.costFooter:SetFontObject("MonDKPNormalLeft");
-	f.costFooter:SetPoint("LEFT", f.cost, "RIGHT", 5, 0);
-	f.costFooter:SetSize(200, 28);
+		f.loot = f:CreateFontString(nil, "OVERLAY")
+		f.loot:SetFontObject("MonDKPNormalLeft");
+		f.loot:SetPoint("LEFT", f.lootIcon, "RIGHT", 5, 1);
+		f.loot:SetSize(200, 28);
 
-	f.bossHeader = f:CreateFontString(nil, "OVERLAY")
-	f.bossHeader:SetFontObject("MonDKPLargeRight");
-	f.bossHeader:SetScale(0.7)
-	f.bossHeader:SetPoint("TOPRIGHT", f.costHeader, "BOTTOMRIGHT", 0, -10);
-	f.bossHeader:SetText(L["BOSS"]..":")
+	----------------------------------
+	-- Cost row
+	----------------------------------
 
-	f.bossDropDown = CreateFrame("FRAME", "MonDKPAwardConfirmBossDropDown", f, "MonolithDKPUIDropDownMenuTemplate")
-	f.bossDropDown:SetPoint("LEFT", f.bossHeader, "RIGHT", -15, -2)
-	UIDropDownMenu_SetWidth(f.bossDropDown, 150)
-	UIDropDownMenu_JustifyText(f.bossDropDown, "LEFT")
+		f.costHeader = f:CreateFontString(nil, "OVERLAY")
+		f.costHeader:SetFontObject("MonDKPLargeRight");
+		f.costHeader:SetScale(0.7)
+		f.costHeader:SetPoint("TOPRIGHT", f.lootHeader, "BOTTOMRIGHT", 0, -10);
+		f.costHeader:SetText(L["ITEMCOST"]..":")
 
-	f.zoneHeader = f:CreateFontString(nil, "OVERLAY")
-	f.zoneHeader:SetFontObject("MonDKPLargeRight");
-	f.zoneHeader:SetScale(0.7)
-	f.zoneHeader:SetPoint("TOPRIGHT", f.bossHeader, "BOTTOMRIGHT", 0, -10);
-	f.zoneHeader:SetText(L["ZONE"]..":")
+		f.cost = CreateFrame("EditBox", nil, f)
+		f.cost:SetAutoFocus(false)
+		f.cost:SetMultiLine(false)
+		f.cost:SetPoint("LEFT", f.costHeader, "RIGHT", 5, 0)
+		f.cost:SetSize(50, 22)
+		f.cost:SetBackdrop({
+		bgFile   = "Textures\\white.blp", tile = true,
+		edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 1, edgeSize = 2, 
+		});
+		f.cost:SetBackdropColor(0,0,0,0.9)
+		f.cost:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
+		f.cost:SetMaxLetters(10)
+		f.cost:SetTextColor(1, 1, 1, 1)
+		f.cost:SetFontObject("MonDKPSmallRight")
+		f.cost:SetTextInsets(10,10,0,0)
+		f.cost:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
+			self:ClearFocus()
+		end)
+		f.cost:SetScript("OnTabPressed", function(self)    -- clears focus on tab
+			self:ClearFocus()
+		end)
+		f.cost:SetScript("OnEnterPressed", function(self)    -- clears focus on enter
+			self:ClearFocus()
+		end)
 
-	f.zoneDropDown = CreateFrame("FRAME", "MonDKPAwardConfirmBossDropDown", f, "MonolithDKPUIDropDownMenuTemplate")
-	f.zoneDropDown:SetPoint("LEFT", f.zoneHeader, "RIGHT", -15, -2)
-	UIDropDownMenu_SetWidth(f.zoneDropDown, 150)
-	UIDropDownMenu_JustifyText(f.zoneDropDown, "LEFT")
+		f.costFooter = f:CreateFontString(nil, "OVERLAY")
+		f.costFooter:SetFontObject("MonDKPNormalLeft");
+		f.costFooter:SetPoint("LEFT", f.cost, "RIGHT", 5, 0);
+		f.costFooter:SetSize(200, 28);
 
-	f.yesButton = MonDKP:CreateButton("BOTTOMLEFT", f, "BOTTOMLEFT", 20, 15, L["CONFIRM"]);
-	f.setPriceButton = MonDKP:CreateButton("BOTTOMLEFT", f, "BOTTOMLEFT", 150, 15, "Set Price");
-	f.setPriceButton:SetShown(false);
-	f.noButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -20, 15, L["CANCEL"]);
+	----------------------------------
+	-- Boss row
+	----------------------------------
+
+		f.bossHeader = f:CreateFontString(nil, "OVERLAY")
+		f.bossHeader:SetFontObject("MonDKPLargeRight");
+		f.bossHeader:SetScale(0.7)
+		f.bossHeader:SetPoint("TOPRIGHT", f.costHeader, "BOTTOMRIGHT", 0, -10);
+		f.bossHeader:SetText(L["BOSS"]..":")
+
+		f.bossDropDown = CreateFrame("FRAME", "MonDKPAwardConfirmBossDropDown", f, "MonolithDKPUIDropDownMenuTemplate")
+		f.bossDropDown:SetPoint("LEFT", f.bossHeader, "RIGHT", -15, -2)
+		UIDropDownMenu_SetWidth(f.bossDropDown, 150)
+		UIDropDownMenu_JustifyText(f.bossDropDown, "LEFT")
+
+	----------------------------------
+	-- Zone row
+	----------------------------------
+
+		f.zoneHeader = f:CreateFontString(nil, "OVERLAY")
+		f.zoneHeader:SetFontObject("MonDKPLargeRight");
+		f.zoneHeader:SetScale(0.7)
+		f.zoneHeader:SetPoint("TOPRIGHT", f.bossHeader, "BOTTOMRIGHT", 0, -10);
+		f.zoneHeader:SetText(L["ZONE"]..":")
+
+		f.zoneDropDown = CreateFrame("FRAME", "MonDKPAwardConfirmBossDropDown", f, "MonolithDKPUIDropDownMenuTemplate")
+		f.zoneDropDown:SetPoint("LEFT", f.zoneHeader, "RIGHT", -15, -2)
+		UIDropDownMenu_SetWidth(f.zoneDropDown, 150)
+		UIDropDownMenu_JustifyText(f.zoneDropDown, "LEFT")
+
+	----------------------------------
+	-- Buttons
+	----------------------------------
+
+		f.yesButton = MonDKP:CreateButton("BOTTOMLEFT", f, "BOTTOMLEFT", 20, 15, L["CONFIRM"]);
+		f.setPriceButton = MonDKP:CreateButton("BOTTOMLEFT", f, "BOTTOMLEFT", 150, 15, "Set Price");
+		f.setPriceButton:SetShown(false);
+		f.noButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -20, 15, L["CANCEL"]);
 
 	return f;
 end
 
+
+-- this also populates all the drop downs
 function MonDKP:AwardConfirm(player, cost, boss, zone, loot, reassign)
 	local _,itemLink,_,_,_,_,_,_,_,itemIcon = GetItemInfo(loot)
 	local curBoss, curZone, player, cost = boss, zone, player, cost
@@ -329,9 +364,6 @@ function MonDKP:AwardConfirm(player, cost, boss, zone, loot, reassign)
 	local curSelected = 0;
 	local mode = core.DB.modes.mode;
 	
---[[ 	if cost == 0 then
-		cost = MonDKP:GetMinBid(itemLink)
-	end ]]
 	
 	if player then
 		search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), player)
@@ -363,6 +395,49 @@ function MonDKP:AwardConfirm(player, cost, boss, zone, loot, reassign)
 	core.AwardConfirm.costFooter:SetText("DKP")
 	--core.AwardConfirm.boss:SetText(boss.." in "..zone)
 
+	-----
+	-- team drop down initialization
+	-----
+
+	core.AwardConfirm.team:SetScript("OnEnter", 
+		function(self) 
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText(L["TEAMCURRENTLIST"], 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine(L["WARNING"], 1.0, 0, 0, true);
+			GameTooltip:AddLine(L["TEAMCURRENTLISTDESC3"], 1.0, 1.0, 1.0, true);
+			GameTooltip:Show();
+		end
+	)
+	core.AwardConfirm.team:SetScript("OnLeave",
+		function(self)
+			GameTooltip:Hide()
+		end
+	)
+
+	-- Create and bind the initialization function to the dropdown menu
+		UIDropDownMenu_Initialize(core.AwardConfirm.team, 
+			function(self, level, menuList)
+
+				local dropDownMenuItem = UIDropDownMenu_CreateInfo()
+				dropDownMenuItem.func = self.SetValue
+				dropDownMenuItem.fontObject = "MonDKPSmallCenter"
+			
+				teamList = MonDKP:GetGuildTeamList()
+
+				for i=1, #teamList do
+					dropDownMenuItem.disabled = true
+					dropDownMenuItem.text = teamList[i][2]
+					dropDownMenuItem.arg1 = teamList[i][2] -- name
+					dropDownMenuItem.arg2 = teamList[i][1] -- index
+					dropDownMenuItem.checked = teamList[i][1] == tonumber(MonDKP:GetCurrentTeamIndex())
+					dropDownMenuItem.isNotRadio = true
+					UIDropDownMenu_AddButton(dropDownMenuItem)
+				end
+			end
+		)
+		-- Show which team is currently the current one
+		UIDropDownMenu_SetText(core.AwardConfirm.team, MonDKP:GetCurrentTeamName())
+	
 	if player then
 		UIDropDownMenu_SetText(core.AwardConfirm.player, "|cff"..class.hex..player.."|r")
 	else
@@ -457,6 +532,7 @@ function MonDKP:AwardConfirm(player, cost, boss, zone, loot, reassign)
 			UIDropDownMenu_AddButton(reason)
 		end
 	end)
+
 
 	function core.AwardConfirm.player:SetValue(newValue, arg2) 	---- PLAYER dropdown function
 		if player ~= newValue then player = newValue end

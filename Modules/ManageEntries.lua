@@ -1142,6 +1142,7 @@ function MonDKP:ManageEntries()
 						button2 = L["NO"],
 						OnAccept = function()
 							AddNewTeamToGuild()
+							MonDKP.ConfigTab3.TeamNameInput:SetText("")
 							UIDropDownMenu_SetText(MonDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
 							CloseDropDownMenus()
 						end,

@@ -102,6 +102,7 @@ core.StandbyActive = false;
 core.currentSort = "class"		-- stores current sort selection
 core.BidInProgress = false;   -- flagged true if bidding in progress. else; false.
 core.RaidInProgress = false;
+core.RaidInPause = false;
 core.NumLootItems = 0;        -- updates on LOOT_OPENED event
 core.Initialized = false
 core.InitStart = false

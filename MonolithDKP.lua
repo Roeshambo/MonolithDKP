@@ -440,15 +440,18 @@ function MonDKP:CreateMenu()
 	------------------------------
 	-- Team view changer Drop Down
 	------------------------------
+
 		MonDKP.UIConfig.TeamViewChangerDropDown = CreateFrame("FRAME", "MonDKPConfigReasonDropDown", MonDKP.UIConfig, "MonolithDKPUIDropDownMenuTemplate")
 		--MonDKP.ConfigTab3.TeamManagementContainer.TeamListDropDown:ClearAllPoints()
-		MonDKP.UIConfig.TeamViewChangerDropDown:SetPoint("BOTTOMLEFT", MonDKP.UIConfig, "BOTTOMLEFT", 340, 15)
+		MonDKP.UIConfig.TeamViewChangerDropDown:SetPoint("BOTTOMLEFT", MonDKP.UIConfig, "BOTTOMLEFT", 340, 13)
 		-- tooltip on mouseOver
 		MonDKP.UIConfig.TeamViewChangerDropDown:SetScript("OnEnter", 
 			function(self) 
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-				GameTooltip:SetText(L["TEAMLIST"], 0.25, 0.75, 0.90, 1, true);
-				GameTooltip:AddLine(L["TEAMLISTDESC"], 1.0, 1.0, 1.0, true);
+				GameTooltip:SetText(L["TEAMCURRENTLIST"], 0.25, 0.75, 0.90, 1, true);
+				GameTooltip:AddLine(L["TEAMCURRENTLISTDESC"], 1.0, 1.0, 1.0, true);
+				GameTooltip:AddLine(L["WARNING"], 1.0, 0, 0, true);
+				GameTooltip:AddLine(L["TEAMCURRENTLISTDESC2"], 1.0, 1.0, 1.0, true);
 				GameTooltip:Show();
 			end
 		)
@@ -483,24 +486,38 @@ function MonDKP:CreateMenu()
 
 		-- Dropdown Menu on SetValue()
 		function MonDKP.UIConfig.TeamViewChangerDropDown:SetValue(arg1, arg2)
-			if tonumber(MonDKP:GetCurrentTeamIndex()) ~= arg2 then
-				MonDKP:SetCurrentTeam(arg2)
-				UIDropDownMenu_SetText(MonDKP.UIConfig.TeamViewChangerDropDown, arg1)
 
-				-- reset dkp table and update it
-				core.WorkingTable = MonDKP:GetTable(MonDKP_DKPTable, true);
-				DKPTable_Update()
+			-- first we check if raid timer is active, 
+			-- if yes -> block the change as this could award dkp to wrong team
+			if core.RaidInProgress == false and core.RaidInPause == false then
+				if tonumber(MonDKP:GetCurrentTeamIndex()) ~= arg2 then
+					MonDKP:SetCurrentTeam(arg2)
+					UIDropDownMenu_SetText(MonDKP.UIConfig.TeamViewChangerDropDown, arg1)
 
-				-- reset dkp history table and update it
-				MonDKP:DKPHistory_Update(true)
-				-- reset loot history
-				MonDKP:LootHistory_Update(L["NOFILTER"])
-				-- update class graph
-				MonDKP:ClassGraph_Update()
+					-- reset dkp table and update it
+					core.WorkingTable = MonDKP:GetTable(MonDKP_DKPTable, true);
+					DKPTable_Update()
+
+					-- reset dkp history table and update it
+					MonDKP:DKPHistory_Update(true)
+					-- reset loot history
+					MonDKP:LootHistory_Update(L["NOFILTER"])
+					-- update class graph
+					MonDKP:ClassGraph_Update()
+				else
+					CloseDropDownMenus()
+				end
 			else
-				CloseDropDownMenus()
+				StaticPopupDialogs["RAID_IN_PROGRESS"] = {
+					text = L["TEAMCHANGERAIDINPROGRESS"],
+					button1 = L["OK"],
+					timeout = 0,
+					whileDead = true,
+					hideOnEscape = true,
+					preferredIndex = 3,
+				}
+				StaticPopup_Show ("RAID_IN_PROGRESS")
 			end
-
 			CloseDropDownMenus()
 		end
 
