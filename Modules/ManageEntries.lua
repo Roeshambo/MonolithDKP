@@ -1105,11 +1105,16 @@ function MonDKP:ManageEntries()
 					else
 						if CheckLeader == 1 then
 							ChangeTeamName(selectedTeamIndex, MonDKP.ConfigTab3.TeamNameInput:GetText())
+							-- if we are performing name change on currently selected team, change main team view dropdown Text
+							if tonumber(MonDKP:GetCurrentTeamIndex()) == selectedTeamIndex then
+								UIDropDownMenu_SetText(MonDKP.UIConfig.TeamViewChangerDropDown, MonDKP.ConfigTab3.TeamNameInput:GetText())
+							end
 							MonDKP.ConfigTab3.TeamNameInput:SetText("")
 							UIDropDownMenu_SetText(MonDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
 							selectedTeam = nil
 							selectedTeamIndex = nil
 							CloseDropDownMenus()
+							
 						else
 							StaticPopupDialogs["NOT_GUILD_MASTER"] = {
 								text = L["NOTGUILDMASTER"],
