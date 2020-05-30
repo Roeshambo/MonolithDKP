@@ -531,6 +531,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		MonDKP:SetTable(MonDKP_DB, false, InitializeMonDKPDB(MonDKP:GetTable(MonDKP_DB)))
 		core.DB 				= MonDKP:GetTable(MonDKP_DB); --Player specific DB
 
+		
 		if not VerifyDBSchema(MonDKP_DKPTable) then MonDKP_DKPTable =  UpgradeDBSchema(MonDKP_DKPTable, MonDKP_DKPTable, true, "MonDKP_DKPTable") end;
 		if not VerifyDBSchema(MonDKP_Loot) then MonDKP_Loot =  UpgradeDBSchema(MonDKP_Loot, MonDKP_Loot, true, "MonDKP_Loot") end;
 		if not VerifyDBSchema(MonDKP_DKPHistory) then MonDKP_DKPHistory =  UpgradeDBSchema(MonDKP_DKPHistory, MonDKP_DKPHistory, true, "MonDKP_DKPHistory") end;
@@ -589,7 +590,7 @@ function MonDKP:GetTable(dbTable, hasTeams)
 		dbTable = InitializeGuild(dbTable,realmName,guildName);
 
 		if hasTeams then
-			
+
 			if not dbTable[realmName][guildName][core.DB.defaults.CurrentTeam] then
 				dbTable[realmName][guildName][core.DB.defaults.CurrentTeam] = {}
 			end

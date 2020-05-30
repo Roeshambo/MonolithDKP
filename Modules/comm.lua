@@ -306,9 +306,12 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
               table.sort(deserialized.DKP, function(a, b)
                 return a["date"] > b["date"]
               end)
-              table.sort(deserialized.MinBids, function(a, b)
-                return a["item"] < b["item"]
-              end)
+
+              if deserialized.MinBids ~= nil then
+                table.sort(deserialized.MinBids, function(a, b)
+                  return a["item"] < b["item"]
+                end)
+              end
 
               if (#MonDKP:GetTable(MonDKP_DKPHistory, true) > 0 and #MonDKP:GetTable(MonDKP_Loot, true) > 0) and (deserialized.DKP[1].date < MonDKP:GetTable(MonDKP_DKPHistory, true)[1].date or deserialized.Loot[1].date < MonDKP:GetTable(MonDKP_Loot, true)[1].date) then
                 local entry1 = "Loot: "..deserialized.Loot[1].loot.." |cff616ccf"..L["WONBY"].." "..deserialized.Loot[1].player.." ("..date("%b %d @ %H:%M:%S", deserialized.Loot[1].date)..") by "..strsub(deserialized.Loot[1].index, 1, strfind(deserialized.Loot[1].index, "-")-1).."|r"
