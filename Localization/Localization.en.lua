@@ -578,6 +578,7 @@ core.L = {
   TABLEVIEWS = "Table Views",
   TAKINGBIDSON = "Taking bids on",
   TANK = "Tank",
+  NOTGUILDMASTER = "Only available to Guild Master",
   TEAM = "Team",
   TEAMS = "Teams",
   TEAMADD = "Add new team",

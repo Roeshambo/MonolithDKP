@@ -400,6 +400,7 @@ end
 ---------------------------------------
 function MonDKP:ManageEntries()
 
+	local CheckLeader = MonDKP:GetGuildRankIndex(UnitName("player"))
 	-- add raid to dkp table if they don't exist
 
 	----------------------------------
@@ -1102,12 +1103,24 @@ function MonDKP:ManageEntries()
 						}
 						StaticPopup_Show ("RENAME_TEAM")
 					else
-						ChangeTeamName(selectedTeamIndex, MonDKP.ConfigTab3.TeamNameInput:GetText())
-						MonDKP.ConfigTab3.TeamNameInput:SetText("")
-						UIDropDownMenu_SetText(MonDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
-						selectedTeam = nil
-						selectedTeamIndex = nil
-						CloseDropDownMenus()
+						if CheckLeader == 1 then
+							ChangeTeamName(selectedTeamIndex, MonDKP.ConfigTab3.TeamNameInput:GetText())
+							MonDKP.ConfigTab3.TeamNameInput:SetText("")
+							UIDropDownMenu_SetText(MonDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
+							selectedTeam = nil
+							selectedTeamIndex = nil
+							CloseDropDownMenus()
+						else
+							StaticPopupDialogs["NOT_GUILD_MASTER"] = {
+								text = L["NOTGUILDMASTER"],
+								button1 = L["OK"],
+								timeout = 0,
+								whileDead = true,
+								hideOnEscape = true,
+								preferredIndex = 3
+							}
+							StaticPopup_Show ("NOT_GUILD_MASTER")	
+						end
 					end
 				end
 			);
@@ -1135,7 +1148,7 @@ function MonDKP:ManageEntries()
 		-- rename team function
 		MonDKP.ConfigTab3.TeamAdd:SetScript("OnClick", 
 			function ()	
-				
+				if CheckLeader == 1 then
 					StaticPopupDialogs["ADD_TEAM"] = {
 						text = L["TEAMADDDIALOG"],
 						button1 = L["YES"],
@@ -1151,7 +1164,18 @@ function MonDKP:ManageEntries()
 						hideOnEscape = true,
 						preferredIndex = 3
 					}
-					StaticPopup_Show ("ADD_TEAM")					
+					StaticPopup_Show ("ADD_TEAM")	
+				else
+					StaticPopupDialogs["NOT_GUILD_MASTER"] = {
+						text = L["NOTGUILDMASTER"],
+						button1 = L["OK"],
+						timeout = 0,
+						whileDead = true,
+						hideOnEscape = true,
+						preferredIndex = 3
+					}
+					StaticPopup_Show ("NOT_GUILD_MASTER")	
+				end			
 			end
 		);
 
@@ -1160,16 +1184,12 @@ function MonDKP:ManageEntries()
 
 	-- TODO remove this later and uncomment check at the end
 		MonDKP.ConfigTab3.WhitelistContainer:Show()
-		--MonDKP.ConfigTab3.Show()
 
 	-- only show whitelist and/or team management if player is a guild master
-		local CheckLeader = MonDKP:GetGuildRankIndex(UnitName("player"))
 		if CheckLeader == 1 then
-			--MonDKP.ConfigTab3.WhitelistContainer:Show()
-			--MonDKP.ConfigTab3.TeamManagementContainer:Show()
+			MonDKP.ConfigTab3.WhitelistContainer:Show()
 		else
-			--MonDKP.ConfigTab3.WhitelistContainer:Hide()
-			--MonDKP.ConfigTab3.TeamManagementContainer:Hide()
+			MonDKP.ConfigTab3.WhitelistContainer:Hide()
 		end
 	
 end
