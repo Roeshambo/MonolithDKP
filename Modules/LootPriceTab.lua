@@ -64,15 +64,20 @@ function MonDKP:ProcessDisenchant(loot)
 
 		
 		local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_MinBids, true), itemName);
-		local numOfDisenchants = MonDKP:GetTable(MonDKP_MinBids, true)[search[1][1]]["disenchants"] or 0;
-		local updatedDisenchants = numOfDisenchants + 1;
 		local cost = 0;
+		local newItem = {item=itemName, minbid=cost, link=itemLink, icon=itemIcon, disenchant=0};
+		if search then
+			newItem = MonDKP:GetTable(MonDKP_MinBids, true)[search[1][1]];
+		end
+		local numOfDisenchants = newItem["disenchants"] or 0;
+		local updatedDisenchants = numOfDisenchants + 1;
+		
 		
 		if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
 			
 			cost = core.BiddingWindow.cost:GetNumber();
 
-			SendChatMessage("No votes for ".." "..itemLink.." for "..cost.." "..L["DKP"].." and will be disenchanted. This will be disenchant number "..updatedDisenchants, "RAID_WARNING");
+			SendChatMessage("No bids for ".." "..itemLink.." for "..cost.." "..L["DKP"].." and will be disenchanted. This will be disenchant number "..updatedDisenchants, "RAID_WARNING");
 			
 			--TODO: Make this less hardcodeded
 
@@ -90,10 +95,10 @@ function MonDKP:ProcessDisenchant(loot)
 			end
 
 		else
-			SendChatMessage("No votes for ".." "..itemLink.." and will be disenchanted. This will be disenchant number "..updatedDisenchants, "RAID_WARNING");
+			SendChatMessage("No bids for ".." "..itemLink.." and will be disenchanted. This will be disenchant number "..updatedDisenchants, "RAID_WARNING");
 		end
 
-		local newItem = {item=itemName, minbid=cost, link=itemLink, icon=itemIcon, disenchant=updatedDisenchants};
+		newItem["disenchants"] = updatedDisenchants;
 
 		if not search then
 			tinsert(MonDKP:GetTable(MonDKP_MinBids, true), newItem)
