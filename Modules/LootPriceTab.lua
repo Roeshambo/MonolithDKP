@@ -62,11 +62,12 @@ function MonDKP:ProcessDisenchant(loot)
 		core.BidInProgress = false;
 		MonDKP:BroadcastStopBidTimer()
 
+		
+		local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_MinBids, true), itemName);
 		local numOfDisenchants = MonDKP:GetTable(MonDKP_MinBids, true)[search[1][1]]["disenchants"] or 0;
 		local updatedDisenchants = numOfDisenchants + 1;
 		local cost = 0;
-		local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_MinBids, true), itemName);
-
+		
 		if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
 			
 			cost = core.BiddingWindow.cost:GetNumber();
