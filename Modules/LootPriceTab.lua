@@ -94,6 +94,9 @@ function MonDKP:ProcessDisenchant(loot)
 				end
 			end
 
+			newItem.cost = cost;
+			newItem.disenchants = updatedDisenchants;
+
 		else
 			SendChatMessage("No bids for ".." "..itemLink.." and will be disenchanted. This will be disenchant number "..updatedDisenchants, "RAID_WARNING");
 		end
