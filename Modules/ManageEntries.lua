@@ -256,15 +256,26 @@ end
 -------
 
 function MonDKP:GetCurrentTeamIndex() 
-	local _tmpString = MonDKP:GetTable(MonDKP_DB, false)["defaults"]["CurrentTeam"]
+	local _tmpString = MonDKP:GetTable(MonDKP_DB, false)["defaults"]["CurrentTeam"] or "0"
 	return _tmpString
 end
 
 function MonDKP:GetCurrentTeamName()
-	_string = MonDKP:GetTable(MonDKP_DB)["teams"][MonDKP:GetCurrentTeamIndex()].name
+	local _string = "Unguilded";
+	local teams = MonDKP:GetTable(MonDKP_DB, false)["teams"];
+
+	if tablelength(teams) > 0 then
+		_string = MonDKP:GetTable(MonDKP_DB, false)["teams"][MonDKP:GetCurrentTeamIndex()].name
+	end
+
 	return _string
 end
 
+function tablelength(T)
+	local count = 0
+	for _ in pairs(T) do count = count + 1 end
+	return count
+  end
 function MonDKP:SetCurrentTeam(index)
 	MonDKP:GetTable(MonDKP_DB, false)["defaults"]["CurrentTeam"] = tostring(index)
 end
