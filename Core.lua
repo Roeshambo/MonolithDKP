@@ -89,7 +89,7 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v2.2.7 - LJT";
+core.MonVersion = "v2.2.7-beta";
 core.defaultTable = "__default";
 core.BuildNumber = 20207;
 core.UpgradeSchema = false;

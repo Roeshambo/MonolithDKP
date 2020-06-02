@@ -215,9 +215,9 @@ function DoGuildUpdate()
 			MonDKP:CheckOfficer()
 			MonDKP:SortLootTable()
 			MonDKP:SortDKPHistoryTable()
-			MonDKP:Print(L["VERSION"].." "..core.MonVersion..", "..L["CREATEDMAINTAIN"].." Kyliee@BloodsailBuccaneers-Classic");
+			MonDKP:Print(L["VERSION"].." "..core.MonVersion..", "..L["CREATEDMAINTAIN"].." Vapok@BloodsailBuccaneers-Classic");
 			MonDKP:Print(L["LOADED"].." "..#MonDKP:GetTable(MonDKP_DKPTable, true).." "..L["PLAYERRECORDS"]..", "..#MonDKP:GetTable(MonDKP_Loot, true).." "..L["LOOTHISTRECORDS"].." "..#MonDKP:GetTable(MonDKP_DKPHistory, true).." "..L["DKPHISTRECORDS"]..".");
-			MonDKP:Print(L["USE"].." /dkp ? "..L["SUBMITBUGS"].." @ https://github.com/Roeshambo/MonolithDKP/issues");
+			MonDKP:Print(L["USE"].." /dkp ? "..L["SUBMITBUGS"].." @ https://github.com/Vapok/MonolithDKP/issues");
 			MonDKP.Sync:SendData("MonDKPBuild", tostring(core.BuildNumber)) -- broadcasts build number to guild to check if a newer version is available
 
 			if not core.DB.defaults.installed210 then

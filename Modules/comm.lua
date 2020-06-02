@@ -327,6 +327,9 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                     MonDKP:SetTable(MonDKP_Loot, true, deserialized.Loot);
                     MonDKP:SetTable(MonDKP_Archive, true, deserialized.Archive);
                     MonDKP:SetTable(MonDKP_MinBids, true, deserialized.MinBids);
+                    core.DB["teams"] = deserialized.Teams;
+
+                    UIDropDownMenu_SetText(MonDKP.UIConfig.TeamViewChangerDropDown, core.DB.teams[MonDKP:GetCurrentTeamIndex()].name)
                     
                     if MonDKP.ConfigTab6 and MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
                       MonDKP:DKPHistory_Update(true)
@@ -357,7 +360,11 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 MonDKP:SetTable(MonDKP_Loot, true, deserialized.Loot);
                 MonDKP:SetTable(MonDKP_Archive, true, deserialized.Archive);
                 MonDKP:SetTable(MonDKP_MinBids, true, deserialized.MinBids);
-            
+                core.DB["teams"] = deserialized.Teams;
+                
+                UIDropDownMenu_SetText(MonDKP.UIConfig.TeamViewChangerDropDown, core.DB.teams[MonDKP:GetCurrentTeamIndex()].name)
+
+        
                 if MonDKP.ConfigTab6 and MonDKP.ConfigTab6.history and MonDKP.ConfigTab6:IsShown() then
                   MonDKP:DKPHistory_Update(true)
                 elseif MonDKP.ConfigTab5 and MonDKP.ConfigTab5:IsShown() then
