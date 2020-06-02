@@ -79,18 +79,19 @@ function MonDKP:ProcessDisenchant(loot)
 
 			SendChatMessage("No bids for ".." "..itemLink.." for "..cost.." "..L["DKP"].." and will be disenchanted. This will be disenchant number "..updatedDisenchants, "RAID_WARNING");
 			
-			--TODO: Make this less hardcodeded
+			if core.DB.defaults.DecreaseDisenchantValue then
+				--If cost is 0, reset disenchants.
+				if cost == 0 then
+					updatedDisenchants = 0;
+				end
 
-			--If cost is 0, dont' track.
-			if cost == 0 then
-				updatedDisenchants = 0;
-			end
-
-			--Adjust Price
-			if updatedDisenchants >= 3 then
-				cost = MonDKP_round(cost/2, core.DB.modes.rounding);
-				if cost < 5 then
-					cost = 5
+				--TODO: Make this less hardcodeded
+				--Adjust Price
+				if updatedDisenchants >= 3 then
+					cost = MonDKP_round(cost/2, core.DB.modes.rounding);
+					if cost < 5 then
+						cost = 5
+					end
 				end
 			end
 

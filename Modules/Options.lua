@@ -1144,6 +1144,30 @@ function MonDKP:Options()
       end
       PlaySound(808)
     end)
+
+    if core.DB.defaults.DecreaseDisenchantValue == nil then
+      core.DB.defaults.DecreaseDisenchantValue = false
+    end
+  
+    MonDKP.ConfigTab4.DecreaseDisenchantCheckbox = CreateFrame("CheckButton", nil, MonDKP.ConfigTab4, "UICheckButtonTemplate");
+    MonDKP.ConfigTab4.DecreaseDisenchantCheckbox:SetPoint("LEFT", MonDKP.ConfigTab4.CombatLogging, "RIGHT", 200, 0)
+    MonDKP.ConfigTab4.DecreaseDisenchantCheckbox:SetChecked(core.DB.defaults.DecreaseDisenchantValue)
+    MonDKP.ConfigTab4.DecreaseDisenchantCheckbox:SetScale(0.8);
+    MonDKP.ConfigTab4.DecreaseDisenchantCheckbox.text:SetText("|cff5151de"..L["DECREASEDISENCHANT"].."|r");
+    MonDKP.ConfigTab4.DecreaseDisenchantCheckbox.text:SetFontObject("MonDKPSmall")
+    MonDKP.ConfigTab4.DecreaseDisenchantCheckbox:SetScript("OnClick", function(self)
+      core.DB.defaults.DecreaseDisenchantValue = self:GetChecked()
+    end)
+    MonDKP.ConfigTab4.DecreaseDisenchantCheckbox:SetScript("OnEnter", function(self)
+      GameTooltip:SetOwner(self, "ANCHOR_LEFT");
+      GameTooltip:SetText(L["DECREASEDISENCHANT"], 0.25, 0.75, 0.90, 1, true);
+      GameTooltip:AddLine(L["DECREASEDISENCHANTTTDESC"], 1.0, 1.0, 1.0, true);
+      GameTooltip:Show();
+    end)
+    MonDKP.ConfigTab4.DecreaseDisenchantCheckbox:SetScript("OnLeave", function(self)
+      GameTooltip:Hide()
+    end)
+  
   end
 
   -- Save Settings Button
@@ -1209,7 +1233,7 @@ function MonDKP:Options()
     end
   end)
 
-  MonDKP.ConfigTab4.ChatFrame:SetPoint("LEFT", MonDKP.ConfigTab4.CombatLogging, "RIGHT", 130, 0)
+  MonDKP.ConfigTab4.ChatFrame:SetPoint("LEFT", MonDKP.ConfigTab4.AutoOpenCheckbox, "RIGHT", 130, 0)
   UIDropDownMenu_SetWidth(MonDKP.ConfigTab4.ChatFrame, 150)
   UIDropDownMenu_SetText(MonDKP.ConfigTab4.ChatFrame, "Addon Notifications")
 
