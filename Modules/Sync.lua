@@ -5,6 +5,8 @@ local L = core.L;
 
 local bytesSent = 0
 local bytesTotal = 0
+local LibAceSerializer = LibStub:GetLibrary("AceSerializer-3.0")
+local LibDeflate = LibStub:GetLibrary("LibDeflate")
 
 function MonDKP_Profile_Create(player, dkp, gained, spent)
 	local tempName, tempClass
@@ -208,6 +210,8 @@ function MonDKP_BroadcastFull_Init()
 
 	core.Broadcast.confirmButton:SetScript("OnClick", function()
 		local tempTable
+		local teams = MonDKP:GetTable(MonDKP_DB, false)["teams"];
+
 		if core.Broadcast.mergeCheckbox:GetChecked() == false and core.Broadcast.fullCheckbox:GetChecked() == false then
 			MonDKP:Print(L["BROADCASTWHICHDATA"])
 			return
@@ -217,7 +221,7 @@ function MonDKP_BroadcastFull_Init()
 			return
 		end
 		if core.Broadcast.fullCheckbox:GetChecked() == true then
-			tempTable = { DKPTable=MonDKP:GetTable(MonDKP_DKPTable, true), DKP=MonDKP:GetTable(MonDKP_DKPHistory, true), Loot=MonDKP:GetTable(MonDKP_Loot, true), Archive=MonDKP:GetTable(MonDKP_Archive, true), MinBids=MonDKP:GetTable(MonDKP_MinBids, true) }
+			tempTable = { DKPTable=MonDKP:GetTable(MonDKP_DKPTable, true), DKP=MonDKP:GetTable(MonDKP_DKPHistory, true), Loot=MonDKP:GetTable(MonDKP_Loot, true), Archive=MonDKP:GetTable(MonDKP_Archive, true), MinBids=MonDKP:GetTable(MonDKP_MinBids, true), Teams=teams }
 		elseif core.Broadcast.mergeCheckbox:GetChecked() == true then
 			tempTable = MonDKP_MergeTable_Create()
 		end
@@ -476,6 +480,7 @@ function MonDKP_MergeTable_Create()
 	local tempDKP = {}
 	local tempLoot = {}
 	local profiles = {}
+	local teams = MonDKP:GetTable(MonDKP_DB, false)["teams"]
 
 	for i=1, #MonDKP:GetTable(MonDKP_DKPHistory, true) do
 		if MonDKP:GetTable(MonDKP_DKPHistory, true)[i].date > (time() - 1209600) and MonDKP:GetTable(MonDKP_DKPHistory, true)[i].date > core.DB.defaults.installed210 then
@@ -497,6 +502,6 @@ function MonDKP_MergeTable_Create()
 		table.insert(profiles, { player=MonDKP:GetTable(MonDKP_DKPTable, true)[i].player, class=MonDKP:GetTable(MonDKP_DKPTable, true)[i].class })
 	end
 
-	local tempTable = { DKP=tempDKP, Loot=tempLoot, Profiles=profiles }
+	local tempTable = { DKP=tempDKP, Loot=tempLoot, Profiles=profiles, Teams=teams }
 	return tempTable
 end

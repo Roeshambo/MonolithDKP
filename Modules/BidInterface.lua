@@ -749,6 +749,7 @@ function MonDKP:BidInterface_Create()
     GameTooltip:Hide()
   end)
 
+
   --------------------------------------------------
   -- Bid Table
   --------------------------------------------------

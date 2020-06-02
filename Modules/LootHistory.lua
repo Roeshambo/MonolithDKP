@@ -100,7 +100,7 @@ local function MonDKPDeleteMenu(index)
 		c = MonDKP:GetCColors(MonDKP_DKPTable[search2[1][1]].class)
 		deleteString = L["CONFIRMDELETEENTRY1"]..": |cff"..c.hex..MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["player"].."|r "..L["WON"].." "..MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["loot"].." "..L["FOR"].." "..-MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["cost"].." "..L["DKP"].."?\n\n("..L["THISWILLREFUND"].." |cff"..c.hex..MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]].player.."|r "..-MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["cost"].." "..L["DKP"]..")";
 	else
-		deleteString = L["CONFIRMDELETEENTRY1"]..": |cff444444"..MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["player"].."|r "..L["WON"].." "..MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["loot"].." "..L["FOR"].." "..-MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["cost"].." "..L["DKP"].."?\n\n("..L["THISWILLREFUND"].." |cff444444"..MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]].player.."|r "..-onDKP_Loot[search[1][1]]["cost"].." "..L["DKP"]..")";
+		deleteString = L["CONFIRMDELETEENTRY1"]..": |cff444444"..MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["player"].."|r "..L["WON"].." "..MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["loot"].." "..L["FOR"].." "..-MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["cost"].." "..L["DKP"].."?\n\n("..L["THISWILLREFUND"].." |cff444444"..MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]].player.."|r "..-DKP_Loot[search[1][1]]["cost"].." "..L["DKP"]..")";
 	end
 
 	StaticPopupDialogs["DELETE_LOOT_ENTRY"] = {

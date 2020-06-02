@@ -496,6 +496,7 @@ function MonDKP:CreateMenu()
 
 					-- reset dkp table and update it
 					core.WorkingTable = MonDKP:GetTable(MonDKP_DKPTable, true);
+					core.PriceTable			= MonDKP:GetTable(MonDKP_MinBids, true);
 					DKPTable_Update()
 
 					-- reset dkp history table and update it
@@ -504,6 +505,8 @@ function MonDKP:CreateMenu()
 					MonDKP:LootHistory_Update(L["NOFILTER"])
 					-- update class graph
 					MonDKP:ClassGraph_Update()
+					-- update price table
+					MonDKP:PriceTable_Update(0)
 				else
 					CloseDropDownMenus()
 				end
