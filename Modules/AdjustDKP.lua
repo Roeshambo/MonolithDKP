@@ -10,6 +10,7 @@ function MonDKP:AdjustDKP(value)
 	local curTime = time()
 	local c;
 	local curOfficer = UnitName("player")
+	value = MonDKP_round(value, core.DB.modes.rounding);
 
 	if not IsInRaid() then
 		c = MonDKP:GetCColors();
