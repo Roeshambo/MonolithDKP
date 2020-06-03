@@ -273,11 +273,10 @@ end
 
 function tablelength(T)
 	local count = 0
-	for _ in pairs(T) do count = count + 1 end
+	for _ in pairs(T) do
+		count = count + 1 
+	end
 	return count
-  end
-function MonDKP:SetCurrentTeam(index)
-	MonDKP:GetTable(MonDKP_DB, false)["defaults"]["CurrentTeam"] = tostring(index)
 end
 
 function MonDKP:GetGuildTeamList() 
@@ -306,6 +305,7 @@ end
 
 function ChangeTeamName(index, _name) 
 	MonDKP:GetTable(MonDKP_DB, false)["teams"][tostring(index)].name = _name;
+	MonDKP.Sync:SendData("MonDKPTeams", MonDKP:GetTable(MonDKP_DB, false)["teams"], "GUILD")
 end
 
 local function AddNewTeamToGuild() 
@@ -335,6 +335,8 @@ local function AddNewTeamToGuild()
 		MonDKP:GetTable(MonDKP_MaxBids, false)[tostring(_index)] = {}
 		MonDKP:GetTable(MonDKP_Standby, false)[tostring(_index)] = {}
 		MonDKP:GetTable(MonDKP_Archive, false)[tostring(_index)] = {}
+
+	MonDKP.Sync:SendData("MonDKPTeams", MonDKP:GetTable(MonDKP_DB, false)["teams"], "GUILD")
 end
 
 -------
@@ -896,6 +898,7 @@ function MonDKP:ManageEntries()
 					end
 				);
 
+<<<<<<< Updated upstream
 			----------------------------------
 			-- Broadcast Whitelist Button
 			----------------------------------
@@ -1047,12 +1050,16 @@ function MonDKP:ManageEntries()
 						StaticPopup_Show ("RENAME_TEAM")
 					else
 						ChangeTeamName(selectedTeamIndex, self:GetText())
-						self:SetText("")
+						-- if we are performing name change on currently selected team, change main team view dropdown Text
+						if tonumber(MonDKP:GetCurrentTeamIndex()) == selectedTeamIndex then
+							UIDropDownMenu_SetText(MonDKP.UIConfig.TeamViewChangerDropDown, self:SetText(""))
+						end
 						UIDropDownMenu_SetText(MonDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
 						selectedTeam = nil
 						selectedTeamIndex = nil
 						CloseDropDownMenus()
 						self:ClearFocus()
+						self:SetText("")
 					end
 				end
 			)
@@ -1125,7 +1132,6 @@ function MonDKP:ManageEntries()
 							selectedTeam = nil
 							selectedTeamIndex = nil
 							CloseDropDownMenus()
-							
 						else
 							StaticPopupDialogs["NOT_GUILD_MASTER"] = {
 								text = L["NOTGUILDMASTER"],
@@ -1195,17 +1201,20 @@ function MonDKP:ManageEntries()
 			end
 		);
 
-		
-
-
-	-- TODO remove this later and uncomment check at the end
-		MonDKP.ConfigTab3.WhitelistContainer:Show()
-
 	-- only show whitelist and/or team management if player is a guild master
-		if CheckLeader == 1 then
-			MonDKP.ConfigTab3.WhitelistContainer:Show()
-		else
-			MonDKP.ConfigTab3.WhitelistContainer:Hide()
-		end
-	
+	if CheckLeader == 1 then
+		MonDKP.ConfigTab3.WhitelistContainer:Show()
+		MonDKP.ConfigTab3.TeamHeader:Show()
+		MonDKP.ConfigTab3.TeamListDropDown:Show()
+		MonDKP.ConfigTab3.TeamNameInput:Show()
+		MonDKP.ConfigTab3.TeamRename:Show()
+		MonDKP.ConfigTab3.TeamAdd:Show()
+	else
+		MonDKP.ConfigTab3.WhitelistContainer:Hide()
+		MonDKP.ConfigTab3.TeamHeader:Hide()
+		MonDKP.ConfigTab3.TeamListDropDown:Hide()
+		MonDKP.ConfigTab3.TeamNameInput:Hide()
+		MonDKP.ConfigTab3.TeamRename:Hide()
+		MonDKP.ConfigTab3.TeamAdd:Hide()
+	end
 end

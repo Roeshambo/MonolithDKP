@@ -487,41 +487,24 @@ function MonDKP:CreateMenu()
 		-- Dropdown Menu on SetValue()
 		function MonDKP.UIConfig.TeamViewChangerDropDown:SetValue(arg1, arg2)
 
-			-- first we check if raid timer is active, 
-			-- if yes -> block the change as this could award dkp to wrong team
-			if core.RaidInProgress == false and core.RaidInPause == false then
-				if tonumber(MonDKP:GetCurrentTeamIndex()) ~= arg2 then
+			if tonumber(MonDKP:GetCurrentTeamIndex()) ~= arg2 then
+				if core.RaidInProgress == false and core.RaidInPause == false then
 					MonDKP:SetCurrentTeam(arg2)
 					UIDropDownMenu_SetText(MonDKP.UIConfig.TeamViewChangerDropDown, arg1)
-
-					-- reset dkp table and update it
-					core.WorkingTable = MonDKP:GetTable(MonDKP_DKPTable, true);
-					core.PriceTable			= MonDKP:GetTable(MonDKP_MinBids, true);
-					DKPTable_Update()
-
-					-- reset dkp history table and update it
-					MonDKP:DKPHistory_Update(true)
-					-- reset loot history
-					MonDKP:LootHistory_Update(L["NOFILTER"])
-					-- update class graph
-					MonDKP:ClassGraph_Update()
-					-- update price table
-					MonDKP:PriceTable_Update(0)
 				else
-					CloseDropDownMenus()
+					StaticPopupDialogs["RAID_IN_PROGRESS"] = {
+						text = L["TEAMCHANGERAIDINPROGRESS"],
+						button1 = L["OK"],
+						timeout = 0,
+						whileDead = true,
+						hideOnEscape = true,
+						preferredIndex = 3,
+					}
+					StaticPopup_Show ("RAID_IN_PROGRESS")
 				end
 			else
-				StaticPopupDialogs["RAID_IN_PROGRESS"] = {
-					text = L["TEAMCHANGERAIDINPROGRESS"],
-					button1 = L["OK"],
-					timeout = 0,
-					whileDead = true,
-					hideOnEscape = true,
-					preferredIndex = 3,
-				}
-				StaticPopup_Show ("RAID_IN_PROGRESS")
+				CloseDropDownMenus()
 			end
-			CloseDropDownMenus()
 		end
 
 	---------------------------------------
