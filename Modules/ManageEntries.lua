@@ -898,7 +898,6 @@ function MonDKP:ManageEntries()
 					end
 				);
 
-<<<<<<< Updated upstream
 			----------------------------------
 			-- Broadcast Whitelist Button
 			----------------------------------
