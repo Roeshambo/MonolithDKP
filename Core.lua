@@ -593,6 +593,29 @@ function MonDKP:StatusVerify_Update()
 	end
 end
 
+
+-- moved to core from ManageEntries as this is called from comm.lua aswell
+function MonDKP:SetCurrentTeam(index)
+	MonDKP:GetTable(MonDKP_DB, false)["defaults"]["CurrentTeam"] = tostring(index)
+
+	UIDropDownMenu_SetText(MonDKP.UIConfig.TeamViewChangerDropDown, MonDKP:GetCurrentTeamName())
+
+	-- reset dkp table and update it
+	core.WorkingTable = MonDKP:GetTable(MonDKP_DKPTable, true);
+	core.PriceTable	= MonDKP:GetTable(MonDKP_MinBids, true);
+	DKPTable_Update()
+
+	-- reset dkp history table and update it
+	MonDKP:DKPHistory_Update(true)
+	-- reset loot history
+	MonDKP:LootHistory_Update(L["NOFILTER"])
+	-- update class graph
+	MonDKP:ClassGraph_Update()
+	-- update price table
+	MonDKP:PriceTable_Update(0)
+
+end
+
 -------------------------------------
 -- Recursively searches tar (table) for val (string) as far as 4 nests deep (use field only if you wish to search a specific key IE: MonDKP:GetTable(MonDKP_DKPTable, true), "Roeshambo", "player" would only search for Roeshambo in the player key)
 -- returns an indexed array of the keys to get to searched value

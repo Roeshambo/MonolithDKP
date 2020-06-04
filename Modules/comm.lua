@@ -68,6 +68,7 @@ function MonDKP.Sync:OnEnable()
   MonDKP.Sync:RegisterComm("MonDKPAllTabs", MonDKP.Sync:OnCommReceived())      -- Full table broadcast
   MonDKP.Sync:RegisterComm("MonDKPSetPrice", MonDKP.Sync:OnCommReceived())      -- Set Single Item Price
   MonDKP.Sync:RegisterComm("MonDKPCurTeam", MonDKP.Sync:OnCommReceived())      -- Sets Current Raid Team
+  MonDKP.Sync:RegisterComm("MonDKPTeams", MonDKP.Sync:OnCommReceived())
   --MonDKP.Sync:RegisterComm("MonDKPEditLoot", MonDKP.Sync:OnCommReceived())    -- not in use
   --MonDKP.Sync:RegisterComm("MonDKPDataSync", MonDKP.Sync:OnCommReceived())    -- not in use
   --MonDKP.Sync:RegisterComm("MonDKPDKPLogSync", MonDKP.Sync:OnCommReceived())  -- not in use
@@ -126,6 +127,8 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
       else
         return
       end
+    elseif prefix == "MonDKPTeams" then
+      MonDKP:GetTable(MonDKP_DB, false)["teams"] = message;
     elseif prefix == "MonDKPCurTeam" then
       core.DB.defaults.CurrentTeam = message;
       return
@@ -789,20 +792,15 @@ function MonDKP.Sync:SendData(prefix, data, target)
   --if prefix ~= "MDKPProfile" then print("|cff00ff00Sent: "..prefix.."|r") end
   if data == nil or data == "" then data = " " end -- just in case, to prevent disconnects due to empty/nil string AddonMessages
 
-  --AceComm Communication doesn't work if the prefix is longer than 15.  And if sucks if you try.
-  if #prefix > 15 then
-    MonDKP:Print("MonolithDKP Error: Prefix ["..prefix.."] is longer than 15. Please shorten.");
-    return;
-  end
-    -- Communicate Current Officer's Sender CurrentTeam
-  if IsInGuild() and core.IsOfficer then
-    MonDKP.Sync:SendCommMessage("MonDKPCurTeam", core.DB.defaults.CurrentTeam, "GUILD")
-  end
+    --AceComm Communication doesn't work if the prefix is longer than 15.  And if sucks if you try.
+    if #prefix > 15 then
+      MonDKP:Print("MonolithDKP Error: Prefix ["..prefix.."] is longer than 15. Please shorten.");
+      return;
+    end
 
   -- non officers / not encoded
   if IsInGuild() then
     if prefix == "MonDKPQuery" or prefix == "MonDKPBuild" or prefix == "MonDKPTalents" or prefix == "MonDKPRoles" then
-      MonDKP.Sync:SendCommMessage("MonDKPCurTeam", core.DB.defaults.CurrentTeam, "GUILD")
       MonDKP.Sync:SendCommMessage(prefix, data, "GUILD")
       return;
     elseif prefix == "MonDKPBidder" then    -- bid submissions. Keep to raid.
@@ -810,44 +808,51 @@ function MonDKP.Sync:SendData(prefix, data, target)
       return;
     end
   end
+
   -- officers
   if IsInGuild() and core.IsOfficer then
     local serialized = nil;
     local packet = nil;
+
     if prefix == "MonDKPCommand" or prefix == "MonDKPRaidTime" then
+      MonDKP.Sync:SendCommMessage("MonDKPCurTeam", MonDKP:GetCurrentTeamIndex(), "RAID")
       MonDKP.Sync:SendCommMessage(prefix, data, "RAID")
       return;
     end
 
     if prefix == "MonDKPBCastMsg" then
-      MonDKP.Sync:SendCommMessage(prefix, data, "GUILD")
+      MonDKP.Sync:SendCommMessage("MonDKPCurTeam", MonDKP:GetCurrentTeamIndex(), "RAID")
+      MonDKP.Sync:SendCommMessage(prefix, data, "RAID") -- changed to raid from guild
       return;
     end  
 
     if data then
       serialized = LibAceSerializer:Serialize(data);  -- serializes tables to a string
     end
+
     local compressed = LibDeflate:CompressDeflate(serialized, {level = 9})
     if compressed then
       packet = LibDeflate:EncodeForWoWAddonChannel(compressed)
     end
 
-    MonDKP.Sync:SendCommMessage("MonDKPCurTeam", core.DB.defaults.CurrentTeam, "GUILD")
-
     -- encoded
     if (prefix == "MonDKPZSumBank" or prefix == "MonDKPBossLoot" or prefix == "MonDKPBidShare") then    -- Zero Sum bank/loot table/bid table data and bid submissions. Keep to raid.
+      MonDKP.Sync:SendCommMessage("MonDKPCurTeam", MonDKP:GetCurrentTeamIndex(), "RAID")
       MonDKP.Sync:SendCommMessage(prefix, packet, "RAID")
       return;
     end
 
     if prefix == "MonDKPAllTabs" or prefix == "MonDKPMerge" then
       if target then
+        MonDKP.Sync:SendCommMessage("MonDKPCurTeam", MonDKP:GetCurrentTeamIndex(), "WHISPER", target, "NORMAL", nil, nil)
         MonDKP.Sync:SendCommMessage(prefix, packet, "WHISPER", target, "NORMAL", MonDKP_BroadcastFull_Callback, nil)
       else
+        MonDKP.Sync:SendCommMessage("MonDKPCurTeam", MonDKP:GetCurrentTeamIndex(), "GUILD")
         MonDKP.Sync:SendCommMessage(prefix, packet, "GUILD", nil, "NORMAL", MonDKP_BroadcastFull_Callback, nil)
       end
       return
     end
+    
     if target then
       MonDKP.Sync:SendCommMessage(prefix, packet, "WHISPER", target)
     else
