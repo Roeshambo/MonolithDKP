@@ -128,7 +128,12 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
         return
       end
     elseif prefix == "MonDKPTeams" then
-      MonDKP:GetTable(MonDKP_DB, false)["teams"] = message;
+      decoded = LibDeflate:DecompressDeflate(LibDeflate:DecodeForWoWAddonChannel(message))
+      local success, deserialized = LibAceSerializer:Deserialize(decoded);
+      if success then
+        MonDKP:GetTable(MonDKP_DB, false)["teams"] = deserialized.Teams
+      end
+      return;
     elseif prefix == "MonDKPCurTeam" then
       core.DB.defaults.CurrentTeam = message;
       return
