@@ -305,7 +305,7 @@ end
 
 function ChangeTeamName(index, _name) 
 	MonDKP:GetTable(MonDKP_DB, false)["teams"][tostring(index)].name = _name;
-	MonDKP.Sync:SendData("MonDKPTeams", MonDKP:GetTable(MonDKP_DB, false)["teams"], "GUILD")
+	MonDKP.Sync:SendData("MonDKPTeams", {Teams =  MonDKP:GetTable(MonDKP_DB, false)["teams"]} , nil)
 end
 
 local function AddNewTeamToGuild() 
@@ -336,7 +336,7 @@ local function AddNewTeamToGuild()
 		MonDKP:GetTable(MonDKP_Standby, false)[tostring(_index)] = {}
 		MonDKP:GetTable(MonDKP_Archive, false)[tostring(_index)] = {}
 
-	MonDKP.Sync:SendData("MonDKPTeams", MonDKP:GetTable(MonDKP_DB, false)["teams"], "GUILD")
+		MonDKP.Sync:SendData("MonDKPTeams", {Teams =  MonDKP:GetTable(MonDKP_DB, false)["teams"]} , nil)
 end
 
 -------
