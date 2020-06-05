@@ -135,7 +135,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
       end
       return;
     elseif prefix == "MonDKPCurTeam" then
-      core.DB.defaults.CurrentTeam = message;
+      MonDKP:SetCurrentTeam(message) -- this also refreshes all the tables/views/graphs
       return
     elseif prefix == "MonDKPTalents" then
       local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), sender, "player")
