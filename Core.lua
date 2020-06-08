@@ -408,7 +408,7 @@ function MonDKP:CreateContainer(parent, name, header)
 	f.header.text:SetFontObject("MonDKPSmallCenter");
 	f.header.text:SetPoint("CENTER", f.header, "CENTER", 0, 0);
 	f.header.text:SetText(header);
-	f.header:SetWidth(f.header.text:GetWidth() + 600)
+	f.header:SetWidth(f.header.text:GetWidth() + 30)
 	f.header:SetHeight(f.header.text:GetHeight() + 4)
 
 	return f;
