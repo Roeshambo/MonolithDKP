@@ -58,7 +58,7 @@ end
 
 local function DeleteLootHistoryEntry(index)
 	local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Loot, true), index, "index");
-	local search_player = MonDKP:Table_Search(MonDKP_DKPTable, MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]].player);
+	local search_player = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]].player);
 	local curTime = time()
 	local curOfficer = UnitName("player")
 	local newIndex = curOfficer.."-"..curTime
@@ -79,8 +79,8 @@ local function DeleteLootHistoryEntry(index)
 	}
 
 	if search_player then
-		MonDKP_DKPTable[search_player[1][1]].dkp = MonDKP_DKPTable[search_player[1][1]].dkp + tempTable.cost 							-- refund previous looter
-		MonDKP_DKPTable[search_player[1][1]].lifetime_spent = MonDKP_DKPTable[search_player[1][1]].lifetime_spent + tempTable.cost 		-- remove from lifetime_spent
+		MonDKP:GetTable(MonDKP_DKPTable, true)[search_player[1][1]].dkp = MonDKP:GetTable(MonDKP_DKPTable, true)[search_player[1][1]].dkp + tempTable.cost 							-- refund previous looter
+		MonDKP:GetTable(MonDKP_DKPTable, true)[search_player[1][1]].lifetime_spent = MonDKP:GetTable(MonDKP_DKPTable, true)[search_player[1][1]].lifetime_spent + tempTable.cost 		-- remove from lifetime_spent
 	end
 
 	MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]].deletedby = newIndex
@@ -94,10 +94,10 @@ end
 
 local function MonDKPDeleteMenu(index)
 	local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Loot, true), index, "index")
-	local search2 = MonDKP:Table_Search(MonDKP_DKPTable, MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["player"])
+	local search2 = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["player"])
 	local c, deleteString;
 	if search2 then
-		c = MonDKP:GetCColors(MonDKP_DKPTable[search2[1][1]].class)
+		c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[search2[1][1]].class)
 		deleteString = L["CONFIRMDELETEENTRY1"]..": |cff"..c.hex..MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["player"].."|r "..L["WON"].." "..MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["loot"].." "..L["FOR"].." "..-MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["cost"].." "..L["DKP"].."?\n\n("..L["THISWILLREFUND"].." |cff"..c.hex..MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]].player.."|r "..-MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["cost"].." "..L["DKP"]..")";
 	else
 		deleteString = L["CONFIRMDELETEENTRY1"]..": |cff444444"..MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["player"].."|r "..L["WON"].." "..MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["loot"].." "..L["FOR"].." "..-MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]]["cost"].." "..L["DKP"].."?\n\n("..L["THISWILLREFUND"].." |cff444444"..MonDKP:GetTable(MonDKP_Loot, true)[search[1][1]].player.."|r "..-DKP_Loot[search[1][1]]["cost"].." "..L["DKP"]..")";
@@ -416,7 +416,6 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 	end
 	if filter and filter ~= L["NOFILTER"] and filter ~= L["DELETEDENTRY"] then
 		-- items or players
-		
 		for i=1, #MonDKP:GetTable(MonDKP_Loot, true) do
 			if curDropDownMenuFilterCategory == L["PLAYERS"] then
 				if not MonDKP:GetTable(MonDKP_Loot, true)[i].deletes and not MonDKP:GetTable(MonDKP_Loot, true)[i].deletedby and not MonDKP:GetTable(MonDKP_Loot, true)[i].hidden and MonDKP:GetTable(MonDKP_Loot, true)[i].player == filter then
@@ -636,7 +635,7 @@ function MonDKP:LootHistory_Update(filter)				-- if "filter" is included in call
 			    	local col
 			    	local del_date = MonDKP:FormatTime(LootTable[i].date)
 				    local del_date1, del_date2, del_date3 = strsplit("/", strtrim(strsub(del_date, 1, 8), " "))
-			    	local s = MonDKP:Table_Search(MonDKP_DKPTable, delOfficer, "player")
+			    	local s = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), delOfficer, "player")
 			    	if s then
 			    		col = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[s[1][1]].class)
 			    	else
