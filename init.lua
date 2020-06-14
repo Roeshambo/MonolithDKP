@@ -551,7 +551,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 
 		if not MonDKP:GetTable(MonDKP_DKPHistory, true).seed then MonDKP:GetTable(MonDKP_DKPHistory, true).seed = 0 end
 		if not MonDKP:GetTable(MonDKP_Loot, true).seed then MonDKP:GetTable(MonDKP_Loot, true).seed = 0 end
-		if MonDKP:GetTable(MonDKP_DKPTable, true).seed then MonMonDKP:GetTable(MonDKP_DKPTable, true)DKP_DKPTable.seed = nil end
+		if MonDKP:GetTable(MonDKP_DKPTable, true).seed then MonDKP:GetTable(MonDKP_DKPTable, true).seed = nil end
 
 
 		core.CurrentRaidZone	= core.DB.bossargs.CurrentRaidZone;	-- stores raid zone as a redundency
