@@ -466,7 +466,8 @@ function MonDKP_SyncDeleted()
 	local deleted = {}
 
 	for k,v in pairs(MonDKP:GetTable(MonDKP_Archive, true)) do
-		if MonDKP:GetTable(MonDKP_Archive, true)[k].deleted then
+		-- skip entry if it is not a table (e.g. DKPMeta/LootMeta)
+		if type(MonDKP:GetTable(MonDKP_Archive, true)[k]) == "table" and MonDKP:GetTable(MonDKP_Archive, true)[k].deleted then
 			table.insert(deleted, { player=k, deleted=v.deleted, edited=v.edited })
 		end
 	end
