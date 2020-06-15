@@ -783,7 +783,7 @@ core.L = {
   VALIDATEWARN = "This will recalculate all players dkp, lifetime earned and lifetime spent based on their complete history. Make sure to back up your saved variables file in the event the result is improper due to missing history entries. You should reset previous dkp (context menu > select all > reset previous dkp) for all players prior to running so you can see how much they changed. Would you like to continue?",
   PASS = "Pass",
 
-  CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.2.8-beta",
+  CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.2.9-beta",
   CHANGELOG2 = "- Added in Loot Filter to Loot History (Taidtuskecyh)",
   CHANGELOG3 = "- Small adjustments and fixes to Loot Price and DE communication",
   CHANGELOG4 = "- Added in Multi-Guild, Multi-Teams supprot (thanks to Taidtuskecyh for the help)",

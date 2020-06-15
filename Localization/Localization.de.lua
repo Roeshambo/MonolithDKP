@@ -784,7 +784,7 @@ if GetLocale() == "deDE" then
     ZEROSUMITEMCOSTTTDESC = "Wählen Sie die Art der Artikelkosten aus, die Sie verwenden möchten. Static gibt Artikeln einen definierten Preis. Während Mindestgebot ermöglicht es den Spielern, ein Gebot abzugeben, das die Kosten definiert, während Sie einen Mindestgebotsschwellenwert festlegen.",
     ZONE = "Zone",
     PASS                  = "Passen",
-    CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.2.8-beta",
+    CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.2.9-beta",
     CHANGELOG2 = "- Added in Loot Filter to Loot History (Taidtuskecyh)",
     CHANGELOG3 = "- Small adjustments and fixes to Loot Price and DE communication",
     CHANGELOG4 = "- Added in Multi-Guild, Multi-Teams supprot (thanks to Taidtuskecyh for the help)",
