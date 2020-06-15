@@ -789,7 +789,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     VALIDATEWARN          = "Esto volverá a calcular el dkp de todos los jugadores, la vida ganada y la vida gastada en función de su historial completo. Asegúrese de hacer una copia de seguridad del archivo de variables guardado en caso de que el resultado sea incorrecto debido a la falta de entradas en el historial. Debes restablecer dkp anterior (menú contextual> seleccionar todo> restablecer dkp anterior) para todos los jugadores antes de correr para que puedas ver cuánto cambiaron. ¿Te gustaria continuar?",
     PASS                  = "Pasar",
 
-    CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.2.8-beta",
+    CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.2.9-beta",
     CHANGELOG2 = "- Added in Loot Filter to Loot History (Taidtuskecyh)",
     CHANGELOG3 = "- Small adjustments and fixes to Loot Price and DE communication",
     CHANGELOG4 = "- Added in Multi-Guild, Multi-Teams supprot (thanks to Taidtuskecyh for the help)",
