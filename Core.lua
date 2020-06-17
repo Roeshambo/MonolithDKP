@@ -434,7 +434,7 @@ function MonDKP:StartTimer(seconds, ...)
 	PlaySound(8959)
 
 	if core.DB.timerpos then
-		local a = MonDKP_DB["timerpos"]                   -- retrieves timer's saved position from SavedVariables
+		local a = core.DB.timerpos                   -- retrieves timer's saved position from SavedVariables
 		MonDKP.BidTimer:SetPoint(a.point, a.relativeTo, a.relativePoint, a.x, a.y)
 	else
 		MonDKP.BidTimer:SetPoint("CENTER")                      -- sets to center if no position has been saved
