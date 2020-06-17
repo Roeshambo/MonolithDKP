@@ -587,8 +587,9 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	end
 end
 
-function MonDKP:GetTable(dbTable, hasTeams)
+function MonDKP:GetTable(dbTable, hasTeams, teamIndex)
 	hasTeams = hasTeams or false;
+	local _teamIndex = teamIndex or core.DB.defaults.CurrentTeam;
 
 	if IsInGuild() then
 		local realmName = MonDKP:GetRealmName();
@@ -598,11 +599,11 @@ function MonDKP:GetTable(dbTable, hasTeams)
 
 		if hasTeams then
 
-			if not dbTable[realmName][guildName][core.DB.defaults.CurrentTeam] then
-				dbTable[realmName][guildName][core.DB.defaults.CurrentTeam] = {}
+			if not dbTable[realmName][guildName][_teamIndex] then
+				dbTable[realmName][guildName][_teamIndex] = {}
 			end
 
-			return dbTable[realmName][guildName][core.DB.defaults.CurrentTeam];
+			return dbTable[realmName][guildName][_teamIndex];
 		else
 			return dbTable[realmName][guildName];
 		end
@@ -611,9 +612,11 @@ function MonDKP:GetTable(dbTable, hasTeams)
 	end
 end
 
-function MonDKP:SetTable(dbTable, hasTeams, value)
+-- 2.3.0 added teamIndex
+function MonDKP:SetTable(dbTable, hasTeams, value, teamIndex)
 	hasTeams = hasTeams or false;
-
+	local _teamIndex = teamIndex or core.DB.defaults.CurrentTeam;
+	
 	if IsInGuild() then
 		local realmName = MonDKP:GetRealmName();
 		local guildName = MonDKP:GetGuildName();
@@ -621,7 +624,7 @@ function MonDKP:SetTable(dbTable, hasTeams, value)
 		dbTable = InitializeGuild(dbTable,realmName,guildName);
 
 		if hasTeams then
-			dbTable[realmName][guildName][core.DB.defaults.CurrentTeam] = value;
+			dbTable[realmName][guildName][_teamIndex] = value;
 		else
 			dbTable[realmName][guildName] = value;
 		end
