@@ -857,7 +857,9 @@ function MonDKP:StartBidTimer(seconds, title, itemIcon)
         MonDKP.BidTimer:SetScale(0.1);
       end
     end)
-  PlaySound(8959)
+  if title ~= nil then
+    PlaySound(8959);
+  end
 
   if core.DB.timerpos then
     local a = core.DB["timerpos"]                    -- retrieves timer's saved position from SavedVariables

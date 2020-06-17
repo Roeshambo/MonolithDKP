@@ -247,6 +247,21 @@ end
 
 function MonDKP_OnEvent(self, event, arg1, ...)
 
+	if event == "ADDON_LOADED" then
+		if (arg1 ~= "MonolithDKP") then return end
+		core.InitStart = false
+		core.IsOfficer = nil
+		core.Initialized = false
+		MonDKP_wait(2, DoInit, event, arg1);
+		---DoInit(event,arg1);
+		self:UnregisterEvent("ADDON_LOADED")
+	end
+
+	-- If core.DB is nil, that means that the addon hasn't fully initialized.. so we should not accept other events except for ADDON_LOADED.
+	if core.DB == nil then
+		return;
+	end
+
 	-- unregister unneccessary events
 	if event == "CHAT_MSG_WHISPER" and not core.DB.modes.channels.whisper then
 		self:UnregisterEvent("CHAT_MSG_WHISPER")
@@ -262,15 +277,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		return
 	end
 
-	if event == "ADDON_LOADED" then
-		if (arg1 ~= "MonolithDKP") then return end
-		core.InitStart = false
-		core.IsOfficer = nil
-		core.Initialized = false
-		MonDKP_wait(2, DoInit, event, arg1);
-		---DoInit(event,arg1);
-		self:UnregisterEvent("ADDON_LOADED")
-	elseif event == "BOSS_KILL" then
+	if event == "BOSS_KILL" then
 		MonDKP:CheckOfficer()
 		if core.IsOfficer and IsInRaid() then
 			local boss_name = ...;
