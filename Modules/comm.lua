@@ -69,6 +69,7 @@ function MonDKP.Sync:OnEnable()
   MonDKP.Sync:RegisterComm("MonDKPSetPrice", MonDKP.Sync:OnCommReceived())      -- Set Single Item Price
   MonDKP.Sync:RegisterComm("MonDKPCurTeam", MonDKP.Sync:OnCommReceived())      -- Sets Current Raid Team
   MonDKP.Sync:RegisterComm("MonDKPTeams", MonDKP.Sync:OnCommReceived())
+  MonDKP.Sync:RegisterComm("MonDKPPreBroad", MonDKP.Sync:OnCommReceived()) -- send info that full broadcast is starting
   --MonDKP.Sync:RegisterComm("MonDKPEditLoot", MonDKP.Sync:OnCommReceived())    -- not in use
   --MonDKP.Sync:RegisterComm("MonDKPDataSync", MonDKP.Sync:OnCommReceived())    -- not in use
   --MonDKP.Sync:RegisterComm("MonDKPDKPLogSync", MonDKP.Sync:OnCommReceived())  -- not in use
@@ -251,6 +252,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
           MonDKP.Sync:SendData("MonDKPBuild", tostring(core.BuildNumber))
         end
         return;
+        
       end
 
       ---
@@ -259,6 +261,12 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
       if MonDKP:ValidateSender(sender) then    -- validates sender as an officer. fail-safe to prevent addon alterations to manipulate DKP table
         if (prefix == "MonDKPBCastMsg") and sender ~= UnitName("player") then
           MonDKP:Print(_objReceived.Data)
+        elseif prefix == "MonDKPPreBroad" then
+          if sender ~= UnitName("player") then
+            print("[MonolithDKP] COMMS: Full Broadcast started by "..sender.." for team "..MonDKP:GetTeamName(_objReceived.CurrentTeam));
+          else
+            print("[MonolithDKP] COMMS: You started Full Broadcast for team "..MonDKP:GetTeamName(_objReceived.CurrentTeam));
+          end
         elseif (prefix == "MonDKPCommand") then
           local command, arg1, arg2, arg3, arg4 = strsplit(",", _objReceived.Data);
           if sender ~= UnitName("player") then
@@ -349,7 +357,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
           prefix == "MonDKPAllTabs" or prefix == "MonDKPBidShare" or prefix == "MonDKPMerge" or prefix == "MonDKPSetPrice" then
 
             if prefix == "MonDKPAllTabs" then   -- receives full table broadcast
-              print("[MonolithDKP] COMMS: Full Broadcast Receive Started for team"..MonDKP:GetTeamName(_objReceived.CurrentTeam));
+              --print("[MonolithDKP] COMMS: Full Broadcast Receive Started for team "..MonDKP:GetTeamName(_objReceived.CurrentTeam));
 
               table.sort(_objReceived.Data.Loot, function(a, b)
                 return a["date"] > b["date"]
@@ -875,16 +883,26 @@ function MonDKP.Sync:SendData(prefix, data, target)
       return;
     end  
 
-    -- encoded
     if (prefix == "MonDKPZSumBank" or prefix == "MonDKPBossLoot" or prefix == "MonDKPBidShare") then    -- Zero Sum bank/loot table/bid table data and bid submissions. Keep to raid.
       MonDKP.Sync:SendCommMessage(prefix, _compressedObj, "RAID")
       return;
     end
 
+    if prefix == "MonDKPPreBroad" then
+      if target then
+        MonDKP.Sync:SendCommMessage(prefix, _compressedObj, target);
+      else
+        MonDKP.Sync:SendCommMessage(prefix, _compressedObj, "GUILD");
+      end
+      return;
+    end
+
     if prefix == "MonDKPAllTabs" or prefix == "MonDKPMerge" then
       if target then
+        MonDKP.Sync:SendData("MonDKPPreBroad", "Full broadcast premessage", target);
         MonDKP.Sync:SendCommMessage(prefix, _compressedObj, "WHISPER", target, "NORMAL", MonDKP_BroadcastFull_Callback, nil)
       else
+        MonDKP.Sync:SendData("MonDKPPreBroad", "Full broadcast premessage", nil);
         MonDKP.Sync:SendCommMessage(prefix, _compressedObj, "GUILD", nil, "NORMAL", MonDKP_BroadcastFull_Callback, nil)
       end
       return
