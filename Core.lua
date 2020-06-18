@@ -89,9 +89,9 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v2.2.10-beta";
+core.MonVersion = "v2.3.0-beta";
 core.defaultTable = "__default";
-core.BuildNumber = 20210;
+core.BuildNumber = 20300;
 core.UpgradeSchema = false;
 core.TableWidth, core.TableRowHeight, core.TableNumRows, core.PriceNumRows = 500, 18, 27, 22; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
@@ -593,6 +593,68 @@ function MonDKP:StatusVerify_Update()
 	end
 end
 
+-------
+-- TEAM FUNCTIONS
+-------
+
+function MonDKP:GetCurrentTeamIndex() 
+	local _tmpString = MonDKP:GetTable(MonDKP_DB, false)["defaults"]["CurrentTeam"] or "0"
+	return _tmpString
+end
+
+function MonDKP:GetCurrentTeamName()
+	local _string = "Unguilded";
+	local teams = MonDKP:GetTable(MonDKP_DB, false)["teams"];
+
+	if tablelength(teams) > 0 then
+		_string = MonDKP:GetTable(MonDKP_DB, false)["teams"][MonDKP:GetCurrentTeamIndex()].name
+	end
+
+	return _string
+end
+
+function MonDKP:GetTeamName(index)
+	local _string = "Unguilded";
+	if index == nil then return _string end
+	local teamName = MonDKP:GetTable(MonDKP_DB, false)["teams"][index]["name"];
+
+	if teamName == nil then return "no team" end;
+
+	return teamName;
+end
+
+
+function tablelength(T)
+	local count = 0
+	for _ in pairs(T) do
+		count = count + 1 
+	end
+	return count
+end
+
+function MonDKP:GetGuildTeamList() 
+	local _list = {};
+	local _tmp = MonDKP:GetTable(MonDKP_DB, false)["teams"]
+	local index = 1
+
+	for k,v in pairs(_tmp) do
+		if(type(v) == "table") then
+			for z,x in pairs(v) do
+				table.insert(_list, {tonumber(k), v.name})
+				index = index + 1
+			end
+		end
+	end
+	-- so, because team "index" is a string Lua doesn't give a flying fuck
+	-- about order of adding elements to "string" indexed table so we have to unfuck it
+	table.sort(_list,  
+		function(a, b)
+			return a[1] < b[1]
+		end
+	)
+
+	return _list
+end
 
 -- moved to core from ManageEntries as this is called from comm.lua aswell
 function MonDKP:SetCurrentTeam(index)
@@ -615,6 +677,10 @@ function MonDKP:SetCurrentTeam(index)
 	MonDKP:PriceTable_Update(0)
 
 end
+
+-------
+-- TEAM FUNCTIONS END
+-------
 
 -------------------------------------
 -- Recursively searches tar (table) for val (string) as far as 4 nests deep (use field only if you wish to search a specific key IE: MonDKP:GetTable(MonDKP_DKPTable, true), "Roeshambo", "player" would only search for Roeshambo in the player key)

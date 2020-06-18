@@ -551,7 +551,7 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 		
 		-- Verify that the DB table has been initialized.
 		MonDKP:SetTable(MonDKP_DB, false, InitializeMonDKPDB(MonDKP:GetTable(MonDKP_DB)))
-		core.DB 				= MonDKP:GetTable(MonDKP_DB); --Player specific DB
+		core.DB = MonDKP:GetTable(MonDKP_DB); --Player specific DB
 
 		
 		if not VerifyDBSchema(MonDKP_DKPTable) then MonDKP_DKPTable =  UpgradeDBSchema(MonDKP_DKPTable, MonDKP_DKPTable, true, "MonDKP_DKPTable") end;
@@ -602,8 +602,9 @@ function MonDKP:OnInitialize(event, name)		-- This is the FIRST function to run 
 	end
 end
 
-function MonDKP:GetTable(dbTable, hasTeams)
+function MonDKP:GetTable(dbTable, hasTeams, teamIndex)
 	hasTeams = hasTeams or false;
+	local _teamIndex;
 
 	if IsInGuild() then
 		local realmName = MonDKP:GetRealmName();
@@ -613,11 +614,17 @@ function MonDKP:GetTable(dbTable, hasTeams)
 
 		if hasTeams then
 
-			if not dbTable[realmName][guildName][core.DB.defaults.CurrentTeam] then
-				dbTable[realmName][guildName][core.DB.defaults.CurrentTeam] = {}
+			if teamIndex == nil then
+				_teamIndex =  core.DB.defaults.CurrentTeam;
+			else
+				_teamIndex = teamIndex
 			end
 
-			return dbTable[realmName][guildName][core.DB.defaults.CurrentTeam];
+			if not dbTable[realmName][guildName][_teamIndex] then
+				dbTable[realmName][guildName][_teamIndex] = {}
+			end
+
+			return dbTable[realmName][guildName][_teamIndex];
 		else
 			return dbTable[realmName][guildName];
 		end
@@ -626,8 +633,10 @@ function MonDKP:GetTable(dbTable, hasTeams)
 	end
 end
 
-function MonDKP:SetTable(dbTable, hasTeams, value)
+-- 2.3.0 added teamIndex
+function MonDKP:SetTable(dbTable, hasTeams, value, teamIndex)
 	hasTeams = hasTeams or false;
+	local _teamIndex;
 
 	if IsInGuild() then
 		local realmName = MonDKP:GetRealmName();
@@ -636,7 +645,13 @@ function MonDKP:SetTable(dbTable, hasTeams, value)
 		dbTable = InitializeGuild(dbTable,realmName,guildName);
 
 		if hasTeams then
-			dbTable[realmName][guildName][core.DB.defaults.CurrentTeam] = value;
+			if teamIndex == nil then
+				_teamIndex =  core.DB.defaults.CurrentTeam;
+			else
+				_teamIndex = teamIndex
+			end
+
+			dbTable[realmName][guildName][_teamIndex] = value;
 		else
 			dbTable[realmName][guildName] = value;
 		end

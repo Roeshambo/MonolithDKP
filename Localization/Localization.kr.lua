@@ -789,15 +789,15 @@ if GetLocale() == "koKR" then
     VALIDATEWARN          = "전체 기록을 기준으로 모든 플레이어의 dkp, 평생 획득 한 시간 및 평생을 재 계산합니다. 누락 된 히스토리 항목으로 인해 결과가 올바르지 않은 경우 저장된 변수 파일을 백업하십시오. 달리기 전에 모든 플레이어에 대해 이전 dkp (컨텍스트 메뉴> 모두 선택> 이전 dkp 재설정)를 재설정해야 변경 한 양을 확인할 수 있습니다. 계속 하시겠습니까?",
     PASS                  = "통과하다",
 
-    CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.2.10-beta",
-    CHANGELOG2 = "- Added in Loot Filter to Loot History (Taidtuskecyh)",
+    CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.3.0-beta",
+    CHANGELOG2 = "- THIS VERSION WILL NOT SYNC WITH PREVIOUS ONES - version check will work",
     CHANGELOG3 = "- Small adjustments and fixes to Loot Price and DE communication",
     CHANGELOG4 = "- Added in Multi-Guild, Multi-Teams supprot (thanks to Taidtuskecyh for the help)",
     CHANGELOG5 = "- Fixed a few bugs from the 2.1.2 version of the addon",
     CHANGELOG6 = "- Fixed a rounding issue when adjusting DKP when rounding is enabled. (GH-5)",
     CHANGELOG7 = "- Fixed a Loot History Delete Bug",
     CHANGELOG8 = "- Load In Bug Fixes",
-    CHANGELOG9 = "- Known Issue: Multi-Teams tables may not sync appropriately.",
+    CHANGELOG9 = "- Added in Loot Filter to Loot History (Taidtuskecyh)",
     CHANGELOG10 = "",
     }
 end

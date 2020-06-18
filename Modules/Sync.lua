@@ -8,7 +8,8 @@ local bytesTotal = 0
 local LibAceSerializer = LibStub:GetLibrary("AceSerializer-3.0")
 local LibDeflate = LibStub:GetLibrary("LibDeflate")
 
-function MonDKP_Profile_Create(player, dkp, gained, spent)
+function MonDKP_Profile_Create(player, dkp, gained, spent, teamIndex)
+	local _teamIndex = teamIndex or core.DB.defaults.CurrentTeam;
 	local tempName, tempClass
 	local guildSize = GetNumGuildMembers();
 	local class = "NONE"
@@ -22,7 +23,7 @@ function MonDKP_Profile_Create(player, dkp, gained, spent)
 		tempName = strsub(tempName, 1, string.find(tempName, "-")-1)			-- required to remove server name from player (can remove in classic if this is not an issue)
 		if tempName == player then
 			class = tempClass
-			table.insert(MonDKP:GetTable(MonDKP_DKPTable, true), { player=player, lifetime_spent=spent, lifetime_gained=gained, class=class, dkp=dkp, rank=10, spec=L["NOSPECREPORTED"], role=L["NOROLEDETECTED"], rankName="None", previous_dkp=0, })
+			table.insert(MonDKP:GetTable(MonDKP_DKPTable, true, _teamIndex), { player=player, lifetime_spent=spent, lifetime_gained=gained, class=class, dkp=dkp, rank=10, spec=L["NOSPECREPORTED"], role=L["NOROLEDETECTED"], rankName="None", previous_dkp=0, })
 
 			MonDKP:FilterDKPTable(core.currentSort, "reset")
 			MonDKP:ClassGraph_Update()
@@ -43,8 +44,8 @@ function MonDKP_Profile_Create(player, dkp, gained, spent)
 		for i=1, GroupSize do
 			tempName,_,_,_,_,tempClass = GetRaidRosterInfo(i)
 			if tempName == player then
-				if not MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), tempName, "player") then
-					tinsert(MonDKP:GetTable(MonDKP_DKPTable, true), { player=player, class=tempClass, dkp=dkp, previous_dkp=0, lifetime_gained=gained, lifetime_spent=spent, rank=10, rankName="None", spec=L["NOSPECREPORTED"], role=L["NOROLEDETECTED"], })
+				if not MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true, _teamIndex), tempName, "player") then
+					tinsert(MonDKP:GetTable(MonDKP_DKPTable, true, _teamIndex), { player=player, class=tempClass, dkp=dkp, previous_dkp=0, lifetime_gained=gained, lifetime_spent=spent, rank=10, rankName="None", spec=L["NOSPECREPORTED"], role=L["NOROLEDETECTED"], })
 					MonDKP:FilterDKPTable(core.currentSort, "reset")
 					MonDKP:ClassGraph_Update()
 					created = true
@@ -55,7 +56,7 @@ function MonDKP_Profile_Create(player, dkp, gained, spent)
 	end
 
 	if not created then
-		tinsert(MonDKP:GetTable(MonDKP_DKPTable, true), { player=player, class=class, dkp=dkp, previous_dkp=0, lifetime_gained=gained, lifetime_spent=spent, rank=10, rankName="None", spec=L["NOSPECREPORTED"], role=L["NOROLEDETECTED"], })
+		tinsert(MonDKP:GetTable(MonDKP_DKPTable, true, _teamIndex), { player=player, class=class, dkp=dkp, previous_dkp=0, lifetime_gained=gained, lifetime_spent=spent, rank=10, rankName="None", spec=L["NOSPECREPORTED"], role=L["NOROLEDETECTED"], })
 	end
 
 	return created
