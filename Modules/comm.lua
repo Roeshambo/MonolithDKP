@@ -298,8 +298,10 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
             end
           end
         elseif prefix == "MonDKPRaidTime" and sender ~= UnitName("player") and core.IsOfficer and MonDKP.ConfigTab2 then
+
           local command, args = strsplit(",", _objReceived.Data);
           if command == "start" then
+            MonDKP:SetCurrentTeam(_objReceived.CurrentTeam); -- on start change the currentTeam
             local arg1, arg2, arg3, arg4, arg5, arg6 = strsplit(" ", args, 6)
 
             if arg1 == "true" then arg1 = true else arg1 = false end
@@ -334,8 +336,11 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
           elseif strfind(command, "sync", 1) then
             local _, syncTimer, syncSecondCount, syncMinuteCount, syncAward = strsplit(" ", command, 5)
             MonDKP:StartRaidTimer(nil, syncTimer, syncSecondCount, syncMinuteCount, syncAward)
+            MonDKP:SetCurrentTeam(_objReceived.CurrentTeam);
             core.RaidInProgress = true
           end
+        elseif prefix == "MonDKPRaidTime" and sender ~= UnitName("player") and not core.IsOfficer and not MonDKP.ConfigTab2 then -- non officer receiving StartRaidTime
+          MonDKP:SetCurrentTeam(_objReceived.CurrentTeam); -- only change currentTeam to raid leads
         end
 
         if (sender ~= UnitName("player")) then
@@ -344,7 +349,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
           prefix == "MonDKPAllTabs" or prefix == "MonDKPBidShare" or prefix == "MonDKPMerge" or prefix == "MonDKPSetPrice" then
 
             if prefix == "MonDKPAllTabs" then   -- receives full table broadcast
-              print("[MonolithDKP] COMMS: Full Broadcast Receive Started");
+              print("[MonolithDKP] COMMS: Full Broadcast Receive Started for team"..MonDKP:GetTeamName(_objReceived.CurrentTeam));
 
               table.sort(_objReceived.Data.Loot, function(a, b)
                 return a["date"] > b["date"]
@@ -405,7 +410,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 MonDKP:FilterDKPTable(core.currentSort, "reset")
                 MonDKP:StatusVerify_Update()
               end
-              print("[MonolithDKP] COMMS: Full Broadcast Receive Finished");
+              print("[MonolithDKP] COMMS: Full Broadcast Receive Finished for team"..MonDKP:GetTeamName(_objReceived.CurrentTeam));
               return
             elseif prefix == "MonDKPMerge" then
               for i=1, #_objReceived.Data.DKP do

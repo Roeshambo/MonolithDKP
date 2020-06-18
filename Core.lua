@@ -613,6 +613,17 @@ function MonDKP:GetCurrentTeamName()
 	return _string
 end
 
+function MonDKP:GetTeamName(index)
+	local _string = "Unguilded";
+	if index == nil then return _string end
+	local teamName = MonDKP:GetTable(MonDKP_DB, false)["teams"][index]["name"];
+
+	if teamName == nil then return "no team" end;
+
+	return teamName;
+end
+
+
 function tablelength(T)
 	local count = 0
 	for _ in pairs(T) do
