@@ -83,7 +83,6 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
     local decompressed = LibDeflate:DecompressDeflate(decoded);
 
     if decompressed == nil then  -- this checks if message was previously encoded and compressed, only case we allow this is MonDKPBuild
-
       -- check if 2.1.2 is trying to communicate
       if prefix == "MonDKPBuild" and sender ~= UnitName("player") then
         local LastVerCheck = time() - core.LastVerCheck;
@@ -102,6 +101,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
       elseif prefix == "MonDKPBuild" and sender == UnitName("player") then
         return;
       end
+      return;
     end
 
     -- decompresed is not null meaning data is coming from 2.3.0, lets go
