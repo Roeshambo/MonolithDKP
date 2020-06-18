@@ -774,7 +774,7 @@ if GetLocale() == "zhCN" then
     REPAIRSTART           = "修复表以删除重复或无效的条目。",
     MISSINGENT            = "您缺少以下人员的一个或多个条目",
     CREATED               = "已建立",
-    BROADCASTTABLES       = "广播表",ks
+    BROADCASTTABLES       = "广播表",
     BCASTINGTABLES        = "广播表...",
     FULLBROADCAST         = "全播",
     MERGE2WEEKS           = "合并过去2周",
