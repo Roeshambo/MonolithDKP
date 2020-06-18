@@ -784,15 +784,15 @@ if GetLocale() == "deDE" then
     ZEROSUMITEMCOSTTTDESC = "Wählen Sie die Art der Artikelkosten aus, die Sie verwenden möchten. Static gibt Artikeln einen definierten Preis. Während Mindestgebot ermöglicht es den Spielern, ein Gebot abzugeben, das die Kosten definiert, während Sie einen Mindestgebotsschwellenwert festlegen.",
     ZONE = "Zone",
     PASS                  = "Passen",
-    CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.2.10-beta",
-    CHANGELOG2 = "- Added in Loot Filter to Loot History (Taidtuskecyh)",
+    CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.3.0-beta",
+    CHANGELOG2 = "- THIS VERSION WILL NOT SYNC WITH PREVIOUS ONES - version check will work",
     CHANGELOG3 = "- Small adjustments and fixes to Loot Price and DE communication",
     CHANGELOG4 = "- Added in Multi-Guild, Multi-Teams supprot (thanks to Taidtuskecyh for the help)",
     CHANGELOG5 = "- Fixed a few bugs from the 2.1.2 version of the addon",
     CHANGELOG6 = "- Fixed a rounding issue when adjusting DKP when rounding is enabled. (GH-5)",
     CHANGELOG7 = "- Fixed a Loot History Delete Bug",
     CHANGELOG8 = "- Load In Bug Fixes",
-    CHANGELOG9 = "- Known Issue: Multi-Teams tables may not sync appropriately.",
+    CHANGELOG9 = "- Added in Loot Filter to Loot History (Taidtuskecyh)",
     CHANGELOG10 = "",
   }
 end

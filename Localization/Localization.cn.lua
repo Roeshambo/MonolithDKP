@@ -774,7 +774,7 @@ if GetLocale() == "zhCN" then
     REPAIRSTART           = "修复表以删除重复或无效的条目。",
     MISSINGENT            = "您缺少以下人员的一个或多个条目",
     CREATED               = "已建立",
-    BROADCASTTABLES       = "广播表",
+    BROADCASTTABLES       = "广播表",ks
     BCASTINGTABLES        = "广播表...",
     FULLBROADCAST         = "全播",
     MERGE2WEEKS           = "合并过去2周",
@@ -791,15 +791,15 @@ if GetLocale() == "zhCN" then
     VALIDATEWARN          = "这将根据他们的完整历史记录重新计算所有玩家的dkp，获得的生命和花费的生命。 如果由于缺少历史记录而导致结果不正确，请确保备份已保存的变量文件。 在运行之前，您应该为所有播放器重置先前的dkp（上下文菜单>全选>重置先前的dkp），以便可以看到它们已更改了多少。 你想继续吗？",
     PASS                  = "通过",
 
-    CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.2.10-beta",
-    CHANGELOG2 = "- Added in Loot Filter to Loot History (Taidtuskecyh)",
+    CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.3.0-beta",
+    CHANGELOG2 = "- THIS VERSION WILL NOT SYNC WITH PREVIOUS ONES - version check will work",
     CHANGELOG3 = "- Small adjustments and fixes to Loot Price and DE communication",
     CHANGELOG4 = "- Added in Multi-Guild, Multi-Teams supprot (thanks to Taidtuskecyh for the help)",
     CHANGELOG5 = "- Fixed a few bugs from the 2.1.2 version of the addon",
     CHANGELOG6 = "- Fixed a rounding issue when adjusting DKP when rounding is enabled. (GH-5)",
     CHANGELOG7 = "- Fixed a Loot History Delete Bug",
     CHANGELOG8 = "- Load In Bug Fixes",
-    CHANGELOG9 = "- Known Issue: Multi-Teams tables may not sync appropriately.",
+    CHANGELOG9 = "- Added in Loot Filter to Loot History (Taidtuskecyh)",
     CHANGELOG10 = "",
   }
 end
