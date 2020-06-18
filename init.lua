@@ -257,8 +257,9 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 		self:UnregisterEvent("ADDON_LOADED")
 	end
 
-	-- If core.DB is nil, that means that the addon hasn't fully initialized.. so we should not accept other events except for ADDON_LOADED.
+	-- If core.DB is nil, that means that the addon hasn't fully initialized.. so let's wait 1 second and try again.
 	if core.DB == nil then
+		C_Timer.After(1, function () MonDKP_OnEvent(self, event, arg1); end);
 		return;
 	end
 
@@ -340,7 +341,11 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			end
 		end
 	elseif event == "GUILD_ROSTER_UPDATE" then
-		DoGuildUpdate();
+		
+		if not core.InitStart then
+			DoGuildUpdate();
+		end
+
 		if IsInGuild() and core.InitStart then
 			self:UnregisterEvent("GUILD_ROSTER_UPDATE")
 		end
