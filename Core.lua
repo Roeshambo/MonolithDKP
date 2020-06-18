@@ -89,9 +89,9 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 }
 
 core.MonDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v2.2.9-beta";
+core.MonVersion = "v2.2.10-beta";
 core.defaultTable = "__default";
-core.BuildNumber = 20209;
+core.BuildNumber = 20210;
 core.UpgradeSchema = false;
 core.TableWidth, core.TableRowHeight, core.TableNumRows, core.PriceNumRows = 500, 18, 27, 22; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
