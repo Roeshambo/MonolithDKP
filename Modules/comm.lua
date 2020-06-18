@@ -79,7 +79,41 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
   if not core.Initialized or core.IsOfficer == nil then return end
   if prefix then
 
-    local success, _objReceived = MonDKP.Sync:DeserializeStringToTable(message);
+    local decoded = LibDeflate:DecodeForWoWAddonChannel(message);
+    local decompressed = LibDeflate:DecompressDeflate(decoded);
+
+    if decompressed == nil then  -- this checks if message was previously encoded and compressed, only case we allow this is MonDKPBuild
+
+      -- check if 2.1.2 is trying to communicate
+      if prefix == "MonDKPBuild" and sender ~= UnitName("player") then
+        local LastVerCheck = time() - core.LastVerCheck;
+
+        if LastVerCheck > 900 then             -- limits the Out of Date message from firing more than every 15 minutes 
+          if tonumber(message) > core.BuildNumber then
+            core.LastVerCheck = time();
+            MonDKP:Print(L["OUTOFDATEANNOUNCE"])
+          end
+        end
+
+        if tonumber(message) < core.BuildNumber then   -- returns build number if receiving party has a newer version
+          MonDKP.Sync:SendData("MonDKPBuild", tostring(core.BuildNumber))
+        end
+        return;
+      elseif prefix == "MonDKPBuild" and sender == UnitName("player") then
+        return;
+      end
+    end
+
+    -- decompresed is not null meaning data is coming from 2.3.0, lets go
+    local success, _objReceived = LibAceSerializer:Deserialize(decompressed);
+    
+    --[[ 
+      _objReceived = {
+        Teams = {},
+        CurrentTeam = "0",
+        Data = string | {} | nil
+      }
+    --]]
 
     if success then
       if prefix == "MonDKPQuery" then
@@ -203,6 +237,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
         end
         return;
       elseif prefix == "MonDKPBuild" and sender ~= UnitName("player") then
+
         local LastVerCheck = time() - core.LastVerCheck;
 
         if LastVerCheck > 900 then             -- limits the Out of Date message from firing more than every 15 minutes 
@@ -769,7 +804,7 @@ function MonDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
         end
       end
     else
-      MonDKP:Print("Report the following error on Curse or Github: "..deserialized)  -- error reporting if string doesn't get deserialized correctly
+      MonDKP:Print("OnCommReceived ERROR: "..prefix)  -- error reporting if string doesn't get deserialized correctly
     end
   end
 end
@@ -780,12 +815,27 @@ function MonDKP.Sync:SendData(prefix, data, target)
   -- the idea is to envelope the old message into another object and then decode it on receiving end
   -- that way we won't have to do too much diging in the old code
   -- expect to send everything through SendData
+  -- the only edge case is MonDKPBuild which for now stays the same as it was in 2.1.2
+
   local _objToSend = {
     Teams = MonDKP:GetTable(MonDKP_DB, false)["teams"],
     CurrentTeam = MonDKP:GetCurrentTeamIndex(),
     Data = nil
-  } 
-  
+  }; 
+
+  if prefix == "MonDKPBuild" then
+    MonDKP.Sync:SendCommMessage(prefix, data, "GUILD");
+    return;
+  end
+
+  -- everything else but MonDKPBuild is getting compressed
+  _objToSend.Data = data; -- if we send table everytime we have to serialize / deserialize anyway
+  local _compressedObj = MonDKP.Sync:SerializeTableToString(_objToSend);
+
+  if _compressedObj == nil then
+    MonDKP:Print("prefix"..prefix.." ");
+    MonDKP:Print("Compressing is fucked mate");
+  end
 
   if data == nil or data == "" then data = " " end -- just in case, to prevent disconnects due to empty/nil string AddonMessages
 
@@ -795,15 +845,14 @@ function MonDKP.Sync:SendData(prefix, data, target)
     return;
   end
 
-  _objToSend.Data = data; -- if we send table everytime we have to serialize / deserialize anyway
-
+  
   -- non officers / not encoded
   if IsInGuild() then
     if prefix == "MonDKPQuery" or prefix == "MonDKPBuild" or prefix == "MonDKPTalents" or prefix == "MonDKPRoles" then
-      MonDKP.Sync:SendCommMessage(prefix, MonDKP.Sync:SerializeTableToString(_objToSend), "GUILD")
+      MonDKP.Sync:SendCommMessage(prefix, _compressedObj, "GUILD")
       return;
     elseif prefix == "MonDKPBidder" then    -- bid submissions. Keep to raid.
-      MonDKP.Sync:SendCommMessage(prefix, MonDKP.Sync:SerializeTableToString(_objToSend), "RAID")
+      MonDKP.Sync:SendCommMessage(prefix, _compressedObj, "RAID")
       return;
     end
   end
@@ -812,34 +861,34 @@ function MonDKP.Sync:SendData(prefix, data, target)
   if IsInGuild() and core.IsOfficer then
     
     if prefix == "MonDKPCommand" or prefix == "MonDKPRaidTime" then
-      MonDKP.Sync:SendCommMessage(prefix, MonDKP.Sync:SerializeTableToString(_objToSend), "RAID")
+      MonDKP.Sync:SendCommMessage(prefix, _compressedObj, "RAID")
       return;
     end
 
     if prefix == "MonDKPBCastMsg" then
-      MonDKP.Sync:SendCommMessage(prefix, MonDKP.Sync:SerializeTableToString(_objToSend), "RAID") -- changed to raid from guild
+      MonDKP.Sync:SendCommMessage(prefix, _compressedObj, "RAID") -- changed to raid from guild
       return;
     end  
 
     -- encoded
     if (prefix == "MonDKPZSumBank" or prefix == "MonDKPBossLoot" or prefix == "MonDKPBidShare") then    -- Zero Sum bank/loot table/bid table data and bid submissions. Keep to raid.
-      MonDKP.Sync:SendCommMessage(prefix, MonDKP.Sync:SerializeTableToString(_objToSend), "RAID")
+      MonDKP.Sync:SendCommMessage(prefix, _compressedObj, "RAID")
       return;
     end
 
     if prefix == "MonDKPAllTabs" or prefix == "MonDKPMerge" then
       if target then
-        MonDKP.Sync:SendCommMessage(prefix, MonDKP.Sync:SerializeTableToString(_objToSend), "WHISPER", target, "NORMAL", MonDKP_BroadcastFull_Callback, nil)
+        MonDKP.Sync:SendCommMessage(prefix, _compressedObj, "WHISPER", target, "NORMAL", MonDKP_BroadcastFull_Callback, nil)
       else
-        MonDKP.Sync:SendCommMessage(prefix, MonDKP.Sync:SerializeTableToString(_objToSend), "GUILD", nil, "NORMAL", MonDKP_BroadcastFull_Callback, nil)
+        MonDKP.Sync:SendCommMessage(prefix, _compressedObj, "GUILD", nil, "NORMAL", MonDKP_BroadcastFull_Callback, nil)
       end
       return
     end
     
     if target then
-      MonDKP.Sync:SendCommMessage(prefix, MonDKP.Sync:SerializeTableToString(_objToSend), "WHISPER", target)
+      MonDKP.Sync:SendCommMessage(prefix, _compressedObj, "WHISPER", target)
     else
-      MonDKP.Sync:SendCommMessage(prefix, MonDKP.Sync:SerializeTableToString(_objToSend), "GUILD")
+      MonDKP.Sync:SendCommMessage(prefix, _compressedObj, "GUILD")
     end
   end
 end
@@ -862,9 +911,16 @@ end
 
 function MonDKP.Sync:DeserializeStringToTable(_string)
 
-  if _string then
+  if not _string == nil then
+
     local decoded = LibDeflate:DecompressDeflate(LibDeflate:DecodeForWoWAddonChannel(_string))
     local success, _obj  = LibAceSerializer:Deserialize(decoded);
+
+    MonDKP:Print("success: "..success)  -- error reporting if string doesn't get deserialized correctly
+    if not success then
+      MonDKP:Print("_string: ".._string)  -- error reporting if string doesn't get deserialized correctly
+      MonDKP:Print("decoded: "..decoded)  -- error reporting if string doesn't get deserialized correctly
+    end
 
     return success, _obj;
   end
