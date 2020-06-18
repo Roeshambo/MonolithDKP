@@ -5,6 +5,7 @@ local L = core.L;
 local waitTable = {};
 local waitFrame = nil;
 local lockouts = CreateFrame("Frame", "LockoutsFrame");
+local eventDelay = {};
 
 --------------------------------------
 -- Slash Command
@@ -249,18 +250,27 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 
 	if event == "ADDON_LOADED" then
 		if (arg1 ~= "MonolithDKP") then return end
-		core.InitStart = false
 		core.IsOfficer = nil
 		core.Initialized = false
 		MonDKP_wait(2, DoInit, event, arg1);
 		---DoInit(event,arg1);
 		self:UnregisterEvent("ADDON_LOADED")
+		return;
 	end
 
 	-- If core.DB is nil, that means that the addon hasn't fully initialized.. so let's wait 1 second and try again.
 	if core.DB == nil then
-		C_Timer.After(1, function () MonDKP_OnEvent(self, event, arg1); end);
+		if eventDelay[event] == nil then
+			eventDelay[event] = 1;
+		else
+			eventDelay[event] = eventDelay[event] + 2;
+		end
+		C_Timer.After(eventDelay[event], function () MonDKP_OnEvent(self, event, arg1); end);
 		return;
+	end
+
+	if eventDelay[event] ~= nil then
+		eventDelay[event] = nil;
 	end
 
 	-- unregister unneccessary events
@@ -341,7 +351,7 @@ function MonDKP_OnEvent(self, event, arg1, ...)
 			end
 		end
 	elseif event == "GUILD_ROSTER_UPDATE" then
-		
+
 		if not core.InitStart then
 			DoGuildUpdate();
 		end
