@@ -6,7 +6,7 @@ CommunityDKP is the leading DKP Management Tool supporting a number of different
 
 CommunityDKP Discord Server: https://discord.gg/HGgvYFB
   
-##General Features Include:##
+**General Features Include:**
 
    - Multi-Guild, Multi-Team DKP Tables allowing for management of multiple different types of DKP Tables.
    - DKP Table entries provide a tooltip showing the players recently spent and earned DKP  
@@ -18,7 +18,7 @@ CommunityDKP Discord Server: https://discord.gg/HGgvYFB
    - Bid Timer displaying what is currently up for bid as well as the minimum bid price.
    - Raid Timer. Allowing for automatic distribution of DKP points over a set interval of time as the raid progresses.
  
-##Officer Only Features:##
+**Officer Only Features:**
    - Bid window (opened by SHIFT+ALT clicking an item in the loot window or by typing /dkp bid [item link]) that starts bidding, collects all bids submitted and awards the item. NOTE: Shift+Alt clicking an item only works if the item is in one of the first 4 slots of the loot window due to restrictions at the moment. If the item you wish to bid on isn't on the first page, either loot all items on that first page, close, and reopen the window. Or simply use /dkp bid [item link] .
    - Adjust DKP tab (awarding DKP). Also includes a DKP Decay option that reduces all entries by X% (default set in options or change on the fly in the Adjust DKP tab)   
    - Award Item Window (awards an item to a play, but also allows an officer to set the min price on an item)
@@ -28,12 +28,11 @@ CommunityDKP Discord Server: https://discord.gg/HGgvYFB
    - Boss Kill Bonus auto selects the last killed boss/zone  
    - Options window has additional fields to set bonus defaults (On time bonus, boss kill bonus etc)
  
-##Guild Leader Only Features:##
+**Guild Leader Only Features:**
    - Whitelist Settings: Setting an Officer Whitelist to specific people instead of all guild officers to manage DKP.
    - Team Management: Ability to create and rename teams that officers can then manage DKP for.
  
 CommunityDKP is a community-driven collaboration born from the original MonolithDKP. It has also been completely overhauled and changed to support multiple teams, guilds, characters, and accounts. 
-
 Forked from: https://www.curseforge.com/wow/addons/monolith-dkp
   
 Commands  
