@@ -1,6 +1,6 @@
 local _, core = ...;
 local _G = _G;
-local MonDKP = core.MonDKP;
+local CommDKP = core.CommDKP;
 local L = core.L;
 
 local function ZeroSumDistribution()
@@ -13,15 +13,15 @@ local function ZeroSumDistribution()
 		local curOfficer = UnitName("player")
 
 		if core.DB.modes.ZeroSumStandby then
-			for i=1, #MonDKP:GetTable(MonDKP_Standby, true) do
-				tinsert(VerifyTable, MonDKP:GetTable(MonDKP_Standby, true)[i].player)
+			for i=1, #CommDKP:GetTable(CommDKP_Standby, true) do
+				tinsert(VerifyTable, CommDKP:GetTable(CommDKP_Standby, true)[i].player)
 			end
 		end		
 
 		for i=1, 40 do
 			local tempName, _rank, _subgroup, _level, _class, _fileName, zone, online = GetRaidRosterInfo(i)
-			local search = MonDKP:Table_Search(VerifyTable, tempName)
-			local search2 = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), tempName)
+			local search = CommDKP:Table_Search(VerifyTable, tempName)
+			local search2 = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), tempName)
 			local OnlineOnly = core.DB.modes.OnlineOnly
 			local limitToZone = core.DB.modes.SameZoneOnly
 			local isSameZone = zone == GetRealZoneText()
@@ -32,42 +32,42 @@ local function ZeroSumDistribution()
 		end
 
 		balance = tonumber(core.ZeroSumBank.Balance:GetText())
-		distribution = MonDKP_round(balance / #VerifyTable, core.DB.modes.rounding) + core.DB.modes.Inflation
+		distribution = CommDKP_round(balance / #VerifyTable, core.DB.modes.rounding) + core.DB.modes.Inflation
 
 		for i=1, #VerifyTable do
 			local name = VerifyTable[i]
-			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), name)
+			local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
 
 			if search then
-				MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].dkp = MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].dkp + distribution
+				CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp = CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp + distribution
 				players = players..name..","
 			end
 		end
 		
 		local newIndex = curOfficer.."-"..curTime
-		tinsert(MonDKP:GetTable(MonDKP_DKPHistory, true), 1, {players=players, dkp=distribution, reason=reason, date=curTime, index=newIndex})
-		if MonDKP.ConfigTab6.history then
-			MonDKP:DKPHistory_Update(true)
+		tinsert(CommDKP:GetTable(CommDKP_DKPHistory, true), 1, {players=players, dkp=distribution, reason=reason, date=curTime, index=newIndex})
+		if CommDKP.ConfigTab6.history then
+			CommDKP:DKPHistory_Update(true)
 		end
 
-		MonDKP.Sync:SendData("MonDKPDKPDist", MonDKP:GetTable(MonDKP_DKPHistory, true)[1])
-		MonDKP.Sync:SendData("MonDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..distribution.." "..L["AMONG"].." "..#VerifyTable.." "..L["PLAYERSFORREASON"]..": "..reason)
-		MonDKP:Print("Raid DKP Adjusted by "..distribution.." "..L["AMONG"].." "..#VerifyTable.." "..L["PLAYERSFORREASON"]..": "..reason)
+		CommDKP.Sync:SendData("CommDKPDKPDist", CommDKP:GetTable(CommDKP_DKPHistory, true)[1])
+		CommDKP.Sync:SendData("CommDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..distribution.." "..L["AMONG"].." "..#VerifyTable.." "..L["PLAYERSFORREASON"]..": "..reason)
+		CommDKP:Print("Raid DKP Adjusted by "..distribution.." "..L["AMONG"].." "..#VerifyTable.." "..L["PLAYERSFORREASON"]..": "..reason)
 		
 		table.wipe(VerifyTable)
 		table.wipe(core.DB.modes.ZeroSumBank)
 		core.DB.modes.ZeroSumBank.balance = 0
 		core.ZeroSumBank.LootFrame.LootList:SetText("")
 		DKPTable_Update()
-		MonDKP.Sync:SendData("MonDKPZSumBank", core.DB.modes.ZeroSumBank)
-		MonDKP:ZeroSumBank_Update()
+		CommDKP.Sync:SendData("CommDKPZSumBank", core.DB.modes.ZeroSumBank)
+		CommDKP:ZeroSumBank_Update()
 		core.ZeroSumBank:Hide();
 	else
-		MonDKP:Print(L["NOTINRAIDPARTY"])
+		CommDKP:Print(L["NOTINRAIDPARTY"])
 	end
 end
 
-function MonDKP:ZeroSumBank_Update()
+function CommDKP:ZeroSumBank_Update()
 	core.ZeroSumBank.Boss:SetText(core.DB.bossargs.LastKilledBoss.." in "..core.DB.bossargs.CurrentRaidZone)
 	core.ZeroSumBank.Balance:SetText(core.DB.modes.ZeroSumBank.balance)
 
@@ -85,8 +85,8 @@ function MonDKP:ZeroSumBank_Update()
  	end
 end
 
-function MonDKP:ZeroSumBank_Create()
-	local f = CreateFrame("Frame", "MonDKP_DKPZeroSumBankFrame", UIParent, "ShadowOverlaySmallTemplate");
+function CommDKP:ZeroSumBank_Create()
+	local f = CreateFrame("Frame", "CommDKP_DKPZeroSumBankFrame", UIParent, "ShadowOverlaySmallTemplate");
 
 	if not core.DB.modes.ZeroSumBank then core.DB.modes.ZeroSumBank = 0 end
 
@@ -94,7 +94,7 @@ function MonDKP:ZeroSumBank_Create()
 	f:SetSize(325, 350);
 	f:SetBackdrop( {
 		bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
-		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3,  
+		edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3,  
 		insets = { left = 0, right = 0, top = 0, bottom = 0 }
 	});
 	f:SetBackdropColor(0,0,0,0.9);
@@ -109,11 +109,11 @@ function MonDKP:ZeroSumBank_Create()
 	f:Hide()
 
 	-- Close Button
-	f.closeContainer = CreateFrame("Frame", "MonDKPZeroSumBankWindowCloseButtonContainer", f)
+	f.closeContainer = CreateFrame("Frame", "CommDKPZeroSumBankWindowCloseButtonContainer", f)
 	f.closeContainer:SetPoint("CENTER", f, "TOPRIGHT", -4, 0)
 	f.closeContainer:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
-		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
+		edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
 	});
 	f.closeContainer:SetBackdropColor(0,0,0,0.9)
 	f.closeContainer:SetBackdropBorderColor(1,1,1,0.2)
@@ -123,17 +123,17 @@ function MonDKP:ZeroSumBank_Create()
 	f.closeBtn:SetPoint("CENTER", f.closeContainer, "TOPRIGHT", -14, -14)
 
 	f.BankHeader = f:CreateFontString(nil, "OVERLAY")
-	f.BankHeader:SetFontObject("MonDKPLargeLeft");
+	f.BankHeader:SetFontObject("CommDKPLargeLeft");
 	f.BankHeader:SetScale(1)
 	f.BankHeader:SetPoint("TOPLEFT", f, "TOPLEFT", 10, -10);
 	f.BankHeader:SetText(L["ZEROSUMBANK"])
 
 	f.Boss = f:CreateFontString(nil, "OVERLAY")
-	f.Boss:SetFontObject("MonDKPSmallLeft");
+	f.Boss:SetFontObject("CommDKPSmallLeft");
 	f.Boss:SetPoint("TOPLEFT", f, "TOPLEFT", 60, -45);
 
 	f.Boss.Header = f:CreateFontString(nil, "OVERLAY")
-	f.Boss.Header:SetFontObject("MonDKPLargeRight");
+	f.Boss.Header:SetFontObject("CommDKPLargeRight");
 	f.Boss.Header:SetScale(0.7)
 	f.Boss.Header:SetPoint("RIGHT", f.Boss, "LEFT", -7, 0);
 	f.Boss.Header:SetText(L["BOSS"]..": ")
@@ -145,13 +145,13 @@ function MonDKP:ZeroSumBank_Create()
     f.Balance:SetSize(85, 28)
     f.Balance:SetBackdrop({
       bgFile   = "Textures\\white.blp", tile = true,
-      edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\slider-border", tile = true, tileSize = 1, edgeSize = 2, 
+      edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\slider-border", tile = true, tileSize = 1, edgeSize = 2, 
     });
     f.Balance:SetBackdropColor(0,0,0,0.9)
     f.Balance:SetBackdropBorderColor(1,1,1,0.4)
     f.Balance:SetMaxLetters(10)
     f.Balance:SetTextColor(1, 1, 1, 1)
-    f.Balance:SetFontObject("MonDKPSmallLeft")
+    f.Balance:SetFontObject("CommDKPSmallLeft")
     f.Balance:SetTextInsets(10, 10, 5, 5)
     f.Balance:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
       self:ClearFocus()
@@ -167,18 +167,18 @@ function MonDKP:ZeroSumBank_Create()
 	end)
 
 	f.Balance.Header = f:CreateFontString(nil, "OVERLAY")
-	f.Balance.Header:SetFontObject("MonDKPLargeRight");
+	f.Balance.Header:SetFontObject("CommDKPLargeRight");
 	f.Balance.Header:SetScale(0.7)
 	f.Balance.Header:SetPoint("RIGHT", f.Balance, "LEFT", -7, 0);
 	f.Balance.Header:SetText(L["BALANCE"]..": ")
 
-	f.Distribute = CreateFrame("Button", "MonDKPBiddingDistributeButton", f, "MonolithDKPButtonTemplate")
+	f.Distribute = CreateFrame("Button", "CommDKPBiddingDistributeButton", f, "CommunityDKPButtonTemplate")
 	f.Distribute:SetPoint("TOPRIGHT", f, "TOPRIGHT", -15, -95);
 	f.Distribute:SetSize(90, 25);
 	f.Distribute:SetText(L["DISTRIBUTEDKP"]);
 	f.Distribute:GetFontString():SetTextColor(1, 1, 1, 1)
-	f.Distribute:SetNormalFontObject("MonDKPSmallCenter");
-	f.Distribute:SetHighlightFontObject("MonDKPSmallCenter");
+	f.Distribute:SetNormalFontObject("CommDKPSmallCenter");
+	f.Distribute:SetHighlightFontObject("CommDKPSmallCenter");
 	f.Distribute:SetScript("OnClick", function (self)
 		if core.DB.modes.ZeroSumBank.balance > 0 or tonumber(f.Balance:GetText()) > 0 then
 			StaticPopupDialogs["CONFIRM_ADJUST1"] = {
@@ -195,7 +195,7 @@ function MonDKP:ZeroSumBank_Create()
 			}
 			StaticPopup_Show ("CONFIRM_ADJUST1")
 		else
-			MonDKP:Print(L["NOPOINTSTODISTRIBUTE"])
+			CommDKP:Print(L["NOPOINTSTODISTRIBUTE"])
 		end
 	end)
 	f.Distribute:SetScript("OnEnter", function(self)
@@ -214,7 +214,7 @@ function MonDKP:ZeroSumBank_Create()
 	f.IncludeStandby:SetScale(0.6);
 	f.IncludeStandby.text:SetText("  |cff5151de"..L["INCLUDESTANDBY"].."|r");
 	f.IncludeStandby.text:SetScale(1.5);
-	f.IncludeStandby.text:SetFontObject("MonDKPSmallLeft")
+	f.IncludeStandby.text:SetFontObject("CommDKPSmallLeft")
 	f.IncludeStandby:SetPoint("TOPLEFT", f.Distribute, "BOTTOMLEFT", -15, -10);
 	f.IncludeStandby:SetScript("OnClick", function(self)
 		core.DB.modes.ZeroSumStandby = self:GetChecked();
@@ -232,24 +232,24 @@ function MonDKP:ZeroSumBank_Create()
 	end)
 
 	-- Loot List Frame
-	f.LootFrame = CreateFrame("Frame", "MonDKPZeroSumBankLootListContainer", f, "ShadowOverlaySmallTemplate")
+	f.LootFrame = CreateFrame("Frame", "CommDKPZeroSumBankLootListContainer", f, "ShadowOverlaySmallTemplate")
 	f.LootFrame:SetPoint("TOPRIGHT", f.IncludeStandby, "BOTTOM", 95, -5)
 	f.LootFrame:SetSize(305, 190)
 	f.LootFrame:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
-		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
+		edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
 	});
 	f.LootFrame:SetBackdropColor(0,0,0,0.9)
 	f.LootFrame:SetBackdropBorderColor(1,1,1,1)
 
 	f.LootFrame.Header = f.LootFrame:CreateFontString(nil, "OVERLAY")
-	f.LootFrame.Header:SetFontObject("MonDKPLargeLeft");
+	f.LootFrame.Header:SetFontObject("CommDKPLargeLeft");
 	f.LootFrame.Header:SetScale(0.7)
 	f.LootFrame.Header:SetPoint("TOPLEFT", f.LootFrame, "TOPLEFT", 8, -8);
 	f.LootFrame.Header:SetText(L["LOOTBANKED"])
 
 	f.LootFrame.LootList = f.LootFrame:CreateFontString(nil, "OVERLAY")
-	f.LootFrame.LootList:SetFontObject("MonDKPNormalLeft");
+	f.LootFrame.LootList:SetFontObject("CommDKPNormalLeft");
 	f.LootFrame.LootList:SetPoint("TOPLEFT", f.LootFrame, "TOPLEFT", 8, -18);
 	f.LootFrame.LootList:SetText("")
 

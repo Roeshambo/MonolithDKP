@@ -1,6 +1,6 @@
 local _, core = ...;
 local _G = _G;
-local MonDKP = core.MonDKP;
+local CommDKP = core.CommDKP;
 local L = core.L;
 
 local function CMD_Handler(...)
@@ -13,24 +13,24 @@ local function CMD_Handler(...)
 	return cmd;
 end
 
-function MonDKP_Standby_Announce(bossName)
+function CommDKP_Standby_Announce(bossName)
 	core.StandbyActive = true; -- activates opt in
-	table.wipe(MonDKP:GetTable(MonDKP_Standby, true));
-	if MonDKP:CheckRaidLeader() then
+	table.wipe(CommDKP:GetTable(CommDKP_Standby, true));
+	if CommDKP:CheckRaidLeader() then
 		SendChatMessage(bossName..L["STANDBYOPTINBEGIN"], "GUILD") -- only raid leader announces
 	end
 	C_Timer.After(120, function ()
 		core.StandbyActive = false;  -- deactivates opt in
-		if MonDKP:CheckRaidLeader() then
+		if CommDKP:CheckRaidLeader() then
 			SendChatMessage(L["STANDBYOPTINEND"]..bossName, "GUILD") -- only raid leader announces
 			if core.DB.DKPBonus.AutoIncStandby then
-				MonDKP:AutoAward(2, core.DB.DKPBonus.BossKillBonus, core.DB.bossargs.CurrentRaidZone..": "..core.DB.bossargs.LastKilledBoss)
+				CommDKP:AutoAward(2, core.DB.DKPBonus.BossKillBonus, core.DB.bossargs.CurrentRaidZone..": "..core.DB.bossargs.LastKilledBoss)
 			end
 		end
 	end)
 end
 
-function MonDKP_Standby_Handler(text, ...)
+function CommDKP_Standby_Handler(text, ...)
 	local name = ...;
 	local cmd;
 	local response = L["ERRORPROCESSING"];
@@ -46,39 +46,39 @@ function MonDKP_Standby_Handler(text, ...)
 		if cmd and cmd:gsub("%s+", "") ~= "nil" and cmd:gsub("%s+", "") ~= "" then
 			-- if it's !standby *name*
 			cmd = cmd:gsub("%s+", "") -- removes unintended spaces from string
-			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), cmd)
-			local verify = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Standby, true), cmd)
+			local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), cmd)
+			local verify = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Standby, true), cmd)
 
 			if search and not verify then
-				table.insert(MonDKP:GetTable(MonDKP_Standby, true), MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]])
-				response = "MonolithDKP: "..cmd.." "..L["STANDBYWHISPERRESP1"]
+				table.insert(CommDKP:GetTable(CommDKP_Standby, true), CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]])
+				response = "CommunityDKP: "..cmd.." "..L["STANDBYWHISPERRESP1"]
 			elseif search and verify then
-				response = "MonolithDKP: "..cmd.." "..L["STANDBYWHISPERRESP2"]
+				response = "CommunityDKP: "..cmd.." "..L["STANDBYWHISPERRESP2"]
 			else
-				response = "MonolithDKP: "..cmd.." "..L["STANDBYWHISPERRESP3"];
+				response = "CommunityDKP: "..cmd.." "..L["STANDBYWHISPERRESP3"];
 			end
 		else
 			-- if it's just !standby
-			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), name)
-			local verify = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Standby, true), name)
+			local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
+			local verify = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Standby, true), name)
 
 			if search and not verify then
-				table.insert(MonDKP:GetTable(MonDKP_Standby, true), MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]])
-				response = "MonolithDKP: "..L["STANDBYWHISPERRESP4"]
+				table.insert(CommDKP:GetTable(CommDKP_Standby, true), CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]])
+				response = "CommunityDKP: "..L["STANDBYWHISPERRESP4"]
 			elseif search and verify then
-				response = "MonolithDKP: "..L["STANDBYWHISPERRESP5"]
+				response = "CommunityDKP: "..L["STANDBYWHISPERRESP5"]
 			else
-				response = "MonolithDKP: "..L["STANDBYWHISPERRESP6"];
+				response = "CommunityDKP: "..L["STANDBYWHISPERRESP6"];
 			end
 		end
-		if MonDKP:CheckRaidLeader() then 						 -- only raid leader responds to add.
+		if CommDKP:CheckRaidLeader() then 						 -- only raid leader responds to add.
 			SendChatMessage(response, "WHISPER", nil, name)
 		end
 	end
 
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", function(self, event, msg, ...)		-- suppresses outgoing whisper responses to limit spam
 		if core.StandbyActive and core.DB.defaults.SupressTells then
-			if strfind(msg, "MonolithDKP: ") then
+			if strfind(msg, "CommunityDKP: ") then
 				return true
 			end
 		end

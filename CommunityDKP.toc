@@ -1,0 +1,49 @@
+## Interface: 11304
+## Title: |cff9900ffCommunity|r |cff595959DKP|r
+## Author: Vapok-BloodsailBuccaneers
+## Notes: Feature-rich DKP Management Tool 
+## Version: 3.0.0
+## DefaultState: enabled
+## SavedVariables: CommDKP_DB, CommDKP_Loot, CommDKP_DKPTable, CommDKP_DKPHistory, CommDKP_MinBids, CommDKP_MaxBids, CommDKP_Whitelist, CommDKP_Standby, CommDKP_Archive
+
+
+
+Localization\Localization.en.lua
+Localization\Localization.cn.lua
+Localization\Localization.de.lua
+Localization\Localization.es.lua
+Localization\Localization.fr.lua
+Localization\Localization.kr.lua
+Localization\Localization.ru.lua
+Localization\Localization.tw.lua
+embeds.xml
+Core.lua
+Modules\Sync.lua
+Modules\comm.lua
+Modules\Standby.lua
+Modules\Bidding.lua
+CommunityDKP.lua
+Modules\AutoAward.lua
+init.lua
+Localization\Localization.lua
+Modules\LootHistory.lua
+Modules\DKPHistory.lua
+ConfigMenuTabs.lua
+Modules\Award.lua
+Modules\LootPriceTab.lua
+Modules\AdjustDKP.lua
+Modules\ManageEntries.lua
+Modules\ClassGraph.lua
+Modules\Options.lua
+TableFunctions.lua
+XMLFunctions.lua
+CommunityDKP.xml
+Modules\DKPModes.lua
+Modules\Modes\DKPModesMain.lua
+Modules\Modes\DKPModesMisc.lua
+Modules\BidInterface.lua
+Modules\exportDKP.lua
+Modules\Repair.lua
+Modules\RaidTimer.lua
+Modules\ZeroSumBank.lua
+Modules\Validate.lua

@@ -1,22 +1,22 @@
 local _, core = ...;
 local _G = _G;
-local MonDKP = core.MonDKP;
+local CommDKP = core.CommDKP;
 local L = core.L;
 
 local SelectedRow = 0;        -- sets the row that is being clicked
-local menuFrame = CreateFrame("Frame", "MonDKPDKPTableMenuFrame", UIParent, "UIDropDownMenuTemplate")
-local ConvToRaidEvent = CreateFrame("Frame", "MonDKPConvToRaidEventsFrame");
+local menuFrame = CreateFrame("Frame", "CommDKPDKPTableMenuFrame", UIParent, "UIDropDownMenuTemplate")
+local ConvToRaidEvent = CreateFrame("Frame", "CommDKPConvToRaidEventsFrame");
 local InvCount;
 local LastSelection = 0;
 
-function MonDKPSelectionCount_Update()
+function CommDKPSelectionCount_Update()
 	if #core.SelectedData == 0 then
-		MonDKP.DKPTable.counter.s:SetText("");    -- updates "Entries Shown" at bottom of DKPTable
+		CommDKP.DKPTable.counter.s:SetText("");    -- updates "Entries Shown" at bottom of DKPTable
 	else
 		if #core.SelectedData == 1 then
-			MonDKP.DKPTable.counter.s:SetText("("..#core.SelectedData.." "..L["ENTRYSELECTED"]..")");
+			CommDKP.DKPTable.counter.s:SetText("("..#core.SelectedData.." "..L["ENTRYSELECTED"]..")");
 		else
-			MonDKP.DKPTable.counter.s:SetText("("..#core.SelectedData.." "..L["ENTRIESSELECTED"]..")");
+			CommDKP.DKPTable.counter.s:SetText("("..#core.SelectedData.." "..L["ENTRIESSELECTED"]..")");
 		end
 	end
 end
@@ -32,7 +32,7 @@ local function CountDown(time)
 end
 
 function DKPTable_OnClick(self)   
-	local offset = FauxScrollFrame_GetOffset(MonDKP.DKPTable) or 0
+	local offset = FauxScrollFrame_GetOffset(CommDKP.DKPTable) or 0
 	local index, TempSearch;
 	SelectedRow = self.index
 
@@ -43,7 +43,7 @@ function DKPTable_OnClick(self)
 	if IsShiftKeyDown() then
 		if LastSelection < SelectedRow then
 			for i=LastSelection+1, SelectedRow do
-				TempSearch = MonDKP:Table_Search(core.SelectedData, core.WorkingTable[i].player);
+				TempSearch = CommDKP:Table_Search(core.SelectedData, core.WorkingTable[i].player);
 				
 				if not TempSearch then
 					tinsert(core.SelectedData, core.WorkingTable[i])
@@ -51,7 +51,7 @@ function DKPTable_OnClick(self)
 			end
 		else
 			for i=SelectedRow, LastSelection-1 do
-				TempSearch = MonDKP:Table_Search(core.SelectedData, core.WorkingTable[i].player);
+				TempSearch = CommDKP:Table_Search(core.SelectedData, core.WorkingTable[i].player);
 				
 				if not TempSearch then
 					tinsert(core.SelectedData, core.WorkingTable[i])
@@ -59,12 +59,12 @@ function DKPTable_OnClick(self)
 			end
 		end
 
-		if MonDKP.ConfigTab2.selectAll:GetChecked() then
-			MonDKP.ConfigTab2.selectAll:SetChecked(false)
+		if CommDKP.ConfigTab2.selectAll:GetChecked() then
+			CommDKP.ConfigTab2.selectAll:SetChecked(false)
 		end
 	elseif IsControlKeyDown() then
 		LastSelection = SelectedRow;
-		TempSearch = MonDKP:Table_Search(core.SelectedData, core.WorkingTable[SelectedRow].player);
+		TempSearch = CommDKP:Table_Search(core.SelectedData, core.WorkingTable[SelectedRow].player);
 		if TempSearch == false then
 			tinsert(core.SelectedData, core.WorkingTable[SelectedRow]);
 			PlaySound(808)
@@ -75,9 +75,9 @@ function DKPTable_OnClick(self)
 	else
 		LastSelection = SelectedRow;
 		for i=1, core.TableNumRows do
-			TempSearch = MonDKP:Table_Search(core.SelectedData, core.WorkingTable[SelectedRow].player);
-			if MonDKP.ConfigTab2.selectAll:GetChecked() then
-				MonDKP.ConfigTab2.selectAll:SetChecked(false)
+			TempSearch = CommDKP:Table_Search(core.SelectedData, core.WorkingTable[SelectedRow].player);
+			if CommDKP.ConfigTab2.selectAll:GetChecked() then
+				CommDKP.ConfigTab2.selectAll:SetChecked(false)
 			end
 			if (TempSearch == false) then
 				tinsert(core.SelectedData, core.WorkingTable[SelectedRow]);
@@ -89,7 +89,7 @@ function DKPTable_OnClick(self)
 	end
 
 	DKPTable_Update()
-	MonDKPSelectionCount_Update()
+	CommDKPSelectionCount_Update()
 end
 
 local function Invite_OnEvent(self, event, arg1, ...)
@@ -108,27 +108,27 @@ local function DisplayUserHistory(self, player)
 	local PlayerTable = {}
 	local c, PlayerSearch, PlayerSearch2, LifetimeSearch, RowCount, curDate;
 
-	PlayerSearch = MonDKP:TableStrFind(MonDKP:GetTable(MonDKP_DKPHistory, true), player, "players")
-	PlayerSearch2 = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Loot, true), player, "player")
-	LifetimeSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), player, "player")
+	PlayerSearch = CommDKP:TableStrFind(CommDKP:GetTable(CommDKP_DKPHistory, true), player, "players")
+	PlayerSearch2 = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Loot, true), player, "player")
+	LifetimeSearch = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), player, "player")
 
-	c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[LifetimeSearch[1][1]].class)
+	c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[LifetimeSearch[1][1]].class)
 
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
 	GameTooltip:SetText(L["RECENTHISTORYFOR"].." |cff"..c.hex..player.."|r\n", 0.25, 0.75, 0.90, 1, true);
 
 	if PlayerSearch then
 		for i=1, #PlayerSearch do
-			if not MonDKP:GetTable(MonDKP_DKPHistory, true)[PlayerSearch[i][1]].deletes and not MonDKP:GetTable(MonDKP_DKPHistory, true)[PlayerSearch[i][1]].deletedby and not MonDKP:GetTable(MonDKP_DKPHistory, true)[PlayerSearch[i][1]].hidden then
-				tinsert(PlayerTable, {reason = MonDKP:GetTable(MonDKP_DKPHistory, true)[PlayerSearch[i][1]].reason, date = MonDKP:GetTable(MonDKP_DKPHistory, true)[PlayerSearch[i][1]].date, dkp = MonDKP:GetTable(MonDKP_DKPHistory, true)[PlayerSearch[i][1]].dkp})
+			if not CommDKP:GetTable(CommDKP_DKPHistory, true)[PlayerSearch[i][1]].deletes and not CommDKP:GetTable(CommDKP_DKPHistory, true)[PlayerSearch[i][1]].deletedby and not CommDKP:GetTable(CommDKP_DKPHistory, true)[PlayerSearch[i][1]].hidden then
+				tinsert(PlayerTable, {reason = CommDKP:GetTable(CommDKP_DKPHistory, true)[PlayerSearch[i][1]].reason, date = CommDKP:GetTable(CommDKP_DKPHistory, true)[PlayerSearch[i][1]].date, dkp = CommDKP:GetTable(CommDKP_DKPHistory, true)[PlayerSearch[i][1]].dkp})
 			end
 		end
 	end
 
 	if PlayerSearch2 then
 		for i=1, #PlayerSearch2 do
-			if not MonDKP:GetTable(MonDKP_Loot, true)[PlayerSearch2[i][1]].deletes and not MonDKP:GetTable(MonDKP_Loot, true)[PlayerSearch2[i][1]].deletedby and not MonDKP:GetTable(MonDKP_Loot, true)[PlayerSearch2[i][1]].hidden then
-				tinsert(PlayerTable, {loot = MonDKP:GetTable(MonDKP_Loot, true)[PlayerSearch2[i][1]].loot, date = MonDKP:GetTable(MonDKP_Loot, true)[PlayerSearch2[i][1]].date, zone = MonDKP:GetTable(MonDKP_Loot, true)[PlayerSearch2[i][1]].zone, boss = MonDKP:GetTable(MonDKP_Loot, true)[PlayerSearch2[i][1]].boss, cost = MonDKP:GetTable(MonDKP_Loot, true)[PlayerSearch2[i][1]].cost})
+			if not CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].deletes and not CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].deletedby and not CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].hidden then
+				tinsert(PlayerTable, {loot = CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].loot, date = CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].date, zone = CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].zone, boss = CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].boss, cost = CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].cost})
 			end
 		end
 	end
@@ -154,17 +154,17 @@ local function DisplayUserHistory(self, player)
 					local decay = {strsplit(",", PlayerTable[i].dkp)}
 					GameTooltip:AddDoubleLine("  "..PlayerTable[i].reason, "|cffff0000"..decay[#decay].." DKP|r", 1.0, 0, 0);
 				elseif tonumber(PlayerTable[i].dkp) < 0 then
-					GameTooltip:AddDoubleLine("  "..PlayerTable[i].reason, "|cffff0000"..MonDKP_round(PlayerTable[i].dkp, core.DB.modes.rounding).." DKP|r", 1.0, 0, 0);
+					GameTooltip:AddDoubleLine("  "..PlayerTable[i].reason, "|cffff0000"..CommDKP_round(PlayerTable[i].dkp, core.DB.modes.rounding).." DKP|r", 1.0, 0, 0);
 				else
-					GameTooltip:AddDoubleLine("  "..PlayerTable[i].reason, "|cff00ff00"..MonDKP_round(PlayerTable[i].dkp, core.DB.modes.rounding).." DKP|r", 0, 1.0, 0);
+					GameTooltip:AddDoubleLine("  "..PlayerTable[i].reason, "|cff00ff00"..CommDKP_round(PlayerTable[i].dkp, core.DB.modes.rounding).." DKP|r", 0, 1.0, 0);
 				end
 			elseif PlayerTable[i].cost then
 				GameTooltip:AddDoubleLine("  "..PlayerTable[i].zone..": |cffff0000"..PlayerTable[i].boss.."|r", PlayerTable[i].loot.." |cffff0000("..PlayerTable[i].cost.." DKP)|r", 1.0, 1.0, 1.0);
 			end
 		end
 		GameTooltip:AddDoubleLine(" ", " ", 1.0, 1.0, 1.0);
-		GameTooltip:AddLine("  |cff00ff00"..L["LIFETIMEEARNED"]..": "..MonDKP:GetTable(MonDKP_DKPTable, true)[LifetimeSearch[1][1]].lifetime_gained.."|r", 1.0, 1.0, 1.0, true);
-		GameTooltip:AddLine("  |cffff0000"..L["LIFETIMESPENT"]..": "..MonDKP:GetTable(MonDKP_DKPTable, true)[LifetimeSearch[1][1]].lifetime_spent.."|r", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("  |cff00ff00"..L["LIFETIMEEARNED"]..": "..CommDKP:GetTable(CommDKP_DKPTable, true)[LifetimeSearch[1][1]].lifetime_gained.."|r", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("  |cffff0000"..L["LIFETIMESPENT"]..": "..CommDKP:GetTable(CommDKP_DKPTable, true)[LifetimeSearch[1][1]].lifetime_spent.."|r", 1.0, 1.0, 1.0, true);
 	else
 		GameTooltip:AddLine("No DKP Entries", 1.0, 1.0, 1.0, true);
 	end
@@ -178,15 +178,15 @@ local function EditStandbyList(row, arg1)
 			local copy = CopyTable(core.SelectedData)
 
 			for i=1, #copy do
-				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Standby, true), copy[i].player)
+				local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Standby, true), copy[i].player)
 
 				if arg1 == "add" then
 					if not search then
-						table.insert(MonDKP:GetTable(MonDKP_Standby, true), copy[i])
+						table.insert(CommDKP:GetTable(CommDKP_Standby, true), copy[i])
 					end
 				elseif arg1 == "remove" then          
 					if search then
-						table.remove(MonDKP:GetTable(MonDKP_Standby, true), search[1][1])
+						table.remove(CommDKP:GetTable(CommDKP_Standby, true), search[1][1])
 						core.SelectedData = {}
 						if core.CurView == "limited" then
 							table.remove(core.WorkingTable, search[1][1])
@@ -196,12 +196,12 @@ local function EditStandbyList(row, arg1)
 			end
 		else
 			if arg1 == "add" then
-				table.insert(MonDKP:GetTable(MonDKP_Standby, true), core.WorkingTable[row])
+				table.insert(CommDKP:GetTable(CommDKP_Standby, true), core.WorkingTable[row])
 			elseif arg1 == "remove" then
-				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Standby, true), core.WorkingTable[row].player)
+				local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Standby, true), core.WorkingTable[row].player)
 
 				if search then
-					table.remove(MonDKP:GetTable(MonDKP_Standby, true), search[1][1])
+					table.remove(CommDKP:GetTable(CommDKP_Standby, true), search[1][1])
 					core.SelectedData = {}
 					if core.CurView == "limited" then
 						table.remove(core.WorkingTable, search[1][1])
@@ -209,24 +209,24 @@ local function EditStandbyList(row, arg1)
 				end
 			end
 		end
-		MonDKP.Sync:SendData("MonDKPStand", MonDKP:GetTable(MonDKP_Standby, true))
+		CommDKP.Sync:SendData("CommDKPStand", CommDKP:GetTable(CommDKP_Standby, true))
 		DKPTable_Update()
 	else
-		table.wipe(MonDKP:GetTable(MonDKP_Standby, true))
+		table.wipe(CommDKP:GetTable(CommDKP_Standby, true))
 		core.WorkingTable = {}
 		DKPTable_Update()
-		MonDKP.Sync:SendData("MonDKPStand", MonDKP:GetTable(MonDKP_Standby, true))
+		CommDKP.Sync:SendData("CommDKPStand", CommDKP:GetTable(CommDKP_Standby, true))
 	end
 	if #core.WorkingTable == 0 then
-		core.WorkingTable = CopyTable(MonDKP:GetTable(MonDKP_DKPTable, true));
+		core.WorkingTable = CopyTable(CommDKP:GetTable(CommDKP_DKPTable, true));
 		core.CurView = "all"
-		MonDKP:FilterDKPTable(core.currentSort, "reset")
+		CommDKP:FilterDKPTable(core.currentSort, "reset")
 	end
 end
 
-function MonDKP:ViewLimited(raid, standby, raiders)
-	if #MonDKP:GetTable(MonDKP_Standby, true) == 0 and standby and not raid and not raiders then
-		MonDKP:Print(L["NOPLAYERINSTANDBY"])
+function CommDKP:ViewLimited(raid, standby, raiders)
+	if #CommDKP:GetTable(CommDKP_Standby, true) == 0 and standby and not raid and not raiders then
+		CommDKP:Print(L["NOPLAYERINSTANDBY"])
 		core.CurView = "all"
 		core.CurSubView = "all"
 	elseif raid or standby or raiders then
@@ -234,19 +234,19 @@ function MonDKP:ViewLimited(raid, standby, raiders)
 		local GroupType = "none"
 		
 		if (not IsInGroup() and not IsInRaid()) and raid then
-			MonDKP:Print(L["NOPARTYORRAID"])
-			core.WorkingTable = CopyTable(MonDKP:GetTable(MonDKP_DKPTable, true))
+			CommDKP:Print(L["NOPARTYORRAID"])
+			core.WorkingTable = CopyTable(CommDKP:GetTable(CommDKP_DKPTable, true))
 			core.CurView = "all"
 			core.CurSubView = "all"
 			for i=1, 9 do
-				MonDKP.ConfigTab1.checkBtn[i]:SetChecked(true)
+				CommDKP.ConfigTab1.checkBtn[i]:SetChecked(true)
 			end
-			MonDKP:FilterDKPTable(core.currentSort, "reset");
+			CommDKP:FilterDKPTable(core.currentSort, "reset");
 			return;
 		end
 
 		if raid then
-			for k,v in pairs(MonDKP:GetTable(MonDKP_DKPTable, true)) do
+			for k,v in pairs(CommDKP:GetTable(CommDKP_DKPTable, true)) do
 				if type(v) == "table" then
 					for i=1, 40 do
 						tempName,_,_,_,_,tempClass = GetRaidRosterInfo(i)
@@ -259,12 +259,12 @@ function MonDKP:ViewLimited(raid, standby, raiders)
 		end
 
 		if standby then
-			for i=1, #MonDKP:GetTable(MonDKP_Standby, true) do
-				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), MonDKP:GetTable(MonDKP_Standby, true)[i].player)
-				local search2 = MonDKP:Table_Search(tempTable, MonDKP:GetTable(MonDKP_Standby, true)[i].player)
+			for i=1, #CommDKP:GetTable(CommDKP_Standby, true) do
+				local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), CommDKP:GetTable(CommDKP_Standby, true)[i].player)
+				local search2 = CommDKP:Table_Search(tempTable, CommDKP:GetTable(CommDKP_Standby, true)[i].player)
 				
 				if search and not search2 then
-					table.insert(tempTable, MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]])
+					table.insert(tempTable, CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]])
 				end
 			end
 		end
@@ -276,40 +276,40 @@ function MonDKP:ViewLimited(raid, standby, raiders)
 			for i=1, guildSize do
 				name,_,rankIndex = GetGuildRosterInfo(i)
 				name = strsub(name, 1, string.find(name, "-")-1)      -- required to remove server name from player (can remove in classic if this is not an issue)
-				local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), name)
+				local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
 
 				if search then
 					local rankList = GetGuildRankList()
 
-					local match_rank = MonDKP:Table_Search(core.DB.raiders, rankList[rankIndex+1].name)
+					local match_rank = CommDKP:Table_Search(core.DB.raiders, rankList[rankIndex+1].name)
 
 					if match_rank then
-						table.insert(tempTable, MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]])
+						table.insert(tempTable, CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]])
 					end
 				end
 			end
 			if #tempTable == 0 then
-				MonDKP:Print(L["NOCORERAIDTEAM"])
+				CommDKP:Print(L["NOCORERAIDTEAM"])
 				return;
 			end
 		end
 
 		core.SelectedData = {}
 		LastSelection = 0
-		MonDKPSelectionCount_Update()
+		CommDKPSelectionCount_Update()
 		core.WorkingTable = CopyTable(tempTable)
 		table.wipe(tempTable)
 
 		core.CurView = "limited"
 		DKPTable_Update()
 	elseif core.CurView == "limited" then
-		core.WorkingTable = CopyTable(MonDKP:GetTable(MonDKP_DKPTable, true))
+		core.WorkingTable = CopyTable(CommDKP:GetTable(CommDKP_DKPTable, true))
 		core.CurView = "all"
 		core.CurSubView = "all"
 		for i=1, 9 do
-			MonDKP.ConfigTab1.checkBtn[i]:SetChecked(true)
+			CommDKP.ConfigTab1.checkBtn[i]:SetChecked(true)
 		end
-		MonDKPFilterChecks(MonDKP.ConfigTab1.checkBtn[1])
+		CommDKPFilterChecks(CommDKP.ConfigTab1.checkBtn[1])
 	end
 end
 
@@ -317,7 +317,7 @@ local function RightClickMenu(self)
 	local menu;
 	local disabled;
 
-	if #MonDKP:GetTable(MonDKP_Standby, true) < 1 then disabled = true else disabled = false end
+	if #CommDKP:GetTable(CommDKP_Standby, true) < 1 then disabled = true else disabled = false end
 
 	menu = {
 		{ text = L["MULTIPLESELECT"], isTitle = true, notCheckable = true}, --1
@@ -334,7 +334,7 @@ local function RightClickMenu(self)
 		end }, --2
 		{ text = L["SELECTALL"], notCheckable = true, func = function()
 			core.SelectedData = CopyTable(core.WorkingTable);
-			MonDKPSelectionCount_Update()
+			CommDKPSelectionCount_Update()
 			DKPTable_Update()
 		end }, --3
 		{ text = " ", notCheckable = true, disabled = true}, --4
@@ -342,32 +342,32 @@ local function RightClickMenu(self)
 		{ text = L["TABLEVIEWS"], notCheckable = true, hasArrow = true,
 				menuList = { 
 					{ text = L["VIEWRAID"], notCheckable = true, keepShownOnClick = false; func = function()
-						MonDKP:ViewLimited(true)
+						CommDKP:ViewLimited(true)
 						core.CurSubView = "raid"
-						MonDKP.ConfigTab1.checkBtn[10]:SetChecked(true);
+						CommDKP.ConfigTab1.checkBtn[10]:SetChecked(true);
 						ToggleDropDownMenu(nil, nil, menuFrame)
 					end },
 					{ text = L["VIEWSTANDBY"], notCheckable = true, func = function()
-						MonDKP:ViewLimited(false, true)
+						CommDKP:ViewLimited(false, true)
 						core.CurSubView = "standby"
 						ToggleDropDownMenu(nil, nil, menuFrame)
 					end },
 					{ text = L["VIEWRAIDSTANDBY"], notCheckable = true, func = function()
-						MonDKP:ViewLimited(true, true)
+						CommDKP:ViewLimited(true, true)
 						core.CurSubView = "raid and standby"
 						ToggleDropDownMenu(nil, nil, menuFrame)
 					end },
 					{ text = L["VIEWCORERAID"], notCheckable = true, func = function()
-						MonDKP:ViewLimited(false, false, true)
-						MonDKP:SortDKPTable("class", "Reset")
+						CommDKP:ViewLimited(false, false, true)
+						CommDKP:SortDKPTable("class", "Reset")
 						core.CurSubView = "core"
 						ToggleDropDownMenu(nil, nil, menuFrame)
 					end },
 					{ text = L["VIEWALL"], notCheckable = true, func = function()
-						MonDKP.ConfigTab1.checkBtn[10]:SetChecked(false);
-						MonDKP.ConfigTab1.checkBtn[11]:SetChecked(false);
-						MonDKP.ConfigTab1.checkBtn[12]:SetChecked(false);
-						MonDKP:ViewLimited()
+						CommDKP.ConfigTab1.checkBtn[10]:SetChecked(false);
+						CommDKP.ConfigTab1.checkBtn[11]:SetChecked(false);
+						CommDKP.ConfigTab1.checkBtn[12]:SetChecked(false);
+						CommDKP:ViewLimited()
 						ToggleDropDownMenu(nil, nil, menuFrame, nil, nil, nil, nil, nil)
 					end },
 			}
@@ -399,9 +399,9 @@ local function RightClickMenu(self)
 		{ text = " ", notCheckable = true, disabled = true}, --12
 		{ text = L["RESETPREVIOUS"], notCheckable = true, func = function()
 			for i=1, #core.SelectedData do
-				MonDKP:reset_prev_dkp(core.SelectedData[i].player)
+				CommDKP:reset_prev_dkp(core.SelectedData[i].player)
 			end
-			MonDKP:FilterDKPTable(core.currentSort, "reset")
+			CommDKP:FilterDKPTable(core.currentSort, "reset")
 		end 
 		}, --13
 		{ text = L["VALIDATETABLES"], notCheckable = true, disabled = not core.IsOfficer, func = function()
@@ -410,7 +410,7 @@ local function RightClickMenu(self)
 				button1 = L["YES"],
 				button2 = L["NO"],
 				OnAccept = function()
-					MonDKP:ValidateLootTable()
+					CommDKP:ValidateLootTable()
 				end,
 				timeout = 0,
 				whileDead = true,
@@ -428,7 +428,7 @@ local function RightClickMenu(self)
 			InviteUnit(core.WorkingTable[self.index].player)
 		end }
 
-		local StandbySearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Standby, true), core.WorkingTable[self.index].player)
+		local StandbySearch = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Standby, true), core.WorkingTable[self.index].player)
 		
 		if StandbySearch then
 			menu[10].menuList = {
@@ -456,59 +456,59 @@ local function RightClickMenu(self)
 	end
 
 	for i=1, #core.classes do       -- create Filter selections in context menu
-		menu[7].menuList[i] = { text = core.LocalClass[core.classes[i]], isNotRadio = true, keepShownOnClick = true, checked = MonDKP.ConfigTab1.checkBtn[i]:GetChecked(), func = function()
-			MonDKP.ConfigTab1.checkBtn[i]:SetChecked(not MonDKP.ConfigTab1.checkBtn[i]:GetChecked())
-			MonDKPFilterChecks(MonDKP.ConfigTab1.checkBtn[9])
+		menu[7].menuList[i] = { text = core.LocalClass[core.classes[i]], isNotRadio = true, keepShownOnClick = true, checked = CommDKP.ConfigTab1.checkBtn[i]:GetChecked(), func = function()
+			CommDKP.ConfigTab1.checkBtn[i]:SetChecked(not CommDKP.ConfigTab1.checkBtn[i]:GetChecked())
+			CommDKPFilterChecks(CommDKP.ConfigTab1.checkBtn[9])
 			for j=1, #core.classes+1 do
-				menu[7].menuList[j].checked = MonDKP.ConfigTab1.checkBtn[j]:GetChecked()
+				menu[7].menuList[j].checked = CommDKP.ConfigTab1.checkBtn[j]:GetChecked()
 			end
 		end }
 	end
 
 	menu[7].menuList[#core.classes+1] = { text = L["ALLCLASSES"], isNotRadio = true, keepShownOnClick = false, notCheckable = true, func = function()
-		MonDKP.ConfigTab1.checkBtn[9]:SetChecked(true)
+		CommDKP.ConfigTab1.checkBtn[9]:SetChecked(true)
 		
 		for i=1, #core.classes do
-			MonDKP.ConfigTab1.checkBtn[i]:SetChecked(true)
+			CommDKP.ConfigTab1.checkBtn[i]:SetChecked(true)
 			menu[7].menuList[i].checked = true
 		end
 
-		MonDKPFilterChecks(MonDKP.ConfigTab1.checkBtn[9])
+		CommDKPFilterChecks(CommDKP.ConfigTab1.checkBtn[9])
 		if UIDROPDOWNMENU_OPEN_MENU then
 			ToggleDropDownMenu(nil, nil, menuFrame)
 		end
 	end }
 
-	menu[7].menuList[#core.classes+2] = { text = L["ONLYPARTYRAID"], isNotRadio = true, keepShownOnClick = false, disabled = not IsInRaid(), checked = MonDKP.ConfigTab1.checkBtn[10]:GetChecked(), func = function()
-		MonDKP.ConfigTab1.checkBtn[10]:SetChecked(not MonDKP.ConfigTab1.checkBtn[10]:GetChecked())
-		MonDKP.ConfigTab1.checkBtn[12]:SetChecked(false)
+	menu[7].menuList[#core.classes+2] = { text = L["ONLYPARTYRAID"], isNotRadio = true, keepShownOnClick = false, disabled = not IsInRaid(), checked = CommDKP.ConfigTab1.checkBtn[10]:GetChecked(), func = function()
+		CommDKP.ConfigTab1.checkBtn[10]:SetChecked(not CommDKP.ConfigTab1.checkBtn[10]:GetChecked())
+		CommDKP.ConfigTab1.checkBtn[12]:SetChecked(false)
 		menu[7].menuList[#core.classes+4].checked = false
 
-		MonDKPFilterChecks(MonDKP.ConfigTab1.checkBtn[10])
+		CommDKPFilterChecks(CommDKP.ConfigTab1.checkBtn[10])
 		if UIDROPDOWNMENU_OPEN_MENU then
 			ToggleDropDownMenu(nil, nil, menuFrame)
 		end
 	end }
 
-	menu[7].menuList[#core.classes+3] = { text = L["ONLINE"], isNotRadio = true, keepShownOnClick = true, checked = MonDKP.ConfigTab1.checkBtn[11]:GetChecked(), func = function()
-		MonDKP.ConfigTab1.checkBtn[11]:SetChecked(not MonDKP.ConfigTab1.checkBtn[11]:GetChecked())
+	menu[7].menuList[#core.classes+3] = { text = L["ONLINE"], isNotRadio = true, keepShownOnClick = true, checked = CommDKP.ConfigTab1.checkBtn[11]:GetChecked(), func = function()
+		CommDKP.ConfigTab1.checkBtn[11]:SetChecked(not CommDKP.ConfigTab1.checkBtn[11]:GetChecked())
 		core.CurView = "limited"
 
-		MonDKPFilterChecks(MonDKP.ConfigTab1.checkBtn[11])
+		CommDKPFilterChecks(CommDKP.ConfigTab1.checkBtn[11])
 	end }
 
-	menu[7].menuList[#core.classes+4] = { text = L["NOTINRAIDFILTER"], isNotRadio = true, keepShownOnClick = false, disabled = not IsInRaid(), checked = MonDKP.ConfigTab1.checkBtn[12]:GetChecked(), func = function()
-		MonDKP.ConfigTab1.checkBtn[12]:SetChecked(not MonDKP.ConfigTab1.checkBtn[12]:GetChecked())
-		MonDKP.ConfigTab1.checkBtn[10]:SetChecked(false)
+	menu[7].menuList[#core.classes+4] = { text = L["NOTINRAIDFILTER"], isNotRadio = true, keepShownOnClick = false, disabled = not IsInRaid(), checked = CommDKP.ConfigTab1.checkBtn[12]:GetChecked(), func = function()
+		CommDKP.ConfigTab1.checkBtn[12]:SetChecked(not CommDKP.ConfigTab1.checkBtn[12]:GetChecked())
+		CommDKP.ConfigTab1.checkBtn[10]:SetChecked(false)
 		menu[7].menuList[#core.classes+2].checked = false
 
-		MonDKPFilterChecks(MonDKP.ConfigTab1.checkBtn[12])
+		CommDKPFilterChecks(CommDKP.ConfigTab1.checkBtn[12])
 		if UIDROPDOWNMENU_OPEN_MENU then
 			ToggleDropDownMenu(nil, nil, menuFrame)
 		end
 	end }
 
-	if #MonDKP:GetTable(MonDKP_Standby, true) == 0 then
+	if #CommDKP:GetTable(CommDKP_Standby, true) == 0 then
 		menu[6].menuList[2] = { text = L["VIEWSTANDBY"], notCheckable = true, disabled = true, }
 		menu[6].menuList[3] = { text = L["VIEWRAIDSTANDBY"], notCheckable = true, disabled = true}
 	end
@@ -522,7 +522,7 @@ local function RightClickMenu(self)
 	for i=1, #rankList do
 		local checked;
 
-		if MonDKP:Table_Search(core.DB.raiders, rankList[i].name) then
+		if CommDKP:Table_Search(core.DB.raiders, rankList[i].name) then
 			checked = true;
 		else
 			checked = false;
@@ -532,7 +532,7 @@ local function RightClickMenu(self)
 			if menu[11].menuList[i].checked then
 				menu[11].menuList[i].checked = false;
 
-				local rank_search = MonDKP:Table_Search(core.DB.raiders, rankList[i].name)
+				local rank_search = CommDKP:Table_Search(core.DB.raiders, rankList[i].name)
 
 				if rank_search then
 					table.remove(core.DB.raiders, rank_search[1])
@@ -558,15 +558,15 @@ local function RightClickMenu(self)
 	for i=1, guildSize do
 		name,_,rankIndex = GetGuildRosterInfo(i)
 		name = strsub(name, 1, string.find(name, "-")-1)      -- required to remove server name from player (can remove in classic if this is not an issue)
-		local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), name)
+		local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
 
 		if search then
 			local rankList = GetGuildRankList()
 
-			local match_rank = MonDKP:Table_Search(core.DB.raiders, rankList[rankIndex+1].name)
+			local match_rank = CommDKP:Table_Search(core.DB.raiders, rankList[rankIndex+1].name)
 
 			if match_rank then
-				table.insert(tempTable, MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]])
+				table.insert(tempTable, CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]])
 			end
 		end
 	end
@@ -592,31 +592,31 @@ local function CreateRow(parent, id) -- Create 3 buttons for each row in the lis
 		local f = CreateFrame("Button", "$parentLine"..id, parent)
 		f.DKPInfo = {}
 		f:SetSize(core.TableWidth, core.TableRowHeight)
-		f:SetHighlightTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\ListBox-Highlight");
+		f:SetHighlightTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\ListBox-Highlight");
 		f:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
 		f:GetNormalTexture():SetAlpha(0.2)
 		f:SetScript("OnClick", DKPTable_OnClick)
 		for i=1, 3 do
 			f.DKPInfo[i] = f:CreateFontString(nil, "OVERLAY");
-			f.DKPInfo[i]:SetFontObject("MonDKPSmallOutlineLeft")
+			f.DKPInfo[i]:SetFontObject("CommDKPSmallOutlineLeft")
 			f.DKPInfo[i]:SetTextColor(1, 1, 1, 1);
 			if (i==1) then
 				f.DKPInfo[i].rowCounter = f:CreateFontString(nil, "OVERLAY");
-				f.DKPInfo[i].rowCounter:SetFontObject("MonDKPSmallOutlineLeft")
+				f.DKPInfo[i].rowCounter:SetFontObject("CommDKPSmallOutlineLeft")
 				f.DKPInfo[i].rowCounter:SetTextColor(1, 1, 1, 0.3);
 				f.DKPInfo[i].rowCounter:SetPoint("LEFT", f, "LEFT", 3, -1);
 			end
 			if (i==3) then
-				f.DKPInfo[i]:SetFontObject("MonDKPSmallLeft")
+				f.DKPInfo[i]:SetFontObject("CommDKPSmallLeft")
 				f.DKPInfo[i].adjusted = f:CreateFontString(nil, "OVERLAY");
-				f.DKPInfo[i].adjusted:SetFontObject("MonDKPSmallOutlineLeft")
+				f.DKPInfo[i].adjusted:SetFontObject("CommDKPSmallOutlineLeft")
 				f.DKPInfo[i].adjusted:SetScale("0.8")
 				f.DKPInfo[i].adjusted:SetTextColor(1, 1, 1, 0.6);
 				f.DKPInfo[i].adjusted:SetPoint("LEFT", f.DKPInfo[3], "RIGHT", 3, -1);
 
 				if core.DB.modes.mode == "Roll Based Bidding" then
 					f.DKPInfo[i].rollrange = f:CreateFontString(nil, "OVERLAY");
-					f.DKPInfo[i].rollrange:SetFontObject("MonDKPSmallOutlineLeft")
+					f.DKPInfo[i].rollrange:SetFontObject("CommDKPSmallOutlineLeft")
 					f.DKPInfo[i].rollrange:SetScale("0.8")
 					f.DKPInfo[i].rollrange:SetTextColor(1, 1, 1, 0.6);
 					f.DKPInfo[i].rollrange:SetPoint("CENTER", 115, -1);
@@ -643,7 +643,7 @@ local function CreateRow(parent, id) -- Create 3 buttons for each row in the lis
 end
 
 function DKPTable_Update()
-	if not MonDKP.UIConfig:IsShown() then     -- does not update list if DKP window is closed. Gets done when /dkp is used anyway.
+	if not CommDKP.UIConfig:IsShown() then     -- does not update list if DKP window is closed. Gets done when /dkp is used anyway.
 		return;
 	end
 
@@ -651,10 +651,10 @@ function DKPTable_Update()
 		local tempTable = {}
 
 		for i=1, #core.WorkingTable do
-			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), core.WorkingTable[i].player)
+			local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), core.WorkingTable[i].player)
 
 			if search then
-				table.insert(tempTable, MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]])
+				table.insert(tempTable, CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]])
 			end
 		end
 		core.WorkingTable = CopyTable(tempTable)
@@ -663,32 +663,32 @@ function DKPTable_Update()
 
 	local numOptions = #core.WorkingTable
 	local index, row, c
-	local offset = FauxScrollFrame_GetOffset(MonDKP.DKPTable) or 0
+	local offset = FauxScrollFrame_GetOffset(CommDKP.DKPTable) or 0
 	local rank, rankIndex;
 
 	for i=1, core.TableNumRows do     -- hide all rows before displaying them 1 by 1 as they show values
-		row = MonDKP.DKPTable.Rows[i];
+		row = CommDKP.DKPTable.Rows[i];
 		row:Hide();
 	end
-	--[[for i=1, #MonDKP:GetTable(MonDKP_DKPTable, true) do
-		if MonDKP:GetTable(MonDKP_DKPTable, true)[i].dkp < 0 then MonDKP:GetTable(MonDKP_DKPTable, true)[i].dkp = 0 end  -- cleans negative numbers from SavedVariables
+	--[[for i=1, #CommDKP:GetTable(CommDKP_DKPTable, true) do
+		if CommDKP:GetTable(CommDKP_DKPTable, true)[i].dkp < 0 then CommDKP:GetTable(CommDKP_DKPTable, true)[i].dkp = 0 end  -- cleans negative numbers from SavedVariables
 	end--]]
 	for i=1, core.TableNumRows do     -- show rows if they have values
-		row = MonDKP.DKPTable.Rows[i]
+		row = CommDKP.DKPTable.Rows[i]
 		index = offset + i
 		if core.WorkingTable[index] then
 			--if (tonumber(core.WorkingTable[index].dkp) < 0) then core.WorkingTable[index].dkp = 0 end           -- shows 0 if negative DKP
 
-			c = MonDKP:GetCColors(core.WorkingTable[index].class);
+			c = CommDKP:GetCColors(core.WorkingTable[index].class);
 			row:Show()
 			row.index = index
 			local CurPlayer = core.WorkingTable[index].player;
 			
 			if core.CenterSort == "rank" then
-				local SetRank = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), core.WorkingTable[index].player, "player")
-				rank, rankIndex = MonDKP:GetGuildRank(core.WorkingTable[index].player)
-				MonDKP:GetTable(MonDKP_DKPTable, true)[SetRank[1][1]].rank = rankIndex or 20;
-				MonDKP:GetTable(MonDKP_DKPTable, true)[SetRank[1][1]].rankName = rank or "None";
+				local SetRank = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), core.WorkingTable[index].player, "player")
+				rank, rankIndex = CommDKP:GetGuildRank(core.WorkingTable[index].player)
+				CommDKP:GetTable(CommDKP_DKPTable, true)[SetRank[1][1]].rank = rankIndex or 20;
+				CommDKP:GetTable(CommDKP_DKPTable, true)[SetRank[1][1]].rankName = rank or "None";
 			end
 			row.DKPInfo[1]:SetText(core.WorkingTable[index].player)
 			row.DKPInfo[1].rowCounter:SetText(index)
@@ -703,30 +703,30 @@ function DKPTable_Update()
 					row.DKPInfo[2]:SetText(core.WorkingTable[index].spec)
 				else
 					row.DKPInfo[2]:SetText(L["NOSPECREPORTED"])
-					local SetSpec = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), core.WorkingTable[index].player, "player")		-- writes "No Spec Reported" to players profile if spec field doesn't exist
-					MonDKP:GetTable(MonDKP_DKPTable, true)[SetSpec[1][1]].spec = L["NOSPECREPORTED"]
+					local SetSpec = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), core.WorkingTable[index].player, "player")		-- writes "No Spec Reported" to players profile if spec field doesn't exist
+					CommDKP:GetTable(CommDKP_DKPTable, true)[SetSpec[1][1]].spec = L["NOSPECREPORTED"]
 				end
 			elseif core.CenterSort == "role" then
 				if core.WorkingTable[index].role then
 					row.DKPInfo[2]:SetText(core.WorkingTable[index].role)
 				else
 					row.DKPInfo[2]:SetText(L["NOROLEDETECTED"])
-					local SetRole = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), core.WorkingTable[index].player, "player")		-- writes "No Role Detected" to players profile if role field doesn't exist
-					MonDKP:GetTable(MonDKP_DKPTable, true)[SetRole[1][1]].role = L["NOROLEDETECTED"]
+					local SetRole = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), core.WorkingTable[index].player, "player")		-- writes "No Role Detected" to players profile if role field doesn't exist
+					CommDKP:GetTable(CommDKP_DKPTable, true)[SetRole[1][1]].role = L["NOROLEDETECTED"]
 				end
 			end
 			
-			row.DKPInfo[3]:SetText(MonDKP_round(core.WorkingTable[index].dkp, core.DB.modes.rounding))
+			row.DKPInfo[3]:SetText(CommDKP_round(core.WorkingTable[index].dkp, core.DB.modes.rounding))
 			local CheckAdjusted = core.WorkingTable[index].dkp - core.WorkingTable[index].previous_dkp;
 			if(CheckAdjusted > 0) then 
 				CheckAdjusted = strjoin("", "+", CheckAdjusted) 
-				row.DKPInfo[3].adjustedArrow:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\green-up-arrow.png");
+				row.DKPInfo[3].adjustedArrow:SetTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\green-up-arrow.png");
 			elseif (CheckAdjusted < 0) then
-				row.DKPInfo[3].adjustedArrow:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\red-down-arrow.png");
+				row.DKPInfo[3].adjustedArrow:SetTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\red-down-arrow.png");
 			else
 				row.DKPInfo[3].adjustedArrow:SetTexture(nil);
 			end        
-			row.DKPInfo[3].adjusted:SetText("("..MonDKP_round(CheckAdjusted, core.DB.modes.rounding)..")");
+			row.DKPInfo[3].adjusted:SetText("("..CommDKP_round(CheckAdjusted, core.DB.modes.rounding)..")");
 
 			if core.DB.modes.mode == "Roll Based Bidding" then
 				local minimum;
@@ -760,23 +760,23 @@ function DKPTable_Update()
 				row.DKPInfo[3].rollrange:SetText("")
 			end
 
-			local a = MonDKP:Table_Search(core.SelectedData, core.WorkingTable[index].player);  -- searches selectedData for the player name indexed.
+			local a = CommDKP:Table_Search(core.SelectedData, core.WorkingTable[index].player);  -- searches selectedData for the player name indexed.
 			if not a then
-				MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
-				MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.2)
+				CommDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
+				CommDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.2)
 			else
-				MonDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\ListBox-Highlight")
-				MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
+				CommDKP.DKPTable.Rows[i]:SetNormalTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\ListBox-Highlight")
+				CommDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.7)
 			end
 			if core.WorkingTable[index].player == UnitName("player") then
 				row.DKPInfo[2]:SetText("|cff00ff00"..row.DKPInfo[2]:GetText().."|r")
-				row.DKPInfo[3]:SetText("|cff00ff00"..MonDKP_round(core.WorkingTable[index].dkp, core.DB.modes.rounding).."|r")
-				MonDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.8)
+				row.DKPInfo[3]:SetText("|cff00ff00"..CommDKP_round(core.WorkingTable[index].dkp, core.DB.modes.rounding).."|r")
+				CommDKP.DKPTable.Rows[i]:GetNormalTexture():SetAlpha(0.8)
 			end
-			MonDKP.DKPTable.Rows[i]:SetScript("OnEnter", function(self)
+			CommDKP.DKPTable.Rows[i]:SetScript("OnEnter", function(self)
 				DisplayUserHistory(self, CurPlayer)
 			end)
-			MonDKP.DKPTable.Rows[i]:SetScript("OnLeave", function()
+			CommDKP.DKPTable.Rows[i]:SetScript("OnLeave", function()
 				GameTooltip:Hide()
 			end)
 		else
@@ -785,82 +785,82 @@ function DKPTable_Update()
 	end
 
 	if #core.WorkingTable == 0 then  		-- Displays "No Entries Returned" if the result of filter combinations yields an empty table
-		--MonDKP_RestoreFilterOptions()
-		MonDKP.DKPTable.Rows[1].DKPInfo[1].rowCounter:SetText("")
-		MonDKP.DKPTable.Rows[1].DKPInfo[1]:SetText("")
-		MonDKP.DKPTable.Rows[1].DKPInfo[2]:SetText("|cffff6060"..L["NOENTRIESRETURNED"].."|r")
-		MonDKP.DKPTable.Rows[1].DKPInfo[3]:SetText("")
-		MonDKP.DKPTable.Rows[1].DKPInfo[3].adjusted:SetText("")
-		MonDKP.DKPTable.Rows[1].DKPInfo[3].adjustedArrow:SetTexture(nil)
-		if MonDKP.DKPTable.Rows[1].DKPInfo[3].rollrange then MonDKP.DKPTable.Rows[1].DKPInfo[3].rollrange:SetText("") end
-		MonDKP.DKPTable.Rows[1]:SetScript("OnEnter", nil)
-		MonDKP.DKPTable.Rows[1]:SetScript("OnMouseDown", function()
-			MonDKP_RestoreFilterOptions() 		-- restores filter selections to default on click.
+		--CommDKP_RestoreFilterOptions()
+		CommDKP.DKPTable.Rows[1].DKPInfo[1].rowCounter:SetText("")
+		CommDKP.DKPTable.Rows[1].DKPInfo[1]:SetText("")
+		CommDKP.DKPTable.Rows[1].DKPInfo[2]:SetText("|cffff6060"..L["NOENTRIESRETURNED"].."|r")
+		CommDKP.DKPTable.Rows[1].DKPInfo[3]:SetText("")
+		CommDKP.DKPTable.Rows[1].DKPInfo[3].adjusted:SetText("")
+		CommDKP.DKPTable.Rows[1].DKPInfo[3].adjustedArrow:SetTexture(nil)
+		if CommDKP.DKPTable.Rows[1].DKPInfo[3].rollrange then CommDKP.DKPTable.Rows[1].DKPInfo[3].rollrange:SetText("") end
+		CommDKP.DKPTable.Rows[1]:SetScript("OnEnter", nil)
+		CommDKP.DKPTable.Rows[1]:SetScript("OnMouseDown", function()
+			CommDKP_RestoreFilterOptions() 		-- restores filter selections to default on click.
 		end)
-		MonDKP.DKPTable.Rows[1]:SetScript("OnClick", function()
-			MonDKP_RestoreFilterOptions() 		-- restores filter selections to default on click.
+		CommDKP.DKPTable.Rows[1]:SetScript("OnClick", function()
+			CommDKP_RestoreFilterOptions() 		-- restores filter selections to default on click.
 		end)
-		MonDKP.DKPTable.Rows[1]:Show()
+		CommDKP.DKPTable.Rows[1]:Show()
 	else
-		MonDKP.DKPTable.Rows[1]:SetScript("OnMouseDown", function(self, button)
+		CommDKP.DKPTable.Rows[1]:SetScript("OnMouseDown", function(self, button)
 			if button == "RightButton" then
 				RightClickMenu(self)
 			end
 		end)
-		MonDKP.DKPTable.Rows[1]:SetScript("OnClick", DKPTable_OnClick)
+		CommDKP.DKPTable.Rows[1]:SetScript("OnClick", DKPTable_OnClick)
 	end
 
-	MonDKP.DKPTable.counter.t:SetText(#core.WorkingTable.." "..L["ENTRIESSHOWN"]);    -- updates "Entries Shown" at bottom of DKPTable
-	MonDKP.DKPTable.counter.t:SetFontObject("MonDKPSmallLeft")
+	CommDKP.DKPTable.counter.t:SetText(#core.WorkingTable.." "..L["ENTRIESSHOWN"]);    -- updates "Entries Shown" at bottom of DKPTable
+	CommDKP.DKPTable.counter.t:SetFontObject("CommDKPSmallLeft")
 
-	FauxScrollFrame_Update(MonDKP.DKPTable, numOptions, core.TableNumRows, core.TableRowHeight, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding
+	FauxScrollFrame_Update(CommDKP.DKPTable, numOptions, core.TableNumRows, core.TableRowHeight, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding
 end
 
-function MonDKP:DKPTable_Create()
-	MonDKP.DKPTable = CreateFrame("ScrollFrame", "MonDKPDisplayScrollFrame", MonDKP.UIConfig, "FauxScrollFrameTemplate")
-	MonDKP.DKPTable:SetSize(core.TableWidth, core.TableRowHeight*core.TableNumRows+3)
-	MonDKP.DKPTable:SetPoint("LEFT", 20, 3)
-	MonDKP.DKPTable:SetBackdrop( {
+function CommDKP:DKPTable_Create()
+	CommDKP.DKPTable = CreateFrame("ScrollFrame", "CommDKPDisplayScrollFrame", CommDKP.UIConfig, "FauxScrollFrameTemplate")
+	CommDKP.DKPTable:SetSize(core.TableWidth, core.TableRowHeight*core.TableNumRows+3)
+	CommDKP.DKPTable:SetPoint("LEFT", 20, 3)
+	CommDKP.DKPTable:SetBackdrop( {
 		bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
-		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,
+		edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,
 		insets = { left = 0, right = 0, top = 0, bottom = 0 }
 	});
-	MonDKP.DKPTable:SetBackdropColor(0,0,0,0.4);
-	MonDKP.DKPTable:SetBackdropBorderColor(1,1,1,0.5)
-	MonDKP.DKPTable:SetClipsChildren(false);
+	CommDKP.DKPTable:SetBackdropColor(0,0,0,0.4);
+	CommDKP.DKPTable:SetBackdropBorderColor(1,1,1,0.5)
+	CommDKP.DKPTable:SetClipsChildren(false);
 
-	MonDKP.DKPTable.ScrollBar = FauxScrollFrame_GetChildFrames(MonDKP.DKPTable)
-	MonDKP.DKPTable.Rows = {}
+	CommDKP.DKPTable.ScrollBar = FauxScrollFrame_GetChildFrames(CommDKP.DKPTable)
+	CommDKP.DKPTable.Rows = {}
 	for i=1, core.TableNumRows do
-		MonDKP.DKPTable.Rows[i] = CreateRow(MonDKP.DKPTable, i)
+		CommDKP.DKPTable.Rows[i] = CreateRow(CommDKP.DKPTable, i)
 		if i==1 then
-			MonDKP.DKPTable.Rows[i]:SetPoint("TOPLEFT", MonDKP.DKPTable, "TOPLEFT", 0, -2)
+			CommDKP.DKPTable.Rows[i]:SetPoint("TOPLEFT", CommDKP.DKPTable, "TOPLEFT", 0, -2)
 		else  
-			MonDKP.DKPTable.Rows[i]:SetPoint("TOPLEFT", MonDKP.DKPTable.Rows[i-1], "BOTTOMLEFT")
+			CommDKP.DKPTable.Rows[i]:SetPoint("TOPLEFT", CommDKP.DKPTable.Rows[i-1], "BOTTOMLEFT")
 		end
 	end
-	MonDKP.DKPTable:SetScript("OnVerticalScroll", function(self, offset)
+	CommDKP.DKPTable:SetScript("OnVerticalScroll", function(self, offset)
 		FauxScrollFrame_OnVerticalScroll(self, offset, core.TableRowHeight, DKPTable_Update)
 	end)
 	
-	MonDKP.DKPTable.SeedVerify = CreateFrame("Frame", nil, MonDKP.DKPTable);
-	MonDKP.DKPTable.SeedVerify:SetPoint("TOPLEFT", MonDKP.DKPTable, "BOTTOMLEFT", 0, -15);
-	MonDKP.DKPTable.SeedVerify:SetSize(18, 18);
-	MonDKP.DKPTable.SeedVerify:SetScript("OnLeave", function(self)
+	CommDKP.DKPTable.SeedVerify = CreateFrame("Frame", nil, CommDKP.DKPTable);
+	CommDKP.DKPTable.SeedVerify:SetPoint("TOPLEFT", CommDKP.DKPTable, "BOTTOMLEFT", 0, -15);
+	CommDKP.DKPTable.SeedVerify:SetSize(18, 18);
+	CommDKP.DKPTable.SeedVerify:SetScript("OnLeave", function(self)
 		GameTooltip:Hide()
 	end)
-	MonDKP.DKPTable.SeedVerify:SetScript("OnMouseDown", function()  -- broadcast button
+	CommDKP.DKPTable.SeedVerify:SetScript("OnMouseDown", function()  -- broadcast button
 		if core.IsOfficer then	
 			local seed
-			if #MonDKP:GetTable(MonDKP_DKPHistory, true) > 0 and #MonDKP:GetTable(MonDKP_Loot, true) > 0 then seed = MonDKP:GetTable(MonDKP_DKPHistory, true)[1].index..","..MonDKP:GetTable(MonDKP_Loot, true)[1].index else seed = "start" end
-			MonDKP.Sync:SendData("MonDKPQuery", seed) 	-- requests role and spec data and sets current seeds
-			MonDKP_BroadcastFull_Init() 	-- launches Broadcast UI
+			if #CommDKP:GetTable(CommDKP_DKPHistory, true) > 0 and #CommDKP:GetTable(CommDKP_Loot, true) > 0 then seed = CommDKP:GetTable(CommDKP_DKPHistory, true)[1].index..","..CommDKP:GetTable(CommDKP_Loot, true)[1].index else seed = "start" end
+			CommDKP.Sync:SendData("CommDKPQuery", seed) 	-- requests role and spec data and sets current seeds
+			CommDKP_BroadcastFull_Init() 	-- launches Broadcast UI
 		end
 	end)
 
-	MonDKP.DKPTable.SeedVerifyIcon = MonDKP.DKPTable:CreateTexture(nil, "OVERLAY", nil)             -- seed verify (bottom left) indicator
-	MonDKP.DKPTable.SeedVerifyIcon:SetPoint("TOPLEFT", MonDKP.DKPTable.SeedVerify, "TOPLEFT", 0, 0);
-	MonDKP.DKPTable.SeedVerifyIcon:SetColorTexture(0, 0, 0, 1)
-	MonDKP.DKPTable.SeedVerifyIcon:SetSize(18, 18);
-	MonDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\out-of-date")
+	CommDKP.DKPTable.SeedVerifyIcon = CommDKP.DKPTable:CreateTexture(nil, "OVERLAY", nil)             -- seed verify (bottom left) indicator
+	CommDKP.DKPTable.SeedVerifyIcon:SetPoint("TOPLEFT", CommDKP.DKPTable.SeedVerify, "TOPLEFT", 0, 0);
+	CommDKP.DKPTable.SeedVerifyIcon:SetColorTexture(0, 0, 0, 1)
+	CommDKP.DKPTable.SeedVerifyIcon:SetSize(18, 18);
+	CommDKP.DKPTable.SeedVerifyIcon:SetTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\out-of-date")
 end

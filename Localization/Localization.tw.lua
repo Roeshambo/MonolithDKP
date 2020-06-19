@@ -1,6 +1,6 @@
 if GetLocale() == "zhTW" then
   local _, core = ...;
-  local MonDKP = core.MonDKP;
+  local CommDKP = core.CommDKP;
   
   core.BossList = {
     MC = {
@@ -420,10 +420,10 @@ if GetLocale() == "zhTW" then
     MAXIMUMROLLTTWARN = "如果未選中“使用百分比”，則最大DKP僅保留空白。如果選中，請使用100％。",
     MELEEDPS = "近戰DPS",
     MIGRATE = "遷移",
-    MIGRATEINST1 = [=[|cffff0000IMPORTANT!!|r：在繼續之前備份您保存的變量文件。 2.0版附帶了一個全新的索引廣播系統。這需要使用新值來遷移當前表。此遷移是一次性的過程，只能由一名人員執行。選擇具有最準確數據的人員進行遷移。所有其他人員將被阻止，並將刪除其數據，以接受來自所選人員的新數據廣播。這是為了防止重複數據。一旦所有人員都收到了新數據，您就可以從行會負責人公開說明中刪除{MonDKP=OFFICER_NAME}標籤。至關重要的是，只有一名管理人員執行遷移，否則您將有重複的數據並且您的表將被損壞（解決此問題的唯一方法是讓所有損壞了表的人員註銷並同時刪除其保存的變量文件，否則登錄後，您將再次收到損壞的數據）。此外，所有成員都必須使用2.0或更高版本才能兼容。舊版本將無法使用。
+    MIGRATEINST1 = [=[|cffff0000IMPORTANT!!|r：在繼續之前備份您保存的變量文件。 2.0版附帶了一個全新的索引廣播系統。這需要使用新值來遷移當前表。此遷移是一次性的過程，只能由一名人員執行。選擇具有最準確數據的人員進行遷移。所有其他人員將被阻止，並將刪除其數據，以接受來自所選人員的新數據廣播。這是為了防止重複數據。一旦所有人員都收到了新數據，您就可以從行會負責人公開說明中刪除{CommDKP=OFFICER_NAME}標籤。至關重要的是，只有一名管理人員執行遷移，否則您將有重複的數據並且您的表將被損壞（解決此問題的唯一方法是讓所有損壞了表的人員註銷並同時刪除其保存的變量文件，否則登錄後，您將再次收到損壞的數據）。此外，所有成員都必須使用2.0或更高版本才能兼容。舊版本將無法使用。
 
     可以使用“/dkp migration”重新打開此窗口。]=],
-    MIGRATEINST2 = "％s 已經進行了遷移。請立即備份您保存的變量文件（WTF\\Account\\ACCOUNT_NAME\\SavedVariables\\MonolithDKP.lua），然後單擊下面的刪除表按鈕。如果 ％s 在線，他們將在您重新加載後自動向您推送同步。如果不是，將在他們登錄時將其推送，或者您可以請求他們推送同步（這是通過單擊主GUI左下角的表格狀態按鈕來完成的）。如果您的公會的遷移過程中發生任何錯誤，請從公會負責人的公開說明中刪除遷移人員標籤，並讓到目前為止參與的所有人員刪除已損壞的已保存變量文件，並將其還原到已備份的文件中。每個人都必須同時執行此操作，並且在完成此操作之前，請勿登錄（啟用插件）。擁有遷移表的任何在線用戶都將在您登錄後自動將數據推送給您。",
+    MIGRATEINST2 = "％s 已經進行了遷移。請立即備份您保存的變量文件（WTF\\Account\\ACCOUNT_NAME\\SavedVariables\\CommunityDKP.lua），然後單擊下面的刪除表按鈕。如果 ％s 在線，他們將在您重新加載後自動向您推送同步。如果不是，將在他們登錄時將其推送，或者您可以請求他們推送同步（這是通過單擊主GUI左下角的表格狀態按鈕來完成的）。如果您的公會的遷移過程中發生任何錯誤，請從公會負責人的公開說明中刪除遷移人員標籤，並讓到目前為止參與的所有人員刪除已損壞的已保存變量文件，並將其還原到已備份的文件中。每個人都必須同時執行此操作，並且在完成此操作之前，請勿登錄（啟用插件）。擁有遷移表的任何在線用戶都將在您登錄後自動將數據推送給您。",
     MIN = "敏",
     MINBIDDESCRIPTION = [=[使用最低出價值，所有廣告位（或單個項目）都被分配了最小值。 
 
@@ -439,9 +439,9 @@ if GetLocale() == "zhTW" then
     MINUTE = "分鐘",
     MINUTES = "分鐘",
     MISCSETTINGS = "雜項設置",
-    MONDKPSCALESIZE = "整體式DKP秤尺寸",
-    MONDKPSCALESIZETTDESC = "Monolith DKP窗口的比例。單擊\"保存設置\"以將大小更改為設置值。",
-    MONDKPSCALESIZETTWARN = "如果使用另一個修改UI比例的插件（例如TukUI，ElvUI等），則保存後可能需要/ reload。",
+    CommDKPSCALESIZE = "整體式DKP秤尺寸",
+    CommDKPSCALESIZETTDESC = "Monolith DKP窗口的比例。單擊\"保存設置\"以將大小更改為設置值。",
+    CommDKPSCALESIZETTWARN = "如果使用另一個修改UI比例的插件（例如TukUI，ElvUI等），則保存後可能需要/ reload。",
     MORE = "更多",
     MORESECONDSTO = "還有更多秒可以做到這一點。",
     MOVEBIDTIMER = "移動出價計時器",
@@ -694,7 +694,7 @@ if GetLocale() == "zhTW" then
     TOSTANDBYLIST = "到待機列表",
     TOTALDKP = "總DKP",
     TOTALDKPAWARD = "授予的丹麥克朗總額",
-    TOTALMONDKPUSERS = "MonDKP用戶總數",
+    TOTALCommDKPUSERS = "CommDKP用戶總數",
     TOWITHDRAWBID = "撤回出價。",
     TRINKET = "飾品",
     TTHISTORYCOUNT = "工具提示歷史記錄計數",
@@ -741,7 +741,7 @@ if GetLocale() == "zhTW" then
     WHITELISTEMPTY = "您的白名單是空的。",
     WHITELISTHEADER = [=[白名單設置|CFF444444（僅領導人）（α)|r 
 
-    強烈建議您僅在希望限制哪些警官需要權限的情況下才使用此白名單設置。如果您希望所有人員都具有權限，請完全忽略此設置功能。請謹慎使用。 （如果應用這些設置會導致問題，請使用文本編輯器打開 \WTF\Accounts\ACCOUNT_NAME\SavedVariables\MonolithDKP.lua文件，然後刪除底部附近的MonDKP_Whitelist表。）]=],
+    強烈建議您僅在希望限制哪些警官需要權限的情況下才使用此白名單設置。如果您希望所有人員都具有權限，請完全忽略此設置功能。請謹慎使用。 （如果應用這些設置會導致問題，請使用文本編輯器打開 \WTF\Accounts\ACCOUNT_NAME\SavedVariables\CommunityDKP.lua文件，然後刪除底部附近的CommDKP_Whitelist表。）]=],
     WIPETABLES = "擦桌子",
     WIPETABLESCONF = "您確定要刪除所有表格嗎？ 當某位人員在線時，您可以從其獲取所有信息。",
     WIPETABLESTTDESC = "擦除所有數據，包括DKP表，戰利品歷史記錄和DKP歷史記錄。 如果在嘗試同步以從可用人員接收新的和完整的信息時發生問題，請使用此選項。",
