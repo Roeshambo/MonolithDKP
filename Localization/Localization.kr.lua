@@ -442,7 +442,7 @@ if GetLocale() == "koKR" then
     MINUTES = "의사록",
     MISCSETTINGS = "기타 설정",
     CommDKPSCALESIZE = "모놀리스 DKP 스케일 크기",
-    CommDKPSCALESIZETTDESC = "Monolith DKP 창의 스케일. \"설정 저장\"을 클릭하여 크기를 설정 값으로 변경하십시오.",
+    CommDKPSCALESIZETTDESC = "CommunityDKP 창의 스케일. \"설정 저장\"을 클릭하여 크기를 설정 값으로 변경하십시오.",
     CommDKPSCALESIZETTWARN = "UI 스케일 (예 : TukUI, ElvUI 등)을 수정하는 다른 애드온을 사용하는 경우 저장 후 / 재로드가 필요할 수 있습니다.",
     MORE = "더",
     MORESECONDSTO = "더 많은 초.",
@@ -521,7 +521,7 @@ if GetLocale() == "koKR" then
 
     이 작업을 수행 하시겠습니까?]=],
     OUTOFDATE = "오래된",
-    OUTOFDATEANNOUNCE = "사용중인 Monolith DKP 버전이 오래되었습니다. 호환성 문제가 없는지 확인하려면 Curse / Twitch 또는 WoWInterface를 업데이트하십시오.",
+    OUTOFDATEANNOUNCE = "사용중인 CommunityDKP 버전이 오래되었습니다. 호환성 문제가 없는지 확인하려면 Curse / Twitch 또는 WoWInterface를 업데이트하십시오.",
     PAUSERAID = "레이드 일시 중지",
     PAUSERAIDTTDESC = "리더가 휴식을 위해 타이머를 중단해야한다고 결정하면 급습 타이머가 일시 중지됩니다.",
     PAUSERAIDTTWARN = "\"계속 레이드\"를 클릭하여 다시 시작할 수 있습니다.",
@@ -789,7 +789,7 @@ if GetLocale() == "koKR" then
     VALIDATEWARN          = "전체 기록을 기준으로 모든 플레이어의 dkp, 평생 획득 한 시간 및 평생을 재 계산합니다. 누락 된 히스토리 항목으로 인해 결과가 올바르지 않은 경우 저장된 변수 파일을 백업하십시오. 달리기 전에 모든 플레이어에 대해 이전 dkp (컨텍스트 메뉴> 모두 선택> 이전 dkp 재설정)를 재설정해야 변경 한 양을 확인할 수 있습니다. 계속 하시겠습니까?",
     PASS                  = "통과하다",
 
-    CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.3.0-beta",
+    CHANGELOG1 = "CommunityDKP - 3.0.0",
     CHANGELOG2 = "- THIS VERSION WILL NOT SYNC WITH PREVIOUS ONES - version check will work",
     CHANGELOG3 = "- Small adjustments and fixes to Loot Price and DE communication",
     CHANGELOG4 = "- Added in Multi-Guild, Multi-Teams supprot (thanks to Taidtuskecyh for the help)",

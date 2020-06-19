@@ -450,8 +450,8 @@ if GetLocale() == "ruRU" then
     MINUTES = "минут",
     MISCSETTINGS = "Прочие настройки",
     MISSINGENT = "У Вас отсутствуют одна или более групп данных от следующих офицеров",
-    CommDKPSCALESIZE = "Размер окна Monolith DKP",
-    CommDKPSCALESIZETTDESC = "Изменение размера окна Monolith DKP. Кликните \"Сохранить\" чтобы изменить размер на выбранный.",
+    CommDKPSCALESIZE = "Размер окна CommunityDKP",
+    CommDKPSCALESIZETTDESC = "Изменение размера окна CommunityDKP. Кликните \"Сохранить\" чтобы изменить размер на выбранный.",
     CommDKPSCALESIZETTWARN = "Может потребоваться /reload после сохранения, если используется другой аддон, который изменяет масштабы пользовательского интерфейса (TukUI, ElvUI и т.д.)",
     MORE = "больше",
     MORESECONDSTO = "секунд чтобы сделать это.",
@@ -532,7 +532,7 @@ if GetLocale() == "ruRU" then
 
      Вы уверены что хотите это сделать?]=],
     OUTOFDATE = "не обновлены",
-    OUTOFDATEANNOUNCE = "Ваша версия Monolith DKP устарела. Пожалуйста, обновите Curse / Twitch или WoWInterface, чтобы убедиться в отсутствии проблем с совместимостью.",
+    OUTOFDATEANNOUNCE = "Ваша версия CommunityDKP устарела. Пожалуйста, обновите Curse / Twitch или WoWInterface, чтобы убедиться в отсутствии проблем с совместимостью.",
     OVERWRITETABLES = "Полная синхронизация перезапишет все данные у пользователей, которым Вы пытаетесь их послать. Если у них есть данные, которые отсутствуют у Вас, они будут перезаписаны. Если Вы просто хотите синхронизировать только те данные, которые у игроков отсутствуют, воспользуйтесь функцией \"Синхронизация последних 2 недель\". Вы хотите продолжить? ",
     PAUSERAID = "Пауза",
     PAUSERAIDTTDESC = "Это останавливает таймер рейда, если лидер решает, что таймер должен быть остановлен для перерывов",
@@ -784,7 +784,7 @@ if GetLocale() == "ruRU" then
     ZONE = "зона",
     PASS                  = "Отказаться",
 
-    CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.3.0-beta",
+    CHANGELOG1 = "CommunityDKP - 3.0.0",
     CHANGELOG2 = "- THIS VERSION WILL NOT SYNC WITH PREVIOUS ONES - version check will work",
     CHANGELOG3 = "- Small adjustments and fixes to Loot Price and DE communication",
     CHANGELOG4 = "- Added in Multi-Guild, Multi-Teams supprot (thanks to Taidtuskecyh for the help)",

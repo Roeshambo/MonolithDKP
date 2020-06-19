@@ -584,7 +584,7 @@ function CommDKP:CreateMenu()
 		CommDKP.ChangeLogDisplay.ChangeLogHeader:ClearAllPoints();
 		CommDKP.ChangeLogDisplay.ChangeLogHeader:SetFontObject("CommDKPLargeLeft")
 		CommDKP.ChangeLogDisplay.ChangeLogHeader:SetPoint("TOPLEFT", CommDKP.ChangeLogDisplay, "TOPLEFT", 10, -10);
-		CommDKP.ChangeLogDisplay.ChangeLogHeader:SetText("Monolith DKP Change Log");
+		CommDKP.ChangeLogDisplay.ChangeLogHeader:SetText("CommunityDKP Change Log");
 
 		CommDKP.ChangeLogDisplay.Notes = CommDKP.ChangeLogDisplay:CreateFontString(nil, "OVERLAY")   -- Filters header
 		CommDKP.ChangeLogDisplay.Notes:ClearAllPoints();

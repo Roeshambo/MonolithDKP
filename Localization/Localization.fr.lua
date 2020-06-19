@@ -441,8 +441,8 @@ if GetLocale() == "frFR" then
     MINUTE = "minute",
     MINUTES = "minutes",
     MISCSETTINGS = "Réglages divers",
-    CommDKPSCALESIZE = "Monolith DKP Scale Size",
-    CommDKPSCALESIZETTDESC = "Échelle de la fenêtre Monolith DKP. Cliquez sur \"Enregistrer les paramètres\" pour modifier la taille afin de définir la valeur.",
+    CommDKPSCALESIZE = "CommunityDKP Scale Size",
+    CommDKPSCALESIZETTDESC = "Échelle de la fenêtre CommunityDKP. Cliquez sur \"Enregistrer les paramètres\" pour modifier la taille afin de définir la valeur.",
     CommDKPSCALESIZETTWARN = "Peut nécessiter un /reload après l'enregistrement si un autre addon est utilisé pour modifier les échelles de l'interface utilisateur (ex. TukUI, ElvUI, etc.)",
     MORE = "plus",
     MORESECONDSTO = "plus de seconde (s) pour le faire.",
@@ -521,7 +521,7 @@ if GetLocale() == "frFR" then
 
     Êtes-vous sûr de vouloir faire cela?]=],
     OUTOFDATE = "périmé",
-    OUTOFDATEANNOUNCE = "Votre version de Monolith DKP est obsolète. Veuillez mettre à jour Curse / Twitch ou WoWInterface pour vous assurer qu'il n'y a aucun problème de compatibilité.",
+    OUTOFDATEANNOUNCE = "Votre version de CommunityDKP est obsolète. Veuillez mettre à jour Curse / Twitch ou WoWInterface pour vous assurer qu'il n'y a aucun problème de compatibilité.",
     PAUSERAID = "Pause Raid",
     PAUSERAIDTTDESC = "Ceci met en pause un chronomètre de raid si le chef décide que le chronomètre doit être arrêté pour les pauses.",
     PAUSERAIDTTWARN = "Peut être repris en cliquant sur \"Continuer le raid\".",
@@ -789,7 +789,7 @@ if GetLocale() == "frFR" then
     VALIDATEWARN          = "Cela recalculera tous les dkp des joueurs, la durée de vie gagnée et la durée de vie dépensée en fonction de leur historique complet. Assurez-vous de sauvegarder votre fichier de variables enregistré dans le cas où le résultat serait incorrect en raison d'entrées d'historique manquantes. Vous devez réinitialiser le dkp précédent (menu contextuel> sélectionner tout> réinitialiser le dkp précédent) pour tous les joueurs avant de courir afin que vous puissiez voir combien ils ont changé. Voulez-vous continuer?",
     PASS                  = "Passer",
 
-    CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.3.0-beta",
+    CHANGELOG1 = "CommunityDKP - 3.0.0",
     CHANGELOG2 = "- THIS VERSION WILL NOT SYNC WITH PREVIOUS ONES - version check will work",
     CHANGELOG3 = "- Small adjustments and fixes to Loot Price and DE communication",
     CHANGELOG4 = "- Added in Multi-Guild, Multi-Teams supprot (thanks to Taidtuskecyh for the help)",

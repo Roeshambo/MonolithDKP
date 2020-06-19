@@ -442,7 +442,7 @@ if GetLocale() == "zhCN" then
     MINUTES = "分钟",
     MISCSETTINGS = "杂项设置",
     CommDKPSCALESIZE = "整体式DKP秤尺寸",
-    CommDKPSCALESIZETTDESC = "Monolith DKP窗口的比例。单击\"保存设置\"以将大小更改为设置值。",
+    CommDKPSCALESIZETTDESC = "CommunityDKP窗口的比例。单击\"保存设置\"以将大小更改为设置值。",
     CommDKPSCALESIZETTWARN = "如果使用另一个修改UI比例的插件（例如TukUI，ElvUI等），则保存后可能需要/ reload。",
     MORE = "更多",
     MORESECONDSTO = "还有更多秒可以做到这一点。",
@@ -521,7 +521,7 @@ if GetLocale() == "zhCN" then
 
     您确定要这样做吗]=],
     OUTOFDATE = "过时的",
-    OUTOFDATEANNOUNCE = "您的Monolith DKP版本已过时。请更新Curse / Twitch或WoWInterface，以确保没有兼容性问题。",
+    OUTOFDATEANNOUNCE = "您的CommunityDKP版本已过时。请更新Curse / Twitch或WoWInterface，以确保没有兼容性问题。",
     PAUSERAID = "暂停突",
     PAUSERAIDTTDESC = "如果领导者决定暂停计时器，则这会暂停突袭计时器",
     PAUSERAIDTTWARN = "可以通过单击“ 继续突袭 ”恢复",
@@ -791,7 +791,7 @@ if GetLocale() == "zhCN" then
     VALIDATEWARN          = "这将根据他们的完整历史记录重新计算所有玩家的dkp，获得的生命和花费的生命。 如果由于缺少历史记录而导致结果不正确，请确保备份已保存的变量文件。 在运行之前，您应该为所有播放器重置先前的dkp（上下文菜单>全选>重置先前的dkp），以便可以看到它们已更改了多少。 你想继续吗？",
     PASS                  = "通过",
 
-    CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.3.0-beta",
+    CHANGELOG1 = "CommunityDKP - 3.0.0",
     CHANGELOG2 = "- THIS VERSION WILL NOT SYNC WITH PREVIOUS ONES - version check will work",
     CHANGELOG3 = "- Small adjustments and fixes to Loot Price and DE communication",
     CHANGELOG4 = "- Added in Multi-Guild, Multi-Teams supprot (thanks to Taidtuskecyh for the help)",

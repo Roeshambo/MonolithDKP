@@ -33,7 +33,7 @@ CommDKP.Commands = {
         StaticPopup_Show ("SUGGEST_RELOAD")
       end
     else
-      CommDKP:Print("Monolith DKP has not completed initialization.")
+      CommDKP:Print("CommunityDKP has not completed initialization.")
     end
   end,
   ["reset"] = CommDKP.ResetPosition,
@@ -54,7 +54,7 @@ CommDKP.Commands = {
       end
       CommDKP:BidInterface_Toggle()
     else
-      CommDKP:Print("Monolith DKP has not completed initialization.")
+      CommDKP:Print("CommunityDKP has not completed initialization.")
     end 
   end,
   ["repairtables"] = function(...)       -- test new features
@@ -118,7 +118,7 @@ CommDKP.Commands = {
         CommDKP:Print(L["NOPERMISSION"])
       end
     else
-      CommDKP:Print("Monolith DKP has not completed initialization.")
+      CommDKP:Print("CommunityDKP has not completed initialization.")
     end
   end,
   ["help"] = function()
@@ -633,7 +633,6 @@ function CommDKP:GetTable(dbTable, hasTeams, teamIndex)
 	end
 end
 
--- 2.3.0 added teamIndex
 function CommDKP:SetTable(dbTable, hasTeams, value, teamIndex)
 	hasTeams = hasTeams or false;
 	local _teamIndex;

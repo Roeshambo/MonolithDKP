@@ -1,7 +1,7 @@
 # CommunityDKP
 [![paypal](https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif)](https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=USXJZT2BKCYBS&currency_code=USD&source=url)
 
-This is the development repository for Monolith DKP and may not necessarily reflect current releases on Curse or WoWI. It may also create compatibility issues with those that have older versiond depending on the features added. Back up your saved variables file prior to attempting to use to prevent any possible data loss.
+This is the development repository for CommunityDKP and may not necessarily reflect current releases on Curse or WoWI. It may also create compatibility issues with those that have older versiond depending on the features added. Back up your saved variables file prior to attempting to use to prevent any possible data loss.
 
 Instructions: Clone and remove "-master" from the addon directory. Place in "Interface\AddOns" folder  
 
@@ -42,4 +42,4 @@ Recommendations
 	  isn't lost due to somehow losing your WTF folder.  
 	- Export DKP to HTML at the end of a raid week and paste into an HTML file and keep a week by week log in Discord for players to view outside of the game. This will also give you a backup of the data to reapply in the event data is lost.  
   
-If you'd like to change the Monolith DKP Title image to one for your own guild, you're more than welcome to. It simply requires you replace "CommunityDKP\Media\Textures\CommDKP-0title-t.tga" with your custom tga image (MUST be 256 x 64).
+If you'd like to change the CommunityDKP Title image to one for your own guild, you're more than welcome to. It simply requires you replace "CommunityDKP\Media\Textures\CommDKP-0title-t.tga" with your custom tga image (MUST be 256 x 64).
