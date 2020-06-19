@@ -1,33 +1,33 @@
 local _, core = ...;
 local _G = _G;
-local MonDKP = core.MonDKP;
+local CommDKP = core.CommDKP;
 local L = core.L;
 
-function MonDKP:ToggleDKPModesWindow()
+function CommDKP:ToggleDKPModesWindow()
 	if core.IsOfficer == true then
 		if not core.ModesWindow then
-			core.ModesWindow =  MonDKP:DKPModesFrame_Create();
+			core.ModesWindow =  CommDKP:DKPModesFrame_Create();
 
 			-- Populate Tabs
-			MonDKP:DKPModes_Main()
-			MonDKP:DKPModes_Misc()
+			CommDKP:DKPModes_Main()
+			CommDKP:DKPModes_Misc()
 		end
 	 	core.ModesWindow:SetShown(not core.ModesWindow:IsShown())
 	 	core.ModesWindow:SetFrameLevel(10)
 		if core.BiddingWindow then core.BiddingWindow:SetFrameLevel(6) end
-		if MonDKP.UIConfig then MonDKP.UIConfig:SetFrameLevel(2) end
+		if CommDKP.UIConfig then CommDKP.UIConfig:SetFrameLevel(2) end
 	else
-		MonDKP:Print(L["NOPERMISSION"])
+		CommDKP:Print(L["NOPERMISSION"])
 	end
 end
 
-function MonDKP:DKPModesFrame_Create()
-	local f = CreateFrame("Frame", "MonDKP_DKPModesFrame", UIParent);
+function CommDKP:DKPModesFrame_Create()
+	local f = CreateFrame("Frame", "CommDKP_DKPModesFrame", UIParent);
 	local ActiveMode = core.DB.modes.mode;
 	local ActiveCostType = core.DB.modes.costvalue;
 
 	if not core.IsOfficer then
-		MonDKP:Print(L["NOPERMISSION"])
+		CommDKP:Print(L["NOPERMISSION"])
 		return
 	end
 
@@ -35,7 +35,7 @@ function MonDKP:DKPModesFrame_Create()
 	f:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 300, -200);
 	f:SetSize(473, 598);
 	f:SetBackdrop( {
-	edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
+	edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
 	insets = { left = 0, right = 0, top = 0, bottom = 0 }
 	});
 	f:SetBackdropColor(0,0,0,0.9);
@@ -50,7 +50,7 @@ function MonDKP:DKPModesFrame_Create()
 	f:SetScript("OnMouseDown", function(self)
 	self:SetFrameLevel(10)
 	if core.BiddingWindow then core.BiddingWindow:SetFrameLevel(6) end
-	if MonDKP.UIConfig then MonDKP.UIConfig:SetFrameLevel(2) end
+	if CommDKP.UIConfig then CommDKP.UIConfig:SetFrameLevel(2) end
 	end)
 	tinsert(UISpecialFrames, f:GetName()); -- Sets frame to close on "Escape"
 
@@ -58,7 +58,7 @@ function MonDKP:DKPModesFrame_Create()
 	f.BG:SetColorTexture(0, 0, 0, 1)
 	f.BG:SetPoint("TOPLEFT", f, "TOPLEFT", 2, -2);
 	f.BG:SetSize(475, 600);
-	f.BG:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\menu-bg");
+	f.BG:SetTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\menu-bg");
 
 	-- TabMenu ScrollFrame and ScrollBar
 	f.ScrollFrame = CreateFrame("ScrollFrame", nil, f);
@@ -73,7 +73,7 @@ function MonDKP:DKPModesFrame_Create()
 	f.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", f.ScrollFrame, "TOPRIGHT", -20, -12);
 	f.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", f.ScrollFrame, "BOTTOMRIGHT", -2, 15);
 
-	f.DKPModesMain, f.DKPModesMisc = MonDKP:SetTabs(f, 2, 475, 600, "Modes", "Misc");
+	f.DKPModesMain, f.DKPModesMisc = CommDKP:SetTabs(f, 2, 475, 600, "Modes", "Misc");
 	tinsert(UISpecialFrames, f:GetName()); -- Sets frame to close on "Escape"
 
 	-- Close Button
@@ -81,7 +81,7 @@ function MonDKP:DKPModesFrame_Create()
 	f.closeContainer:SetPoint("CENTER", f, "TOPRIGHT", -4, 0)
 	f.closeContainer:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
-		edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
+		edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
 	});
 	f.closeContainer:SetBackdropColor(0,0,0,0.9)
 	f.closeContainer:SetBackdropBorderColor(1,1,1,0.2)

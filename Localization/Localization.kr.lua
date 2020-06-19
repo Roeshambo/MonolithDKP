@@ -1,6 +1,6 @@
 if GetLocale() == "koKR" then
   local _, core = ...;
-  local MonDKP = core.MonDKP;
+  local CommDKP = core.CommDKP;
   
   core.BossList = {
     MC = {
@@ -422,10 +422,10 @@ if GetLocale() == "koKR" then
     MAXIMUMROLLTTWARN = "\"사용률\"가 체크되어 있지 않으면 max DKP를 비워 두십시오. 확인 된 경우 100 %를 사용하십시오.",
     MELEEDPS = "근접 DPS",
     MIGRATE = "이주",
-    MIGRATEINST1 = [=[| cffff0000 중요 !! | r : 계속하기 전에 저장된 변수 파일을 백업하십시오. 2.0에는 완전히 새로운 색인화 된 방송 시스템이 있습니다. 이를 위해서는 현재 테이블을 새 값으로 마이그레이션해야합니다. 이 이주는 한 명의 담당자 만 수행 할 수있는 일회성 프로세스입니다. 가장 정확한 데이터를 가진 임원을 선택하여 마이그레이션을 수행하십시오. 다른 모든 임원은 차단되며 선택한 임원의 새 데이터 방송을 수락하기 위해 데이터가 삭제됩니다. 이것은 데이터 중복을 방지하기위한 것입니다. 모든 임원이 새로운 데이터를 받으면 길드 리더 공개 메모에서 {MonDKP = OFFICER_NAME} 태그를 삭제할 수 있습니다. 한 명의 담당자 만 마이그레이션을 수행하거나 데이터가 중복되어 테이블이 손상되는 것이 중요합니다 (문제를 해결하는 유일한 방법은 테이블을 손상시킨 모든 담당자가 로그 오프하고 저장된 변수 파일을 동시에 또는 다른 방법으로 삭제하는 것입니다). 로그인하자마자 손상된 데이터를 다시 받게됩니다.) 또한 모든 멤버가 호환 되려면 2.0 이상을 사용해야합니다. 이전 버전은 작동하지 않습니다.
+    MIGRATEINST1 = [=[| cffff0000 중요 !! | r : 계속하기 전에 저장된 변수 파일을 백업하십시오. 2.0에는 완전히 새로운 색인화 된 방송 시스템이 있습니다. 이를 위해서는 현재 테이블을 새 값으로 마이그레이션해야합니다. 이 이주는 한 명의 담당자 만 수행 할 수있는 일회성 프로세스입니다. 가장 정확한 데이터를 가진 임원을 선택하여 마이그레이션을 수행하십시오. 다른 모든 임원은 차단되며 선택한 임원의 새 데이터 방송을 수락하기 위해 데이터가 삭제됩니다. 이것은 데이터 중복을 방지하기위한 것입니다. 모든 임원이 새로운 데이터를 받으면 길드 리더 공개 메모에서 {CommDKP = OFFICER_NAME} 태그를 삭제할 수 있습니다. 한 명의 담당자 만 마이그레이션을 수행하거나 데이터가 중복되어 테이블이 손상되는 것이 중요합니다 (문제를 해결하는 유일한 방법은 테이블을 손상시킨 모든 담당자가 로그 오프하고 저장된 변수 파일을 동시에 또는 다른 방법으로 삭제하는 것입니다). 로그인하자마자 손상된 데이터를 다시 받게됩니다.) 또한 모든 멤버가 호환 되려면 2.0 이상을 사용해야합니다. 이전 버전은 작동하지 않습니다.
 
     이 창은 "/dkp migrate"로 다시 열 수 있습니다.]=],
-    MIGRATEINST2 = "%s 은 (는) 이미 마이그레이션을 수행했습니다. 저장된 변수 파일을 즉시 백업하고 (WTF\\Account\\ACCOUNT_NAME\\SavedVariables\\MonolithDKP.lua) 아래 테이블 삭제 버튼을 클릭하십시오. %s 이 (가) 온라인 인 경우 다시로드하면 자동으로 동기화됩니다. 그렇지 않은 경우 로그인 할 때 푸시되거나 동기화를 푸시하도록 요청할 수 있습니다 (메인 GUI의 왼쪽 하단 모서리에있는 테이블 상태 단추를 클릭하여 수행). 길드 마이그레이션 프로세스에서 오류가 발생하면 길드 리더의 공개 메모에서 마이그레이션 관리자 태그를 삭제하고 지금까지 참여한 모든 임원이 손상된 저장된 변수 파일을 삭제하고 백업 한 것으로 복원하십시오. 이 작업이 완료 될 때까지 모든 사람은 동시에이 작업을 수행해야하며 애드온이 활성화 된 상태에서 로그인하지 않아야합니다. 마이그레이션 된 테이블이있는 온라인 사용자는 로그인하자마자 해당 데이터를 자동으로 푸시합니다.",
+    MIGRATEINST2 = "%s 은 (는) 이미 마이그레이션을 수행했습니다. 저장된 변수 파일을 즉시 백업하고 (WTF\\Account\\ACCOUNT_NAME\\SavedVariables\\CommunityDKP.lua) 아래 테이블 삭제 버튼을 클릭하십시오. %s 이 (가) 온라인 인 경우 다시로드하면 자동으로 동기화됩니다. 그렇지 않은 경우 로그인 할 때 푸시되거나 동기화를 푸시하도록 요청할 수 있습니다 (메인 GUI의 왼쪽 하단 모서리에있는 테이블 상태 단추를 클릭하여 수행). 길드 마이그레이션 프로세스에서 오류가 발생하면 길드 리더의 공개 메모에서 마이그레이션 관리자 태그를 삭제하고 지금까지 참여한 모든 임원이 손상된 저장된 변수 파일을 삭제하고 백업 한 것으로 복원하십시오. 이 작업이 완료 될 때까지 모든 사람은 동시에이 작업을 수행해야하며 애드온이 활성화 된 상태에서 로그인하지 않아야합니다. 마이그레이션 된 테이블이있는 온라인 사용자는 로그인하자마자 해당 데이터를 자동으로 푸시합니다.",
     MIN = "최소",
     MINBIDDESCRIPTION = [=[최소 입찰 값을 사용하면 모든 슬롯 (또는 개별 항목)에 최소값이 할당됩니다. 입찰을 제출 한 사람은 해당 값 이상으로 입찰해야합니다. 
 
@@ -441,9 +441,9 @@ if GetLocale() == "koKR" then
     MINUTE = "분",
     MINUTES = "의사록",
     MISCSETTINGS = "기타 설정",
-    MONDKPSCALESIZE = "모놀리스 DKP 스케일 크기",
-    MONDKPSCALESIZETTDESC = "Monolith DKP 창의 스케일. \"설정 저장\"을 클릭하여 크기를 설정 값으로 변경하십시오.",
-    MONDKPSCALESIZETTWARN = "UI 스케일 (예 : TukUI, ElvUI 등)을 수정하는 다른 애드온을 사용하는 경우 저장 후 / 재로드가 필요할 수 있습니다.",
+    CommDKPSCALESIZE = "모놀리스 DKP 스케일 크기",
+    CommDKPSCALESIZETTDESC = "CommunityDKP 창의 스케일. \"설정 저장\"을 클릭하여 크기를 설정 값으로 변경하십시오.",
+    CommDKPSCALESIZETTWARN = "UI 스케일 (예 : TukUI, ElvUI 등)을 수정하는 다른 애드온을 사용하는 경우 저장 후 / 재로드가 필요할 수 있습니다.",
     MORE = "더",
     MORESECONDSTO = "더 많은 초.",
     MOVEBIDTIMER = "입찰 타이머 이동",
@@ -521,7 +521,7 @@ if GetLocale() == "koKR" then
 
     이 작업을 수행 하시겠습니까?]=],
     OUTOFDATE = "오래된",
-    OUTOFDATEANNOUNCE = "사용중인 Monolith DKP 버전이 오래되었습니다. 호환성 문제가 없는지 확인하려면 Curse / Twitch 또는 WoWInterface를 업데이트하십시오.",
+    OUTOFDATEANNOUNCE = "사용중인 CommunityDKP 버전이 오래되었습니다. 호환성 문제가 없는지 확인하려면 Curse / Twitch 또는 WoWInterface를 업데이트하십시오.",
     PAUSERAID = "레이드 일시 중지",
     PAUSERAIDTTDESC = "리더가 휴식을 위해 타이머를 중단해야한다고 결정하면 급습 타이머가 일시 중지됩니다.",
     PAUSERAIDTTWARN = "\"계속 레이드\"를 클릭하여 다시 시작할 수 있습니다.",
@@ -694,7 +694,7 @@ if GetLocale() == "koKR" then
     TOSTANDBYLIST = "대기 목록으로",
     TOTALDKP = "총 DKP",
     TOTALDKPAWARD = "총 DKP 수여",
-    TOTALMONDKPUSERS = "총 MonDKP 사용자",
+    TOTALCommDKPUSERS = "총 CommDKP 사용자",
     TOWITHDRAWBID = "입찰을 철회합니다.",
     TRINKET = "하찮은 것",
     TTHISTORYCOUNT = "툴팁 히스토리 수",
@@ -741,7 +741,7 @@ if GetLocale() == "koKR" then
     WHITELISTEMPTY = "허용 목록이 비어 있습니다.",
     WHITELISTHEADER = [=[화이트리스트 설정 |CFF444444(리더 만)(알파)|r
 
-    임원이 필요한 권한을 제한하려면이 화이트리스트 설정 만 사용하는 것이 좋습니다. 모든 임원에게 권한을 부여하려면이 설정 기능을 완전히 무시하십시오. 주의해서 사용하십시오. (이 설정을 적용하면 문제가 발생하면 텍스트 편집기로 \WTF\Accounts\ACCOUNT_NAME\SavedVariables\MonolithDKP.lua 파일을 열고 하단 근처의 MonDKP_Whitelist 테이블을 삭제하십시오.)]=],
+    임원이 필요한 권한을 제한하려면이 화이트리스트 설정 만 사용하는 것이 좋습니다. 모든 임원에게 권한을 부여하려면이 설정 기능을 완전히 무시하십시오. 주의해서 사용하십시오. (이 설정을 적용하면 문제가 발생하면 텍스트 편집기로 \WTF\Accounts\ACCOUNT_NAME\SavedVariables\CommunityDKP.lua 파일을 열고 하단 근처의 CommDKP_Whitelist 테이블을 삭제하십시오.)]=],
     WIPETABLES = "테이블 정리",
     WIPETABLESCONF = "모든 테이블을 삭제 하시겠습니까? 경찰관이 온라인 상태 일 때 경찰관으로부터 모든 정보를 검색 할 수 있습니다.",
     WIPETABLESTTDESC = "DKP 테이블, 전리품 기록 및 DKP 기록을 포함한 모든 데이터를 지 웁니다. 사용 가능한 담당자로부터 새롭고 완전한 정보를 받기 위해 동기화하는 동안 문제가 발생하는 경우이 옵션을 사용하십시오.",
@@ -789,15 +789,15 @@ if GetLocale() == "koKR" then
     VALIDATEWARN          = "전체 기록을 기준으로 모든 플레이어의 dkp, 평생 획득 한 시간 및 평생을 재 계산합니다. 누락 된 히스토리 항목으로 인해 결과가 올바르지 않은 경우 저장된 변수 파일을 백업하십시오. 달리기 전에 모든 플레이어에 대해 이전 dkp (컨텍스트 메뉴> 모두 선택> 이전 dkp 재설정)를 재설정해야 변경 한 양을 확인할 수 있습니다. 계속 하시겠습니까?",
     PASS                  = "통과하다",
 
-    CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.2.10-beta",
-    CHANGELOG2 = "- Added in Loot Filter to Loot History (Taidtuskecyh)",
+    CHANGELOG1 = "CommunityDKP - 3.0.0",
+    CHANGELOG2 = "- THIS VERSION WILL NOT SYNC WITH PREVIOUS ONES - version check will work",
     CHANGELOG3 = "- Small adjustments and fixes to Loot Price and DE communication",
     CHANGELOG4 = "- Added in Multi-Guild, Multi-Teams supprot (thanks to Taidtuskecyh for the help)",
     CHANGELOG5 = "- Fixed a few bugs from the 2.1.2 version of the addon",
     CHANGELOG6 = "- Fixed a rounding issue when adjusting DKP when rounding is enabled. (GH-5)",
     CHANGELOG7 = "- Fixed a Loot History Delete Bug",
     CHANGELOG8 = "- Load In Bug Fixes",
-    CHANGELOG9 = "- Known Issue: Multi-Teams tables may not sync appropriately.",
+    CHANGELOG9 = "- Added in Loot Filter to Loot History (Taidtuskecyh)",
     CHANGELOG10 = "",
     }
 end

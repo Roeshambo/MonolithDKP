@@ -1,20 +1,20 @@
 local _, core = ...;
 local _G = _G;
-local MonDKP = core.MonDKP;
+local CommDKP = core.CommDKP;
 local L = core.L;
 
-function MonDKP:DKPModes_Main()
+function CommDKP:DKPModes_Main()
   local f = core.ModesWindow;
 
   f.DKPModesMain.ModeDescriptionHeader = f.DKPModesMain:CreateFontString(nil, "OVERLAY")
-  f.DKPModesMain.ModeDescriptionHeader:SetFontObject("MonDKPLargeLeft");
+  f.DKPModesMain.ModeDescriptionHeader:SetFontObject("CommDKPLargeLeft");
   f.DKPModesMain.ModeDescriptionHeader:SetWidth(400);
   f.DKPModesMain.ModeDescriptionHeader:SetPoint("TOPLEFT", f.DKPModesMain, "TOPLEFT", 30, -20);
 
   f.DKPModesMain.ModeDescription = f.DKPModesMain:CreateFontString(nil, "OVERLAY")
   f.DKPModesMain.ModeDescription:SetPoint("TOPLEFT", f.DKPModesMain, "TOPLEFT", 20, -45);
   f.DKPModesMain.ModeDescription:SetWidth(400);
-  f.DKPModesMain.ModeDescription:SetFontObject("MonDKPSmallLeft")
+  f.DKPModesMain.ModeDescription:SetFontObject("CommDKPSmallLeft")
   
   local MinBidDescription = L["MINBIDDESCRIPTION"]
   local StaticDescription = L["STATICDESCRIPTION"]
@@ -50,13 +50,13 @@ function MonDKP:DKPModes_Main()
   end
 
 
-  f.DKPModesMain.ModesDropDown = CreateFrame("FRAME", "MonDKPModeSelectDropDown", f.DKPModesMain, "MonolithDKPUIDropDownMenuTemplate")
+  f.DKPModesMain.ModesDropDown = CreateFrame("FRAME", "CommDKPModeSelectDropDown", f.DKPModesMain, "CommunityDKPUIDropDownMenuTemplate")
 
   -- Create and bind the initialization function to the dropdown menu
   UIDropDownMenu_Initialize(f.DKPModesMain.ModesDropDown, function(self, level, menuList)
   local DKPMode = UIDropDownMenu_CreateInfo()
     DKPMode.func = self.SetValue
-    DKPMode.fontObject = "MonDKPSmallCenter"
+    DKPMode.fontObject = "CommDKPSmallCenter"
     DKPMode.text, DKPMode.arg1, DKPMode.checked, DKPMode.isNotRadio = L["MINBIDVALUESHEAD"], "Minimum Bid Values", "Minimum Bid Values" == CurMode, false
     UIDropDownMenu_AddButton(DKPMode)
     DKPMode.text, DKPMode.arg1, DKPMode.checked, DKPMode.isNotRadio = L["STATICITEMVALUESHEAD"], "Static Item Values", "Static Item Values" == CurMode, false
@@ -210,17 +210,17 @@ function MonDKP:DKPModes_Main()
 
   f.DKPModesMain.ModeHeader = f.DKPModesMain:CreateFontString(nil, "OVERLAY")
   f.DKPModesMain.ModeHeader:SetPoint("BOTTOMLEFT", f.DKPModesMain.ModesDropDown, "TOPLEFT", 25, 0);
-  f.DKPModesMain.ModeHeader:SetFontObject("MonDKPSmallLeft")
+  f.DKPModesMain.ModeHeader:SetFontObject("CommDKPSmallLeft")
   f.DKPModesMain.ModeHeader:SetText(L["DKPMODES"])
 
   -- Rounding DROPDOWN box 
-  f.DKPModesMain.RoundDropDown = CreateFrame("FRAME", "MonDKPModeSelectDropDown", f.DKPModesMain, "MonolithDKPUIDropDownMenuTemplate")
+  f.DKPModesMain.RoundDropDown = CreateFrame("FRAME", "CommDKPModeSelectDropDown", f.DKPModesMain, "CommunityDKPUIDropDownMenuTemplate")
 
   -- Create and bind the initialization function to the dropdown menu
   UIDropDownMenu_Initialize(f.DKPModesMain.RoundDropDown, function(self, level, menuList)
   local places = UIDropDownMenu_CreateInfo()
     places.func = self.SetValue
-    places.fontObject = "MonDKPSmallCenter"
+    places.fontObject = "CommDKPSmallCenter"
     places.text, places.arg1, places.checked, places.isNotRadio = 0, 0, 0 == core.DB.modes.rounding, false
     UIDropDownMenu_AddButton(places)
     places.text, places.arg1, places.checked, places.isNotRadio = 1, 1, 1 == core.DB.modes.rounding, false
@@ -259,17 +259,17 @@ function MonDKP:DKPModes_Main()
 
   f.DKPModesMain.RoundHeader = f.DKPModesMain:CreateFontString(nil, "OVERLAY")
   f.DKPModesMain.RoundHeader:SetPoint("BOTTOMLEFT", f.DKPModesMain.RoundDropDown, "TOPLEFT", 25, 0);
-  f.DKPModesMain.RoundHeader:SetFontObject("MonDKPSmallLeft")
+  f.DKPModesMain.RoundHeader:SetFontObject("CommDKPSmallLeft")
   f.DKPModesMain.RoundHeader:SetText(L["DKPROUNDING"])
 
   -- MAX Bid button behavior
-  f.DKPModesMain.MaxBidBehaviorDropDown = CreateFrame("FRAME", "MonDKPModeSelectDropDown", f.DKPModesMain, "MonolithDKPUIDropDownMenuTemplate")
+  f.DKPModesMain.MaxBidBehaviorDropDown = CreateFrame("FRAME", "CommDKPModeSelectDropDown", f.DKPModesMain, "CommunityDKPUIDropDownMenuTemplate")
 
   -- Create and bind the initialization function to the dropdown menu
   UIDropDownMenu_Initialize(f.DKPModesMain.MaxBidBehaviorDropDown, function(self, level, menuList)
   local MaxBehavior = UIDropDownMenu_CreateInfo()
     MaxBehavior.func = self.SetValue
-    MaxBehavior.fontObject = "MonDKPSmallCenter"
+    MaxBehavior.fontObject = "CommDKPSmallCenter"
     MaxBehavior.text, MaxBehavior.arg1, MaxBehavior.checked, MaxBehavior.isNotRadio = L["MAXBIDBEHAVIORMAXDKP"], "Max DKP", "Max DKP" == core.DB.modes.MaxBehavior, false
     UIDropDownMenu_AddButton(MaxBehavior)
     MaxBehavior.text, MaxBehavior.arg1, MaxBehavior.checked, MaxBehavior.isNotRadio = L["MAXBIDBEHAVIORMAXITEMVALUE"], "Max Item Value", "Max Item Value" == core.DB.modes.MaxBehavior, false
@@ -311,7 +311,7 @@ function MonDKP:DKPModes_Main()
   
   f.DKPModesMain.MaxBidBehaviorHeader = f.DKPModesMain:CreateFontString(nil, "OVERLAY")
   f.DKPModesMain.MaxBidBehaviorHeader:SetPoint("BOTTOMLEFT", f.DKPModesMain.MaxBidBehaviorDropDown, "TOPLEFT", 25, 0);
-  f.DKPModesMain.MaxBidBehaviorHeader:SetFontObject("MonDKPSmallLeft")
+  f.DKPModesMain.MaxBidBehaviorHeader:SetFontObject("CommDKPSmallLeft")
   f.DKPModesMain.MaxBidBehaviorHeader:SetText(L["MAXBIDBEHAVIOR"])
 
   -- AntiSnipe Option
@@ -328,7 +328,7 @@ function MonDKP:DKPModes_Main()
     f.DKPModesMain.AntiSnipe:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
     f.DKPModesMain.AntiSnipe:SetMaxLetters(8)
     f.DKPModesMain.AntiSnipe:SetTextColor(1, 1, 1, 1)
-    f.DKPModesMain.AntiSnipe:SetFontObject("MonDKPSmallRight")
+    f.DKPModesMain.AntiSnipe:SetFontObject("CommDKPSmallRight")
     f.DKPModesMain.AntiSnipe:SetTextInsets(10, 15, 5, 5)
     f.DKPModesMain.AntiSnipe:SetText(core.DB.modes.AntiSnipe)
     f.DKPModesMain.AntiSnipe:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
@@ -365,18 +365,18 @@ function MonDKP:DKPModes_Main()
     end)
 
     f.DKPModesMain.AntiSnipe.Header = f.DKPModesMain.AntiSnipe:CreateFontString(nil, "OVERLAY")
-    f.DKPModesMain.AntiSnipe.Header:SetFontObject("MonDKPNormalLeft");
+    f.DKPModesMain.AntiSnipe.Header:SetFontObject("CommDKPNormalLeft");
     f.DKPModesMain.AntiSnipe.Header:SetPoint("BOTTOMLEFT", f.DKPModesMain.AntiSnipe, "TOPLEFT", 0, 2);
     f.DKPModesMain.AntiSnipe.Header:SetText(L["ANTISNIPE"])
 
   -- Channels DROPDOWN box 
-  f.DKPModesMain.ChannelsDropDown = CreateFrame("FRAME", "MonDKPModeSelectDropDown", f.DKPModesMain, "MonolithDKPUIDropDownMenuTemplate")
+  f.DKPModesMain.ChannelsDropDown = CreateFrame("FRAME", "CommDKPModeSelectDropDown", f.DKPModesMain, "CommunityDKPUIDropDownMenuTemplate")
 
   -- Create and bind the initialization function to the dropdown menu
   UIDropDownMenu_Initialize(f.DKPModesMain.ChannelsDropDown, function(self, level, menuList)
   local OpenChannel = UIDropDownMenu_CreateInfo()
     OpenChannel.func = self.SetValue
-    OpenChannel.fontObject = "MonDKPSmallCenter"
+    OpenChannel.fontObject = "CommDKPSmallCenter"
     OpenChannel.keepShownOnClick = true;
     OpenChannel.isNotRadio = true;
     OpenChannel.text, OpenChannel.arg1, OpenChannel.checked = L["WHISPER"], "Whisper", true == core.DB.modes.channels.whisper
@@ -417,12 +417,12 @@ function MonDKP:DKPModes_Main()
 
   f.DKPModesMain.ChannelsHeader = f.DKPModesMain:CreateFontString(nil, "OVERLAY")
   f.DKPModesMain.ChannelsHeader:SetPoint("BOTTOMLEFT", f.DKPModesMain.ChannelsDropDown, "TOPLEFT", 25, 0);
-  f.DKPModesMain.ChannelsHeader:SetFontObject("MonDKPSmallLeft")
+  f.DKPModesMain.ChannelsHeader:SetFontObject("CommDKPSmallLeft")
   f.DKPModesMain.ChannelsHeader:SetText(L["COMMANDCHANNELS"])
 
   -- Cost Auto Update Value DROPDOWN box 
   if not core.DB.modes.CostSelection then core.DB.modes.CostSelection = "Second Bidder" end
-  f.DKPModesMain.CostSelection = CreateFrame("FRAME", "MonDKPModeSelectDropDown", f.DKPModesMain, "MonolithDKPUIDropDownMenuTemplate")
+  f.DKPModesMain.CostSelection = CreateFrame("FRAME", "CommDKPModeSelectDropDown", f.DKPModesMain, "CommunityDKPUIDropDownMenuTemplate")
   f.DKPModesMain.CostSelection:SetPoint("TOPLEFT", f.DKPModesMain.ChannelsDropDown, "BOTTOMLEFT", 0, -10)
 
   local LocalCostSel;
@@ -437,7 +437,7 @@ function MonDKP:DKPModes_Main()
   UIDropDownMenu_Initialize(f.DKPModesMain.CostSelection, function(self, level, menuList)
   local CostSelect = UIDropDownMenu_CreateInfo()
     CostSelect.func = self.SetValue
-    CostSelect.fontObject = "MonDKPSmallCenter"
+    CostSelect.fontObject = "CommDKPSmallCenter"
     CostSelect.text, CostSelect.arg1, CostSelect.checked, CostSelect.isNotRadio = L["FIRSTBIDDER"], "First Bidder", "First Bidder" == core.DB.modes.CostSelection, false
     UIDropDownMenu_AddButton(CostSelect)
     CostSelect.text, CostSelect.arg1, CostSelect.checked, CostSelect.isNotRadio = L["SECONDBIDDER"], "Second Bidder", "Second Bidder" == core.DB.modes.CostSelection, false
@@ -473,7 +473,7 @@ function MonDKP:DKPModes_Main()
 
   f.DKPModesMain.CostSelectionHeader = f.DKPModesMain:CreateFontString(nil, "OVERLAY")
   f.DKPModesMain.CostSelectionHeader:SetPoint("BOTTOMLEFT", f.DKPModesMain.CostSelection, "TOPLEFT", 25, 0);
-  f.DKPModesMain.CostSelectionHeader:SetFontObject("MonDKPSmallLeft")
+  f.DKPModesMain.CostSelectionHeader:SetFontObject("CommDKPSmallLeft")
   f.DKPModesMain.CostSelectionHeader:SetText(L["COSTAUTOUPDATEVALUE"])
 
   if not (core.DB.modes.mode == "Minimum Bid Values" or (core.DB.modes.mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid")) then
@@ -496,7 +496,7 @@ function MonDKP:DKPModes_Main()
     f.DKPModesMain.Inflation:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
     f.DKPModesMain.Inflation:SetMaxLetters(8)
     f.DKPModesMain.Inflation:SetTextColor(1, 1, 1, 1)
-    f.DKPModesMain.Inflation:SetFontObject("MonDKPSmallRight")
+    f.DKPModesMain.Inflation:SetFontObject("CommDKPSmallRight")
     f.DKPModesMain.Inflation:SetTextInsets(10, 15, 5, 5)
     f.DKPModesMain.Inflation:SetText(core.DB.modes.Inflation)
     f.DKPModesMain.Inflation:Hide();
@@ -524,7 +524,7 @@ function MonDKP:DKPModes_Main()
 
     -- Min Roll Header
     f.DKPModesMain.Inflation.Header = f.DKPModesMain.Inflation:CreateFontString(nil, "OVERLAY")
-    f.DKPModesMain.Inflation.Header:SetFontObject("MonDKPNormalLeft");
+    f.DKPModesMain.Inflation.Header:SetFontObject("CommDKPNormalLeft");
     f.DKPModesMain.Inflation.Header:SetPoint("BOTTOM", f.DKPModesMain.Inflation, "TOP", -20, 2);
     f.DKPModesMain.Inflation.Header:SetText(L["INFLATION"])
 
@@ -534,13 +534,13 @@ function MonDKP:DKPModes_Main()
     end
 
     -- ZeroSum Type DROPDOWN box 
-  f.DKPModesMain.ZeroSumType = CreateFrame("FRAME", "MonDKPModeSelectDropDown", f.DKPModesMain, "MonolithDKPUIDropDownMenuTemplate")
+  f.DKPModesMain.ZeroSumType = CreateFrame("FRAME", "CommDKPModeSelectDropDown", f.DKPModesMain, "CommunityDKPUIDropDownMenuTemplate")
 
   -- Create and bind the initialization function to the dropdown menu
   UIDropDownMenu_Initialize(f.DKPModesMain.ZeroSumType, function(self, level, menuList)
   local BidType = UIDropDownMenu_CreateInfo()
     BidType.func = self.SetValue
-    BidType.fontObject = "MonDKPSmallCenter"
+    BidType.fontObject = "CommDKPSmallCenter"
     BidType.text, BidType.arg1, BidType.checked, BidType.isNotRadio = L["STATIC"], "Static", "Static" == core.DB.modes.ZeroSumBidType, false
     UIDropDownMenu_AddButton(BidType)
     BidType.text, BidType.arg1, BidType.checked, BidType.isNotRadio = L["MINIMUMBID"], "Minimum Bid", "Minimum Bid" == core.DB.modes.ZeroSumBidType, false
@@ -589,7 +589,7 @@ function MonDKP:DKPModes_Main()
 
   f.DKPModesMain.ZeroSumTypeHeader = f.DKPModesMain:CreateFontString(nil, "OVERLAY")
   f.DKPModesMain.ZeroSumTypeHeader:SetPoint("BOTTOMLEFT", f.DKPModesMain.ZeroSumType, "TOPLEFT", 25, 0);
-  f.DKPModesMain.ZeroSumTypeHeader:SetFontObject("MonDKPSmallLeft")
+  f.DKPModesMain.ZeroSumTypeHeader:SetFontObject("CommDKPSmallLeft")
   f.DKPModesMain.ZeroSumTypeHeader:SetText(L["BIDMETHOD"])
 
   if core.DB.modes.mode ~= "Zero Sum" then
@@ -598,13 +598,13 @@ function MonDKP:DKPModes_Main()
   end
 
   -- Item Cost Value DROPDOWN box 
-  f.DKPModesMain.ItemCostDropDown = CreateFrame("FRAME", "MonDKPModeSelectDropDown", f.DKPModesMain, "MonolithDKPUIDropDownMenuTemplate")
+  f.DKPModesMain.ItemCostDropDown = CreateFrame("FRAME", "CommDKPModeSelectDropDown", f.DKPModesMain, "CommunityDKPUIDropDownMenuTemplate")
 
   -- Create and bind the initialization function to the dropdown menu
   UIDropDownMenu_Initialize(f.DKPModesMain.ItemCostDropDown, function(self, level, menuList)
   local CostValue = UIDropDownMenu_CreateInfo()
     CostValue.func = self.SetValue
-    CostValue.fontObject = "MonDKPSmallCenter"
+    CostValue.fontObject = "CommDKPSmallCenter"
     CostValue.text, CostValue.arg1, CostValue.checked, CostValue.isNotRadio = L["INTEGER"], "Integer", "Integer" == core.DB.modes.costvalue, false
     UIDropDownMenu_AddButton(CostValue)
     CostValue.text, CostValue.arg1, CostValue.checked, CostValue.isNotRadio = L["PERCENT"], "Percent", "Percent" == core.DB.modes.costvalue, false
@@ -649,7 +649,7 @@ function MonDKP:DKPModes_Main()
 
   f.DKPModesMain.ItemCostHeader = f.DKPModesMain:CreateFontString(nil, "OVERLAY")
   f.DKPModesMain.ItemCostHeader:SetPoint("BOTTOMLEFT", f.DKPModesMain.ItemCostDropDown, "TOPLEFT", 25, 0);
-  f.DKPModesMain.ItemCostHeader:SetFontObject("MonDKPSmallLeft")
+  f.DKPModesMain.ItemCostHeader:SetFontObject("CommDKPSmallLeft")
   f.DKPModesMain.ItemCostHeader:SetText(L["ITEMCOSTTYPES"])
 
   if core.DB.modes.mode == "Minimum Bid Values" then
@@ -686,17 +686,17 @@ elseif core.DB.modes.mode == "Static Item Values" then
   f.DKPModesMain.SubZeroBidding:SetScale(0.6);
   f.DKPModesMain.SubZeroBidding.text:SetText("  |cff5151de"..L["SUBZEROBIDDING"].."|r");
   f.DKPModesMain.SubZeroBidding.text:SetScale(1.5);
-  f.DKPModesMain.SubZeroBidding.text:SetFontObject("MonDKPSmallLeft")
+  f.DKPModesMain.SubZeroBidding.text:SetFontObject("CommDKPSmallLeft")
   f.DKPModesMain.SubZeroBidding:SetPoint("TOP", f.DKPModesMain.ModesDropDown, "BOTTOMLEFT", 60, 0);
   f.DKPModesMain.SubZeroBidding:SetScript("OnClick", function(self)
     if self:GetChecked() == true then
       core.DB.modes.SubZeroBidding = true;
-      MonDKP:Print("Sub Zero Bidding |cff00ff00"..L["ENABLED"].."|r")
+      CommDKP:Print("Sub Zero Bidding |cff00ff00"..L["ENABLED"].."|r")
       f.DKPModesMain.AllowNegativeBidders:Show()
       f.DKPModesMain.AllowNegativeBidders:SetChecked(core.DB.modes.AllowNegativeBidders)
     else
       core.DB.modes.SubZeroBidding = false;
-      MonDKP:Print("Sub Zero Bidding |cffff0000"..L["DISABLED"].."|r")
+      CommDKP:Print("Sub Zero Bidding |cffff0000"..L["DISABLED"].."|r")
       core.DB.modes.AllowNegativeBidders = false
       f.DKPModesMain.AllowNegativeBidders:Hide()
     end
@@ -721,15 +721,15 @@ elseif core.DB.modes.mode == "Static Item Values" then
   f.DKPModesMain.AllowNegativeBidders:SetScale(0.6);
   f.DKPModesMain.AllowNegativeBidders.text:SetText("  |cff5151de"..L["ALLOWNEGATIVEBIDDERS"].."|r");
   f.DKPModesMain.AllowNegativeBidders.text:SetScale(1.5);
-  f.DKPModesMain.AllowNegativeBidders.text:SetFontObject("MonDKPSmallLeft")
+  f.DKPModesMain.AllowNegativeBidders.text:SetFontObject("CommDKPSmallLeft")
   f.DKPModesMain.AllowNegativeBidders:SetPoint("TOPLEFT", f.DKPModesMain.SubZeroBidding, "BOTTOMLEFT", 0, 0);
   f.DKPModesMain.AllowNegativeBidders:SetScript("OnClick", function(self)
     if self:GetChecked() == true then
       core.DB.modes.AllowNegativeBidders = true;
-      MonDKP:Print("Allow Negative Bidders |cff00ff00"..L["ENABLED"].."|r")
+      CommDKP:Print("Allow Negative Bidders |cff00ff00"..L["ENABLED"].."|r")
     else
       core.DB.modes.AllowNegativeBidders = false;
-      MonDKP:Print("Allow Negative Bidders |cffff0000"..L["DISABLED"].."|r")
+      CommDKP:Print("Allow Negative Bidders |cffff0000"..L["DISABLED"].."|r")
     end
     PlaySound(808);
   end)
@@ -764,7 +764,7 @@ elseif core.DB.modes.mode == "Static Item Values" then
 
   -- Roll Container Header
     f.DKPModesMain.RollContainer.Header = f.DKPModesMain.RollContainer:CreateFontString(nil, "OVERLAY")
-    f.DKPModesMain.RollContainer.Header:SetFontObject("MonDKPLargeLeft");
+    f.DKPModesMain.RollContainer.Header:SetFontObject("CommDKPLargeLeft");
     f.DKPModesMain.RollContainer.Header:SetScale(0.6)
     f.DKPModesMain.RollContainer.Header:SetPoint("TOPLEFT", f.DKPModesMain.RollContainer, "TOPLEFT", 15, -15);
     f.DKPModesMain.RollContainer.Header:SetText(L["ROLLSETTINGS"])
@@ -784,7 +784,7 @@ elseif core.DB.modes.mode == "Static Item Values" then
       f.DKPModesMain.RollContainer.rollMin:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
       f.DKPModesMain.RollContainer.rollMin:SetMaxLetters(6)
       f.DKPModesMain.RollContainer.rollMin:SetTextColor(1, 1, 1, 1)
-      f.DKPModesMain.RollContainer.rollMin:SetFontObject("MonDKPSmallRight")
+      f.DKPModesMain.RollContainer.rollMin:SetFontObject("CommDKPSmallRight")
       f.DKPModesMain.RollContainer.rollMin:SetTextInsets(10, 15, 5, 5)
       f.DKPModesMain.RollContainer.rollMin:SetText(core.DB.modes.rolls.min)
       f.DKPModesMain.RollContainer.rollMin:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
@@ -818,13 +818,13 @@ elseif core.DB.modes.mode == "Static Item Values" then
 
       -- Min Roll Header
       f.DKPModesMain.RollContainer.rollMin.Header = f.DKPModesMain.RollContainer.rollMin:CreateFontString(nil, "OVERLAY")
-      f.DKPModesMain.RollContainer.rollMin.Header:SetFontObject("MonDKPNormalLeft");
+      f.DKPModesMain.RollContainer.rollMin.Header:SetFontObject("CommDKPNormalLeft");
       f.DKPModesMain.RollContainer.rollMin.Header:SetPoint("BOTTOM", f.DKPModesMain.RollContainer.rollMin, "TOP", -20, 2);
       f.DKPModesMain.RollContainer.rollMin.Header:SetText(L["MIN"])
 
       -- Dash Between Rolls
       f.DKPModesMain.RollContainer.dash = f.DKPModesMain.RollContainer:CreateFontString(nil, "OVERLAY")
-      f.DKPModesMain.RollContainer.dash:SetFontObject("MonDKPLargeLeft");
+      f.DKPModesMain.RollContainer.dash:SetFontObject("CommDKPLargeLeft");
       f.DKPModesMain.RollContainer.dash:SetPoint("LEFT", f.DKPModesMain.RollContainer.rollMin, "RIGHT", 9, 0);
       f.DKPModesMain.RollContainer.dash:SetText("-")
 
@@ -842,7 +842,7 @@ elseif core.DB.modes.mode == "Static Item Values" then
       f.DKPModesMain.RollContainer.rollMax:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
       f.DKPModesMain.RollContainer.rollMax:SetMaxLetters(6)
       f.DKPModesMain.RollContainer.rollMax:SetTextColor(1, 1, 1, 1)
-      f.DKPModesMain.RollContainer.rollMax:SetFontObject("MonDKPSmallRight")
+      f.DKPModesMain.RollContainer.rollMax:SetFontObject("CommDKPSmallRight")
       f.DKPModesMain.RollContainer.rollMax:SetTextInsets(10, 15, 5, 5)
       f.DKPModesMain.RollContainer.rollMax:SetText(core.DB.modes.rolls.max)
       f.DKPModesMain.RollContainer.rollMax:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
@@ -876,18 +876,18 @@ elseif core.DB.modes.mode == "Static Item Values" then
 
       -- Max Roll Header
       f.DKPModesMain.RollContainer.rollMax.Header = f.DKPModesMain.RollContainer.rollMax:CreateFontString(nil, "OVERLAY")
-      f.DKPModesMain.RollContainer.rollMax.Header:SetFontObject("MonDKPNormalLeft");
+      f.DKPModesMain.RollContainer.rollMax.Header:SetFontObject("CommDKPNormalLeft");
       f.DKPModesMain.RollContainer.rollMax.Header:SetPoint("BOTTOM", f.DKPModesMain.RollContainer.rollMax, "TOP", -20, 2);
       f.DKPModesMain.RollContainer.rollMax.Header:SetText(L["MAX"])
 
     f.DKPModesMain.RollContainer.rollMin.perc = f.DKPModesMain.RollContainer.rollMin:CreateFontString(nil, "OVERLAY")
-    f.DKPModesMain.RollContainer.rollMin.perc:SetFontObject("MonDKPSmallLeft");
+    f.DKPModesMain.RollContainer.rollMin.perc:SetFontObject("CommDKPSmallLeft");
     f.DKPModesMain.RollContainer.rollMin.perc:SetPoint("LEFT", f.DKPModesMain.RollContainer.rollMin, "RIGHT", -15, 0);
     f.DKPModesMain.RollContainer.rollMin.perc:SetText("%")
     f.DKPModesMain.RollContainer.rollMin.perc:SetShown(core.DB.modes.rolls.UsePerc);
 
     f.DKPModesMain.RollContainer.rollMax.perc = f.DKPModesMain.RollContainer.rollMax:CreateFontString(nil, "OVERLAY")
-    f.DKPModesMain.RollContainer.rollMax.perc:SetFontObject("MonDKPSmallLeft");
+    f.DKPModesMain.RollContainer.rollMax.perc:SetFontObject("CommDKPSmallLeft");
     f.DKPModesMain.RollContainer.rollMax.perc:SetPoint("LEFT", f.DKPModesMain.RollContainer.rollMax, "RIGHT", -15, 0);
     f.DKPModesMain.RollContainer.rollMax.perc:SetText("%")
     f.DKPModesMain.RollContainer.rollMax.perc:SetShown(core.DB.modes.rolls.UsePerc);
@@ -898,7 +898,7 @@ elseif core.DB.modes.mode == "Static Item Values" then
     f.DKPModesMain.RollContainer.UsePerc:SetScale(0.6);
     f.DKPModesMain.RollContainer.UsePerc.text:SetText("  |cff5151de"..L["USEPERCENTAGE"].."|r");
     f.DKPModesMain.RollContainer.UsePerc.text:SetScale(1.5);
-    f.DKPModesMain.RollContainer.UsePerc.text:SetFontObject("MonDKPSmallLeft")
+    f.DKPModesMain.RollContainer.UsePerc.text:SetFontObject("CommDKPSmallLeft")
     f.DKPModesMain.RollContainer.UsePerc:SetPoint("TOP", f.DKPModesMain.RollContainer.rollMin, "BOTTOMLEFT", 0, -10);
     f.DKPModesMain.RollContainer.UsePerc:SetScript("OnClick", function(self)
       core.DB.modes.rolls.UsePerc = self:GetChecked();
@@ -934,7 +934,7 @@ elseif core.DB.modes.mode == "Static Item Values" then
       f.DKPModesMain.RollContainer.AddMax:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
       f.DKPModesMain.RollContainer.AddMax:SetMaxLetters(6)
       f.DKPModesMain.RollContainer.AddMax:SetTextColor(1, 1, 1, 1)
-      f.DKPModesMain.RollContainer.AddMax:SetFontObject("MonDKPSmallRight")
+      f.DKPModesMain.RollContainer.AddMax:SetFontObject("CommDKPSmallRight")
       f.DKPModesMain.RollContainer.AddMax:SetTextInsets(10, 15, 5, 5)
       f.DKPModesMain.RollContainer.AddMax:SetText(core.DB.modes.rolls.AddToMax)
       f.DKPModesMain.RollContainer.AddMax:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
@@ -968,7 +968,7 @@ elseif core.DB.modes.mode == "Static Item Values" then
 
       -- Add to Max Header
       f.DKPModesMain.RollContainer.AddMax.Header = f.DKPModesMain.RollContainer.rollMax:CreateFontString(nil, "OVERLAY")
-      f.DKPModesMain.RollContainer.AddMax.Header:SetFontObject("MonDKPSmallRight");
+      f.DKPModesMain.RollContainer.AddMax.Header:SetFontObject("CommDKPSmallRight");
       f.DKPModesMain.RollContainer.AddMax.Header:SetPoint("RIGHT", f.DKPModesMain.RollContainer.AddMax, "LEFT", -5, 0);
       f.DKPModesMain.RollContainer.AddMax.Header:SetText(L["ADDTOMAXROLL"]..": ")
 
@@ -1002,16 +1002,16 @@ elseif core.DB.modes.mode == "Static Item Values" then
         table.insert(temptable1, core.DB.modes)
         table.insert(temptable1, core.DB.DKPBonus)
         table.insert(temptable1, core.DB.raiders)
-        MonDKP.Sync:SendData("MonDKPDKPModes", temptable1)
-        MonDKP:Print(L["DKPMODESENTCONF"])
+        CommDKP.Sync:SendData("CommDKPDKPModes", temptable1)
+        CommDKP:Print(L["DKPMODESENTCONF"])
         local temptable2 = {}
               table.insert(temptable2, core.DB.MinBidBySlot)
-              table.insert(temptable2, MonDKP:GetTable(MonDKP_MinBids, true))
-              MonDKP.Sync:SendData("MonDKPMinBid", temptable2)
+              table.insert(temptable2, CommDKP:GetTable(CommDKP_MinBids, true))
+              CommDKP.Sync:SendData("CommDKPMinBid", temptable2)
         local temptable3 = {}
               table.insert(temptable3, core.DB.MaxBidBySlot)
-              table.insert(temptable3, MonDKP:GetTable(MonDKP_MaxBids, true))
-              MonDKP.Sync:SendData("MonDKPMaxBid", temptable3)
+              table.insert(temptable3, CommDKP:GetTable(CommDKP_MaxBids, true))
+              CommDKP.Sync:SendData("CommDKPMaxBid", temptable3)
       end,
       timeout = 0,
       whileDead = true,

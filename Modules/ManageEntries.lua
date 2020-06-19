@@ -1,46 +1,46 @@
 local _, core = ...;
 local _G = _G;
-local MonDKP = core.MonDKP;
+local CommDKP = core.CommDKP;
 local L = core.L;
 
 
 local function Remove_Entries()
-	MonDKP:StatusVerify_Update()
+	CommDKP:StatusVerify_Update()
 	local numPlayers = 0;
 	local removedUsers, c;
 	local deleted = {}
 
 	for i=1, #core.SelectedData do
-		local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), core.SelectedData[i]["player"]);
+		local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), core.SelectedData[i]["player"]);
 		local flag = false -- flag = only create archive entry if they appear anywhere in the history. If there's no history, there's no reason anyone would have it.
 		local curTime = time()
 
 		if search then
-			local path = MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]]
+			local path = CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]]
 
-			for i=1, #MonDKP:GetTable(MonDKP_DKPHistory, true) do
-				if strfind(MonDKP:GetTable(MonDKP_DKPHistory, true)[i].players, ","..path.player..",") or strfind(MonDKP:GetTable(MonDKP_DKPHistory, true)[i].players, path.player..",") == 1 then
+			for i=1, #CommDKP:GetTable(CommDKP_DKPHistory, true) do
+				if strfind(CommDKP:GetTable(CommDKP_DKPHistory, true)[i].players, ","..path.player..",") or strfind(CommDKP:GetTable(CommDKP_DKPHistory, true)[i].players, path.player..",") == 1 then
 					flag = true
 				end
 			end
 
-			for i=1, #MonDKP:GetTable(MonDKP_Loot, true) do
-				if MonDKP:GetTable(MonDKP_Loot, true)[i].player == path.player then
+			for i=1, #CommDKP:GetTable(CommDKP_Loot, true) do
+				if CommDKP:GetTable(CommDKP_Loot, true)[i].player == path.player then
 					flag = true
 				end
 			end
 			
 			if flag then 		-- above 2 loops flags character if they have any loot/dkp history. Only inserts to archive and broadcasts if found. Other players will not have the entry if no history exists
-				if not MonDKP:GetTable(MonDKP_Archive, true)[core.SelectedData[i].player] then
-					MonDKP:GetTable(MonDKP_Archive, true)[core.SelectedData[i].player] = { dkp=0, lifetime_spent=0, lifetime_gained=0, deleted=true, edited=curTime }
+				if not CommDKP:GetTable(CommDKP_Archive, true)[core.SelectedData[i].player] then
+					CommDKP:GetTable(CommDKP_Archive, true)[core.SelectedData[i].player] = { dkp=0, lifetime_spent=0, lifetime_gained=0, deleted=true, edited=curTime }
 				else
-					MonDKP:GetTable(MonDKP_Archive, true)[core.SelectedData[i].player].deleted = true
-					MonDKP:GetTable(MonDKP_Archive, true)[core.SelectedData[i].player].edited = curTime
+					CommDKP:GetTable(CommDKP_Archive, true)[core.SelectedData[i].player].deleted = true
+					CommDKP:GetTable(CommDKP_Archive, true)[core.SelectedData[i].player].edited = curTime
 				end
 				table.insert(deleted, { player=path.player, deleted=true })
 			end
 
-			c = MonDKP:GetCColors(core.SelectedData[i]["class"])
+			c = CommDKP:GetCColors(core.SelectedData[i]["class"])
 			if i==1 then
 				removedUsers = "|cff"..c.hex..core.SelectedData[i]["player"].."|r"
 			else
@@ -48,22 +48,22 @@ local function Remove_Entries()
 			end
 			numPlayers = numPlayers + 1
 
-			tremove(MonDKP:GetTable(MonDKP_DKPTable, true), search[1][1])
+			tremove(CommDKP:GetTable(CommDKP_DKPTable, true), search[1][1])
 
-			local search2 = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Standby, true), core.SelectedData[i].player, "player");
+			local search2 = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Standby, true), core.SelectedData[i].player, "player");
 
 			if search2 then
-				table.remove(MonDKP:GetTable(MonDKP_Standby, true), search2[1][1])
+				table.remove(CommDKP:GetTable(CommDKP_Standby, true), search2[1][1])
 			end
 		end
 	end
 	table.wipe(core.SelectedData)
-	MonDKPSelectionCount_Update()
-	MonDKP:FilterDKPTable(core.currentSort, "reset")
-	MonDKP:Print("Removed "..numPlayers.." player(s): "..removedUsers)
-	MonDKP:ClassGraph_Update()
+	CommDKPSelectionCount_Update()
+	CommDKP:FilterDKPTable(core.currentSort, "reset")
+	CommDKP:Print("Removed "..numPlayers.." player(s): "..removedUsers)
+	CommDKP:ClassGraph_Update()
 	if #deleted >0 then
-		MonDKP.Sync:SendData("MonDKPDelUsers", deleted)
+		CommDKP.Sync:SendData("CommDKPDelUsers", deleted)
 	end
 end
 
@@ -103,8 +103,8 @@ function AddRaidToDKPTable()
 				end
 			end
 			if tempName and InGuild then
-				if not MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), tempName) then
-					tinsert(MonDKP:GetTable(MonDKP_DKPTable, true), {
+				if not CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), tempName) then
+					tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), {
 						player=tempName,
 						class=tempClass,
 						dkp=0,
@@ -117,15 +117,15 @@ function AddRaidToDKPTable()
 						role = "No Role Reported",
 					});
 					numPlayers = numPlayers + 1;
-					c = MonDKP:GetCColors(tempClass)
+					c = CommDKP:GetCColors(tempClass)
 					if addedUsers == nil then
 						addedUsers = "|cff"..c.hex..tempName.."|r"; 
 					else
 						addedUsers = addedUsers..", |cff"..c.hex..tempName.."|r"
 					end
-					if MonDKP:GetTable(MonDKP_Archive, true)[tempName] and MonDKP:GetTable(MonDKP_Archive, true)[tempName].deleted then
-						MonDKP:GetTable(MonDKP_Archive, true)[tempName].deleted = "Recovered"
-						MonDKP:GetTable(MonDKP_Archive, true)[tempName].edited = curTime
+					if CommDKP:GetTable(CommDKP_Archive, true)[tempName] and CommDKP:GetTable(CommDKP_Archive, true)[tempName].deleted then
+						CommDKP:GetTable(CommDKP_Archive, true)[tempName].deleted = "Recovered"
+						CommDKP:GetTable(CommDKP_Archive, true)[tempName].edited = curTime
 						FlagRecovery = true
 					end
 				end
@@ -133,19 +133,19 @@ function AddRaidToDKPTable()
 			InGuild = false;
 		end
 		if addedUsers then
-			MonDKP:Print(L["ADDED"].." "..numPlayers.." "..L["PLAYERS"]..": "..addedUsers)
+			CommDKP:Print(L["ADDED"].." "..numPlayers.." "..L["PLAYERS"]..": "..addedUsers)
 		end
 		if core.ClassGraph then
-			MonDKP:ClassGraph_Update()
+			CommDKP:ClassGraph_Update()
 		else
-			MonDKP:ClassGraph()
+			CommDKP:ClassGraph()
 		end
 		if FlagRecovery then 
-			MonDKP:Print(L["YOUHAVERECOVERED"])
+			CommDKP:Print(L["YOUHAVERECOVERED"])
 		end
-		MonDKP:FilterDKPTable(core.currentSort, "reset")
+		CommDKP:FilterDKPTable(core.currentSort, "reset")
 	else
-		MonDKP:Print(L["NOPARTYORRAID"])
+		CommDKP:Print(L["NOPARTYORRAID"])
 	end
 end
 
@@ -159,10 +159,10 @@ local function AddGuildToDKPTable(rank, level)
 	for i=1, guildSize do
 		name,rankName,rankIndex,charLevel,_,_,_,_,_,_,class = GetGuildRosterInfo(i)
 		name = strsub(name, 1, string.find(name, "-")-1)			-- required to remove server name from player (can remove in classic if this is not an issue)
-		local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), name)
+		local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
 
 		if not search and (level == nil or charLevel >= level) and (rank == nil or rankIndex == rank) then
-			tinsert(MonDKP:GetTable(MonDKP_DKPTable, true), {
+			tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), {
 				player=name,
 				class=class,
 				dkp=0,
@@ -175,30 +175,30 @@ local function AddGuildToDKPTable(rank, level)
 				role = "No Role Reported",
 			});
 			numPlayers = numPlayers + 1;
-			c = MonDKP:GetCColors(class)
+			c = CommDKP:GetCColors(class)
 			if addedUsers == nil then
 				addedUsers = "|cff"..c.hex..name.."|r"; 
 			else
 				addedUsers = addedUsers..", |cff"..c.hex..name.."|r"
 			end
-			if MonDKP:GetTable(MonDKP_Archive, true)[name] and MonDKP:GetTable(MonDKP_Archive, true)[name].deleted then
-				MonDKP:GetTable(MonDKP_Archive, true)[name].deleted = "Recovered"
-				MonDKP:GetTable(MonDKP_Archive, true)[name].edited = curTime
+			if CommDKP:GetTable(CommDKP_Archive, true)[name] and CommDKP:GetTable(CommDKP_Archive, true)[name].deleted then
+				CommDKP:GetTable(CommDKP_Archive, true)[name].deleted = "Recovered"
+				CommDKP:GetTable(CommDKP_Archive, true)[name].edited = curTime
 				FlagRecovery = true
 			end
 		end
 	end
-	MonDKP:FilterDKPTable(core.currentSort, "reset")
+	CommDKP:FilterDKPTable(core.currentSort, "reset")
 	if addedUsers then
-		MonDKP:Print(L["ADDED"].." "..numPlayers.." "..L["PLAYERS"]..": "..addedUsers)
+		CommDKP:Print(L["ADDED"].." "..numPlayers.." "..L["PLAYERS"]..": "..addedUsers)
 	end
 	if FlagRecovery then 
-		MonDKP:Print(L["YOUHAVERECOVERED"])
+		CommDKP:Print(L["YOUHAVERECOVERED"])
 	end
 	if core.ClassGraph then
-		MonDKP:ClassGraph_Update()
+		CommDKP:ClassGraph_Update()
 	else
-		MonDKP:ClassGraph()
+		CommDKP:ClassGraph()
 	end
 end
 
@@ -208,10 +208,10 @@ local function AddTargetToDKPTable()
 	local c;
 	local curTime = time()
 
-	local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), name)
+	local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
 
 	if not search then
-		tinsert(MonDKP:GetTable(MonDKP_DKPTable, true), {
+		tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), {
 			player=name,
 			class=class,
 			dkp=0,
@@ -224,19 +224,19 @@ local function AddTargetToDKPTable()
 			role = "No Role Reported",
 		});
 
-		MonDKP:FilterDKPTable(core.currentSort, "reset")
-		c = MonDKP:GetCColors(class)
-		MonDKP:Print(L["ADDED"].." |cff"..c.hex..name.."|r")
+		CommDKP:FilterDKPTable(core.currentSort, "reset")
+		c = CommDKP:GetCColors(class)
+		CommDKP:Print(L["ADDED"].." |cff"..c.hex..name.."|r")
 
 		if core.ClassGraph then
-			MonDKP:ClassGraph_Update()
+			CommDKP:ClassGraph_Update()
 		else
-			MonDKP:ClassGraph()
+			CommDKP:ClassGraph()
 		end
-		if MonDKP:GetTable(MonDKP_Archive, true)[name] and MonDKP:GetTable(MonDKP_Archive, true)[name].deleted then
-			MonDKP:GetTable(MonDKP_Archive, true)[name].deleted = "Recovered"
-			MonDKP:GetTable(MonDKP_Archive, true)[name].edited = curTime
-			MonDKP:Print(L["YOUHAVERECOVERED"])
+		if CommDKP:GetTable(CommDKP_Archive, true)[name] and CommDKP:GetTable(CommDKP_Archive, true)[name].deleted then
+			CommDKP:GetTable(CommDKP_Archive, true)[name].deleted = "Recovered"
+			CommDKP:GetTable(CommDKP_Archive, true)[name].edited = curTime
+			CommDKP:Print(L["YOUHAVERECOVERED"])
 		end
 	end
 end
@@ -255,113 +255,65 @@ end
 -- TEAM FUNCTIONS
 -------
 
-function MonDKP:GetCurrentTeamIndex() 
-	local _tmpString = MonDKP:GetTable(MonDKP_DB, false)["defaults"]["CurrentTeam"] or "0"
-	return _tmpString
-end
-
-function MonDKP:GetCurrentTeamName()
-	local _string = "Unguilded";
-	local teams = MonDKP:GetTable(MonDKP_DB, false)["teams"];
-
-	if tablelength(teams) > 0 then
-		_string = MonDKP:GetTable(MonDKP_DB, false)["teams"][MonDKP:GetCurrentTeamIndex()].name
-	end
-
-	return _string
-end
-
-function tablelength(T)
-	local count = 0
-	for _ in pairs(T) do
-		count = count + 1 
-	end
-	return count
-end
-
-function MonDKP:GetGuildTeamList() 
-	local _list = {};
-	local _tmp = MonDKP:GetTable(MonDKP_DB, false)["teams"]
-	local index = 1
-
-	for k,v in pairs(_tmp) do
-		if(type(v) == "table") then
-			for z,x in pairs(v) do
-				table.insert(_list, {tonumber(k), v.name})
-				index = index + 1
-			end
-		end
-	end
-	-- so, because team "index" is a string Lua doesn't give a flying fuck
-	-- about order of adding elements to "string" indexed table so we have to unfuck it
-	table.sort(_list,  
-		function(a, b)
-			return a[1] < b[1]
-		end
-	)
-
-	return _list
-end
-
 function ChangeTeamName(index, _name) 
-	MonDKP:GetTable(MonDKP_DB, false)["teams"][tostring(index)].name = _name;
-	MonDKP.Sync:SendData("MonDKPTeams", {Teams =  MonDKP:GetTable(MonDKP_DB, false)["teams"]} , nil)
+	CommDKP:GetTable(CommDKP_DB, false)["teams"][tostring(index)].name = _name;
+	CommDKP.Sync:SendData("CommDKPTeams", {Teams =  CommDKP:GetTable(CommDKP_DB, false)["teams"]} , nil)
 end
 
 local function AddNewTeamToGuild() 
 	local _index = 0
-	local _tmp = MonDKP:GetTable(MonDKP_DB, false)["teams"]
-	local realmName = MonDKP:GetRealmName();
-	local guildName = MonDKP:GetGuildName();
+	local _tmp = CommDKP:GetTable(CommDKP_DB, false)["teams"]
+	local realmName = CommDKP:GetRealmName();
+	local guildName = CommDKP:GetGuildName();
 
-	-- get the index of last team from MonDKP_DB
+	-- get the index of last team from CommDKP_DB
 	for k,v in pairs(_tmp) do
 		if(type(v) == "table") then
 			_index = _index + 1
 		end
 	end
 
-	-- add new team definition to MonDKP_DB with generic GuildName-index
-	MonDKP:GetTable(MonDKP_DB, false)["teams"][tostring(_index)] = { ["name"] = guildName.."-"..tostring(_index)}
+	-- add new team definition to CommDKP_DB with generic GuildName-index
+	CommDKP:GetTable(CommDKP_DB, false)["teams"][tostring(_index)] = { ["name"] = guildName.."-"..tostring(_index)}
 
 	------
 	-- add new team with new "index" to all "team" tables in saved variables
-	-- MonDKP_Loot, MonDKP_DKPTable, MonDKP_DKPHistory, MonDKP_MinBids, MonDKP_MaxBids, MonDKP_Standby, MonDKP_Archive
+	-- CommDKP_Loot, CommDKP_DKPTable, CommDKP_DKPHistory, CommDKP_MinBids, CommDKP_MaxBids, CommDKP_Standby, CommDKP_Archive
 	------
-		MonDKP:GetTable(MonDKP_Loot, false)[tostring(_index)] = {}
-		MonDKP:GetTable(MonDKP_DKPTable, false)[tostring(_index)] = {}
-		MonDKP:GetTable(MonDKP_DKPHistory, false)[tostring(_index)] = {}
-		MonDKP:GetTable(MonDKP_MinBids, false)[tostring(_index)] = {}
-		MonDKP:GetTable(MonDKP_MaxBids, false)[tostring(_index)] = {}
-		MonDKP:GetTable(MonDKP_Standby, false)[tostring(_index)] = {}
-		MonDKP:GetTable(MonDKP_Archive, false)[tostring(_index)] = {}
+		CommDKP:GetTable(CommDKP_Loot, false)[tostring(_index)] = {}
+		CommDKP:GetTable(CommDKP_DKPTable, false)[tostring(_index)] = {}
+		CommDKP:GetTable(CommDKP_DKPHistory, false)[tostring(_index)] = {}
+		CommDKP:GetTable(CommDKP_MinBids, false)[tostring(_index)] = {}
+		CommDKP:GetTable(CommDKP_MaxBids, false)[tostring(_index)] = {}
+		CommDKP:GetTable(CommDKP_Standby, false)[tostring(_index)] = {}
+		CommDKP:GetTable(CommDKP_Archive, false)[tostring(_index)] = {}
 
-		MonDKP.Sync:SendData("MonDKPTeams", {Teams =  MonDKP:GetTable(MonDKP_DB, false)["teams"]} , nil)
+		CommDKP.Sync:SendData("CommDKPTeams", {Teams =  CommDKP:GetTable(CommDKP_DB, false)["teams"]} , nil)
 end
 
 -------
 -- TEAM FUNCTIONS END
 -------
 
-function MonDKP:reset_prev_dkp(player)
+function CommDKP:reset_prev_dkp(player)
 	if player then
-		local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), player, "player")
+		local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), player, "player")
 
 		if search then
-			MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].previous_dkp = MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]].dkp
+			CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].previous_dkp = CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp
 		end
 	else
-		for i=1, #MonDKP:GetTable(MonDKP_DKPTable, true) do
-			MonDKP:GetTable(MonDKP_DKPTable, true)[i].previous_dkp = MonDKP:GetTable(MonDKP_DKPTable, true)[i].dkp
+		for i=1, #CommDKP:GetTable(CommDKP_DKPTable, true) do
+			CommDKP:GetTable(CommDKP_DKPTable, true)[i].previous_dkp = CommDKP:GetTable(CommDKP_DKPTable, true)[i].dkp
 		end
 	end
 end
 
 local function UpdateWhitelist()
 	if #core.SelectedData > 0 then
-		table.wipe(MonDKP:GetTable(MonDKP_Whitelist))
+		table.wipe(CommDKP:GetTable(CommDKP_Whitelist))
 		for i=1, #core.SelectedData do
-			local validate = MonDKP:ValidateSender(core.SelectedData[i].player)
+			local validate = CommDKP:ValidateSender(core.SelectedData[i].player)
 
 			if not validate then
 				StaticPopupDialogs["VALIDATE_OFFICER"] = {
@@ -377,33 +329,33 @@ local function UpdateWhitelist()
 			end
 		end
 		for i=1, #core.SelectedData do
-			table.insert(MonDKP:GetTable(MonDKP_Whitelist), core.SelectedData[i].player)
+			table.insert(CommDKP:GetTable(CommDKP_Whitelist), core.SelectedData[i].player)
 		end
 
-		local verifyLeadAdded = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_Whitelist), UnitName("player"))
+		local verifyLeadAdded = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Whitelist), UnitName("player"))
 
 		if not verifyLeadAdded then
 			local pname = UnitName("player");
-			table.insert(MonDKP:GetTable(MonDKP_Whitelist), pname)		-- verifies leader is included in white list. Adds if they aren't
+			table.insert(CommDKP:GetTable(CommDKP_Whitelist), pname)		-- verifies leader is included in white list. Adds if they aren't
 		end
 	else
-		table.wipe(MonDKP:GetTable(MonDKP_Whitelist))
+		table.wipe(CommDKP:GetTable(CommDKP_Whitelist))
 	end
-	MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP:GetTable(MonDKP_Whitelist))
-	MonDKP:Print(L["WHITELISTBROADCASTED"])
+	CommDKP.Sync:SendData("CommDKPWhitelist", CommDKP:GetTable(CommDKP_Whitelist))
+	CommDKP:Print(L["WHITELISTBROADCASTED"])
 end
 
 local function ViewWhitelist()
-	if #MonDKP:GetTable(MonDKP_Whitelist) > 0 then
+	if #CommDKP:GetTable(CommDKP_Whitelist) > 0 then
 		core.SelectedData = {}
-		for i=1, #MonDKP:GetTable(MonDKP_Whitelist) do
-			local search = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), MonDKP:GetTable(MonDKP_Whitelist)[i])
+		for i=1, #CommDKP:GetTable(CommDKP_Whitelist) do
+			local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), CommDKP:GetTable(CommDKP_Whitelist)[i])
 
 			if search then
-				table.insert(core.SelectedData, MonDKP:GetTable(MonDKP_DKPTable, true)[search[1][1]])
+				table.insert(core.SelectedData, CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]])
 			end
 		end
-		MonDKP:FilterDKPTable(core.currentSort, "reset")
+		CommDKP:FilterDKPTable(core.currentSort, "reset")
 	end
 end
 
@@ -411,28 +363,28 @@ end
 ---------------------------------------
 -- Manage DKP TAB.Create()
 ---------------------------------------
-function MonDKP:ManageEntries()
+function CommDKP:ManageEntries()
 
-	local CheckLeader = MonDKP:GetGuildRankIndex(UnitName("player"))
+	local CheckLeader = CommDKP:GetGuildRankIndex(UnitName("player"))
 	-- add raid to dkp table if they don't exist
 
 	----------------------------------
 	-- Header text above the buttons
 	----------------------------------
-		MonDKP.ConfigTab3.AddEntriesHeader = MonDKP.ConfigTab3:CreateFontString(nil, "OVERLAY")
-		MonDKP.ConfigTab3.AddEntriesHeader:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab3.add_raid_to_table, "TOPLEFT", -10, 10);
-		MonDKP.ConfigTab3.AddEntriesHeader:SetWidth(400)
-		MonDKP.ConfigTab3.AddEntriesHeader:SetFontObject("MonDKPNormalLeft")
-		MonDKP.ConfigTab3.AddEntriesHeader:SetText(L["ADDREMDKPTABLEENTRIES"]); 
+		CommDKP.ConfigTab3.AddEntriesHeader = CommDKP.ConfigTab3:CreateFontString(nil, "OVERLAY")
+		CommDKP.ConfigTab3.AddEntriesHeader:SetPoint("BOTTOMLEFT", CommDKP.ConfigTab3.add_raid_to_table, "TOPLEFT", -10, 10);
+		CommDKP.ConfigTab3.AddEntriesHeader:SetWidth(400)
+		CommDKP.ConfigTab3.AddEntriesHeader:SetFontObject("CommDKPNormalLeft")
+		CommDKP.ConfigTab3.AddEntriesHeader:SetText(L["ADDREMDKPTABLEENTRIES"]); 
 
 	----------------------------------
 	-- add raid members button
 	----------------------------------
-		MonDKP.ConfigTab3.add_raid_to_table = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 30, -90, L["ADDRAIDMEMBERS"]);
-		MonDKP.ConfigTab3.add_raid_to_table:SetSize(120,25);
+		CommDKP.ConfigTab3.add_raid_to_table = self:CreateButton("TOPLEFT", CommDKP.ConfigTab3, "TOPLEFT", 30, -90, L["ADDRAIDMEMBERS"]);
+		CommDKP.ConfigTab3.add_raid_to_table:SetSize(120,25);
 
 		-- tooltip for add raid members button
-		MonDKP.ConfigTab3.add_raid_to_table:SetScript("OnEnter", 
+		CommDKP.ConfigTab3.add_raid_to_table:SetScript("OnEnter", 
 			function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 				GameTooltip:SetText(L["ADDRAIDMEMBERS"], 0.25, 0.75, 0.90, 1, true);
@@ -440,14 +392,14 @@ function MonDKP:ManageEntries()
 				GameTooltip:Show();
 			end
 		)
-		MonDKP.ConfigTab3.add_raid_to_table:SetScript("OnLeave", 
+		CommDKP.ConfigTab3.add_raid_to_table:SetScript("OnLeave", 
 			function(self)
 				GameTooltip:Hide()
 			end
 		)
 
 		-- confirmation dialog to remove user(s)
-		MonDKP.ConfigTab3.add_raid_to_table:SetScript("OnClick", 
+		CommDKP.ConfigTab3.add_raid_to_table:SetScript("OnClick", 
 			function ()
 				local selected = L["ADDRAIDMEMBERSCONFIRM"];
 
@@ -472,11 +424,11 @@ function MonDKP:ManageEntries()
 	----------------------------------
 	-- remove selected entries button
 	----------------------------------
-		MonDKP.ConfigTab3.remove_entries = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 170, -60, L["REMOVEENTRIES"]);
-		MonDKP.ConfigTab3.remove_entries:SetSize(120,25);
-		MonDKP.ConfigTab3.remove_entries:ClearAllPoints()
-		MonDKP.ConfigTab3.remove_entries:SetPoint("LEFT", MonDKP.ConfigTab3.add_raid_to_table, "RIGHT", 20, 0)
-		MonDKP.ConfigTab3.remove_entries:SetScript("OnEnter", 
+		CommDKP.ConfigTab3.remove_entries = self:CreateButton("TOPLEFT", CommDKP.ConfigTab3, "TOPLEFT", 170, -60, L["REMOVEENTRIES"]);
+		CommDKP.ConfigTab3.remove_entries:SetSize(120,25);
+		CommDKP.ConfigTab3.remove_entries:ClearAllPoints()
+		CommDKP.ConfigTab3.remove_entries:SetPoint("LEFT", CommDKP.ConfigTab3.add_raid_to_table, "RIGHT", 20, 0)
+		CommDKP.ConfigTab3.remove_entries:SetScript("OnEnter", 
 			function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 				GameTooltip:SetText(L["REMOVESELECTEDENTRIES"], 0.25, 0.75, 0.90, 1, true);
@@ -485,22 +437,22 @@ function MonDKP:ManageEntries()
 				GameTooltip:Show();
 			end
 		)
-		MonDKP.ConfigTab3.remove_entries:SetScript("OnLeave", 
+		CommDKP.ConfigTab3.remove_entries:SetScript("OnLeave", 
 			function(self)
 				GameTooltip:Hide()
 			end
 		)
 		-- confirmation dialog to remove user(s)
-		MonDKP.ConfigTab3.remove_entries:SetScript("OnClick", 
+		CommDKP.ConfigTab3.remove_entries:SetScript("OnClick", 
 			function ()	
 				if #core.SelectedData > 0 then
 					local selected = L["CONFIRMREMOVESELECT"]..": \n\n";
 
 					for i=1, #core.SelectedData do
-						local classSearch = MonDKP:Table_Search(MonDKP:GetTable(MonDKP_DKPTable, true), core.SelectedData[i].player)
+						local classSearch = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), core.SelectedData[i].player)
 
 						if classSearch then
-							c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[classSearch[1][1]].class)
+							c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[classSearch[1][1]].class)
 						else
 							c = { hex="ffffff" }
 						end
@@ -526,18 +478,18 @@ function MonDKP:ManageEntries()
 					}
 					StaticPopup_Show ("REMOVE_ENTRIES")
 				else
-					MonDKP:Print(L["NOENTRIESSELECTED"])
+					CommDKP:Print(L["NOENTRIESSELECTED"])
 				end
 			end
 		);
 	----------------------------------
 	-- Reset previous DKP button -- number showing how much a player has gained or lost since last clear
 	----------------------------------
-		MonDKP.ConfigTab3.reset_previous_dkp = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 310, -60, L["RESETPREVIOUS"]);
-		MonDKP.ConfigTab3.reset_previous_dkp:SetSize(120,25);
-		MonDKP.ConfigTab3.reset_previous_dkp:ClearAllPoints()
-		MonDKP.ConfigTab3.reset_previous_dkp:SetPoint("LEFT", MonDKP.ConfigTab3.remove_entries, "RIGHT", 20, 0)
-		MonDKP.ConfigTab3.reset_previous_dkp:SetScript("OnEnter",
+		CommDKP.ConfigTab3.reset_previous_dkp = self:CreateButton("TOPLEFT", CommDKP.ConfigTab3, "TOPLEFT", 310, -60, L["RESETPREVIOUS"]);
+		CommDKP.ConfigTab3.reset_previous_dkp:SetSize(120,25);
+		CommDKP.ConfigTab3.reset_previous_dkp:ClearAllPoints()
+		CommDKP.ConfigTab3.reset_previous_dkp:SetPoint("LEFT", CommDKP.ConfigTab3.remove_entries, "RIGHT", 20, 0)
+		CommDKP.ConfigTab3.reset_previous_dkp:SetScript("OnEnter",
 			function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 				GameTooltip:SetText(L["RESETPREVDKP"], 0.25, 0.75, 0.90, 1, true);
@@ -546,20 +498,20 @@ function MonDKP:ManageEntries()
 				GameTooltip:Show();
 			end
 		)
-		MonDKP.ConfigTab3.reset_previous_dkp:SetScript("OnLeave", 
+		CommDKP.ConfigTab3.reset_previous_dkp:SetScript("OnLeave", 
 			function(self)
 				GameTooltip:Hide()
 			end
 		)
 		-- confirmation dialog to remove user(s)
-		MonDKP.ConfigTab3.reset_previous_dkp:SetScript("OnClick",
+		CommDKP.ConfigTab3.reset_previous_dkp:SetScript("OnClick",
 			function ()	
 				StaticPopupDialogs["RESET_PREVIOUS_DKP"] = {
 					text = L["RESETPREVCONFIRM"],
 					button1 = L["YES"],
 					button2 = L["NO"],
 					OnAccept = function()
-						MonDKP:reset_prev_dkp()
+						CommDKP:reset_prev_dkp()
 					end,
 					timeout = 0,
 					whileDead = true,
@@ -576,9 +528,9 @@ function MonDKP:ManageEntries()
 	----------------------------------
 	-- rank select dropDownMenu
 	----------------------------------
-		MonDKP.ConfigTab3.GuildRankDropDown = CreateFrame("FRAME", "MonDKPConfigReasonDropDown", MonDKP.ConfigTab3, "MonolithDKPUIDropDownMenuTemplate")
-		MonDKP.ConfigTab3.GuildRankDropDown:SetPoint("TOPLEFT", MonDKP.ConfigTab3.add_raid_to_table, "BOTTOMLEFT", -17, -15)
-		MonDKP.ConfigTab3.GuildRankDropDown:SetScript("OnEnter", 
+		CommDKP.ConfigTab3.GuildRankDropDown = CreateFrame("FRAME", "CommDKPConfigReasonDropDown", CommDKP.ConfigTab3, "CommunityDKPUIDropDownMenuTemplate")
+		CommDKP.ConfigTab3.GuildRankDropDown:SetPoint("TOPLEFT", CommDKP.ConfigTab3.add_raid_to_table, "BOTTOMLEFT", -17, -15)
+		CommDKP.ConfigTab3.GuildRankDropDown:SetScript("OnEnter", 
 			function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 				GameTooltip:SetText(L["RANKLIST"], 0.25, 0.75, 0.90, 1, true);
@@ -586,20 +538,20 @@ function MonDKP:ManageEntries()
 				GameTooltip:Show();
 			end
 		)
-		MonDKP.ConfigTab3.GuildRankDropDown:SetScript("OnLeave",
+		CommDKP.ConfigTab3.GuildRankDropDown:SetScript("OnLeave",
 			function(self)
 				GameTooltip:Hide()
 			end
 		)
-		UIDropDownMenu_SetWidth(MonDKP.ConfigTab3.GuildRankDropDown, 105)
-		UIDropDownMenu_SetText(MonDKP.ConfigTab3.GuildRankDropDown, "Select Rank")
+		UIDropDownMenu_SetWidth(CommDKP.ConfigTab3.GuildRankDropDown, 105)
+		UIDropDownMenu_SetText(CommDKP.ConfigTab3.GuildRankDropDown, "Select Rank")
 
 		-- Create and bind the initialization function to the dropdown menu
-		UIDropDownMenu_Initialize(MonDKP.ConfigTab3.GuildRankDropDown, 
+		UIDropDownMenu_Initialize(CommDKP.ConfigTab3.GuildRankDropDown, 
 			function(self, level, menuList)
 				local rank = UIDropDownMenu_CreateInfo()
 					rank.func = self.SetValue
-					rank.fontObject = "MonDKPSmallCenter"
+					rank.fontObject = "CommDKPSmallCenter"
 
 					local rankList = GetGuildRankList()
 
@@ -611,15 +563,15 @@ function MonDKP:ManageEntries()
 		)
 
 		-- Dropdown Menu Function
-		function MonDKP.ConfigTab3.GuildRankDropDown:SetValue(arg1, arg2)
+		function CommDKP.ConfigTab3.GuildRankDropDown:SetValue(arg1, arg2)
 			if curRank ~= arg1 then
 				curRank = arg1
 				curIndex = arg2
-				UIDropDownMenu_SetText(MonDKP.ConfigTab3.GuildRankDropDown, arg1)
+				UIDropDownMenu_SetText(CommDKP.ConfigTab3.GuildRankDropDown, arg1)
 			else
 				curRank = nil
 				curIndex = nil
-				UIDropDownMenu_SetText(MonDKP.ConfigTab3.GuildRankDropDown, L["SELECTRANK"])
+				UIDropDownMenu_SetText(CommDKP.ConfigTab3.GuildRankDropDown, L["SELECTRANK"])
 			end
 
 			CloseDropDownMenus()
@@ -628,11 +580,11 @@ function MonDKP:ManageEntries()
 	----------------------------------
 	-- Add Guild to DKP Table Button
 	----------------------------------
-		MonDKP.ConfigTab3.AddGuildToDKP = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["ADDGUILDMEMBERS"]);
-		MonDKP.ConfigTab3.AddGuildToDKP:SetSize(120,25);
-		MonDKP.ConfigTab3.AddGuildToDKP:ClearAllPoints()
-		MonDKP.ConfigTab3.AddGuildToDKP:SetPoint("LEFT", MonDKP.ConfigTab3.GuildRankDropDown, "RIGHT", 2, 2)
-		MonDKP.ConfigTab3.AddGuildToDKP:SetScript("OnEnter", 
+		CommDKP.ConfigTab3.AddGuildToDKP = self:CreateButton("TOPLEFT", CommDKP.ConfigTab3, "TOPLEFT", 0, 0, L["ADDGUILDMEMBERS"]);
+		CommDKP.ConfigTab3.AddGuildToDKP:SetSize(120,25);
+		CommDKP.ConfigTab3.AddGuildToDKP:ClearAllPoints()
+		CommDKP.ConfigTab3.AddGuildToDKP:SetPoint("LEFT", CommDKP.ConfigTab3.GuildRankDropDown, "RIGHT", 2, 2)
+		CommDKP.ConfigTab3.AddGuildToDKP:SetScript("OnEnter", 
 			function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 				GameTooltip:SetText(L["ADDGUILDDKPTABLE"], 0.25, 0.75, 0.90, 1, true);
@@ -640,13 +592,13 @@ function MonDKP:ManageEntries()
 				GameTooltip:Show();
 			end
 		)
-		MonDKP.ConfigTab3.AddGuildToDKP:SetScript("OnLeave", 
+		CommDKP.ConfigTab3.AddGuildToDKP:SetScript("OnLeave", 
 			function(self)
 				GameTooltip:Hide()
 			end
 		)
 		-- confirmation dialog to add user(s)
-		MonDKP.ConfigTab3.AddGuildToDKP:SetScript("OnClick",
+		CommDKP.ConfigTab3.AddGuildToDKP:SetScript("OnClick",
 			function ()	
 				if curIndex ~= nil then
 					StaticPopupDialogs["ADD_GUILD_MEMBERS"] = {
@@ -679,11 +631,11 @@ function MonDKP:ManageEntries()
 	----------------------------------
 	-- Add target to DKP list button
 	----------------------------------	
-		MonDKP.ConfigTab3.AddTargetToDKP = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["ADDTARGET"]);
-		MonDKP.ConfigTab3.AddTargetToDKP:SetSize(120,25);
-		MonDKP.ConfigTab3.AddTargetToDKP:ClearAllPoints()
-		MonDKP.ConfigTab3.AddTargetToDKP:SetPoint("LEFT", MonDKP.ConfigTab3.AddGuildToDKP, "RIGHT", 20, 0)
-		MonDKP.ConfigTab3.AddTargetToDKP:SetScript("OnEnter", 
+		CommDKP.ConfigTab3.AddTargetToDKP = self:CreateButton("TOPLEFT", CommDKP.ConfigTab3, "TOPLEFT", 0, 0, L["ADDTARGET"]);
+		CommDKP.ConfigTab3.AddTargetToDKP:SetSize(120,25);
+		CommDKP.ConfigTab3.AddTargetToDKP:ClearAllPoints()
+		CommDKP.ConfigTab3.AddTargetToDKP:SetPoint("LEFT", CommDKP.ConfigTab3.AddGuildToDKP, "RIGHT", 20, 0)
+		CommDKP.ConfigTab3.AddTargetToDKP:SetScript("OnEnter", 
 			function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 				GameTooltip:SetText(L["ADDTARGETTODKPTABLE"], 0.25, 0.75, 0.90, 1, true);
@@ -691,12 +643,12 @@ function MonDKP:ManageEntries()
 				GameTooltip:Show();
 			end
 		)
-		MonDKP.ConfigTab3.AddTargetToDKP:SetScript("OnLeave",
+		CommDKP.ConfigTab3.AddTargetToDKP:SetScript("OnLeave",
 			function(self)
 				GameTooltip:Hide()
 			end
 		)
-		MonDKP.ConfigTab3.AddTargetToDKP:SetScript("OnClick", 
+		CommDKP.ConfigTab3.AddTargetToDKP:SetScript("OnClick", 
 			function ()	-- confirmation dialog to add user(s)
 				if UnitIsPlayer("target") == true then
 					StaticPopupDialogs["ADD_TARGET_DKP"] = {
@@ -729,11 +681,11 @@ function MonDKP:ManageEntries()
 	----------------------------------
 	-- Purge DKP list button
 	----------------------------------
-		MonDKP.ConfigTab3.CleanList = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["PURGELIST"]);
-		MonDKP.ConfigTab3.CleanList:SetSize(120,25);
-		MonDKP.ConfigTab3.CleanList:ClearAllPoints()
-		MonDKP.ConfigTab3.CleanList:SetPoint("TOP", MonDKP.ConfigTab3.AddTargetToDKP, "BOTTOM", 0, -16)
-		MonDKP.ConfigTab3.CleanList:SetScript("OnEnter", 
+		CommDKP.ConfigTab3.CleanList = self:CreateButton("TOPLEFT", CommDKP.ConfigTab3, "TOPLEFT", 0, 0, L["PURGELIST"]);
+		CommDKP.ConfigTab3.CleanList:SetSize(120,25);
+		CommDKP.ConfigTab3.CleanList:ClearAllPoints()
+		CommDKP.ConfigTab3.CleanList:SetPoint("TOP", CommDKP.ConfigTab3.AddTargetToDKP, "BOTTOM", 0, -16)
+		CommDKP.ConfigTab3.CleanList:SetScript("OnEnter", 
 			function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 				GameTooltip:SetText(L["PURGELIST"], 0.25, 0.75, 0.90, 1, true);
@@ -741,12 +693,12 @@ function MonDKP:ManageEntries()
 				GameTooltip:Show();
 			end
 		)
-		MonDKP.ConfigTab3.CleanList:SetScript("OnLeave", 
+		CommDKP.ConfigTab3.CleanList:SetScript("OnLeave", 
 			function(self)
 				GameTooltip:Hide()
 			end
 		)
-		MonDKP.ConfigTab3.CleanList:SetScript("OnClick", 
+		CommDKP.ConfigTab3.CleanList:SetScript("OnClick", 
 			function()
 				StaticPopupDialogs["PURGE_CONFIRM"] = {
 					text = L["PURGECONFIRM"],
@@ -757,12 +709,12 @@ function MonDKP:ManageEntries()
 						local count = 0;
 						local i = 1;
 
-						while i <= #MonDKP:GetTable(MonDKP_DKPTable, true) do
-							local search = MonDKP:TableStrFind(MonDKP:GetTable(MonDKP_DKPHistory, true), MonDKP:GetTable(MonDKP_DKPTable, true)[i].player, "players")
+						while i <= #CommDKP:GetTable(CommDKP_DKPTable, true) do
+							local search = CommDKP:TableStrFind(CommDKP:GetTable(CommDKP_DKPHistory, true), CommDKP:GetTable(CommDKP_DKPTable, true)[i].player, "players")
 
-							if MonDKP:GetTable(MonDKP_DKPTable, true)[i].dkp == 0 and not search then
-								c = MonDKP:GetCColors(MonDKP:GetTable(MonDKP_DKPTable, true)[i].class)
-								name = MonDKP:GetTable(MonDKP_DKPTable, true)[i].player;
+							if CommDKP:GetTable(CommDKP_DKPTable, true)[i].dkp == 0 and not search then
+								c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[i].class)
+								name = CommDKP:GetTable(CommDKP_DKPTable, true)[i].player;
 
 								if purgeString == nil then
 									purgeString = "|cff"..c.hex..name.."|r"; 
@@ -771,15 +723,15 @@ function MonDKP:ManageEntries()
 								end
 
 								count = count + 1;
-								table.remove(MonDKP:GetTable(MonDKP_DKPTable, true), i)
+								table.remove(CommDKP:GetTable(CommDKP_DKPTable, true), i)
 							else
 								i=i+1;
 							end
 						end
 						if count > 0 then
-							MonDKP:Print(L["PURGELIST"].." ("..count.."):")
-							MonDKP:Print(purgeString)
-							MonDKP:FilterDKPTable(core.currentSort, "reset")
+							CommDKP:Print(L["PURGELIST"].." ("..count.."):")
+							CommDKP:Print(purgeString)
+							CommDKP:FilterDKPTable(core.currentSort, "reset")
 						end
 					end,
 					timeout = 0,
@@ -795,22 +747,22 @@ function MonDKP:ManageEntries()
 	-- White list container
 	----------------------------------
 
-		MonDKP.ConfigTab3.WhitelistContainer = CreateFrame("Frame", nil, MonDKP.ConfigTab3);
-		MonDKP.ConfigTab3.WhitelistContainer:SetSize(475, 200);
-		MonDKP.ConfigTab3.WhitelistContainer:SetPoint("TOPLEFT", MonDKP.ConfigTab3.GuildRankDropDown, "BOTTOMLEFT", 20, -30)
+		CommDKP.ConfigTab3.WhitelistContainer = CreateFrame("Frame", nil, CommDKP.ConfigTab3);
+		CommDKP.ConfigTab3.WhitelistContainer:SetSize(475, 200);
+		CommDKP.ConfigTab3.WhitelistContainer:SetPoint("TOPLEFT", CommDKP.ConfigTab3.GuildRankDropDown, "BOTTOMLEFT", 20, -30)
 
 		-- Whitelist Header
-		MonDKP.ConfigTab3.WhitelistContainer.WhitelistHeader = MonDKP.ConfigTab3.WhitelistContainer:CreateFontString(nil, "OVERLAY")
-		MonDKP.ConfigTab3.WhitelistContainer.WhitelistHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab3.WhitelistContainer, "TOPLEFT", -10, 0);
-		MonDKP.ConfigTab3.WhitelistContainer.WhitelistHeader:SetWidth(400)
-		MonDKP.ConfigTab3.WhitelistContainer.WhitelistHeader:SetFontObject("MonDKPNormalLeft")
-		MonDKP.ConfigTab3.WhitelistContainer.WhitelistHeader:SetText(L["WHITELISTHEADER"]); 
+		CommDKP.ConfigTab3.WhitelistContainer.WhitelistHeader = CommDKP.ConfigTab3.WhitelistContainer:CreateFontString(nil, "OVERLAY")
+		CommDKP.ConfigTab3.WhitelistContainer.WhitelistHeader:SetPoint("TOPLEFT", CommDKP.ConfigTab3.WhitelistContainer, "TOPLEFT", -10, 0);
+		CommDKP.ConfigTab3.WhitelistContainer.WhitelistHeader:SetWidth(400)
+		CommDKP.ConfigTab3.WhitelistContainer.WhitelistHeader:SetFontObject("CommDKPNormalLeft")
+		CommDKP.ConfigTab3.WhitelistContainer.WhitelistHeader:SetText(L["WHITELISTHEADER"]); 
 
 		-- Whitelist button
-		MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab3.WhitelistContainer, "BOTTOMLEFT", 15, 15, L["SETWHITELIST"]);
-		MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:ClearAllPoints()
-		MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:SetPoint("TOPLEFT", MonDKP.ConfigTab3.WhitelistContainer.WhitelistHeader, "BOTTOMLEFT", 10, -10)
-		MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:SetScript("OnEnter", 
+		CommDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton = self:CreateButton("BOTTOMLEFT", CommDKP.ConfigTab3.WhitelistContainer, "BOTTOMLEFT", 15, 15, L["SETWHITELIST"]);
+		CommDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:ClearAllPoints()
+		CommDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:SetPoint("TOPLEFT", CommDKP.ConfigTab3.WhitelistContainer.WhitelistHeader, "BOTTOMLEFT", 10, -10)
+		CommDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:SetScript("OnEnter", 
 			function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 				GameTooltip:SetText(L["SETWHITELIST"], 0.25, 0.75, 0.90, 1, true);
@@ -820,13 +772,13 @@ function MonDKP:ManageEntries()
 				GameTooltip:Show();
 			end
 		)
-		MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:SetScript("OnLeave", 
+		CommDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:SetScript("OnLeave", 
 			function(self)
 				GameTooltip:Hide()
 			end
 		)
 		-- confirmation dialog to add user(s)
-		MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:SetScript("OnClick", 
+		CommDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton:SetScript("OnClick", 
 			function ()	
 				if #core.SelectedData > 0 then
 					StaticPopupDialogs["ADD_GUILD_MEMBERS"] = {
@@ -864,10 +816,10 @@ function MonDKP:ManageEntries()
 			-- View Whitelist Button
 			----------------------------------
 		
-				MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab3.WhitelistContainer, "BOTTOMLEFT", 15, 15, L["VIEWWHITELISTBTN"]);
-				MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:ClearAllPoints()
-				MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:SetPoint("LEFT", MonDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton, "RIGHT", 10, 0)
-				MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:SetScript("OnEnter",
+				CommDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton = self:CreateButton("BOTTOMLEFT", CommDKP.ConfigTab3.WhitelistContainer, "BOTTOMLEFT", 15, 15, L["VIEWWHITELISTBTN"]);
+				CommDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:ClearAllPoints()
+				CommDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:SetPoint("LEFT", CommDKP.ConfigTab3.WhitelistContainer.AddWhitelistButton, "RIGHT", 10, 0)
+				CommDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:SetScript("OnEnter",
 					function(self)
 						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 						GameTooltip:SetText(L["VIEWWHITELISTBTN"], 0.25, 0.75, 0.90, 1, true);
@@ -875,14 +827,14 @@ function MonDKP:ManageEntries()
 						GameTooltip:Show();
 					end
 				)
-				MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:SetScript("OnLeave", 
+				CommDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:SetScript("OnLeave", 
 					function(self)
 						GameTooltip:Hide()
 					end
 				)
-				MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:SetScript("OnClick", 
+				CommDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton:SetScript("OnClick", 
 					function ()	-- confirmation dialog to add user(s)
-						if #MonDKP:GetTable(MonDKP_Whitelist) > 0 then
+						if #CommDKP:GetTable(CommDKP_Whitelist) > 0 then
 							ViewWhitelist()
 						else
 							StaticPopupDialogs["ADD_GUILD_MEMBERS"] = {
@@ -902,10 +854,10 @@ function MonDKP:ManageEntries()
 			-- Broadcast Whitelist Button
 			----------------------------------
 		
-				MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton = self:CreateButton("BOTTOMLEFT", MonDKP.ConfigTab3.WhitelistContainer, "BOTTOMLEFT", 15, 15, L["SENDWHITELIST"]);
-				MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:ClearAllPoints()
-				MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetPoint("LEFT", MonDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton, "RIGHT", 30, 0)
-				MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetScript("OnEnter", 
+				CommDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton = self:CreateButton("BOTTOMLEFT", CommDKP.ConfigTab3.WhitelistContainer, "BOTTOMLEFT", 15, 15, L["SENDWHITELIST"]);
+				CommDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:ClearAllPoints()
+				CommDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetPoint("LEFT", CommDKP.ConfigTab3.WhitelistContainer.ViewWhitelistButton, "RIGHT", 30, 0)
+				CommDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetScript("OnEnter", 
 					function(self)
 						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 						GameTooltip:SetText(L["SENDWHITELIST"], 0.25, 0.75, 0.90, 1, true);
@@ -914,16 +866,16 @@ function MonDKP:ManageEntries()
 						GameTooltip:Show();
 					end
 				)
-				MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetScript("OnLeave",
+				CommDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetScript("OnLeave",
 					function(self)
 						GameTooltip:Hide()
 					end
 				)
 				-- confirmation dialog to add user(s)
-				MonDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetScript("OnClick",
+				CommDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetScript("OnClick",
 					function ()	
-						MonDKP.Sync:SendData("MonDKPWhitelist", MonDKP:GetTable(MonDKP_Whitelist))
-						MonDKP:Print(L["WHITELISTBROADCASTED"])
+						CommDKP.Sync:SendData("CommDKPWhitelist", CommDKP:GetTable(CommDKP_Whitelist))
+						CommDKP:Print(L["WHITELISTBROADCASTED"])
 					end
 				);
 
@@ -939,20 +891,20 @@ function MonDKP:ManageEntries()
 		----------------------------------
 		-- Teams Header
 		----------------------------------
-		MonDKP.ConfigTab3.TeamHeader = MonDKP.ConfigTab3:CreateFontString(nil, "OVERLAY")
-		MonDKP.ConfigTab3.TeamHeader:SetPoint("TOPLEFT", MonDKP.ConfigTab3.WhitelistContainer, "BOTTOMLEFT", -10, -5);
-		MonDKP.ConfigTab3.TeamHeader:SetWidth(400)
-		MonDKP.ConfigTab3.TeamHeader:SetFontObject("MonDKPNormalLeft")
-		MonDKP.ConfigTab3.TeamHeader:SetText(L["TEAMMANAGEMENTHEADER"].." of "..MonDKP:GetGuildName()..""); 
+		CommDKP.ConfigTab3.TeamHeader = CommDKP.ConfigTab3:CreateFontString(nil, "OVERLAY")
+		CommDKP.ConfigTab3.TeamHeader:SetPoint("TOPLEFT", CommDKP.ConfigTab3.WhitelistContainer, "BOTTOMLEFT", -10, -5);
+		CommDKP.ConfigTab3.TeamHeader:SetWidth(400)
+		CommDKP.ConfigTab3.TeamHeader:SetFontObject("CommDKPNormalLeft")
+		CommDKP.ConfigTab3.TeamHeader:SetText(L["TEAMMANAGEMENTHEADER"].." of "..CommDKP:GetGuildName()..""); 
 
 		----------------------------------
 		-- Drop down with lists of teams 
 		----------------------------------
-			MonDKP.ConfigTab3.TeamListDropDown = CreateFrame("FRAME", "MonDKPConfigReasonDropDown", MonDKP.ConfigTab3, "MonolithDKPUIDropDownMenuTemplate")
-			--MonDKP.ConfigTab3.TeamManagementContainer.TeamListDropDown:ClearAllPoints()
-			MonDKP.ConfigTab3.TeamListDropDown:SetPoint("BOTTOMLEFT", MonDKP.ConfigTab3.TeamHeader, "BOTTOMLEFT", 0, -50)
+			CommDKP.ConfigTab3.TeamListDropDown = CreateFrame("FRAME", "CommDKPConfigReasonDropDown", CommDKP.ConfigTab3, "CommunityDKPUIDropDownMenuTemplate")
+			--CommDKP.ConfigTab3.TeamManagementContainer.TeamListDropDown:ClearAllPoints()
+			CommDKP.ConfigTab3.TeamListDropDown:SetPoint("BOTTOMLEFT", CommDKP.ConfigTab3.TeamHeader, "BOTTOMLEFT", 0, -50)
 			-- tooltip on mouseOver
-			MonDKP.ConfigTab3.TeamListDropDown:SetScript("OnEnter", 
+			CommDKP.ConfigTab3.TeamListDropDown:SetScript("OnEnter", 
 				function(self) 
 					GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 					GameTooltip:SetText(L["TEAMLIST"], 0.25, 0.75, 0.90, 1, true);
@@ -960,22 +912,22 @@ function MonDKP:ManageEntries()
 					GameTooltip:Show();
 				end
 			)
-			MonDKP.ConfigTab3.TeamListDropDown:SetScript("OnLeave",
+			CommDKP.ConfigTab3.TeamListDropDown:SetScript("OnLeave",
 				function(self)
 					GameTooltip:Hide()
 				end
 			)
-			UIDropDownMenu_SetWidth(MonDKP.ConfigTab3.TeamListDropDown, 105)
-			UIDropDownMenu_SetText(MonDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
+			UIDropDownMenu_SetWidth(CommDKP.ConfigTab3.TeamListDropDown, 105)
+			UIDropDownMenu_SetText(CommDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
 
 			-- Create and bind the initialization function to the dropdown menu
-			UIDropDownMenu_Initialize(MonDKP.ConfigTab3.TeamListDropDown, 
+			UIDropDownMenu_Initialize(CommDKP.ConfigTab3.TeamListDropDown, 
 				function(self, level, menuList)
 					local dropDownMenuItem = UIDropDownMenu_CreateInfo()
 					dropDownMenuItem.func = self.SetValue
-					dropDownMenuItem.fontObject = "MonDKPSmallCenter"
+					dropDownMenuItem.fontObject = "CommDKPSmallCenter"
 				
-					teamList = MonDKP:GetGuildTeamList()
+					teamList = CommDKP:GetGuildTeamList()
 
 					for i=1, #teamList do
 						dropDownMenuItem.text = teamList[i][2]
@@ -989,17 +941,17 @@ function MonDKP:ManageEntries()
 			)
 
 			-- Dropdown Menu on SetValue()
-			function MonDKP.ConfigTab3.TeamListDropDown:SetValue(arg1, arg2)
+			function CommDKP.ConfigTab3.TeamListDropDown:SetValue(arg1, arg2)
 				if selectedTeamIndex ~= arg2 then
 					selectedTeam = arg1
 					selectedTeamIndex = arg2
-					UIDropDownMenu_SetText(MonDKP.ConfigTab3.TeamListDropDown, arg1)
-					MonDKP.ConfigTab3.TeamNameInput:SetText(arg1)
+					UIDropDownMenu_SetText(CommDKP.ConfigTab3.TeamListDropDown, arg1)
+					CommDKP.ConfigTab3.TeamNameInput:SetText(arg1)
 				else
 					selectedTeam = nil
 					selectedTeamIndex = nil
-					MonDKP.ConfigTab3.TeamNameInput:SetText("")
-					UIDropDownMenu_SetText(MonDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
+					CommDKP.ConfigTab3.TeamNameInput:SetText("")
+					UIDropDownMenu_SetText(CommDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
 				end
 
 				CloseDropDownMenus()
@@ -1008,33 +960,33 @@ function MonDKP:ManageEntries()
 		----------------------------------
 		-- Team name input box
 		----------------------------------
-			MonDKP.ConfigTab3.TeamNameInput = CreateFrame("EditBox", nil, MonDKP.ConfigTab3)
-			MonDKP.ConfigTab3.TeamNameInput:SetAutoFocus(false)
-			MonDKP.ConfigTab3.TeamNameInput:SetMultiLine(false)
-			MonDKP.ConfigTab3.TeamNameInput:SetSize(160, 24)
-			MonDKP.ConfigTab3.TeamNameInput:SetPoint("TOPRIGHT", MonDKP.ConfigTab3.TeamListDropDown, "TOPRIGHT", 160, 0)
-			MonDKP.ConfigTab3.TeamNameInput:SetBackdrop({
+			CommDKP.ConfigTab3.TeamNameInput = CreateFrame("EditBox", nil, CommDKP.ConfigTab3)
+			CommDKP.ConfigTab3.TeamNameInput:SetAutoFocus(false)
+			CommDKP.ConfigTab3.TeamNameInput:SetMultiLine(false)
+			CommDKP.ConfigTab3.TeamNameInput:SetSize(160, 24)
+			CommDKP.ConfigTab3.TeamNameInput:SetPoint("TOPRIGHT", CommDKP.ConfigTab3.TeamListDropDown, "TOPRIGHT", 160, 0)
+			CommDKP.ConfigTab3.TeamNameInput:SetBackdrop({
 				bgFile   = "Textures\\white.blp", tile = true,
-				edgeFile = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\edgefile",
+				edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile",
 				tile = true, 
 				tileSize = 32, 
 				edgeSize = 2
 			});
-			MonDKP.ConfigTab3.TeamNameInput:SetBackdropColor(0,0,0,0.9)
-			MonDKP.ConfigTab3.TeamNameInput:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
-			--MonDKP.ConfigTab3.TeamNameInput:SetMaxLetters(6)
-			MonDKP.ConfigTab3.TeamNameInput:SetTextColor(1, 1, 1, 1)
-			MonDKP.ConfigTab3.TeamNameInput:SetFontObject("MonDKPSmallRight")
-			MonDKP.ConfigTab3.TeamNameInput:SetTextInsets(10, 10, 5, 5)
-			MonDKP.ConfigTab3.TeamNameInput.tooltipText = L["TEAMNAMEINPUTTOOLTIP"]
-			MonDKP.ConfigTab3.TeamNameInput.tooltipDescription = L["TEAMNAMEINPUTTOOLTIPDESC"]
-			MonDKP.ConfigTab3.TeamNameInput:SetScript("OnEscapePressed", 
+			CommDKP.ConfigTab3.TeamNameInput:SetBackdropColor(0,0,0,0.9)
+			CommDKP.ConfigTab3.TeamNameInput:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
+			--CommDKP.ConfigTab3.TeamNameInput:SetMaxLetters(6)
+			CommDKP.ConfigTab3.TeamNameInput:SetTextColor(1, 1, 1, 1)
+			CommDKP.ConfigTab3.TeamNameInput:SetFontObject("CommDKPSmallRight")
+			CommDKP.ConfigTab3.TeamNameInput:SetTextInsets(10, 10, 5, 5)
+			CommDKP.ConfigTab3.TeamNameInput.tooltipText = L["TEAMNAMEINPUTTOOLTIP"]
+			CommDKP.ConfigTab3.TeamNameInput.tooltipDescription = L["TEAMNAMEINPUTTOOLTIPDESC"]
+			CommDKP.ConfigTab3.TeamNameInput:SetScript("OnEscapePressed", 
 				function(self)    -- clears focus on esc
 					self:HighlightText(0,0)
 					self:ClearFocus()
 				end
 			)
-			MonDKP.ConfigTab3.TeamNameInput:SetScript("OnEnterPressed", 
+			CommDKP.ConfigTab3.TeamNameInput:SetScript("OnEnterPressed", 
 				function(self)
 					self:HighlightText(0,0)
 					if (selectedTeamIndex == nil ) then
@@ -1050,10 +1002,10 @@ function MonDKP:ManageEntries()
 					else
 						ChangeTeamName(selectedTeamIndex, self:GetText())
 						-- if we are performing name change on currently selected team, change main team view dropdown Text
-						if tonumber(MonDKP:GetCurrentTeamIndex()) == selectedTeamIndex then
-							UIDropDownMenu_SetText(MonDKP.UIConfig.TeamViewChangerDropDown, self:SetText(""))
+						if tonumber(CommDKP:GetCurrentTeamIndex()) == selectedTeamIndex then
+							UIDropDownMenu_SetText(CommDKP.UIConfig.TeamViewChangerDropDown, self:SetText(""))
 						end
-						UIDropDownMenu_SetText(MonDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
+						UIDropDownMenu_SetText(CommDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
 						selectedTeam = nil
 						selectedTeamIndex = nil
 						CloseDropDownMenus()
@@ -1062,7 +1014,7 @@ function MonDKP:ManageEntries()
 					end
 				end
 			)
-			MonDKP.ConfigTab3.TeamNameInput:SetScript("OnEnter", 
+			CommDKP.ConfigTab3.TeamNameInput:SetScript("OnEnter", 
 				function(self)
 					if (self.tooltipText) then
 						GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
@@ -1078,7 +1030,7 @@ function MonDKP:ManageEntries()
 					end
 				end
 			)
-			MonDKP.ConfigTab3.TeamNameInput:SetScript("OnLeave",
+			CommDKP.ConfigTab3.TeamNameInput:SetScript("OnLeave",
 				function(self)
 					GameTooltip:Hide()
 				end
@@ -1089,11 +1041,11 @@ function MonDKP:ManageEntries()
 		----------------------------------
 		-- Rename selected team button
 		----------------------------------	
-			MonDKP.ConfigTab3.TeamRename = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["TEAMRENAME"]);
-			MonDKP.ConfigTab3.TeamRename:SetSize(120,25);
-			MonDKP.ConfigTab3.TeamRename:ClearAllPoints()
-			MonDKP.ConfigTab3.TeamRename:SetPoint("TOPRIGHT", MonDKP.ConfigTab3.TeamNameInput, "TOPRIGHT", 125, 0)
-			MonDKP.ConfigTab3.TeamRename:SetScript("OnEnter", 
+			CommDKP.ConfigTab3.TeamRename = self:CreateButton("TOPLEFT", CommDKP.ConfigTab3, "TOPLEFT", 0, 0, L["TEAMRENAME"]);
+			CommDKP.ConfigTab3.TeamRename:SetSize(120,25);
+			CommDKP.ConfigTab3.TeamRename:ClearAllPoints()
+			CommDKP.ConfigTab3.TeamRename:SetPoint("TOPRIGHT", CommDKP.ConfigTab3.TeamNameInput, "TOPRIGHT", 125, 0)
+			CommDKP.ConfigTab3.TeamRename:SetScript("OnEnter", 
 				function(self)
 					GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 					GameTooltip:SetText(L["TEAMRENAMESELECTED"], 0.25, 0.75, 0.90, 1, true);
@@ -1101,13 +1053,13 @@ function MonDKP:ManageEntries()
 					GameTooltip:Show();
 				end
 			)
-			MonDKP.ConfigTab3.TeamRename:SetScript("OnLeave",
+			CommDKP.ConfigTab3.TeamRename:SetScript("OnLeave",
 				function(self)
 					GameTooltip:Hide()
 				end
 			)
 			-- rename team function
-			MonDKP.ConfigTab3.TeamRename:SetScript("OnClick", 
+			CommDKP.ConfigTab3.TeamRename:SetScript("OnClick", 
 				function ()	
 					if selectedTeamIndex == nil then
 						StaticPopupDialogs["RENAME_TEAM"] = {
@@ -1121,13 +1073,13 @@ function MonDKP:ManageEntries()
 						StaticPopup_Show ("RENAME_TEAM")
 					else
 						if CheckLeader == 1 then
-							ChangeTeamName(selectedTeamIndex, MonDKP.ConfigTab3.TeamNameInput:GetText())
+							ChangeTeamName(selectedTeamIndex, CommDKP.ConfigTab3.TeamNameInput:GetText())
 							-- if we are performing name change on currently selected team, change main team view dropdown Text
-							if tonumber(MonDKP:GetCurrentTeamIndex()) == selectedTeamIndex then
-								UIDropDownMenu_SetText(MonDKP.UIConfig.TeamViewChangerDropDown, MonDKP.ConfigTab3.TeamNameInput:GetText())
+							if tonumber(CommDKP:GetCurrentTeamIndex()) == selectedTeamIndex then
+								UIDropDownMenu_SetText(CommDKP.UIConfig.TeamViewChangerDropDown, CommDKP.ConfigTab3.TeamNameInput:GetText())
 							end
-							MonDKP.ConfigTab3.TeamNameInput:SetText("")
-							UIDropDownMenu_SetText(MonDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
+							CommDKP.ConfigTab3.TeamNameInput:SetText("")
+							UIDropDownMenu_SetText(CommDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
 							selectedTeam = nil
 							selectedTeamIndex = nil
 							CloseDropDownMenus()
@@ -1149,11 +1101,11 @@ function MonDKP:ManageEntries()
 		----------------------------------
 		-- Add new team button
 		----------------------------------	
-		MonDKP.ConfigTab3.TeamAdd = self:CreateButton("TOPLEFT", MonDKP.ConfigTab3, "TOPLEFT", 0, 0, L["TEAMADD"]);
-		MonDKP.ConfigTab3.TeamAdd:SetSize(120,25);
-		MonDKP.ConfigTab3.TeamAdd:ClearAllPoints()
-		MonDKP.ConfigTab3.TeamAdd:SetPoint("BOTTOM", MonDKP.ConfigTab3.TeamRename, "BOTTOM", 0, -40)
-		MonDKP.ConfigTab3.TeamAdd:SetScript("OnEnter", 
+		CommDKP.ConfigTab3.TeamAdd = self:CreateButton("TOPLEFT", CommDKP.ConfigTab3, "TOPLEFT", 0, 0, L["TEAMADD"]);
+		CommDKP.ConfigTab3.TeamAdd:SetSize(120,25);
+		CommDKP.ConfigTab3.TeamAdd:ClearAllPoints()
+		CommDKP.ConfigTab3.TeamAdd:SetPoint("BOTTOM", CommDKP.ConfigTab3.TeamRename, "BOTTOM", 0, -40)
+		CommDKP.ConfigTab3.TeamAdd:SetScript("OnEnter", 
 			function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
 				GameTooltip:SetText(L["TEAMADD"], 0.25, 0.75, 0.90, 1, true);
@@ -1161,13 +1113,13 @@ function MonDKP:ManageEntries()
 				GameTooltip:Show();
 			end
 		)
-		MonDKP.ConfigTab3.TeamAdd:SetScript("OnLeave",
+		CommDKP.ConfigTab3.TeamAdd:SetScript("OnLeave",
 			function(self)
 				GameTooltip:Hide()
 			end
 		)
 		-- rename team function
-		MonDKP.ConfigTab3.TeamAdd:SetScript("OnClick", 
+		CommDKP.ConfigTab3.TeamAdd:SetScript("OnClick", 
 			function ()	
 				if CheckLeader == 1 then
 					StaticPopupDialogs["ADD_TEAM"] = {
@@ -1176,8 +1128,8 @@ function MonDKP:ManageEntries()
 						button2 = L["NO"],
 						OnAccept = function()
 							AddNewTeamToGuild()
-							MonDKP.ConfigTab3.TeamNameInput:SetText("")
-							UIDropDownMenu_SetText(MonDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
+							CommDKP.ConfigTab3.TeamNameInput:SetText("")
+							UIDropDownMenu_SetText(CommDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
 							CloseDropDownMenus()
 						end,
 						timeout = 0,
@@ -1202,18 +1154,18 @@ function MonDKP:ManageEntries()
 
 	-- only show whitelist and/or team management if player is a guild master
 	if CheckLeader == 1 then
-		MonDKP.ConfigTab3.WhitelistContainer:Show()
-		MonDKP.ConfigTab3.TeamHeader:Show()
-		MonDKP.ConfigTab3.TeamListDropDown:Show()
-		MonDKP.ConfigTab3.TeamNameInput:Show()
-		MonDKP.ConfigTab3.TeamRename:Show()
-		MonDKP.ConfigTab3.TeamAdd:Show()
+		CommDKP.ConfigTab3.WhitelistContainer:Show()
+		CommDKP.ConfigTab3.TeamHeader:Show()
+		CommDKP.ConfigTab3.TeamListDropDown:Show()
+		CommDKP.ConfigTab3.TeamNameInput:Show()
+		CommDKP.ConfigTab3.TeamRename:Show()
+		CommDKP.ConfigTab3.TeamAdd:Show()
 	else
-		MonDKP.ConfigTab3.WhitelistContainer:Hide()
-		MonDKP.ConfigTab3.TeamHeader:Hide()
-		MonDKP.ConfigTab3.TeamListDropDown:Hide()
-		MonDKP.ConfigTab3.TeamNameInput:Hide()
-		MonDKP.ConfigTab3.TeamRename:Hide()
-		MonDKP.ConfigTab3.TeamAdd:Hide()
+		CommDKP.ConfigTab3.WhitelistContainer:Hide()
+		CommDKP.ConfigTab3.TeamHeader:Hide()
+		CommDKP.ConfigTab3.TeamListDropDown:Hide()
+		CommDKP.ConfigTab3.TeamNameInput:Hide()
+		CommDKP.ConfigTab3.TeamRename:Hide()
+		CommDKP.ConfigTab3.TeamAdd:Hide()
 	end
 end

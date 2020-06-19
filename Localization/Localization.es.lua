@@ -1,6 +1,6 @@
 if GetLocale() == "esES" or GetLocale() == "esMX" then
   local _, core = ...;
-  local MonDKP = core.MonDKP;
+  local CommDKP = core.CommDKP;
   
   core.BossList = {
     MC = {
@@ -422,10 +422,10 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     MAXIMUMROLLTTWARN = "Solo déjelo en blanco para DKP máximo si \"Usar porcentaje\" está desmarcado. Si está marcado, use 100%.",
     MELEEDPS = "Cuerpo a cuerpo DPS",
     MIGRATE = "Emigrar",
-    MIGRATEINST1 = [=[|cffff0000¡IMPORTANTE!|r: Haga una copia de seguridad del archivo de variables guardado antes de continuar. Con 2.0 viene un nuevo sistema de transmisión indexada. Esto requiere que sus tablas actuales se migren con nuevos valores. Esta migración es un proceso único que SOLO puede ser realizado por UN oficial. Seleccione el oficial con los datos más precisos para realizar la migración. Todos los demás oficiales serán bloqueados y se eliminarán sus datos para aceptar una transmisión de los nuevos datos de ese oficial seleccionado. Esto es para evitar datos duplicados. Una vez que TODOS los oficiales hayan recibido los nuevos datos, puede eliminar la etiqueta {MonDKP = OFFICER_NAME} de la nota pública de Guild Leaders. Es crucialmente importante que solo un oficial realice la migración o tendrá datos duplicados y sus tablas se dañarán (la única forma de corregir el problema es hacer que todos los oficiales que tienen tablas corruptas cierren sesión y eliminen sus archivos de variables guardados simultáneamente o de lo contrario simplemente recibirá los datos corruptos nuevamente tan pronto como inicie sesión). Además, todos los miembros deben usar 2.0 o posterior para ser compatibles. Las versiones anteriores NO funcionarán.
+    MIGRATEINST1 = [=[|cffff0000¡IMPORTANTE!|r: Haga una copia de seguridad del archivo de variables guardado antes de continuar. Con 2.0 viene un nuevo sistema de transmisión indexada. Esto requiere que sus tablas actuales se migren con nuevos valores. Esta migración es un proceso único que SOLO puede ser realizado por UN oficial. Seleccione el oficial con los datos más precisos para realizar la migración. Todos los demás oficiales serán bloqueados y se eliminarán sus datos para aceptar una transmisión de los nuevos datos de ese oficial seleccionado. Esto es para evitar datos duplicados. Una vez que TODOS los oficiales hayan recibido los nuevos datos, puede eliminar la etiqueta {CommDKP = OFFICER_NAME} de la nota pública de Guild Leaders. Es crucialmente importante que solo un oficial realice la migración o tendrá datos duplicados y sus tablas se dañarán (la única forma de corregir el problema es hacer que todos los oficiales que tienen tablas corruptas cierren sesión y eliminen sus archivos de variables guardados simultáneamente o de lo contrario simplemente recibirá los datos corruptos nuevamente tan pronto como inicie sesión). Además, todos los miembros deben usar 2.0 o posterior para ser compatibles. Las versiones anteriores NO funcionarán.
 
     Esta ventana se puede volver a abrir con "/dkp migrate".]=],
-    MIGRATEINST2 = "%s ya ha realizado la migración. Realice una copia de seguridad de su archivo de variables guardadas de inmediato (WTF\\Cuenta\\NOMBRE_CUENTA\\GuardadoVariables\\MonolithDKP.lua) y luego haga clic en el botón Eliminar tablas a continuación. Si %s está en línea, automáticamente le enviarán una sincronización después de que haya recargado. De lo contrario, se presionará uno cuando inicien sesión o puede solicitar que empujen una sincronización (esto se hace haciendo clic en el botón de estado de la tabla en la esquina inferior izquierda de la GUI principal). Si se produce algún error en el proceso de migración de su gremio, elimine la etiqueta de los oficiales que migran de la nota pública del líder del gremio y haga que todos los oficiales que hayan participado hasta ahora eliminen su archivo de variables guardadas corrupto y lo restauren en el que se hizo una copia de seguridad. Todos deben hacer esto al mismo tiempo y no iniciar sesión (con el complemento habilitado) hasta que se haya completado. Cualquier persona en línea con tablas migradas le enviará automáticamente esos datos tan pronto como inicie sesión.",
+    MIGRATEINST2 = "%s ya ha realizado la migración. Realice una copia de seguridad de su archivo de variables guardadas de inmediato (WTF\\Cuenta\\NOMBRE_CUENTA\\GuardadoVariables\\CommunityDKP.lua) y luego haga clic en el botón Eliminar tablas a continuación. Si %s está en línea, automáticamente le enviarán una sincronización después de que haya recargado. De lo contrario, se presionará uno cuando inicien sesión o puede solicitar que empujen una sincronización (esto se hace haciendo clic en el botón de estado de la tabla en la esquina inferior izquierda de la GUI principal). Si se produce algún error en el proceso de migración de su gremio, elimine la etiqueta de los oficiales que migran de la nota pública del líder del gremio y haga que todos los oficiales que hayan participado hasta ahora eliminen su archivo de variables guardadas corrupto y lo restauren en el que se hizo una copia de seguridad. Todos deben hacer esto al mismo tiempo y no iniciar sesión (con el complemento habilitado) hasta que se haya completado. Cualquier persona en línea con tablas migradas le enviará automáticamente esos datos tan pronto como inicie sesión.",
     MIN = "Min",
     MINBIDDESCRIPTION = [=[Con los valores mínimos de oferta, a todos los espacios (o artículos individuales) se les asigna un valor mínimo. Cualquier persona que presente una oferta debe ofertar a ese valor o mayor. 
 
@@ -441,9 +441,9 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     MINUTE = "minuto",
     MINUTES = "minutos",
     MISCSETTINGS = "Configuraciones varias",
-    MONDKPSCALESIZE = "Monolith DKP Scale Size",
-    MONDKPSCALESIZETTDESC = "Escala de la ventana Monolith DKP. Haga clic en \"Guardar configuración\" para cambiar el tamaño y establecer el valor.",
-    MONDKPSCALESIZETTWARN = "Puede requerir una / reload después de guardar si se usa otro Addon que modifica las escalas de UI (ej. TukUI, ElvUI, etc.)",
+    CommDKPSCALESIZE = "CommunityDKP Scale Size",
+    CommDKPSCALESIZETTDESC = "Escala de la ventana CommunityDKP. Haga clic en \"Guardar configuración\" para cambiar el tamaño y establecer el valor.",
+    CommDKPSCALESIZETTWARN = "Puede requerir una / reload después de guardar si se usa otro Addon que modifica las escalas de UI (ej. TukUI, ElvUI, etc.)",
     MORE = "más",
     MORESECONDSTO = "más segundo (s) para hacer eso.",
     MOVEBIDTIMER = "Mover temporizador de ofertas",
@@ -521,7 +521,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
 
     ¿Está seguro de que le gustaría hacer esto?]=],
     OUTOFDATE = "fuera de plazo",
-    OUTOFDATEANNOUNCE = "Su versión de Monolith DKP está desactualizada. Actualice Curse / Twitch o WoWInterface para asegurarse de que no haya problemas de compatibilidad.",
+    OUTOFDATEANNOUNCE = "Su versión de CommunityDKP está desactualizada. Actualice Curse / Twitch o WoWInterface para asegurarse de que no haya problemas de compatibilidad.",
     PAUSERAID = "Pausa Raid",
     PAUSERAIDTTDESC = "Esto detiene un temporizador de incursión si el líder decide que el temporizador debe detenerse por descansos.",
     PAUSERAIDTTWARN = "Se puede reanudar haciendo clic en \"Continuar incursión\".",
@@ -694,7 +694,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     TOSTANDBYLIST = "a la lista de espera",
     TOTALDKP = "DKP total",
     TOTALDKPAWARD = "DKP total otorgado",
-    TOTALMONDKPUSERS = "Total de usuarios de MonDKP",
+    TOTALCommDKPUSERS = "Total de usuarios de CommDKP",
     TOWITHDRAWBID = "para retirar su oferta.",
     TRINKET = "Baratija",
     TTHISTORYCOUNT = "Conteo del historial de información sobre herramientas",
@@ -741,7 +741,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     WHITELISTEMPTY = "Tu lista blanca está vacía.",
     WHITELISTHEADER = [=[Configuración de la lista blanca |CFF444444(Líder solamente) (Alfa)|r
 
-    Se recomienda encarecidamente que solo use esta configuración de la lista blanca si desea restringir qué oficiales requieren permisos. Si desea que todos los oficiales tengan permisos, ignore esta característica de configuración por completo. Usar con precaución. (Si la aplicación de esta configuración causa problemas, abra su archivo \WTF\Cuentas\ACCOUNT_NAME\ SavedVariables\MonolithDKP.lua con un editor de texto y elimine la tabla MonDKP_Whitelist cerca de la parte inferior).]=],
+    Se recomienda encarecidamente que solo use esta configuración de la lista blanca si desea restringir qué oficiales requieren permisos. Si desea que todos los oficiales tengan permisos, ignore esta característica de configuración por completo. Usar con precaución. (Si la aplicación de esta configuración causa problemas, abra su archivo \WTF\Cuentas\ACCOUNT_NAME\ SavedVariables\CommunityDKP.lua con un editor de texto y elimine la tabla CommDKP_Whitelist cerca de la parte inferior).]=],
     WIPETABLES = "Limpiar tablas",
     WIPETABLESCONF = "¿Está seguro de que desea eliminar todas las tablas? Puede recuperar toda la información de un oficial cuando uno está en línea.",
     WIPETABLESTTDESC = "Limpia todos los datos, incluida la tabla DKP, el historial de botín y el historial de DKP. Use esto si se producen problemas al intentar sincronizar para recibir información nueva y completa de un oficial disponible.",
@@ -789,15 +789,15 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     VALIDATEWARN          = "Esto volverá a calcular el dkp de todos los jugadores, la vida ganada y la vida gastada en función de su historial completo. Asegúrese de hacer una copia de seguridad del archivo de variables guardado en caso de que el resultado sea incorrecto debido a la falta de entradas en el historial. Debes restablecer dkp anterior (menú contextual> seleccionar todo> restablecer dkp anterior) para todos los jugadores antes de correr para que puedas ver cuánto cambiaron. ¿Te gustaria continuar?",
     PASS                  = "Pasar",
 
-    CHANGELOG1 = "Monolith DKP (Vapok Edition) - 2.2.10-beta",
-    CHANGELOG2 = "- Added in Loot Filter to Loot History (Taidtuskecyh)",
+    CHANGELOG1 = "CommunityDKP - 3.0.0",
+    CHANGELOG2 = "- THIS VERSION WILL NOT SYNC WITH PREVIOUS ONES - version check will work",
     CHANGELOG3 = "- Small adjustments and fixes to Loot Price and DE communication",
     CHANGELOG4 = "- Added in Multi-Guild, Multi-Teams supprot (thanks to Taidtuskecyh for the help)",
     CHANGELOG5 = "- Fixed a few bugs from the 2.1.2 version of the addon",
     CHANGELOG6 = "- Fixed a rounding issue when adjusting DKP when rounding is enabled. (GH-5)",
     CHANGELOG7 = "- Fixed a Loot History Delete Bug",
     CHANGELOG8 = "- Load In Bug Fixes",
-    CHANGELOG9 = "- Known Issue: Multi-Teams tables may not sync appropriately.",
+    CHANGELOG9 = "- Added in Loot Filter to Loot History (Taidtuskecyh)",
     CHANGELOG10 = "",
     }
 

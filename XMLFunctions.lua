@@ -1,4 +1,4 @@
-function MonolithDKPButton_OnLoad(self)
+function CommunityDKPButton_OnLoad(self)
 	if ( not self:IsEnabled() ) then
 		self.Left:SetTexture("Interface\\Buttons\\UI-Panel-Button-Disabled");
 		self.Middle:SetTexture("Interface\\Buttons\\UI-Panel-Button-Disabled");
@@ -6,38 +6,38 @@ function MonolithDKPButton_OnLoad(self)
 	end
 end
 
-function MonolithDKPButton_OnMouseDown(self)
+function CommunityDKPButton_OnMouseDown(self)
 	if ( self:IsEnabled() ) then
-		self.Left:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\MonolithDKP-Button-Down");
-		self.Middle:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\MonolithDKP-Button-Down");
-		self.Right:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\MonolithDKP-Button-Down");
+		self.Left:SetTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\CommunityDKP-Button-Down");
+		self.Middle:SetTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\CommunityDKP-Button-Down");
+		self.Right:SetTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\CommunityDKP-Button-Down");
 	end
 end
 
-function MonolithDKPButton_OnMouseUp(self)
+function CommunityDKPButton_OnMouseUp(self)
 	if ( self:IsEnabled() ) then
-		self.Left:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\MonolithDKP-Button-Up");
-		self.Middle:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\MonolithDKP-Button-Up");
-		self.Right:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\MonolithDKP-Button-Up");
+		self.Left:SetTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\CommunityDKP-Button-Up");
+		self.Middle:SetTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\CommunityDKP-Button-Up");
+		self.Right:SetTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\CommunityDKP-Button-Up");
 	end
 end
 
-function MonolithDKPButton_OnShow(self)
+function CommunityDKPButton_OnShow(self)
 	if ( self:IsEnabled() ) then
-		self.Left:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\MonolithDKP-Button-Up");
-		self.Middle:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\MonolithDKP-Button-Up");
-		self.Right:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\MonolithDKP-Button-Up");
+		self.Left:SetTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\CommunityDKP-Button-Up");
+		self.Middle:SetTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\CommunityDKP-Button-Up");
+		self.Right:SetTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\CommunityDKP-Button-Up");
 	end
 end
 
-function MonolithDKPButton_OnDisable(self)
+function CommunityDKPButton_OnDisable(self)
 	self.Left:SetTexture("Interface\\Buttons\\UI-Panel-Button-Disabled");
 	self.Middle:SetTexture("Interface\\Buttons\\UI-Panel-Button-Disabled");
 	self.Right:SetTexture("Interface\\Buttons\\UI-Panel-Button-Disabled");
 end
 
-function MonolithDKPButton_OnEnable(self)
-	self.Left:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\MonolithDKP-Button-Up");
-	self.Middle:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\MonolithDKP-Button-Up");
-	self.Right:SetTexture("Interface\\AddOns\\MonolithDKP\\Media\\Textures\\MonolithDKP-Button-Up");
+function CommunityDKPButton_OnEnable(self)
+	self.Left:SetTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\CommunityDKP-Button-Up");
+	self.Middle:SetTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\CommunityDKP-Button-Up");
+	self.Right:SetTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\CommunityDKP-Button-Up");
 end
