@@ -75,12 +75,12 @@ function CommDKP:ValidateDKPTable_DKP()
 	local ValidateTimer = ValidateTimer or CreateFrame("StatusBar", nil, UIParent)
 	ValidateTimer:SetScript("OnUpdate", function(self, elapsed)
 		timer = timer + elapsed
-		if timer > 0.0001 and i <= #CommDKP:GetTable(CommDKP_History, true) and not processing and not pause then
+		if timer > 0.0001 and i <= #CommDKP:GetTable(CommDKP_DKPHistory, true) and not processing and not pause then
 			processing = true
 			pause = true
 
-			local players = {strsplit(",", strsub(CommDKP:GetTable(CommDKP_History, true)[i].players, 1, -2))}
-			local dkp = {strsplit(",", CommDKP:GetTable(CommDKP_History, true)[i].dkp)}
+			local players = {strsplit(",", strsub(CommDKP:GetTable(CommDKP_DKPHistory, true)[i].players, 1, -2))}
+			local dkp = {strsplit(",", CommDKP:GetTable(CommDKP_DKPHistory, true)[i].dkp)}
 
 			if #dkp == 1 then
 				for i=1, #players do
@@ -102,11 +102,11 @@ function CommDKP:ValidateDKPTable_DKP()
 
 					if search then
 						DKPTableTemp[search[1][1]].dkp = DKPTableTemp[search[1][1]].dkp + tonumber(dkp[j])
-						if ((tonumber(dkp[j]) > 0 and not CommDKP:GetTable(CommDKP_History, true)[i].deletes) or (tonumber(dkp[j]) < 0 and CommDKP:GetTable(CommDKP_History, true)[i].deletes)) and not strfind(CommDKP:GetTable(CommDKP_History, true)[i].dkp, "%-%d*%.?%d+%%") then
+						if ((tonumber(dkp[j]) > 0 and not CommDKP:GetTable(CommDKP_DKPHistory, true)[i].deletes) or (tonumber(dkp[j]) < 0 and CommDKP:GetTable(CommDKP_DKPHistory, true)[i].deletes)) and not strfind(CommDKP:GetTable(CommDKP_DKPHistory, true)[i].dkp, "%-%d*%.?%d+%%") then
 							DKPTableTemp[search[1][1]].lifetime_gained = DKPTableTemp[search[1][1]].lifetime_gained + tonumber(dkp[j])
 						end
 					else
-						if ((tonumber(dkp[j]) > 0 and not CommDKP:GetTable(CommDKP_History, true)[i].deletes) or (tonumber(dkp[j]) < 0 and CommDKP:GetTable(CommDKP_History, true)[i].deletes)) and not strfind(CommDKP:GetTable(CommDKP_History, true)[i].dkp, "%-%d*%.?%d+%%") then
+						if ((tonumber(dkp[j]) > 0 and not CommDKP:GetTable(CommDKP_DKPHistory, true)[i].deletes) or (tonumber(dkp[j]) < 0 and CommDKP:GetTable(CommDKP_DKPHistory, true)[i].deletes)) and not strfind(CommDKP:GetTable(CommDKP_DKPHistory, true)[i].dkp, "%-%d*%.?%d+%%") then
 							table.insert(DKPTableTemp, { player=players[j], dkp=tonumber(dkp[j]), lifetime_gained=tonumber(dkp[j]), lifetime_spent=0 })
 						else
 							table.insert(DKPTableTemp, { player=players[j], dkp=tonumber(dkp[j]), lifetime_gained=0, lifetime_spent=0 })
@@ -124,7 +124,7 @@ function CommDKP:ValidateDKPTable_DKP()
 					timer = 0
 				end
 			end)
-		elseif i > #CommDKP:GetTable(CommDKP_History, true) and not processing and not proc2 and not pause then
+		elseif i > #CommDKP:GetTable(CommDKP_DKPHistory, true) and not processing and not proc2 and not pause then
 			ValidateTimer:SetScript("OnUpdate", nil)
 			timer = 0
 			CommDKP:ValidateDKPTable_Final()
@@ -194,22 +194,22 @@ function CommDKP:ValidateDKPHistory()
 	local ValidateTimer = ValidateTimer or CreateFrame("StatusBar", nil, UIParent)
 	ValidateTimer:SetScript("OnUpdate", function(self, elapsed)
 		timer = timer + elapsed
-		if timer > 0.01 and i <= #CommDKP:GetTable(CommDKP_History, true) and not processing then
+		if timer > 0.01 and i <= #CommDKP:GetTable(CommDKP_DKPHistory, true) and not processing then
 			processing = true
 			-- delete duplicate entries and correct DKP (DKPHistory table)
-			local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_History, true), CommDKP:GetTable(CommDKP_History, true)[i].index, "index")
+			local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPHistory, true), CommDKP:GetTable(CommDKP_DKPHistory, true)[i].index, "index")
 			
-			if CommDKP:GetTable(CommDKP_History, true)[i].deletes then  -- adds deltedby index to field if it was received after a delete entry was received but was sent by someone that did not have the delete entry
-				local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_History, true), CommDKP:GetTable(CommDKP_History, true)[i].deletes, "index")
+			if CommDKP:GetTable(CommDKP_DKPHistory, true)[i].deletes then  -- adds deltedby index to field if it was received after a delete entry was received but was sent by someone that did not have the delete entry
+				local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPHistory, true), CommDKP:GetTable(CommDKP_DKPHistory, true)[i].deletes, "index")
 
-				if search and not CommDKP:GetTable(CommDKP_History, true)[search[1][1]].deletedby then
-					CommDKP:GetTable(CommDKP_History, true)[search[1][1]].deletedby = CommDKP:GetTable(CommDKP_History, true)[i].index
+				if search and not CommDKP:GetTable(CommDKP_DKPHistory, true)[search[1][1]].deletedby then
+					CommDKP:GetTable(CommDKP_DKPHistory, true)[search[1][1]].deletedby = CommDKP:GetTable(CommDKP_DKPHistory, true)[i].index
 				end
 			end
 
 			if #search > 1 then
 				for j=2, #search do
-					table.remove(CommDKP:GetTable(CommDKP_History, true), search[j][1])
+					table.remove(CommDKP:GetTable(CommDKP_DKPHistory, true), search[j][1])
 					deleted_entries = deleted_entries + 1
 				end
 			else
@@ -218,7 +218,7 @@ function CommDKP:ValidateDKPHistory()
 
 			processing = false
 			timer = 0
-		elseif i > #CommDKP:GetTable(CommDKP_History, true) then
+		elseif i > #CommDKP:GetTable(CommDKP_DKPHistory, true) then
 			ValidateTimer:SetScript("OnUpdate", nil)
 			timer = 0
 			CommDKP:ValidateDKPTable_Loot()
@@ -278,12 +278,12 @@ function CommDKP_ReindexTables()
 	end
 
 	i=1
-	while i <= #CommDKP:GetTable(CommDKP_History, true) do
-		if CommDKP:GetTable(CommDKP_History, true)[i].deletes or CommDKP:GetTable(CommDKP_History, true)[i].deletedby or CommDKP:GetTable(CommDKP_History, true)[i].reason == "Migration Correction" then
-			table.remove(CommDKP:GetTable(CommDKP_History, true), i)
+	while i <= #CommDKP:GetTable(CommDKP_DKPHistory, true) do
+		if CommDKP:GetTable(CommDKP_DKPHistory, true)[i].deletes or CommDKP:GetTable(CommDKP_DKPHistory, true)[i].deletedby or CommDKP:GetTable(CommDKP_DKPHistory, true)[i].reason == "Migration Correction" then
+			table.remove(CommDKP:GetTable(CommDKP_DKPHistory, true), i)
 		else
-			if (CommDKP_DB.defaults.installed and CommDKP:GetTable(CommDKP_History, true)[i].date < CommDKP_DB.defaults.installed) or (not CommDKP_DB.defaults.installed and CommDKP:GetTable(CommDKP_History, true)[i].date < CommDKP_DB.defaults.installed210) then
-				CommDKP:GetTable(CommDKP_History, true)[i].index = GM.."-"..CommDKP:GetTable(CommDKP_History, true)[i].date  	-- reindexes under GMs name if the entry was created prior to 2.1 (for uniformity)
+			if (CommDKP_DB.defaults.installed and CommDKP:GetTable(CommDKP_DKPHistory, true)[i].date < CommDKP_DB.defaults.installed) or (not CommDKP_DB.defaults.installed and CommDKP:GetTable(CommDKP_DKPHistory, true)[i].date < CommDKP_DB.defaults.installed210) then
+				CommDKP:GetTable(CommDKP_DKPHistory, true)[i].index = GM.."-"..CommDKP:GetTable(CommDKP_DKPHistory, true)[i].date  	-- reindexes under GMs name if the entry was created prior to 2.1 (for uniformity)
 			end
 			i=i+1
 		end
@@ -300,6 +300,6 @@ function CommDKP_ReindexTables()
 			i=i+1
 		end
 	end
-	CommDKP:GetTable(CommDKP_History, true).seed = 0
+	CommDKP:GetTable(CommDKP_DKPHistory, true).seed = 0
 	CommDKP:GetTable(CommDKP_Loot, true).seed = 0
 end
