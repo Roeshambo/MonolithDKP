@@ -114,6 +114,8 @@ core.CurSubView = "all"
 core.LastVerCheck = 0
 core.CenterSort = "class";
 core.OOD = false
+core.RealmName = nil;
+core.FactionName = nil;
 
 function MonDKP:GetCColors(class)
 	if core.CColors then 
@@ -164,7 +166,13 @@ function MonDKP:GetGuildRank(player)
 end
 
 function MonDKP:GetRealmName()
-	return GetRealmName().."-"..UnitFactionGroup(UnitName("player"))
+
+	if core.FactionName == nil or core.RealmName == nil then
+		core.RealmName = GetRealmName();
+		core.FactionName = UnitFactionGroup(UnitName("player"));
+	end
+
+	return core.RealmName.."-"..core.FactionName
 end
 
 function MonDKP:GetGuildName()
