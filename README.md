@@ -48,4 +48,4 @@ Recommendations
 	  isn't lost due to somehow losing your WTF folder.  
 	- Export DKP to HTML at the end of a raid week and paste into an HTML file and keep a week by week log in Discord for players to view outside of the game. This will also give you a backup of the data to reapply in the event data is lost.  
   
-If you'd like to change the CommunityDKP Title image to one for your own guild, you're more than welcome to. It simply requires you replace "CommunityDKP\Media\Textures\CommDKP-0title-t.tga" with your custom tga image (MUST be 256 x 64).
+If you'd like to change the CommunityDKP Title image to one for your own guild, you're more than welcome to. It simply requires you replace "CommunityDKP\Media\Textures\community-dkp.tga" with your custom tga image (MUST be 256 x 64).
