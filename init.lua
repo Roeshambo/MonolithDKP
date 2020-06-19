@@ -308,7 +308,7 @@ function CommDKP_OnEvent(self, event, arg1, ...)
 					end
 				end
 			else
-				CommDKP:Print("Event ID: "..arg1.." - > "..boss_name.." Killed. Please report this Event ID at https://www.curseforge.com/wow/addons/monolith-dkp to update raid event handlers.")
+				CommDKP:Print("Event ID: "..arg1.." - > "..boss_name.." Killed. Please report this Event ID at https://www.curseforge.com/wow/addons/communitydkp/issues to update raid event handlers.")
 			end
 		elseif IsInRaid() then
 			core.DB.bossargs.LastKilledBoss = ...;
