@@ -724,7 +724,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
               if CommDKP.ConfigTab6 and CommDKP.ConfigTab6.history then
                 CommDKP:DKPHistory_Update(true)
               end
-              DKPTable_Update()
+              CommDKP:DKPTable_Update()
             elseif prefix == "CommDKPMinBid" then
               if core.IsOfficer then
                 core.DB.MinBidBySlot = _objReceived.Data[1]

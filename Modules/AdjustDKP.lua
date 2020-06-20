@@ -49,7 +49,7 @@ function CommDKP:AdjustDKP(value)
 			if CommDKP.ConfigTab6.history and CommDKP.ConfigTab6:IsShown() then
 				CommDKP:DKPHistory_Update(true)
 			end
-			DKPTable_Update()
+			CommDKP:DKPTable_Update()
 			if IsInRaid() then
 				CommDKP.Sync:SendData("CommDKPBCastMsg", L["RAIDDKPADJUSTBY"].." "..value.." "..L["FORREASON"]..": "..adjustReason)
 			else
@@ -130,7 +130,7 @@ local function DecayDKP(amount, deductionType, GetSelections)
 	if CommDKP.ConfigTab6.history then
 		CommDKP:DKPHistory_Update(true)
 	end
-	DKPTable_Update()
+	CommDKP:DKPTable_Update()
 end
 
 local function RaidTimerPopout_Create()

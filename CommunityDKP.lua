@@ -71,7 +71,7 @@ function CommDKP:Toggle()        -- toggles IsShown() state of CommDKP.UIConfig,
 	end
 
 	CommDKP:StatusVerify_Update()
-	DKPTable_Update()
+	CommDKP:DKPTable_Update()
 end
 
 ---------------------------------------
@@ -170,7 +170,7 @@ function CommDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable
 	if id == "class" or id == "rank" or id == "role" or id == "spec" then
 		button = SortButtons.class
 	elseif id == "spec" then                -- doesn't allow "spec" to be sorted.
-		DKPTable_Update()
+		CommDKP:DKPTable_Update()
 		return;
 	else
 		button = SortButtons[id]
@@ -218,7 +218,7 @@ function CommDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable
 		end
 	end)
 	core.currentSort = id;
-	DKPTable_Update()
+	CommDKP:DKPTable_Update()
 end
 
 function CommDKP:CreateMenu()
@@ -660,7 +660,7 @@ function CommDKP:CreateMenu()
 	CommDKP.UIConfig.Version:SetText(core.MonVersion); 
 
 	CommDKP.UIConfig:Hide(); -- hide menu after creation until called.
-	CommDKP:FilterDKPTable(core.currentSort)   -- initial sort and populates data values in DKPTable.Rows{} CommDKP:FilterDKPTable() -> CommDKP:SortDKPTable() -> DKPTable_Update()
+	CommDKP:FilterDKPTable(core.currentSort)   -- initial sort and populates data values in DKPTable.Rows{} CommDKP:FilterDKPTable() -> CommDKP:SortDKPTable() -> CommDKP:DKPTable_Update()
 	core.Initialized = true
 	return CommDKP.UIConfig;
 end

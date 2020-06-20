@@ -93,7 +93,7 @@ local function Roll_OnEvent(self, event, arg1, ...)
           SendChatMessage(L["ONLYONEROLLWARN"], "WHISPER", nil, name)
         end
       end
-      BidScrollFrame_Update()
+      CommDKP:BidScrollFrame_Update()
     end
   end
 end
@@ -138,7 +138,7 @@ function CommDKP_CHAT_MSG_WHISPER(text, ...)
             if core.DB.modes.BroadcastBids then
               CommDKP.Sync:SendData("CommDKPBidShare", Bids_Submitted)
             end
-            BidScrollFrame_Update()
+            CommDKP:BidScrollFrame_Update()
             response = L["BIDCANCELLED"]
             flagCanceled = true
             --SendChatMessage(response, "WHISPER", nil, name)
@@ -213,7 +213,7 @@ function CommDKP_CHAT_MSG_WHISPER(text, ...)
                   CommDKP:BroadcastBidTimer(seconds, core.BiddingWindow.item:GetText().." Extended", core.BiddingWindow.itemIcon:GetTexture());
                 end
               end
-              BidScrollFrame_Update()
+              CommDKP:BidScrollFrame_Update()
             else
               response = L["BIDDENIEDMINBID"].." "..core.BiddingWindow.minBid:GetNumber().."!"
             end
@@ -535,7 +535,7 @@ function CommDKP:ToggleBidWindow(loot, lootIcon, itemName)
        UpdateBidWindow()
      end
 
-     BidScrollFrame_Update()
+     CommDKP:BidScrollFrame_Update()
   else
     CommDKP:Print(L["NOPERMISSION"])
   end
@@ -687,7 +687,7 @@ function ClearBidWindow()
   core.BiddingWindow.CustomMinBid:Hide();
 
   core.BiddingWindow.ItemTooltipButton:SetSize(0,0)
-  BidScrollFrame_Update()
+  CommDKP:BidScrollFrame_Update()
   UpdateBidWindow()
   core.BidInProgress = false;
   core.BiddingWindow.boss:SetText("")
@@ -1092,7 +1092,7 @@ local function RightClickMenu(self)
         core.BiddingWindow.bidTable.Rows[i]:SetNormalTexture("Interface\\COMMON\\talent-blue-glow")
         core.BiddingWindow.bidTable.Rows[i]:GetNormalTexture():SetAlpha(0.2)
       end
-      BidScrollFrame_Update()
+      CommDKP:BidScrollFrame_Update()
     end },
   }
   EasyMenu(menu, menuFrame, "cursor", 0 , 0, "MENU", 1);
@@ -1149,7 +1149,7 @@ local function SortBidTable()             -- sorts the Loot History Table by dat
     end)
 end
 
-function BidScrollFrame_Update()
+function CommDKP:BidScrollFrame_Update()
   local numOptions = #Bids_Submitted;
   local index, row
     local offset = FauxScrollFrame_GetOffset(core.BiddingWindow.bidTable) or 0
@@ -1601,7 +1601,7 @@ function CommDKP:CreateBidWindow()
           end
       end
       f.bidTable:SetScript("OnVerticalScroll", function(self, offset)
-          FauxScrollFrame_OnVerticalScroll(self, offset, height, BidScrollFrame_Update)
+          FauxScrollFrame_OnVerticalScroll(self, offset, height, CommDKP:BidScrollFrame_Update())
       end)
 
     ---------------------------------------

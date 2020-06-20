@@ -67,7 +67,7 @@ local function Remove_Entries()
 	end
 end
 
-function AddRaidToDKPTable()
+local function AddRaidToDKPTable()
 	local GroupType = "none";
 
 	if IsInRaid() then
@@ -241,7 +241,7 @@ local function AddTargetToDKPTable()
 	end
 end
 
-function GetGuildRankList()
+function CommDKP:GetGuildRankList()
 	local numRanks = GuildControlGetNumRanks()
 	local tempTable = {}
 	for i=1, numRanks do
@@ -553,7 +553,7 @@ function CommDKP:ManageEntries()
 					rank.func = self.SetValue
 					rank.fontObject = "CommDKPSmallCenter"
 
-					local rankList = GetGuildRankList()
+					local rankList = CommDKP:GetGuildRankList()
 
 					for i=1, #rankList do
 						rank.text, rank.arg1, rank.arg2, rank.checked, rank.isNotRadio = rankList[i].name, rankList[i].name, rankList[i].index, rankList[i].name == curRank, true

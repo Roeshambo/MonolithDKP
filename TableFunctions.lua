@@ -31,7 +31,7 @@ local function CountDown(time)
 	end
 end
 
-function DKPTable_OnClick(self)   
+local function DKPTable_OnClick(self)   
 	local offset = FauxScrollFrame_GetOffset(CommDKP.DKPTable) or 0
 	local index, TempSearch;
 	SelectedRow = self.index
@@ -88,7 +88,7 @@ function DKPTable_OnClick(self)
 		end
 	end
 
-	DKPTable_Update()
+	CommDKP:DKPTable_Update()
 	CommDKPSelectionCount_Update()
 end
 
@@ -210,11 +210,11 @@ local function EditStandbyList(row, arg1)
 			end
 		end
 		CommDKP.Sync:SendData("CommDKPStand", CommDKP:GetTable(CommDKP_Standby, true))
-		DKPTable_Update()
+		CommDKP:DKPTable_Update()
 	else
 		table.wipe(CommDKP:GetTable(CommDKP_Standby, true))
 		core.WorkingTable = {}
-		DKPTable_Update()
+		CommDKP:DKPTable_Update()
 		CommDKP.Sync:SendData("CommDKPStand", CommDKP:GetTable(CommDKP_Standby, true))
 	end
 	if #core.WorkingTable == 0 then
@@ -279,7 +279,7 @@ function CommDKP:ViewLimited(raid, standby, raiders)
 				local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
 
 				if search then
-					local rankList = GetGuildRankList()
+					local rankList = CommDKP:GetGuildRankList()
 
 					local match_rank = CommDKP:Table_Search(core.DB.raiders, rankList[rankIndex+1].name)
 
@@ -301,7 +301,7 @@ function CommDKP:ViewLimited(raid, standby, raiders)
 		table.wipe(tempTable)
 
 		core.CurView = "limited"
-		DKPTable_Update()
+		CommDKP:DKPTable_Update()
 	elseif core.CurView == "limited" then
 		core.WorkingTable = CopyTable(CommDKP:GetTable(CommDKP_DKPTable, true))
 		core.CurView = "all"
@@ -335,7 +335,7 @@ local function RightClickMenu(self)
 		{ text = L["SELECTALL"], notCheckable = true, func = function()
 			core.SelectedData = CopyTable(core.WorkingTable);
 			CommDKPSelectionCount_Update()
-			DKPTable_Update()
+			CommDKP:DKPTable_Update()
 		end }, --3
 		{ text = " ", notCheckable = true, disabled = true}, --4
 		{ text = L["VIEWS"], isTitle = true, notCheckable = true}, --5
@@ -518,7 +518,7 @@ local function RightClickMenu(self)
 		menu[6].menuList[3] = { text = L["VIEWRAIDSTANDBY"], notCheckable = true, disabled = true}
 	end
 
-	local rankList = GetGuildRankList()
+	local rankList = CommDKP:GetGuildRankList()
 	for i=1, #rankList do
 		local checked;
 
@@ -561,7 +561,7 @@ local function RightClickMenu(self)
 		local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
 
 		if search then
-			local rankList = GetGuildRankList()
+			local rankList = CommDKP:GetGuildRankList()
 
 			local match_rank = CommDKP:Table_Search(core.DB.raiders, rankList[rankIndex+1].name)
 
@@ -642,7 +642,7 @@ local function CreateRow(parent, id) -- Create 3 buttons for each row in the lis
 		return f
 end
 
-function DKPTable_Update()
+function CommDKP:DKPTable_Update()
 	if not CommDKP.UIConfig:IsShown() then     -- does not update list if DKP window is closed. Gets done when /dkp is used anyway.
 		return;
 	end
@@ -840,7 +840,7 @@ function CommDKP:DKPTable_Create()
 		end
 	end
 	CommDKP.DKPTable:SetScript("OnVerticalScroll", function(self, offset)
-		FauxScrollFrame_OnVerticalScroll(self, offset, core.TableRowHeight, DKPTable_Update)
+		FauxScrollFrame_OnVerticalScroll(self, offset, core.TableRowHeight, CommDKP:DKPTable_Update())
 	end)
 	
 	CommDKP.DKPTable.SeedVerify = CreateFrame("Frame", nil, CommDKP.DKPTable);

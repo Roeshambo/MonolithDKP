@@ -309,6 +309,5 @@ function CommDKP:ConfigMenuTabs()
 	if #CommDKP:GetTable(CommDKP_DKPHistory, true) > 0 then
 		CommDKP:DKPHistory_Update()
 	end
-	DKPHistoryFilterBox_Create()
+	CommDKP:DKPHistoryFilterBox_Create()
 end
-	

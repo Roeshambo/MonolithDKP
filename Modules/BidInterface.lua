@@ -131,7 +131,7 @@ local function UpdateBidderWindow()
 	core.BidInterface.Boss:SetText(core.DB.bossargs.LastKilledBoss)
 end
 
-function BidInterface_Update()
+local function BidInterface_Update()
   local numOptions = #Bids_Submitted;
   local index, row
     local offset = FauxScrollFrame_GetOffset(core.BidInterface.bidTable) or 0

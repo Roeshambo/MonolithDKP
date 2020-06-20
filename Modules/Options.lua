@@ -78,7 +78,7 @@ local function SaveSettings()
   core.DB.defaults.HistoryLimit = CommDKP.ConfigTab4.history:GetNumber();
   core.DB.defaults.DKPHistoryLimit = CommDKP.ConfigTab4.DKPHistory:GetNumber();
   core.DB.defaults.TooltipHistoryCount = CommDKP.ConfigTab4.TooltipHistory:GetNumber();
-  DKPTable_Update()
+  CommDKP:DKPTable_Update()
 end
 
 function CommDKP:Options()

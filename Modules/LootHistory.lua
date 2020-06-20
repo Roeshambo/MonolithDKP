@@ -88,7 +88,7 @@ local function DeleteLootHistoryEntry(index)
 	table.insert(CommDKP:GetTable(CommDKP_Loot, true), 1, tempTable)
 	CommDKP.Sync:SendData("CommDKPDelLoot", tempTable)
 	CommDKP:SortLootTable()
-	DKPTable_Update()
+	CommDKP:DKPTable_Update()
 	CommDKP:LootHistory_Update(L["NOFILTER"]);
 end
 
