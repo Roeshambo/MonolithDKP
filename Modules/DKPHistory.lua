@@ -152,7 +152,7 @@ function DKPHistoryFilterBox_Create()
   end
 end
 
-local function CommDKPDeleteDKPEntry(index, timestamp, item)  -- index = entry index (Roeshambo-1), item = # of the entry on DKP History tab; may be different than the key of DKPHistory if hidden fields exist
+local function CommDKPDeleteDKPEntry(index, timestamp, item)  -- index = entry index (Vapok-1), item = # of the entry on DKP History tab; may be different than the key of DKPHistory if hidden fields exist
 	-- pop confirmation. If yes, cycles through CommDKP:GetTable(CommDKP_DKPHistory, true).players and every name it finds, it refunds them (or strips them of) dkp.
 	-- if deleted is the weekly decay,     curdkp * (100 / (100 - decayvalue))
 	local reason_header = CommDKP.ConfigTab6.history[item].d:GetText();

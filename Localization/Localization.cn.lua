@@ -127,7 +127,7 @@ if GetLocale() == "zhCN" then
     BCASTVALUESTTWARN = "当前值不会被覆盖。接收此广播将更新已设置的值或添加不存在的值。他们可能具有的任何未发送的值将保持不变。",
     BEGINSYNC = "同步DKP表",
     BELT = "带",
-    BESTPRACTICES = "由于同步系统反复出现问题，旧的广播系统有了一些改进。 2.1.0与早期版本不兼容，所有入侵者必须在2.1.0或更高版本上。 单击主DKP界面左下角的状态指示符，人员可以使用新的广播UI。 如果您的表由于2.0.x的迁移问题而损坏，则官员还可以使用修复选项。 您可以通过“诅咒”页面上链接的YouTube视频查看如何使用它。",
+    BESTPRACTICES = "",
     BID = "出价",
     BIDACCEPTEDFILTER = "您的出价已被接受。",
     BIDCANCELLED = "您的出价已被取消。",

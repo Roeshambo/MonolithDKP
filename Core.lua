@@ -691,7 +691,7 @@ end
 -------
 
 -------------------------------------
--- Recursively searches tar (table) for val (string) as far as 4 nests deep (use field only if you wish to search a specific key IE: CommDKP:GetTable(CommDKP_DKPTable, true), "Roeshambo", "player" would only search for Roeshambo in the player key)
+-- Recursively searches tar (table) for val (string) as far as 4 nests deep (use field only if you wish to search a specific key IE: CommDKP:GetTable(CommDKP_DKPTable, true), "Vapok", "player" would only search for Vapok in the player key)
 -- returns an indexed array of the keys to get to searched value
 -- First key is the result (ie if it's found 8 times, it will return 8 tables containing results).
 -- Second key holds the path to the value searched. So to get to a player searched on DKPTable that returned 1 result, CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]][search[1][2]] would point at the "player" field
@@ -762,7 +762,7 @@ function CommDKP:Table_Search(tar, val, field)
 end
 
 function CommDKP:TableStrFind(tar, val, field)              -- same function as above, but searches values that contain the searched string rather than exact string matches
-	local value = string.upper(tostring(val));        -- ex. CommDKP:TableStrFind(CommDKP:GetTable(CommDKP_DKPHistory, true), "Roeshambo") will return the path to any table element that contains "Roeshambo"
+	local value = string.upper(tostring(val));        -- ex. CommDKP:TableStrFind(CommDKP:GetTable(CommDKP_DKPHistory, true), "Vapok") will return the path to any table element that contains "Vapok"
 	local location = {}
 	for k,v in pairs(tar) do
 		if(type(v) == "table") then
@@ -824,7 +824,7 @@ function CommDKP:TableStrFind(tar, val, field)              -- same function as 
 	end
 end
 
-function CommDKP:DKPTable_Set(tar, field, value, loot)                -- updates field with value where tar is found (IE: CommDKP:DKPTable_Set("Roeshambo", "dkp", 10) adds 10 dkp to user Roeshambo). loot = true/false if it's to alter lifetime_spent
+function CommDKP:DKPTable_Set(tar, field, value, loot)                -- updates field with value where tar is found (IE: CommDKP:DKPTable_Set("Vapok", "dkp", 10) adds 10 dkp to user Vapok). loot = true/false if it's to alter lifetime_spent
 	local result = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), tar);
 	for i=1, #result do
 		local current = CommDKP:GetTable(CommDKP_DKPTable, true)[result[i][1]][field];

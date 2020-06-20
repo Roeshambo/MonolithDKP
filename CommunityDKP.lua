@@ -564,7 +564,7 @@ function CommDKP:CreateMenu()
 		CommDKP.ChangeLogDisplay = CreateFrame("Frame", "CommDKP_ChangeLogDisplay", UIParent, "ShadowOverlaySmallTemplate");
 
 		CommDKP.ChangeLogDisplay:SetPoint("TOP", UIParent, "TOP", 0, -200);
-		CommDKP.ChangeLogDisplay:SetSize(800, 100);
+		CommDKP.ChangeLogDisplay:SetSize(600, 100);
 		CommDKP.ChangeLogDisplay:SetBackdrop( {
 			bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
 			edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3,  
@@ -588,22 +588,22 @@ function CommDKP:CreateMenu()
 
 		CommDKP.ChangeLogDisplay.Notes = CommDKP.ChangeLogDisplay:CreateFontString(nil, "OVERLAY")   -- Filters header
 		CommDKP.ChangeLogDisplay.Notes:ClearAllPoints();
-		CommDKP.ChangeLogDisplay.Notes:SetWidth(780)
+		CommDKP.ChangeLogDisplay.Notes:SetWidth(580)
 		CommDKP.ChangeLogDisplay.Notes:SetFontObject("CommDKPNormalLeft")
 		CommDKP.ChangeLogDisplay.Notes:SetPoint("TOPLEFT", CommDKP.ChangeLogDisplay.ChangeLogHeader, "BOTTOMLEFT", 0, -10);
 
 		CommDKP.ChangeLogDisplay.VerNumber = CommDKP.ChangeLogDisplay:CreateFontString(nil, "OVERLAY")   -- Filters header
 		CommDKP.ChangeLogDisplay.VerNumber:ClearAllPoints();
-		CommDKP.ChangeLogDisplay.VerNumber:SetWidth(780)
+		CommDKP.ChangeLogDisplay.VerNumber:SetWidth(580)
 		CommDKP.ChangeLogDisplay.VerNumber:SetScale(0.8)
 		CommDKP.ChangeLogDisplay.VerNumber:SetFontObject("CommDKPLargeLeft")
-		CommDKP.ChangeLogDisplay.VerNumber:SetPoint("TOPLEFT", CommDKP.ChangeLogDisplay.Notes, "BOTTOMLEFT", 35, -10);
+		CommDKP.ChangeLogDisplay.VerNumber:SetPoint("TOPLEFT", CommDKP.ChangeLogDisplay.Notes, "BOTTOMLEFT", 0, -10);
 
 		CommDKP.ChangeLogDisplay.ChangeLogText = CommDKP.ChangeLogDisplay:CreateFontString(nil, "OVERLAY")   -- Filters header
 		CommDKP.ChangeLogDisplay.ChangeLogText:ClearAllPoints();
-		CommDKP.ChangeLogDisplay.ChangeLogText:SetWidth(740)
+		CommDKP.ChangeLogDisplay.ChangeLogText:SetWidth(540)
 		CommDKP.ChangeLogDisplay.ChangeLogText:SetFontObject("CommDKPNormalLeft")
-		CommDKP.ChangeLogDisplay.ChangeLogText:SetPoint("TOPLEFT", CommDKP.ChangeLogDisplay.VerNumber, "BOTTOMLEFT", -15, -0);
+		CommDKP.ChangeLogDisplay.ChangeLogText:SetPoint("TOPLEFT", CommDKP.ChangeLogDisplay.VerNumber, "BOTTOMLEFT", 5, -0);
 
 		-- Change Log Close Button
 		CommDKP.ChangeLogDisplay.closeContainer = CreateFrame("Frame", "CommDKPChangeLogClose", CommDKP.ChangeLogDisplay)
@@ -633,9 +633,11 @@ function CommDKP:CreateMenu()
 				core.DB.defaults.HideChangeLogs = 0
 			end
 		end)
-
-		CommDKP.ChangeLogDisplay.Notes:SetText("|CFFAEAEDD"..L["BESTPRACTICES"].."|r")
-		CommDKP.ChangeLogDisplay.VerNumber:SetText(core.MonVersion)
+		
+		if L["BESTPRACTICES"] ~= "" then
+			CommDKP.ChangeLogDisplay.Notes:SetText("|CFFAEAEDD"..L["BESTPRACTICES"].."|r")
+		end
+		CommDKP.ChangeLogDisplay.VerNumber:SetText("Version: "..core.MonVersion)
 
 		--------------------------------------
 		-- ChangeLog variable calls (bottom of localization files)

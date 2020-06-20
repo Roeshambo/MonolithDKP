@@ -128,7 +128,7 @@ if GetLocale() == "deDE" then
     BCASTVALUESTTWARN = "Aktuelle Werte werden nicht überschrieben. Beim Empfang dieser Sendung werden bereits festgelegte Werte aktualisiert oder nicht vorhandene Werte hinzugefügt. Nicht gesendete Werte bleiben unverändert.",
     BEGINSYNC = "DKP-Tabellen synchronisieren",
     BELT = "Gürtel",
-    BESTPRACTICES = "Aufgrund wiederkehrender Probleme mit dem Synchronisierungssystem wurde das alte Broadcast-System mit einigen Verbesserungen zurückgebracht. 2.1.0 ist nicht kompatibel mit früheren Versionen und alle Raider müssen 2.1.0 oder höher sein. Die neue Broadcast-Benutzeroberfläche steht den  zur Verfügung, indem Sie auf die Statusanzeige in der unteren linken Ecke der DKP-Hauptoberfläche klicken. Es gibt auch eine Reparaturoption für Offiziere, wenn Ihre Tabellen durch Migrationsprobleme mit 2.0.x beschädigt wurden. Sie können sehen, wie Sie das verwenden, indem Sie das YouTube-Video auf der Seite Curse verwenden.",
+    BESTPRACTICES = "",
     BID = "Bieten, Gebot, Angebot",
     BIDACCEPTEDFILTER = "Ihr Gebot wurde angenommen.",
     BIDCANCELLED = "Ihr Gebot wurde storniert.",

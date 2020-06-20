@@ -127,7 +127,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     BCASTVALUESTTWARN = "Los valores actuales no se sobrescribirán. Recibir esta transmisión actualizará los valores ya establecidos o agregará valores que no existen. Los valores que pueden tener no se envíen permanecerán sin cambios.",
     BEGINSYNC = "Sincronización de tablas DKP",
     BELT = "Cinturón",
-    BESTPRACTICES = "Debido a problemas recurrentes con el sistema de sincronización, el antiguo sistema de transmisión se recuperó con algunas mejoras. 2.1.0 no es compatible con versiones anteriores y todos los asaltantes deben estar en 2.1.0 o superior. La nueva IU de transmisión está disponible para los oficiales haciendo clic en el indicador de estado en la esquina inferior izquierda de la interfaz principal de DKP. También hay una opción de reparación disponible para los oficiales si sus tablas fueron corrompidas por problemas de migración con 2.0.x. Puede ver cómo usar eso a través del video de YouTube vinculado en la página Curse.",
+    BESTPRACTICES = "",
     BID = "Oferta",
     BIDACCEPTEDFILTER = "Su oferta fue aceptada.",
     BIDCANCELLED = "Su oferta ha sido cancelada.",

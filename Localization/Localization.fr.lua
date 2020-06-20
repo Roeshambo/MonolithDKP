@@ -127,7 +127,7 @@ if GetLocale() == "frFR" then
     BCASTVALUESTTWARN = "Les valeurs actuelles ne seront pas écrasées. La réception de cette diffusion mettra à jour les valeurs déjà définies ou ajoutera des valeurs inexistantes. Toutes les valeurs qu'ils peuvent avoir et qui ne sont pas envoyées resteront inchangéesd.",
     BEGINSYNC = "Synchroniser les tables DKP",
     BELT = "Ceinture",
-    BESTPRACTICES = "En raison de problèmes récurrents avec le système de synchronisation, l'ancien système de diffusion a été ramené avec quelques améliorations. 2.1.0 n'est pas compatible avec les versions antérieures et tous les raiders doivent être sur 2.1.0 ou supérieur. La nouvelle interface utilisateur de diffusion est disponible pour les officiers en cliquant sur l'indicateur d'état dans le coin inférieur gauche de l'interface DKP principale. Il existe également une option de réparation disponible pour les officiers si vos tables ont été corrompues par des problèmes de migration avec 2.0.x. Vous pouvez voir comment utiliser cela via la vidéo YouTube liée sur la page Curse.",
+    BESTPRACTICES = "",
     BID = "Offre",
     BIDACCEPTEDFILTER = "Votre offre a été acceptée.",
     BIDCANCELLED = "Votre offre a été annulée.",
