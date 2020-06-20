@@ -698,7 +698,7 @@ function CommDKP:UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
 	return newDbTable;
 end
 
-local function tableHasKey(table,key)
+function tableHasKey(table,key)
 	return table[key] ~= nil;
 end
 
