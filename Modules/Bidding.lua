@@ -1601,7 +1601,7 @@ function CommDKP:CreateBidWindow()
           end
       end
       f.bidTable:SetScript("OnVerticalScroll", function(self, offset)
-          FauxScrollFrame_OnVerticalScroll(self, offset, height, CommDKP:BidScrollFrame_Update())
+          FauxScrollFrame_OnVerticalScroll(self, offset, height, CommDKP.BidScrollFrame_Update)
       end)
 
     ---------------------------------------

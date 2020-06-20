@@ -840,7 +840,7 @@ function CommDKP:DKPTable_Create()
 		end
 	end
 	CommDKP.DKPTable:SetScript("OnVerticalScroll", function(self, offset)
-		FauxScrollFrame_OnVerticalScroll(self, offset, core.TableRowHeight, CommDKP:DKPTable_Update())
+		FauxScrollFrame_OnVerticalScroll(self, offset, core.TableRowHeight, CommDKP.DKPTable_Update)
 	end)
 	
 	CommDKP.DKPTable.SeedVerify = CreateFrame("Frame", nil, CommDKP.DKPTable);
