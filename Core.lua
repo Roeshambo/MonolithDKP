@@ -357,7 +357,7 @@ function CommDKP:FormatTime(time)
 end
 
 function CommDKP:Print(...)        --print function to add "CommunityDKP:" to the beginning of print() outputs.
-	if not core.DB.defaults.supressNotifications then
+	if core.DB == nil or not core.DB.defaults.supressNotifications then
 		local defaults = CommDKP:GetThemeColor();
 		local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "CommunityDKP:", defaults[2].hex:upper());
 		local suffix = "|r";
@@ -365,7 +365,7 @@ function CommDKP:Print(...)        --print function to add "CommunityDKP:" to th
 		for i = 1, NUM_CHAT_WINDOWS do
 			local name = GetChatWindowInfo(i)
 
-			if core.DB.defaults.ChatFrames[name] then
+			if core.DB == nil or core.DB.defaults.ChatFrames[name] then
 				_G["ChatFrame"..i]:AddMessage(string.join(" ", prefix, ..., suffix));
 			end
 		end
