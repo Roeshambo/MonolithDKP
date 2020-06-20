@@ -662,7 +662,7 @@ end
 function CommDKP:VerifyDBSchema(dbTable)
 	local verified = false;
 	--Check to see if the schema node exists. If not, this is 2.1.2 database.
-	local retOK, hasInfo = pcall(tableHasKey,dbTable,"dbinfo");
+	local retOK, hasInfo = pcall(CommDKP_tableHasKey,dbTable,"dbinfo");
 
 	if (not retOK) or (retOK and not hasInfo) then
 		verified = false;
@@ -675,7 +675,7 @@ end
 
 function CommDKP:UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
 	-- Initialize the Database for a Pre-2.2 Database
-	local retOK, hasInfo = pcall(tableHasKey,oldDbTable,"dbinfo");
+	local retOK, hasInfo = pcall(CommDKP_tableHasKey,oldDbTable,"dbinfo");
 	if (not retOK) or (retOK and not hasInfo) then
 		newDbTable = CommDKP:InitPlayerTable(oldDbTable, hasTeams, tableName)
 	end
@@ -698,7 +698,7 @@ function CommDKP:UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
 	return newDbTable;
 end
 
-function tableHasKey(table,key)
+function CommDKP_tableHasKey(table,key)
 	return table[key] ~= nil;
 end
 
@@ -783,14 +783,14 @@ function CommDKP:InitPlayerTable(globalTable, hasTeams, tableName)
 end
 
 function CommDKP:InitializeGuild(dataTable, realmName, guildName)
-	local retOK1, hasInfo1 = pcall(tableHasKey,dataTable,realmName);
+	local retOK1, hasInfo1 = pcall(CommDKP_tableHasKey,dataTable,realmName);
 	
 	if (not retOK1) or (retOK1 and not hasInfo1) then
 		dataTable[realmName] = {}
 	end
 	
 	if guildName ~= nil then
-		local retOK2, hasInfo2 = pcall(tableHasKey,dataTable[realmName],guildName);
+		local retOK2, hasInfo2 = pcall(CommDKP_tableHasKey,dataTable[realmName],guildName);
 		
 		if (not retOK2) or (retOK2 and not hasInfo2) then
 			dataTable[realmName][guildName] = {}
