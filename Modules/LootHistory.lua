@@ -159,7 +159,7 @@ function CommDKP:ClearLootHistoryFrames()
 end
 
 
-function CreateSortBox()
+function CommDKP:CreateSortBox()
 	local PlayerList = GetSortOptions();
 	local ItemList = GetItemHistoryList();
 	curSelected = 0;
@@ -409,7 +409,7 @@ function CommDKP:LootHistory_Update(filter)				-- if "filter" is included in cal
 
 	if filter and filter == L["NOFILTER"] then
 		curDropDownMenuFilterCategory = L["NOFILTER"]
-		CreateSortBox()
+		CommDKP:CreateSortBox()
 	end
 	if filter then
 		CommDKP:LootHistory_Reset()
