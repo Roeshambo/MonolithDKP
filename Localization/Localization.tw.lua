@@ -794,15 +794,15 @@ if GetLocale() == "zhTW" then
     MIGRATIONCANCELED  = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
     MIGRATIONCOMPLETED = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
 
-    CHANGELOG1 = "CommunityDKP - 3.0.0",
-    CHANGELOG2 = "- THIS VERSION WILL NOT SYNC WITH PREVIOUS ONES - version check will work",
-    CHANGELOG3 = "- Small adjustments and fixes to Loot Price and DE communication",
-    CHANGELOG4 = "- Added in Multi-Guild, Multi-Teams supprot (thanks to Taidtuskecyh for the help)",
-    CHANGELOG5 = "- Fixed a few bugs from the 2.1.2 version of the addon",
-    CHANGELOG6 = "- Fixed a rounding issue when adjusting DKP when rounding is enabled. (GH-5)",
-    CHANGELOG7 = "- Fixed a Loot History Delete Bug",
-    CHANGELOG8 = "- Load In Bug Fixes",
-    CHANGELOG9 = "- Added in Loot Filter to Loot History (Taidtuskecyh)",
+    CHANGELOG1 = "Initial Release of CommunityDKP",
+    CHANGELOG2 = " - Contains Multi-Guild, Multi-Team Syncing.",
+    CHANGELOG3 = " - Refactored function names to not conflict with MonolithDKP",
+    CHANGELOG4 = "",
+    CHANGELOG5 = "",
+    CHANGELOG6 = "",
+    CHANGELOG7 = "",
+    CHANGELOG8 = "",
+    CHANGELOG9 = "CommunityDKP Discord: https://discord.gg/HGgvYFB",
     CHANGELOG10 = "",
-    }
+      }
 end
