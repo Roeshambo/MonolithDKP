@@ -203,6 +203,10 @@ function CommDKP_wait(delay, func, ...)
 end
 
 local function DoInit(event, arg1)
+	if CommDKP:MonolithMigration() then
+		return -- Legacy MonolithDKP addon detected: don't initialise any further!
+	end
+
 	CommDKP:OnInitialize(event, arg1);
 end
 
@@ -807,6 +811,158 @@ function CommDKP:InitDbSchema(dbTable, tableName)
 	dbTable.dbinfo["priorbuild"] = 0;
 	dbTable.dbinfo["needsUpgrade"] = false;
 	return dbTable;
+end
+
+----------------------------------
+-- Monolith Migration
+----------------------------------
+
+function CommDKP:MonolithMigration()
+	local _, _, _, _, reason = GetAddOnInfo("MonolithDKP")
+	if reason == "MISSING" or reason == "DISABLED" then
+		return false -- MonolithDKP is missing or globally disabled
+	end
+    
+    local loaded, finished = IsAddOnLoaded("MonolithDKP")
+    if not loaded then
+    	return false -- MonolithDKP is disabled for the current character
+    end
+
+    if not finished then
+    	CommDKP:Print("MonolithDKP has not finished loading - please report to Discord!")
+    	return false -- Should not happen?! Maybe race condition ...
+    end
+
+    CommDKP:Print("Legacy MonolithDKP addon detected - please disable it to continue with CommunityDKP!")
+    -- CommDKP:Print("MonolithDKP legacy seed: "..self:MonolithMigrationLegacySeed())
+    -- CommDKP:Print("MonolithDKP db build: "..self:MonolithMigrationDbBuild())
+
+    -- check if there are usable MonolithDKP tables available 
+    if self:MonolithMigrationLegacySeed() > 0 or self:MonolithMigrationDbBuild() > 0 then
+		self:MonolithMigrationLegacyDetected(function()
+			-- copy everything from legacy addon
+			CommDKP_DB         = MonDKP_DB
+			CommDKP_DKPTable   = MonDKP_DKPTable
+			CommDKP_Loot       = MonDKP_Loot
+			CommDKP_DKPHistory = MonDKP_DKPHistory
+			CommDKP_MinBids    = MonDKP_MinBids
+			CommDKP_MaxBids    = MonDKP_MaxBids
+			CommDKP_Whitelist  = MonDKP_Whitelist
+			CommDKP_Standby    = MonDKP_Standby
+			CommDKP_Archive    = MonDKP_Archive
+
+			-- 2.1.x: rename MonDKPScaleSize property to CommDKPScaleSize
+			if CommDKP_DB.defaults ~= nil and CommDKP_DB.defaults.MonDKPScaleSize ~= nil then
+				CommDKP_DB.defaults.CommDKPScaleSize = CommDKP_DB.defaults.MonDKPScaleSize
+				CommDKP_DB.defaults.MonDKPScaleSize = nil				
+			end
+
+			-- 2.2.x: rename MonDKPScaleSize property to CommDKPScaleSize for each guild / team
+			local migrateDefaultsRecursive
+			migrateDefaultsRecursive = function(table)
+				for k, v in pairs(table) do
+					if k == "defaults" then
+						if v.MonDKPScaleSize ~= nil then
+							v.CommDKPScaleSize = v.MonDKPScaleSize
+							v.MonDKPScaleSize = nil
+						end
+					elseif type(v) == "table" then
+						migrateDefaultsRecursive(v)
+					end
+				end
+			end
+			migrateDefaultsRecursive(CommDKP_DB)
+
+			-- show completion popup
+			CommDKP:MonolithMigrationCompletionPopup()
+		end)
+	end
+
+	return true
+end
+
+function CommDKP:MonolithMigrationLegacyDetected(migration)
+	L["MIGRATIONDETECTED"] = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?"
+
+	StaticPopupDialogs["MONOLITH_MIGRATION_DETECTED"] = {
+		text = L["MIGRATIONDETECTED"],
+		button1 = L["YES"],
+		button2 = L["NO"],
+		OnAccept = function() self:MonolithMigrationConfirmationPopup(migration) end,
+		OnCancel = function() self:MonolithMigrationCancelationPopup() end,
+		timeout = 0,
+		whileDead = true,
+		hideOnEscape = true,
+		preferredIndex = 3,
+	}
+	StaticPopup_Show("MONOLITH_MIGRATION_DETECTED")
+end
+
+function CommDKP:MonolithMigrationConfirmationPopup(migration)
+	L["MIGRATIONCONFIRM"] = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?"
+
+	StaticPopupDialogs["MONOLITH_MIGRATION_CONFIRMATION"] = {
+		text = "|CFFFF0000"..L["WARNING"].."|r: "..L["MIGRATIONCONFIRM"],
+		button1 = L["YES"],
+		button2 = L["NO"],
+		OnAccept = migration,
+		OnCancel = function() self:MonolithMigrationCancelationPopup() end,
+		timeout = 0,
+		whileDead = true,
+		hideOnEscape = true,
+		preferredIndex = 3,
+	}
+	StaticPopup_Show("MONOLITH_MIGRATION_CONFIRMATION")
+end
+
+function CommDKP:MonolithMigrationCancelationPopup()
+	StaticPopupDialogs["MONOLITH_MIGRATION_CANCELED"] = {
+		text = L["MIGRATIONCANCELED"],
+		button1 = L["OK"],
+		timeout = 0,
+		whileDead = true,
+		hideOnEscape = true,
+		preferredIndex = 3,
+	}
+	StaticPopup_Show("MONOLITH_MIGRATION_CANCELED")
+end
+
+function CommDKP:MonolithMigrationCompletionPopup(text)
+	StaticPopupDialogs["MONOLITH_MIGRATION_COMPLETE"] = {
+		text = text or L["MIGRATIONCOMPLETED"],
+		button1 = L["OK"],
+		timeout = 0,
+		whileDead = true,
+		hideOnEscape = true,
+		preferredIndex = 3,
+	}
+	StaticPopup_Show("MONOLITH_MIGRATION_COMPLETE")
+end
+
+function CommDKP:MonolithMigrationLegacySeed()
+	-- returns the latest seed timestamp (version 2.1.x) or 0 if it won't find anything
+	local lootSeed = 0
+	local historySeed = 0
+
+	if MonDKP_Loot ~= nil and MonDKP_Loot.seed ~= nil and strfind(MonDKP_Loot.seed, "-") ~= nil then
+		lootSeed = tonumber(strsub(MonDKP_Loot.seed, strfind(MonDKP_Loot.seed, "-") + 1))
+	end
+	if MonDKP_DKPHistory ~= nil and MonDKP_DKPHistory.seed ~= nil and strfind(MonDKP_DKPHistory.seed, "-") ~= nil then
+		historySeed = tonumber(strsub(MonDKP_DKPHistory.seed, strfind(MonDKP_DKPHistory.seed, "-") + 1))
+	end
+
+	return math.max(lootSeed or 0, historySeed or 0)
+end
+
+function CommDKP:MonolithMigrationDbBuild()
+	-- returns the db build version (version 2.2.x) or 0 if it won't find anything
+	local build = 0
+
+	if MonDKP_DB ~= nil and MonDKP_DB.dbinfo ~= nil and MonDKP_DB.dbinfo.build ~= nil then
+		build = tonumber(MonDKP_DB.dbinfo.build)
+	end
+
+	return build or 0
 end
 
 ----------------------------------

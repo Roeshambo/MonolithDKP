@@ -504,7 +504,7 @@ if GetLocale() == "deDE" then
     OFF = "aus",
     OFFHAND = "Offhand",
     OFFHANDITEMS = "Offhand Gegenstände",
-    OK = "okay",
+    OK = "Okay",
     ON = "auf",
     ONEHANDED = "Einhändig",
     ONEHANDEDWEAPONS = "Einhandwaffen",
@@ -784,6 +784,12 @@ if GetLocale() == "deDE" then
     ZEROSUMITEMCOSTTTDESC = "Wählen Sie die Art der Artikelkosten aus, die Sie verwenden möchten. Static gibt Artikeln einen definierten Preis. Während Mindestgebot ermöglicht es den Spielern, ein Gebot abzugeben, das die Kosten definiert, während Sie einen Mindestgebotsschwellenwert festlegen.",
     ZONE = "Zone",
     PASS                  = "Passen",
+
+    MIGRATIONDETECTED  = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?",
+    MIGRATIONCONFIRM   = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?",
+    MIGRATIONCANCELED  = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
+    MIGRATIONCOMPLETED = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
+
     CHANGELOG1 = "Initial Release of CommunityDKP",
     CHANGELOG2 = " - Contains Multi-Guild, Multi-Team Syncing.",
     CHANGELOG3 = " - Does not Sync with MonolithDKP",

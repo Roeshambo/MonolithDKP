@@ -789,6 +789,11 @@ if GetLocale() == "zhTW" then
     VALIDATEWARN          = "這將根據其完整歷史記錄重新計算所有玩家的dkp，獲得的生命和花費的生命。 如果由於缺少歷史記錄而導致結果不正確，請確保備份已保存的變量文件。 在運行之前，您應該為所有播放器重置先前的dkp（上下文菜單>全選>重置先前的dkp），以便可以看到它們已更改了多少。 你想繼續嗎？",
     PASS                  = "通過",
 
+    MIGRATIONDETECTED  = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?",
+    MIGRATIONCONFIRM   = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?",
+    MIGRATIONCANCELED  = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
+    MIGRATIONCOMPLETED = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
+
     CHANGELOG1 = "CommunityDKP - 3.0.0",
     CHANGELOG2 = "- THIS VERSION WILL NOT SYNC WITH PREVIOUS ONES - version check will work",
     CHANGELOG3 = "- Small adjustments and fixes to Loot Price and DE communication",
