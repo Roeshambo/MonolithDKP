@@ -856,14 +856,14 @@ function CommDKP:Options()
   else
     CommDKP.ConfigTab4.historySlider:SetPoint("TOPRIGHT", CommDKP.ConfigTab4.TooltipHistorySlider, "BOTTOMLEFT", 56, -49);
   end
-  CommDKP.ConfigTab4.historySlider:SetMinMaxValues(500, 2500);
+  CommDKP.ConfigTab4.historySlider:SetMinMaxValues(100, 2500);
   CommDKP.ConfigTab4.historySlider:SetValue(core.DB.defaults.HistoryLimit);
   CommDKP.ConfigTab4.historySlider:SetValueStep(25);
   CommDKP.ConfigTab4.historySlider.tooltipText = L["LOOTHISTORYLIMIT"]
   CommDKP.ConfigTab4.historySlider.tooltipRequirement = L["LOOTHISTLIMITTTDESC"]
   CommDKP.ConfigTab4.historySlider.tooltipWarning = L["LOOTHISTLIMITTTWARN"]
   CommDKP.ConfigTab4.historySlider:SetObeyStepOnDrag(true);
-  getglobal(CommDKP.ConfigTab4.historySlider:GetName().."Low"):SetText("500")
+  getglobal(CommDKP.ConfigTab4.historySlider:GetName().."Low"):SetText("100")
   getglobal(CommDKP.ConfigTab4.historySlider:GetName().."High"):SetText("2500")
   CommDKP.ConfigTab4.historySlider:SetScript("OnValueChanged", function(self)    -- clears focus on esc
     CommDKP.ConfigTab4.history:SetText(CommDKP.ConfigTab4.historySlider:GetValue())
@@ -903,14 +903,14 @@ function CommDKP:Options()
   -- DKP History Limit Slider
   CommDKP.ConfigTab4.DKPHistorySlider = CreateFrame("SLIDER", "$parentDKPHistorySlider", CommDKP.ConfigTab4, "CommDKPOptionsSliderTemplate");
   CommDKP.ConfigTab4.DKPHistorySlider:SetPoint("LEFT", CommDKP.ConfigTab4.historySlider, "RIGHT", 30, 0);
-  CommDKP.ConfigTab4.DKPHistorySlider:SetMinMaxValues(500, 2500);
+  CommDKP.ConfigTab4.DKPHistorySlider:SetMinMaxValues(100, 2500);
   CommDKP.ConfigTab4.DKPHistorySlider:SetValue(core.DB.defaults.DKPHistoryLimit);
   CommDKP.ConfigTab4.DKPHistorySlider:SetValueStep(25);
   CommDKP.ConfigTab4.DKPHistorySlider.tooltipText = L["DKPHISTORYLIMIT"]
   CommDKP.ConfigTab4.DKPHistorySlider.tooltipRequirement = L["DKPHISTLIMITTTDESC"]
   CommDKP.ConfigTab4.DKPHistorySlider.tooltipWarning = L["DKPHISTLIMITTTWARN"]
   CommDKP.ConfigTab4.DKPHistorySlider:SetObeyStepOnDrag(true);
-  getglobal(CommDKP.ConfigTab4.DKPHistorySlider:GetName().."Low"):SetText("500")
+  getglobal(CommDKP.ConfigTab4.DKPHistorySlider:GetName().."Low"):SetText("100")
   getglobal(CommDKP.ConfigTab4.DKPHistorySlider:GetName().."High"):SetText("2500")
   CommDKP.ConfigTab4.DKPHistorySlider:SetScript("OnValueChanged", function(self)    -- clears focus on esc
     CommDKP.ConfigTab4.DKPHistory:SetText(CommDKP.ConfigTab4.DKPHistorySlider:GetValue())
