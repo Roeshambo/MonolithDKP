@@ -71,7 +71,7 @@ function CommDKP:DKPHistory_Reset()
 	end
 end
 
-function DKPHistoryFilterBox_Create()
+function CommDKP:DKPHistoryFilterBox_Create()
 	local PlayerList = GetSortOptions();
 	local curSelected = 0;
 
@@ -228,7 +228,7 @@ local function CommDKPDeleteDKPEntry(index, timestamp, item)  -- index = entry i
 				end
 
 				CommDKP:StatusVerify_Update()
-				DKPTable_Update()
+				CommDKP:DKPTable_Update()
 			end
 		end,
 		timeout = 0,

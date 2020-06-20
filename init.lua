@@ -202,11 +202,11 @@ function CommDKP_wait(delay, func, ...)
   return true;
 end
 
-function DoInit(event, arg1)
+local function DoInit(event, arg1)
 	CommDKP:OnInitialize(event, arg1);
 end
 
-function DoGuildUpdate()
+local function DoGuildUpdate()
 	if IsInGuild() and not core.InitStart then
 		GuildRoster()
 		core.InitStart = true
@@ -547,21 +547,21 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 		------------------------------------------------
 		-- Verify DB Schemas
 		------------------------------------------------
-		if not VerifyDBSchema(CommDKP_DB) then CommDKP_DB =  UpgradeDBSchema(CommDKP_DB, CommDKP_DB, false, "CommDKP_DB") end;
+		if not CommDKP:VerifyDBSchema(CommDKP_DB) then CommDKP_DB = CommDKP:UpgradeDBSchema(CommDKP_DB, CommDKP_DB, false, "CommDKP_DB") end;
 		
 		-- Verify that the DB table has been initialized.
-		CommDKP:SetTable(CommDKP_DB, false, InitializeCommDKPDB(CommDKP:GetTable(CommDKP_DB)))
+		CommDKP:SetTable(CommDKP_DB, false, CommDKP:InitializeCommDKPDB(CommDKP:GetTable(CommDKP_DB)))
 		core.DB = CommDKP:GetTable(CommDKP_DB); --Player specific DB
 
 		
-		if not VerifyDBSchema(CommDKP_DKPTable) then CommDKP_DKPTable =  UpgradeDBSchema(CommDKP_DKPTable, CommDKP_DKPTable, true, "CommDKP_DKPTable") end;
-		if not VerifyDBSchema(CommDKP_Loot) then CommDKP_Loot =  UpgradeDBSchema(CommDKP_Loot, CommDKP_Loot, true, "CommDKP_Loot") end;
-		if not VerifyDBSchema(CommDKP_DKPHistory) then CommDKP_DKPHistory =  UpgradeDBSchema(CommDKP_DKPHistory, CommDKP_DKPHistory, true, "CommDKP_DKPHistory") end;
-		if not VerifyDBSchema(CommDKP_MinBids) then CommDKP_MinBids =  UpgradeDBSchema(CommDKP_MinBids, CommDKP_MinBids, true, "CommDKP_MinBids") end;
-		if not VerifyDBSchema(CommDKP_MaxBids) then CommDKP_MaxBids =  UpgradeDBSchema(CommDKP_MaxBids, CommDKP_MaxBids, true, "CommDKP_MaxBids") end;
-		if not VerifyDBSchema(CommDKP_Whitelist) then CommDKP_Whitelist =  UpgradeDBSchema(CommDKP_Whitelist, CommDKP_Whitelist, false, "CommDKP_Whitelist") end;
-		if not VerifyDBSchema(CommDKP_Standby) then CommDKP_Standby =  UpgradeDBSchema(CommDKP_Standby, CommDKP_Standby, true, "CommDKP_Standby") end;
-		if not VerifyDBSchema(CommDKP_Archive) then CommDKP_Archive =  UpgradeDBSchema(CommDKP_Archive, CommDKP_Archive, true, "CommDKP_Archive") end;
+		if not CommDKP:VerifyDBSchema(CommDKP_DKPTable) then CommDKP_DKPTable = CommDKP:UpgradeDBSchema(CommDKP_DKPTable, CommDKP_DKPTable, true, "CommDKP_DKPTable") end;
+		if not CommDKP:VerifyDBSchema(CommDKP_Loot) then CommDKP_Loot = CommDKP:UpgradeDBSchema(CommDKP_Loot, CommDKP_Loot, true, "CommDKP_Loot") end;
+		if not CommDKP:VerifyDBSchema(CommDKP_DKPHistory) then CommDKP_DKPHistory = CommDKP:UpgradeDBSchema(CommDKP_DKPHistory, CommDKP_DKPHistory, true, "CommDKP_DKPHistory") end;
+		if not CommDKP:VerifyDBSchema(CommDKP_MinBids) then CommDKP_MinBids = CommDKP:UpgradeDBSchema(CommDKP_MinBids, CommDKP_MinBids, true, "CommDKP_MinBids") end;
+		if not CommDKP:VerifyDBSchema(CommDKP_MaxBids) then CommDKP_MaxBids = CommDKP:UpgradeDBSchema(CommDKP_MaxBids, CommDKP_MaxBids, true, "CommDKP_MaxBids") end;
+		if not CommDKP:VerifyDBSchema(CommDKP_Whitelist) then CommDKP_Whitelist = CommDKP:UpgradeDBSchema(CommDKP_Whitelist, CommDKP_Whitelist, false, "CommDKP_Whitelist") end;
+		if not CommDKP:VerifyDBSchema(CommDKP_Standby) then CommDKP_Standby = CommDKP:UpgradeDBSchema(CommDKP_Standby, CommDKP_Standby, true, "CommDKP_Standby") end;
+		if not CommDKP:VerifyDBSchema(CommDKP_Archive) then CommDKP_Archive = CommDKP:UpgradeDBSchema(CommDKP_Archive, CommDKP_Archive, true, "CommDKP_Archive") end;
 		
 
 
@@ -610,7 +610,7 @@ function CommDKP:GetTable(dbTable, hasTeams, teamIndex)
 		local realmName = CommDKP:GetRealmName();
 		local guildName = CommDKP:GetGuildName();
 
-		dbTable = InitializeGuild(dbTable,realmName,guildName);
+		dbTable = CommDKP:InitializeGuild(dbTable,realmName,guildName);
 
 		if hasTeams then
 
@@ -641,7 +641,7 @@ function CommDKP:SetTable(dbTable, hasTeams, value, teamIndex)
 		local realmName = CommDKP:GetRealmName();
 		local guildName = CommDKP:GetGuildName();
 
-		dbTable = InitializeGuild(dbTable,realmName,guildName);
+		dbTable = CommDKP:InitializeGuild(dbTable,realmName,guildName);
 
 		if hasTeams then
 			if teamIndex == nil then
@@ -659,10 +659,10 @@ function CommDKP:SetTable(dbTable, hasTeams, value, teamIndex)
 	end
 end
 
-function VerifyDBSchema(dbTable)
+function CommDKP:VerifyDBSchema(dbTable)
 	local verified = false;
 	--Check to see if the schema node exists. If not, this is 2.1.2 database.
-	local retOK, hasInfo = pcall(tableHasKey,dbTable,"dbinfo");
+	local retOK, hasInfo = pcall(CommDKP_tableHasKey,dbTable,"dbinfo");
 
 	if (not retOK) or (retOK and not hasInfo) then
 		verified = false;
@@ -673,11 +673,11 @@ function VerifyDBSchema(dbTable)
 	return verified;
 end
 
-function UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
+function CommDKP:UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
 	-- Initialize the Database for a Pre-2.2 Database
-	local retOK, hasInfo = pcall(tableHasKey,oldDbTable,"dbinfo");
+	local retOK, hasInfo = pcall(CommDKP_tableHasKey,oldDbTable,"dbinfo");
 	if (not retOK) or (retOK and not hasInfo) then
-		newDbTable = InitPlayerTable(oldDbTable, hasTeams, tableName)
+		newDbTable = CommDKP:InitPlayerTable(oldDbTable, hasTeams, tableName)
 	end
 	--Set Prior Build
 	newDbTable.dbinfo.priorbuild = newDbTable.dbinfo.build;
@@ -687,7 +687,7 @@ function UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
 		if newDbTable.dbinfo.name == "CommDKP_DB" then
 
 			local defaultTable = {}
-			defaultTable = InitializeCommDKPDB(CommDKP:GetTable(defaultTable))
+			defaultTable = CommDKP:InitializeCommDKPDB(CommDKP:GetTable(defaultTable))
 			if not defaultTable.defaults.CurrentTeam then defaultTable.defaults.CurrentTeam = "0" end;
 			if not defaultTable.teams then defaultTable.teams = {} end;
 			newDbTable[core.defaultTable] = defaultTable;
@@ -698,11 +698,11 @@ function UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
 	return newDbTable;
 end
 
-function tableHasKey(table,key)
+function CommDKP_tableHasKey(table,key)
 	return table[key] ~= nil;
 end
 
-function InitializeCommDKPDB(dbTable)
+function CommDKP:InitializeCommDKPDB(dbTable)
 	if not dbTable.DKPBonus or not dbTable.DKPBonus.OnTimeBonus then
 		dbTable.DKPBonus = {
 			OnTimeBonus = 15, BossKillBonus = 5, CompletionBonus = 10, NewBossKillBonus = 10, UnexcusedAbsence = -25, BidTimer = 30, DecayPercentage = 20, GiveRaidStart = false, IncStandby = false,
@@ -755,16 +755,17 @@ function InitializeCommDKPDB(dbTable)
 
 	return dbTable;
 end
-function InitPlayerTable(globalTable, hasTeams, tableName)
+
+function CommDKP:InitPlayerTable(globalTable, hasTeams, tableName)
 	local playerTable = {};
-	playerTable = InitDbSchema(playerTable, tableName);
+	playerTable = CommDKP:InitDbSchema(playerTable, tableName);
 	if IsInGuild() then
 
 		local realmName = CommDKP:GetRealmName();
 		local guildName = CommDKP:GetGuildName();
 		
 
-		playerTable = InitializeGuild(playerTable,realmName,guildName);
+		playerTable = CommDKP:InitializeGuild(playerTable,realmName,guildName);
 
 		if  not globalTable then
 			globalTable = {};
@@ -781,15 +782,15 @@ function InitPlayerTable(globalTable, hasTeams, tableName)
 	return playerTable;
 end
 
-function InitializeGuild(dataTable, realmName, guildName)
-	local retOK1, hasInfo1 = pcall(tableHasKey,dataTable,realmName);
+function CommDKP:InitializeGuild(dataTable, realmName, guildName)
+	local retOK1, hasInfo1 = pcall(CommDKP_tableHasKey,dataTable,realmName);
 	
 	if (not retOK1) or (retOK1 and not hasInfo1) then
 		dataTable[realmName] = {}
 	end
 	
 	if guildName ~= nil then
-		local retOK2, hasInfo2 = pcall(tableHasKey,dataTable[realmName],guildName);
+		local retOK2, hasInfo2 = pcall(CommDKP_tableHasKey,dataTable[realmName],guildName);
 		
 		if (not retOK2) or (retOK2 and not hasInfo2) then
 			dataTable[realmName][guildName] = {}
@@ -799,7 +800,7 @@ function InitializeGuild(dataTable, realmName, guildName)
  	return dataTable
 end
 
-function InitDbSchema(dbTable, tableName)
+function CommDKP:InitDbSchema(dbTable, tableName)
 	dbTable["dbinfo"] = {};
 	dbTable.dbinfo["build"] = 0;
 	dbTable.dbinfo["name"] = tableName;

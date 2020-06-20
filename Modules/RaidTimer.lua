@@ -12,7 +12,7 @@ local StartAwarded = false;
 local StartBonus = 0;
 local totalAwarded = 0;
 
-function SecondsToClock(seconds)
+local function SecondsToClock(seconds)
   local seconds = tonumber(seconds)
 
   if seconds <= 0 then
@@ -88,7 +88,7 @@ local function AwardRaid(amount, reason)
 		if CommDKP.ConfigTab6.history and CommDKP.ConfigTab6:IsShown() then
 			CommDKP:DKPHistory_Update(true)
 		end
-		DKPTable_Update()
+		CommDKP:DKPTable_Update()
 
 		CommDKP.Sync:SendData("CommDKPDKPDist", CommDKP:GetTable(CommDKP_DKPHistory, true)[1])
 

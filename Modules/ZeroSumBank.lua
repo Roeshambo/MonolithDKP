@@ -58,7 +58,7 @@ local function ZeroSumDistribution()
 		table.wipe(core.DB.modes.ZeroSumBank)
 		core.DB.modes.ZeroSumBank.balance = 0
 		core.ZeroSumBank.LootFrame.LootList:SetText("")
-		DKPTable_Update()
+		CommDKP:DKPTable_Update()
 		CommDKP.Sync:SendData("CommDKPZSumBank", core.DB.modes.ZeroSumBank)
 		CommDKP:ZeroSumBank_Update()
 		core.ZeroSumBank:Hide();

@@ -604,6 +604,13 @@ end
 -------
 -- TEAM FUNCTIONS
 -------
+local function tablelength(T)
+	local count = 0
+	for _ in pairs(T) do
+		count = count + 1 
+	end
+	return count
+end
 
 function CommDKP:GetCurrentTeamIndex() 
 	local _tmpString = CommDKP:GetTable(CommDKP_DB, false)["defaults"]["CurrentTeam"] or "0"
@@ -629,15 +636,6 @@ function CommDKP:GetTeamName(index)
 	if teamName == nil then return "no team" end;
 
 	return teamName;
-end
-
-
-function tablelength(T)
-	local count = 0
-	for _ in pairs(T) do
-		count = count + 1 
-	end
-	return count
 end
 
 function CommDKP:GetGuildTeamList() 
@@ -673,7 +671,7 @@ function CommDKP:SetCurrentTeam(index)
 	-- reset dkp table and update it
 	core.WorkingTable = CommDKP:GetTable(CommDKP_DKPTable, true);
 	core.PriceTable	= CommDKP:GetTable(CommDKP_MinBids, true);
-	DKPTable_Update()
+	CommDKP:DKPTable_Update()
 
 	-- reset dkp history table and update it
 	CommDKP:DKPHistory_Update(true)
@@ -839,5 +837,5 @@ function CommDKP:DKPTable_Set(tar, field, value, loot)                -- updates
 			CommDKP:GetTable(CommDKP_DKPTable, true)[result[i][1]][field] = value
 		end
 	end
-	DKPTable_Update()
+	CommDKP:DKPTable_Update()
 end

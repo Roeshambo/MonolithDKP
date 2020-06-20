@@ -66,7 +66,7 @@ function CommDKP:AutoAward(phase, amount, reason) -- phase identifies who to awa
 			if CommDKP.ConfigTab6.history and CommDKP.ConfigTab6:IsShown() then
 				CommDKP:DKPHistory_Update(true)
 			end
-			DKPTable_Update()
+			CommDKP:DKPTable_Update()
 		end
 	end
 end

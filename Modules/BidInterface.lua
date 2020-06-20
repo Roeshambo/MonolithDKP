@@ -131,7 +131,7 @@ local function UpdateBidderWindow()
 	core.BidInterface.Boss:SetText(core.DB.bossargs.LastKilledBoss)
 end
 
-function BidInterface_Update()
+function CommDKP_BidInterface_Update()
   local numOptions = #Bids_Submitted;
   local index, row
     local offset = FauxScrollFrame_GetOffset(core.BidInterface.bidTable) or 0
@@ -282,7 +282,7 @@ function CommDKP:BidInterface_Toggle()
   end
 
   if core.DB.modes.BroadcastBids then
-    local pass, err = pcall(BidInterface_Update)
+    local pass, err = pcall(CommDKP_BidInterface_Update)
 
     if not pass then
       print(err)
@@ -424,7 +424,7 @@ end
 function CommDKP:Bids_Set(entry)
   Bids_Submitted = entry;
   
-  local pass, err = pcall(BidInterface_Update)
+  local pass, err = pcall(CommDKP_BidInterface_Update)
 
   if not pass then
     print(err)
