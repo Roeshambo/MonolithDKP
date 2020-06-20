@@ -838,6 +838,7 @@ function CommDKP:MonolithMigration()
     -- CommDKP:Print("MonolithDKP db build: "..self:MonolithMigrationDbBuild())
 
     if self:MonolithMigrationDbEntries() then
+		self:MonolithMigrationGenericPopup(L["MIGRATIONUNAVAILABLE"])
     	return true -- CommunityDKP already has table entries - ABORT!
     end
 
@@ -878,7 +879,7 @@ function CommDKP:MonolithMigration()
 			migrateDefaultsRecursive(CommDKP_DB)
 
 			-- show completion popup
-			CommDKP:MonolithMigrationCompletionPopup()
+			self:MonolithMigrationGenericPopup(L["MIGRATIONCOMPLETED"])
 		end)
 	end
 
@@ -931,16 +932,16 @@ function CommDKP:MonolithMigrationCancelationPopup()
 	StaticPopup_Show("MONOLITH_MIGRATION_CANCELED")
 end
 
-function CommDKP:MonolithMigrationCompletionPopup(text)
-	StaticPopupDialogs["MONOLITH_MIGRATION_COMPLETE"] = {
-		text = text or L["MIGRATIONCOMPLETED"],
+function CommDKP:MonolithMigrationGenericPopup(text)
+	StaticPopupDialogs["MONOLITH_MIGRATION_GENERIC"] = {
+		text = text,
 		button1 = L["OK"],
 		timeout = 0,
 		whileDead = true,
 		hideOnEscape = true,
 		preferredIndex = 3,
 	}
-	StaticPopup_Show("MONOLITH_MIGRATION_COMPLETE")
+	StaticPopup_Show("MONOLITH_MIGRATION_GENERIC")
 end
 
 function CommDKP:MonolithMigrationLegacySeed()

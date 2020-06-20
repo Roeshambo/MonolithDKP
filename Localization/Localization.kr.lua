@@ -789,10 +789,11 @@ if GetLocale() == "koKR" then
     VALIDATEWARN          = "전체 기록을 기준으로 모든 플레이어의 dkp, 평생 획득 한 시간 및 평생을 재 계산합니다. 누락 된 히스토리 항목으로 인해 결과가 올바르지 않은 경우 저장된 변수 파일을 백업하십시오. 달리기 전에 모든 플레이어에 대해 이전 dkp (컨텍스트 메뉴> 모두 선택> 이전 dkp 재설정)를 재설정해야 변경 한 양을 확인할 수 있습니다. 계속 하시겠습니까?",
     PASS                  = "통과하다",
 
-    MIGRATIONDETECTED  = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?",
-    MIGRATIONCONFIRM   = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?",
-    MIGRATIONCANCELED  = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
-    MIGRATIONCOMPLETED = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
+    MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?",
+    MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.",
+    MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?",
+    MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
+    MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
 
     CHANGELOG1 = "Initial Release of CommunityDKP",
     CHANGELOG2 = " - Contains Multi-Guild, Multi-Team Syncing.",

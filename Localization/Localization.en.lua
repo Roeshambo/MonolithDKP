@@ -783,10 +783,11 @@ core.L = {
   VALIDATEWARN = "This will recalculate all players dkp, lifetime earned and lifetime spent based on their complete history. Make sure to back up your saved variables file in the event the result is improper due to missing history entries. You should reset previous dkp (context menu > select all > reset previous dkp) for all players prior to running so you can see how much they changed. Would you like to continue?",
   PASS = "Pass",
 
-  MIGRATIONDETECTED  = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?",
-  MIGRATIONCONFIRM   = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?",
-  MIGRATIONCANCELED  = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
-  MIGRATIONCOMPLETED = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
+  MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?",
+  MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.",
+  MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?",
+  MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
+  MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
 
   CHANGELOG1 = "Initial Release of CommunityDKP",
   CHANGELOG2 = " - Contains Multi-Guild, Multi-Team Syncing.",

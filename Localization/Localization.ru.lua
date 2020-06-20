@@ -784,10 +784,11 @@ if GetLocale() == "ruRU" then
     ZONE = "зона",
     PASS                  = "Отказаться",
 
-    MIGRATIONDETECTED  = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?",
-    MIGRATIONCONFIRM   = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?",
-    MIGRATIONCANCELED  = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
-    MIGRATIONCOMPLETED = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
+    MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?",
+    MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.",
+    MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?",
+    MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
+    MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
 
     CHANGELOG1 = "Initial Release of CommunityDKP",
     CHANGELOG2 = " - Contains Multi-Guild, Multi-Team Syncing.",
