@@ -837,6 +837,10 @@ function CommDKP:MonolithMigration()
     -- CommDKP:Print("MonolithDKP legacy seed: "..self:MonolithMigrationLegacySeed())
     -- CommDKP:Print("MonolithDKP db build: "..self:MonolithMigrationDbBuild())
 
+    if self:MonolithMigrationDbEntries() then
+    	return true -- CommunityDKP already has table entries - ABORT!
+    end
+
     -- check if there are usable MonolithDKP tables available 
     if self:MonolithMigrationLegacySeed() > 0 or self:MonolithMigrationDbBuild() > 0 then
 		self:MonolithMigrationLegacyDetected(function()
@@ -963,6 +967,30 @@ function CommDKP:MonolithMigrationDbBuild()
 	end
 
 	return build or 0
+end
+
+function CommDKP:MonolithMigrationDbEntries()
+	-- returns true if there are already CommunityDKP entries
+	local findEntryRecursive
+	findEntryRecursive = function(table, entry)
+		if table == nil then
+			return false
+		end
+
+		for k, v in pairs(table) do
+			if k == entry then
+				return true -- entry found - ABORT!
+			elseif type(v) == "table" and findEntryRecursive(v, entry) then
+				return true -- entry in child table found - ABORT!
+			end
+		end
+
+		return false
+	end
+
+	return findEntryRecursive(CommDKP_DKPHistory, "players")
+		or findEntryRecursive(CommDKP_DKPTable, "player")
+		or findEntryRecursive(CommDKP_Loot, "player")
 end
 
 ----------------------------------
