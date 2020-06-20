@@ -790,6 +790,12 @@ if GetLocale() == "frFR" then
     VALIDATEWARN          = "Cela recalculera tous les dkp des joueurs, la durée de vie gagnée et la durée de vie dépensée en fonction de leur historique complet. Assurez-vous de sauvegarder votre fichier de variables enregistré dans le cas où le résultat serait incorrect en raison d'entrées d'historique manquantes. Vous devez réinitialiser le dkp précédent (menu contextuel> sélectionner tout> réinitialiser le dkp précédent) pour tous les joueurs avant de courir afin que vous puissiez voir combien ils ont changé. Voulez-vous continuer?",
     PASS                  = "Passer",
 
+    MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?",
+    MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.",
+    MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?",
+    MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
+    MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
+
     CHANGELOG1 = "Initial Release of CommunityDKP",
     CHANGELOG2 = " - Contains Multi-Guild, Multi-Team Syncing.",
     CHANGELOG3 = " - Refactored function names to not conflict with MonolithDKP",
