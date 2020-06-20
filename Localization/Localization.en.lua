@@ -785,12 +785,12 @@ core.L = {
 
   CHANGELOG1 = "Initial Release of CommunityDKP",
   CHANGELOG2 = " - Contains Multi-Guild, Multi-Team Syncing.",
-  CHANGELOG3 = " - Does not Sync with MonolithDKP",
+  CHANGELOG3 = " - Refactored function names to not conflict with MonolithDKP",
   CHANGELOG4 = "",
-  CHANGELOG5 = "CommunityDKP Discord: https://discord.gg/HGgvYFB",
+  CHANGELOG5 = "",
   CHANGELOG6 = "",
   CHANGELOG7 = "",
   CHANGELOG8 = "",
-  CHANGELOG9 = "",
+  CHANGELOG9 = "CommunityDKP Discord: https://discord.gg/HGgvYFB",
   CHANGELOG10 = "",
 }

@@ -789,15 +789,15 @@ if GetLocale() == "zhTW" then
     VALIDATEWARN          = "這將根據其完整歷史記錄重新計算所有玩家的dkp，獲得的生命和花費的生命。 如果由於缺少歷史記錄而導致結果不正確，請確保備份已保存的變量文件。 在運行之前，您應該為所有播放器重置先前的dkp（上下文菜單>全選>重置先前的dkp），以便可以看到它們已更改了多少。 你想繼續嗎？",
     PASS                  = "通過",
 
-    CHANGELOG1 = "CommunityDKP - 3.0.0",
-    CHANGELOG2 = "- THIS VERSION WILL NOT SYNC WITH PREVIOUS ONES - version check will work",
-    CHANGELOG3 = "- Small adjustments and fixes to Loot Price and DE communication",
-    CHANGELOG4 = "- Added in Multi-Guild, Multi-Teams supprot (thanks to Taidtuskecyh for the help)",
-    CHANGELOG5 = "- Fixed a few bugs from the 2.1.2 version of the addon",
-    CHANGELOG6 = "- Fixed a rounding issue when adjusting DKP when rounding is enabled. (GH-5)",
-    CHANGELOG7 = "- Fixed a Loot History Delete Bug",
-    CHANGELOG8 = "- Load In Bug Fixes",
-    CHANGELOG9 = "- Added in Loot Filter to Loot History (Taidtuskecyh)",
+    CHANGELOG1 = "Initial Release of CommunityDKP",
+    CHANGELOG2 = " - Contains Multi-Guild, Multi-Team Syncing.",
+    CHANGELOG3 = " - Refactored function names to not conflict with MonolithDKP",
+    CHANGELOG4 = "",
+    CHANGELOG5 = "",
+    CHANGELOG6 = "",
+    CHANGELOG7 = "",
+    CHANGELOG8 = "",
+    CHANGELOG9 = "CommunityDKP Discord: https://discord.gg/HGgvYFB",
     CHANGELOG10 = "",
-    }
+      }
 end
