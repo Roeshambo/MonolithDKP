@@ -675,6 +675,7 @@ if GetLocale() == "koKR" then
     TABLEVIEWS = "테이블 뷰",
     TAKINGBIDSON = "입찰하기",
     TANK = "탱크",
+    TEAMMANAGEMENTHEADER = "Guild team management section",
     TENSECONDSTOBID = "입찰에 남은 10 초!",
     THISWILLREFUND = "환불됩니다",
     TIMEELAPSED = "경과 시간",

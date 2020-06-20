@@ -689,6 +689,7 @@ if GetLocale() == "ruRU" then
     TABLEVIEWS = "Списки",
     TAKINGBIDSON = "Принимаются ставки на",
     TANK = "Танк",
+    TEAMMANAGEMENTHEADER = "Guild team management section",
     TENSECONDSTOBID = "Остается 10 секунд чтобы сделать ставки!",
     THISWILLREFUND = "это вернет",
     TIMEELAPSED = "Время истекло; истекшее время",

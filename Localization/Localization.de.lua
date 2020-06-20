@@ -690,6 +690,7 @@ if GetLocale() == "deDE" then
     TABLEVIEWS = "Tabellenansichten",
     TAKINGBIDSON = "Gebote annehmen",
     TANK = "Tank",
+    TEAMMANAGEMENTHEADER = "Guild team management section",
     TENSECONDSTOBID = "Noch 10 Sekunden zum Bieten!",
     THISWILLREFUND = "Dies wird erstattet",
     TIMEELAPSED = "Verstrichene Zeit",

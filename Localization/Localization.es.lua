@@ -675,6 +675,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     TABLEVIEWS = "Vistas de tabla",
     TAKINGBIDSON = "Tomando ofertas",
     TANK = "Tanque",
+    TEAMMANAGEMENTHEADER = "Guild team management section",
     TENSECONDSTOBID = "¡Quedan 10 segundos para pujar!",
     THISWILLREFUND = "Esto reembolsará",
     TIMEELAPSED = "Tiempo transcurrido",

@@ -675,6 +675,7 @@ if GetLocale() == "zhTW" then
     TABLEVIEWS = "表格檢視",
     TAKINGBIDSON = "競標",
     TANK = "坦",
+    TEAMMANAGEMENTHEADER = "Guild team management section",
     TENSECONDSTOBID = "還剩10秒競標！",
     THISWILLREFUND = "這將退還",
     TIMEELAPSED = "比賽進行時間",

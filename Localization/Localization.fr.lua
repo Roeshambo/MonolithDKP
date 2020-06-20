@@ -675,6 +675,7 @@ if GetLocale() == "frFR" then
     TABLEVIEWS = "Vues de la table",
     TAKINGBIDSON = "Prendre des offres sur",
     TANK = "Tank",
+    TEAMMANAGEMENTHEADER = "Guild team management section",
     TENSECONDSTOBID = "Plus que 10 secondes pour enchérir!",
     THISWILLREFUND = "Cela remboursera",
     TIMEELAPSED = "Temps écoulé",
