@@ -418,7 +418,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 CommDKP:FilterDKPTable(core.currentSort, "reset")
                 CommDKP:StatusVerify_Update()
               end
-              print("[CommunityDKP] COMMS: Full Broadcast Receive Finished for team"..CommDKP:GetTeamName(_objReceived.CurrentTeam));
+              print("[CommunityDKP] COMMS: Full Broadcast Receive Finished for team "..CommDKP:GetTeamName(_objReceived.CurrentTeam));
               return
             elseif prefix == "CommDKPMerge" then
               for i=1, #_objReceived.Data.DKP do
