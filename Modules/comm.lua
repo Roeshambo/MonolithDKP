@@ -53,7 +53,7 @@ function CommDKP.Sync:OnEnable()
   CommDKP.Sync:RegisterComm("CommDKPDKPDist", CommDKP.Sync:OnCommReceived())      -- broadcasts individual DKP award to DKP history table
   CommDKP.Sync:RegisterComm("CommDKPMinBid", CommDKP.Sync:OnCommReceived())      -- broadcasts minimum dkp values (set in Options tab or custom values in bid window)
   CommDKP.Sync:RegisterComm("CommDKPMaxBid", CommDKP.Sync:OnCommReceived())      -- broadcasts maximum dkp values (set in Options tab or custom values in bid window)
-  CommDKP.Sync:RegisterComm("CommDKPWhitelist", CommDKP.Sync:OnCommReceived())      -- broadcasts whitelist
+  CommDKP.Sync:RegisterComm("CDKPWhitelist", CommDKP.Sync:OnCommReceived())      -- broadcasts whitelist
   CommDKP.Sync:RegisterComm("CommDKPDKPModes", CommDKP.Sync:OnCommReceived())      -- broadcasts DKP Mode settings
   CommDKP.Sync:RegisterComm("CommDKPStand", CommDKP.Sync:OnCommReceived())        -- broadcasts standby list
   CommDKP.Sync:RegisterComm("CommDKPRaidTime", CommDKP.Sync:OnCommReceived())      -- broadcasts Raid Timer Commands
@@ -352,7 +352,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
         end
 
         if (sender ~= UnitName("player")) then
-          if prefix == "CommDKPLootDist" or prefix == "CommDKPDKPDist" or prefix == "CommDKPDelLoot" or prefix == "CommDKPDelSync" or prefix == "CommDKPMinBid" or prefix == "CommDKPWhitelist"
+          if prefix == "CommDKPLootDist" or prefix == "CommDKPDKPDist" or prefix == "CommDKPDelLoot" or prefix == "CommDKPDelSync" or prefix == "CommDKPMinBid" or prefix == "CDKPWhitelist"
           or prefix == "CommDKPDKPModes" or prefix == "CommDKPStand" or prefix == "CommDKPZSumBank" or prefix == "CommDKPBossLoot" or prefix == "CommDKPDecay" or prefix == "CommDKPDelUsers" or
           prefix == "CommDKPAllTabs" or prefix == "CommDKPBidShare" or prefix == "CommDKPMerge" or prefix == "CommDKPSetPrice" then
 
@@ -757,7 +757,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                   end
                 end
               end
-            elseif prefix == "CommDKPWhitelist" and CommDKP:GetGuildRankIndex(UnitName("player")) > 1 then -- only applies if not GM
+            elseif prefix == "CDKPWhitelist" and CommDKP:GetGuildRankIndex(UnitName("player")) > 1 then -- only applies if not GM
               CommDKP:SetTable(CommDKP_Whitelist, false, _objReceived.Data, _objReceived.CurrentTeam);
             elseif prefix == "CommDKPStand" then
               CommDKP:GetTable(CommDKP_Standby, true, _objReceived.Data, _objReceived.CurrentTeam);

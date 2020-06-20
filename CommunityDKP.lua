@@ -48,7 +48,7 @@ function CommDKP:Toggle()        -- toggles IsShown() state of CommDKP.UIConfig,
 	end
 
 	if #CommDKP:GetTable(CommDKP_Whitelist) > 0 and core.IsOfficer then 				-- broadcasts whitelist any time the window is opened if one exists (help ensure everyone has the information even if they were offline when it was created)
-		CommDKP.Sync:SendData("CommDKPWhitelist", CommDKP:GetTable(CommDKP_Whitelist))   -- Only officers propagate the whitelist, and it is only accepted by players that are NOT the GM (prevents overwriting new Whitelist set by GM, if any.)
+		CommDKP.Sync:SendData("CDKPWhitelist", CommDKP:GetTable(CommDKP_Whitelist))   -- Only officers propagate the whitelist, and it is only accepted by players that are NOT the GM (prevents overwriting new Whitelist set by GM, if any.)
 	end
 
 	if core.CurSubView == "raid" then

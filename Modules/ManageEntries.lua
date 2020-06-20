@@ -341,7 +341,7 @@ local function UpdateWhitelist()
 	else
 		table.wipe(CommDKP:GetTable(CommDKP_Whitelist))
 	end
-	CommDKP.Sync:SendData("CommDKPWhitelist", CommDKP:GetTable(CommDKP_Whitelist))
+	CommDKP.Sync:SendData("CDKPWhitelist", CommDKP:GetTable(CommDKP_Whitelist))
 	CommDKP:Print(L["WHITELISTBROADCASTED"])
 end
 
@@ -874,7 +874,7 @@ function CommDKP:ManageEntries()
 				-- confirmation dialog to add user(s)
 				CommDKP.ConfigTab3.WhitelistContainer.SendWhitelistButton:SetScript("OnClick",
 					function ()	
-						CommDKP.Sync:SendData("CommDKPWhitelist", CommDKP:GetTable(CommDKP_Whitelist))
+						CommDKP.Sync:SendData("CDKPWhitelist", CommDKP:GetTable(CommDKP_Whitelist))
 						CommDKP:Print(L["WHITELISTBROADCASTED"])
 					end
 				);
