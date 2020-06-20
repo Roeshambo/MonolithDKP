@@ -166,13 +166,11 @@ end
 
 function CommDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable based on id passed. Avail IDs are "class", "player" and "dkp"
 	local button;                                 -- passing "reset" forces it to do initial sort (A to Z repeatedly instead of A to Z then Z to A toggled)
-	
+
 	if id == "class" or id == "rank" or id == "role" or id == "spec" then
 		button = SortButtons.class
 	elseif id == "spec" then                -- doesn't allow "spec" to be sorted.
 		DKPTable_Update()
-		return;
-	elseif button == nil then
 		return;
 	else
 		button = SortButtons[id]
