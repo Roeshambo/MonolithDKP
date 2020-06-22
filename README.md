@@ -36,7 +36,12 @@ CommunityDKP is a community-driven collaboration born from the original Monolith
 Forked from: https://www.curseforge.com/wow/addons/monolith-dkp
 
 # Installation Notes
-**To Upgrade from MonolithDKP 2.1.2 or higher:**
+**To Upgrade from MonolithDKP 2.1.2 or higher AUTOMATICALLY:**
+ - Follow prompts for migrating MonolithDKP settings to CommunityDKP
+ - Once done, unload MonolithDKP.
+ - **ONLY WORKS FOR 1 TABLE AT THE MOMENT**
+
+**To Upgrade from MonolithDKP 2.1.2 or higher MANUALLY:**
    - Copy WTF\Account\<account>\SavedVariables\MonolithDKP.lua -> WTF\Account\<account>\SavedVariables\CommunityDKP.lua
    - Open up CommunityDKP.lua and rename all instances of "MonDKP" -> "CommDKP"
    - Save and start WoW
