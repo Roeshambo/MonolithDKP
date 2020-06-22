@@ -186,7 +186,7 @@ local function GenerateDKPTables(table, format)
 	CommDKPExportBoxEditBox:SetText(ExportString)
 end
 
-function CommDKPExportBox_Show(text)
+function CommDKP:ExportBox_Show(text)
     if not CommDKPExportBox then
         local f = CreateFrame("Frame", "CommDKPExportBox", UIParent)
         f:SetPoint("CENTER")
@@ -374,5 +374,5 @@ function CommDKPExportBox_Show(text)
 end
 
 function CommDKP:ToggleExportWindow()
-	CommDKPExportBox_Show()
+	CommDKP:ExportBox_Show()
 end

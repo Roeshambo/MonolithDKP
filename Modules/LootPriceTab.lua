@@ -120,10 +120,8 @@ function CommDKP:ProcessDisenchant(loot)
 		CommDKP.Sync:SendData("CommDKPSetPrice", newItem);
 		core.BiddingWindow:Hide()
 
-		ClearBidWindow()
-
+		CommDKP:ClearBidWindow()
 	end
-
 end
 
 function CommDKP:PriceTable_Update(scrollOffset)

@@ -675,7 +675,7 @@ local function ToggleTimerBtn(self)
   end
 end
 
-function ClearBidWindow()
+function CommDKP:ClearBidWindow()
   CurrItemForBid = "";
   CurrItemIcon = "";
   Bids_Submitted = {}
@@ -1566,7 +1566,7 @@ function CommDKP:CreateBidWindow()
 
     f.ClearBidWindow = CommDKP:CreateButton("TOP", f.StartBidding, "BOTTOM", 0, -10, L["CLEARBIDWINDOW"]);
     f.ClearBidWindow:SetSize(90,25)
-    f.ClearBidWindow:SetScript("OnClick", ClearBidWindow)
+    f.ClearBidWindow:SetScript("OnClick", CommDKP.ClearBidWindow)
     f.ClearBidWindow:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
       GameTooltip:SetText(L["CLEARBIDWINDOW"], 0.25, 0.75, 0.90, 1, true);

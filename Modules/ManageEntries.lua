@@ -255,12 +255,12 @@ end
 -- TEAM FUNCTIONS
 -------
 
-function ChangeTeamName(index, _name) 
+function CommDKP:ChangeTeamName(index, _name) 
 	CommDKP:GetTable(CommDKP_DB, false)["teams"][tostring(index)].name = _name;
 	CommDKP.Sync:SendData("CommDKPTeams", {Teams =  CommDKP:GetTable(CommDKP_DB, false)["teams"]} , nil)
 end
 
-local function AddNewTeamToGuild() 
+function CommDKP:AddNewTeamToGuild() 
 	local _index = 0
 	local _tmp = CommDKP:GetTable(CommDKP_DB, false)["teams"]
 	local realmName = CommDKP:GetRealmName();
@@ -1000,7 +1000,7 @@ function CommDKP:ManageEntries()
 						}
 						StaticPopup_Show ("RENAME_TEAM")
 					else
-						ChangeTeamName(selectedTeamIndex, self:GetText())
+						CommDKP:ChangeTeamName(selectedTeamIndex, self:GetText())
 						-- if we are performing name change on currently selected team, change main team view dropdown Text
 						if tonumber(CommDKP:GetCurrentTeamIndex()) == selectedTeamIndex then
 							UIDropDownMenu_SetText(CommDKP.UIConfig.TeamViewChangerDropDown, self:SetText(""))
@@ -1073,7 +1073,7 @@ function CommDKP:ManageEntries()
 						StaticPopup_Show ("RENAME_TEAM")
 					else
 						if CheckLeader == 1 then
-							ChangeTeamName(selectedTeamIndex, CommDKP.ConfigTab3.TeamNameInput:GetText())
+							CommDKP:ChangeTeamName(selectedTeamIndex, CommDKP.ConfigTab3.TeamNameInput:GetText())
 							-- if we are performing name change on currently selected team, change main team view dropdown Text
 							if tonumber(CommDKP:GetCurrentTeamIndex()) == selectedTeamIndex then
 								UIDropDownMenu_SetText(CommDKP.UIConfig.TeamViewChangerDropDown, CommDKP.ConfigTab3.TeamNameInput:GetText())
@@ -1127,7 +1127,7 @@ function CommDKP:ManageEntries()
 						button1 = L["YES"],
 						button2 = L["NO"],
 						OnAccept = function()
-							AddNewTeamToGuild()
+							CommDKP:AddNewTeamToGuild()
 							CommDKP.ConfigTab3.TeamNameInput:SetText("")
 							UIDropDownMenu_SetText(CommDKP.ConfigTab3.TeamListDropDown, L["TEAMSELECT"])
 							CloseDropDownMenus()
