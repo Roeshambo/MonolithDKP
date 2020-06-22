@@ -866,13 +866,7 @@ function CommDKP:MonolithMigration()
 		CommDKP_Standby    = MonDKP_Standby
 		CommDKP_Archive    = MonDKP_Archive
 
-		-- 2.1.x: rename MonDKPScaleSize property to CommDKPScaleSize
-		if CommDKP_DB.defaults ~= nil and CommDKP_DB.defaults.MonDKPScaleSize ~= nil then
-			CommDKP_DB.defaults.CommDKPScaleSize = CommDKP_DB.defaults.MonDKPScaleSize
-			CommDKP_DB.defaults.MonDKPScaleSize = nil				
-		end
-
-		-- 2.2.x: rename MonDKPScaleSize property to CommDKPScaleSize for each guild / team
+		-- rename MonDKPScaleSize property to CommDKPScaleSize for each guild / team
 		local migrateDefaultsRecursive
 		migrateDefaultsRecursive = function(table)
 			for k, v in pairs(table) do
