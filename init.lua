@@ -833,55 +833,64 @@ function CommDKP:MonolithMigration()
 		return false -- Should not happen?! Maybe race condition ...
 	end
 
+	-- MonolithDKP is up & running - CommunityDKP will not initialise
 	CommDKP:Print("Legacy MonolithDKP addon detected - please disable it to continue with CommunityDKP!")
-	-- CommDKP:Print("MonolithDKP legacy seed: "..self:MonolithMigrationLegacySeed())
-	-- CommDKP:Print("MonolithDKP db build: "..self:MonolithMigrationDbBuild())
 
-	if self:MonolithMigrationDbEntries() then
+	-- check if we should offer migration
+	if self:MonolithMigrationDbEntries("CommDKP") -- CommunityDKP already has table entries - ABORT MIGRATION!
+		or not (self:MonolithMigrationLegacySeed() > 0 -- check if there are usable MonolithDKP 2.1.x tables available
+		or self:MonolithMigrationDbBuild() > 0 and self:MonolithMigrationDbEntries("MonDKP")) -- check if there are usable MonolithDKP 2.2.x tables available
+	then
 		self:MonolithMigrationGenericPopup(L["MIGRATIONUNAVAILABLE"])
-		return true -- CommunityDKP already has table entries - ABORT!
+		return true
 	end
 
-	-- check if there are usable MonolithDKP tables available 
-	if self:MonolithMigrationLegacySeed() > 0 or self:MonolithMigrationDbBuild() > 0 then
-		self:MonolithMigrationLegacyDetected(function()
-			-- copy everything from legacy addon
-			CommDKP_DB         = MonDKP_DB
-			CommDKP_DKPTable   = MonDKP_DKPTable
-			CommDKP_Loot       = MonDKP_Loot
-			CommDKP_DKPHistory = MonDKP_DKPHistory
-			CommDKP_MinBids    = MonDKP_MinBids
-			CommDKP_MaxBids    = MonDKP_MaxBids
-			CommDKP_Whitelist  = MonDKP_Whitelist
-			CommDKP_Standby    = MonDKP_Standby
-			CommDKP_Archive    = MonDKP_Archive
+	-- CommunityDKP is fresh and there are MonolithDKP 2.1.x or 2.2.x tables available - OFFER MIGRATION!
+	self:MonolithMigrationLegacyDetected(function()
+		local copyTableRecursive
+		copyTableRecursive = function(obj)
+    		if type(obj) ~= "table"	then return obj end
+    		local res = {}
+    		for k, v in pairs(obj) do res[copyTableRecursive(k)] = copyTableRecursive(v) end
+    		return res
+		end
 
-			-- 2.1.x: rename MonDKPScaleSize property to CommDKPScaleSize
-			if CommDKP_DB.defaults ~= nil and CommDKP_DB.defaults.MonDKPScaleSize ~= nil then
-				CommDKP_DB.defaults.CommDKPScaleSize = CommDKP_DB.defaults.MonDKPScaleSize
-				CommDKP_DB.defaults.MonDKPScaleSize = nil				
-			end
+		-- copy everything from legacy addon
+		CommDKP_DB         = copyTableRecursive(MonDKP_DB) -- deep copy so we don't modify the source data
+		CommDKP_DKPTable   = MonDKP_DKPTable
+		CommDKP_Loot       = MonDKP_Loot
+		CommDKP_DKPHistory = MonDKP_DKPHistory
+		CommDKP_MinBids    = MonDKP_MinBids
+		CommDKP_MaxBids    = MonDKP_MaxBids
+		CommDKP_Whitelist  = MonDKP_Whitelist
+		CommDKP_Standby    = MonDKP_Standby
+		CommDKP_Archive    = MonDKP_Archive
 
-			-- 2.2.x: rename MonDKPScaleSize property to CommDKPScaleSize for each guild / team
-			local migrateDefaultsRecursive
-			migrateDefaultsRecursive = function(table)
-				for k, v in pairs(table) do
-					if k == "defaults" then
-						if v.MonDKPScaleSize ~= nil then
-							v.CommDKPScaleSize = v.MonDKPScaleSize
-							v.MonDKPScaleSize = nil
-						end
-					elseif type(v) == "table" then
-						migrateDefaultsRecursive(v)
+		-- 2.1.x: rename MonDKPScaleSize property to CommDKPScaleSize
+		if CommDKP_DB.defaults ~= nil and CommDKP_DB.defaults.MonDKPScaleSize ~= nil then
+			CommDKP_DB.defaults.CommDKPScaleSize = CommDKP_DB.defaults.MonDKPScaleSize
+			CommDKP_DB.defaults.MonDKPScaleSize = nil				
+		end
+
+		-- 2.2.x: rename MonDKPScaleSize property to CommDKPScaleSize for each guild / team
+		local migrateDefaultsRecursive
+		migrateDefaultsRecursive = function(table)
+			for k, v in pairs(table) do
+				if k == "defaults" then
+					if v.MonDKPScaleSize ~= nil then
+						v.CommDKPScaleSize = v.MonDKPScaleSize
+						v.MonDKPScaleSize = nil
 					end
+				elseif type(v) == "table" then
+					migrateDefaultsRecursive(v)
 				end
 			end
-			migrateDefaultsRecursive(CommDKP_DB)
+		end
+		migrateDefaultsRecursive(CommDKP_DB)
 
-			-- show completion popup
-			self:MonolithMigrationGenericPopup(L["MIGRATIONCOMPLETED"])
-		end)
-	end
+		-- show completion popup
+		self:MonolithMigrationGenericPopup(L["MIGRATIONCOMPLETED"])
+	end)
 
 	return true
 end
@@ -970,7 +979,7 @@ function CommDKP:MonolithMigrationDbBuild()
 	return build or 0
 end
 
-function CommDKP:MonolithMigrationDbEntries()
+function CommDKP:MonolithMigrationDbEntries(prefix)
 	-- returns true if there are already CommunityDKP entries
 	local findEntryRecursive
 	findEntryRecursive = function(table, entry)
@@ -989,9 +998,15 @@ function CommDKP:MonolithMigrationDbEntries()
 		return false
 	end
 
-	return findEntryRecursive(CommDKP_DKPHistory, "players")
-		or findEntryRecursive(CommDKP_DKPTable, "player")
-		or findEntryRecursive(CommDKP_Loot, "player")
+	if prefix ~= nil and prefix == "MonDKP" then
+		return findEntryRecursive(MonDKP_DKPHistory, "players")
+			or findEntryRecursive(MonDKP_DKPTable, "player")
+			or findEntryRecursive(MonDKP_Loot, "player")
+	else
+		return findEntryRecursive(CommDKP_DKPHistory, "players")
+			or findEntryRecursive(CommDKP_DKPTable, "player")
+			or findEntryRecursive(CommDKP_Loot, "player")
+	end
 end
 
 ----------------------------------
