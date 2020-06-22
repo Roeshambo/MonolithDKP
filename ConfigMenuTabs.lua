@@ -289,7 +289,7 @@ function CommDKP:ConfigMenuTabs()
 	end
 	if #CommDKP:GetTable(CommDKP_Loot, true) > 0 then
 		CommDKP:LootHistory_Update(L["NOFILTER"])
-		CreateSortBox();
+		CommDKP:CreateSortBox();
 	end
 	---------------------------------------
 	-- DKP History Tab

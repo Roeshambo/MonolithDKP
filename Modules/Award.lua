@@ -194,7 +194,7 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 				CommDKP.Sync:SendData("CommDKPZSumBank", core.DB.modes.ZeroSumBank)
 			end
 			core.BiddingWindow:Hide()
-			ClearBidWindow()
+			CommDKP:ClearBidWindow()
 		end
 	end
 end
