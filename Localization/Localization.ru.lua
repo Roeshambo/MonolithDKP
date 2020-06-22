@@ -791,15 +791,15 @@ if GetLocale() == "ruRU" then
     MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
     MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
 
-    CHANGELOG1 = "Initial Release of CommunityDKP",
-    CHANGELOG2 = " - Contains Multi-Guild, Multi-Team Syncing.",
-    CHANGELOG3 = " - Refactored function names to not conflict with MonolithDKP",
-    CHANGELOG4 = "",
+    CHANGELOG1 = "CommunityDKP - WoW Classic Phase 5",
+    CHANGELOG2 = " - Updated Interface",
+    CHANGELOG3 = " - Additional enchancements to in-game migration from MonolithDKP (Thanks matthi!)",
+    CHANGELOG4 = " - A few more edge case bugfixes.",
     CHANGELOG5 = "",
     CHANGELOG6 = "",
     CHANGELOG7 = "",
-    CHANGELOG8 = "",
-    CHANGELOG9 = "CommunityDKP Discord: https://discord.gg/HGgvYFB",
+    CHANGELOG8 = "CommunityDKP Discord: https://discord.gg/HGgvYFB",
+    CHANGELOG9 = "",
     CHANGELOG10 = "",
         }
 end
