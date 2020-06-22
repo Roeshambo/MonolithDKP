@@ -822,28 +822,28 @@ function CommDKP:MonolithMigration()
 	if reason == "MISSING" or reason == "DISABLED" then
 		return false -- MonolithDKP is missing or globally disabled
 	end
-    
-    local loaded, finished = IsAddOnLoaded("MonolithDKP")
-    if not loaded then
-    	return false -- MonolithDKP is disabled for the current character
-    end
+	
+	local loaded, finished = IsAddOnLoaded("MonolithDKP")
+	if not loaded then
+		return false -- MonolithDKP is disabled for the current character
+	end
 
-    if not finished then
-    	CommDKP:Print("MonolithDKP has not finished loading - please report to Discord!")
-    	return false -- Should not happen?! Maybe race condition ...
-    end
+	if not finished then
+		CommDKP:Print("MonolithDKP has not finished loading - please report to Discord!")
+		return false -- Should not happen?! Maybe race condition ...
+	end
 
-    CommDKP:Print("Legacy MonolithDKP addon detected - please disable it to continue with CommunityDKP!")
-    -- CommDKP:Print("MonolithDKP legacy seed: "..self:MonolithMigrationLegacySeed())
-    -- CommDKP:Print("MonolithDKP db build: "..self:MonolithMigrationDbBuild())
+	CommDKP:Print("Legacy MonolithDKP addon detected - please disable it to continue with CommunityDKP!")
+	-- CommDKP:Print("MonolithDKP legacy seed: "..self:MonolithMigrationLegacySeed())
+	-- CommDKP:Print("MonolithDKP db build: "..self:MonolithMigrationDbBuild())
 
-    if self:MonolithMigrationDbEntries() then
+	if self:MonolithMigrationDbEntries() then
 		self:MonolithMigrationGenericPopup(L["MIGRATIONUNAVAILABLE"])
-    	return true -- CommunityDKP already has table entries - ABORT!
-    end
+		return true -- CommunityDKP already has table entries - ABORT!
+	end
 
-    -- check if there are usable MonolithDKP tables available 
-    if self:MonolithMigrationLegacySeed() > 0 or self:MonolithMigrationDbBuild() > 0 then
+	-- check if there are usable MonolithDKP tables available 
+	if self:MonolithMigrationLegacySeed() > 0 or self:MonolithMigrationDbBuild() > 0 then
 		self:MonolithMigrationLegacyDetected(function()
 			-- copy everything from legacy addon
 			CommDKP_DB         = MonDKP_DB
