@@ -198,7 +198,8 @@ function CommDKP:CreateSortBox()
 			UIDropDownMenu_AddButton(dropDownMenuItem, level)
 
 			-- add separator
-			wipe(dropDownMenuItem)
+			--wipe(dropDownMenuItem)
+			dropDownMenuItem.text = ""
 			dropDownMenuItem.disabled = 1
 			dropDownMenuItem.isNotRadio = true
 			UIDropDownMenu_AddButton(dropDownMenuItem, level)
