@@ -243,13 +243,8 @@ function CommDKP_CHAT_MSG_WHISPER(text, ...)
       return CommDKP_CHAT_MSG_WHISPER("!bid "..cmd, name)
     elseif cmd and cmd:gsub("%s+", "") ~= "nil" and cmd:gsub("%s+", "") ~= "" then    -- allows command if it has content (removes empty spaces)
       cmd = cmd:gsub("%s+", "") -- removes unintended spaces from string
-      local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), cmd, "player")
-
-      if search then
-        response = "CommunityDKP: "..CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].player.." "..L["CURRENTLYHAS"].." "..CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp.." "..L["DKPAVAILABLE"].."."
-      else
-        response = "CommunityDKP: "..L["PLAYERNOTFOUND"]
-      end
+      CommDKP:WhisperAvailableDKP(name, cmd);
+      return;
     else
       local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
       local minimum;
@@ -260,29 +255,30 @@ function CommDKP_CHAT_MSG_WHISPER(text, ...)
       if core.DB.modes.mode == "Roll Based Bidding" and search then
         if core.DB.modes.rolls.UsePerc then
           if core.DB.modes.rolls.min == 0 then
-                  minimum = 1;
-                else
-                  minimum = CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp * (core.DB.modes.rolls.min / 100);
-                end
-
-              perc = " ("..core.DB.modes.rolls.min.."% - "..core.DB.modes.rolls.max.."%)";
-              maximum = CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp * (core.DB.modes.rolls.max / 100) + core.DB.modes.rolls.AddToMax;
-            elseif not core.DB.modes.rolls.UsePerc then
-              minimum = core.DB.modes.rolls.min;
-
-              if core.DB.modes.rolls.max == 0 then
-                maximum = CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp + core.DB.modes.rolls.AddToMax;
-              else
-                maximum = core.DB.modes.rolls.max + core.DB.modes.rolls.AddToMax;
-              end
-              if maximum < 0 then maximum = 0 end
-                if minimum < 0 then minimum = 0 end
-            end
-            range = range.." "..L["USE"].." /random "..CommDKP_round(minimum, 0).."-"..CommDKP_round(maximum, 0).." "..L["TOBID"].." "..perc..".";
+            minimum = 1;
+          else
+            minimum = CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp * (core.DB.modes.rolls.min / 100);
           end
+          perc = " ("..core.DB.modes.rolls.min.."% - "..core.DB.modes.rolls.max.."%)";
+          maximum = CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp * (core.DB.modes.rolls.max / 100) + core.DB.modes.rolls.AddToMax;
+        elseif not core.DB.modes.rolls.UsePerc then
+          minimum = core.DB.modes.rolls.min;
+
+          if core.DB.modes.rolls.max == 0 then
+            maximum = CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp + core.DB.modes.rolls.AddToMax;
+          else
+            maximum = core.DB.modes.rolls.max + core.DB.modes.rolls.AddToMax;
+          end
+          if maximum < 0 then maximum = 0 end
+          if minimum < 0 then minimum = 0 end
+        end
+
+        range = range.." "..L["USE"].." /random "..CommDKP_round(minimum, 0).."-"..CommDKP_round(maximum, 0).." "..L["TOBID"].." "..perc..".";
+      end
 
       if search then
-        response = "CommunityDKP: "..L["YOUCURRENTLYHAVE"].." "..CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp.." "..L["DKP"].."."..range;
+        CommDKP:WhisperAvailableDKP(name);
+        return;
       else
         response = "CommunityDKP: "..L["PLAYERNOTFOUND"]
       end
@@ -332,6 +328,40 @@ function CommDKP_CHAT_MSG_WHISPER(text, ...)
       return true
     end
   end)
+end
+
+function CommDKP:WhisperAvailableDKP(name, cmd)
+  local cmd = cmd or name;
+  
+  local teams = CommDKP:GetTable(CommDKP_DB, false)["teams"];
+  local response = "";
+  local playerFound = false;
+
+  for k, v in pairs(teams) do
+    local teamIndex = k;
+    local team = v
+
+    local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex), cmd, "player")
+
+    if search and not playerFound then
+      -- CommunityDKP: Kyliee
+      local playerResponse = "CommunityDKP: "..CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex)[search[1][1]].player;
+      SendChatMessage(playerResponse, "WHISPER", nil, name)
+      playerFound = true;
+    end
+
+    if search and playerFound then
+      -- [Laughing Jester Tavern] 213 DKP Available
+      -- [The Red Hand] 123 DKP Available
+      response = "["..team.name.."] "..CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex)[search[1][1]].dkp.." "..L["DKPAVAILABLE"];
+      SendChatMessage(response, "WHISPER", nil, name)
+    end
+  end
+  if not playerFound then
+    response = "CommunityDKP: "..L["PLAYERNOTFOUND"]
+    SendChatMessage(response, "WHISPER", nil, name)
+  end
+  return;
 end
 
 function CommDKP:GetMinBid(itemLink)
