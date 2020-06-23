@@ -231,23 +231,63 @@ local function DoGuildUpdate()
 				core.DB.defaults.installed = nil
 			end
 
-			local seed
-			if #CommDKP:GetTable(CommDKP_DKPHistory, true) > 0 and #CommDKP:GetTable(CommDKP_Loot, true) > 0 and strfind(CommDKP:GetTable(CommDKP_DKPHistory, true)[1].index, "-") and strfind(CommDKP:GetTable(CommDKP_Loot, true)[1].index, "-") then
-				local off1,date1 = strsplit("-", CommDKP:GetTable(CommDKP_DKPHistory, true)[1].index)
-				local off2,date2 = strsplit("-", CommDKP:GetTable(CommDKP_Loot, true)[1].index)
-				
-				if CommDKP:ValidateSender(off1) and CommDKP:ValidateSender(off2) and tonumber(date1) > core.DB.defaults.installed210 and tonumber(date2) > core.DB.defaults.installed210 then
-					seed = CommDKP:GetTable(CommDKP_DKPHistory, true)[1].index..","..CommDKP:GetTable(CommDKP_Loot, true)[1].index  -- seed is only sent if the seed dates are post 2.1 installation and the posting officer is an officer in the current guild
-				else
-					seed = "start"
-				end
-			else
-				seed = "start"
-			end
 
-			CommDKP.Sync:SendData("CommDKPQuery", seed) -- requests role and spec data and sends current seeds (index of newest DKP and Loot entries)
+			-- send seed for every team in guild
+			-- this basically sends index of latest entry in loot and DKP tables to everyone online in guild,
+			-- if they have this entry it does nothing since they are up to date, if they dont it changes seed in those tables to the index being sent
+			CommDKP:SendSeedData();
 		end)
 	end
+end
+
+function CommDKP:SendSeedData()
+
+	local latestIndexForTeam = {}
+	local _teams = CommDKP:GetGuildTeamList();
+	local _numberOfTeams = CommDKP:tablelength(_teams);
+
+	for i=1, _numberOfTeams do
+
+		latestIndexForTeam[tostring(_teams[i][1])] = {}
+
+		if 	#CommDKP:GetTable(CommDKP_DKPHistory, true, tostring(_teams[i][1])) > 0 and strfind(CommDKP:GetTable(CommDKP_DKPHistory, true, tostring(_teams[i][1]))[1].index, "-") then
+			local off1,date1 = strsplit("-", CommDKP:GetTable(CommDKP_DKPHistory, true, tostring(_teams[i][1]))[1].index)
+			if CommDKP:ValidateSender(off1) and tonumber(date1) > core.DB.defaults.installed210 then
+				latestIndexForTeam[tostring(_teams[i][1])]["DKPHistory"] = CommDKP:GetTable(CommDKP_DKPHistory, true, tostring(_teams[i][1]))[1].index
+			else
+				latestIndexForTeam[tostring(_teams[i][1])]["DKPHistory"] = "start"
+			end
+		else
+			latestIndexForTeam[tostring(_teams[i][1])]["DKPHistory"] = "start"
+		end
+		
+		if #CommDKP:GetTable(CommDKP_Loot, true, tostring(_teams[i][1])) > 0 and strfind(CommDKP:GetTable(CommDKP_Loot, true, tostring(_teams[i][1]))[1].index, "-") then
+			local off2,date2 = strsplit("-", CommDKP:GetTable(CommDKP_Loot, true, tostring(_teams[i][1]))[1].index)
+			if CommDKP:ValidateSender(off2) and tonumber(date2) > core.DB.defaults.installed210 then
+				latestIndexForTeam[tostring(_teams[i][1])]["Loot"] = CommDKP:GetTable(CommDKP_Loot, true, tostring(_teams[i][1]))[1].index
+			else
+				latestIndexForTeam[tostring(_teams[i][1])]["Loot"] = "start"
+			end
+		else
+			latestIndexForTeam[tostring(_teams[i][1])]["Loot"] = "start"
+		end
+	end
+
+	--[[ 
+		latestIndexForTeam = {
+			["0"] = {
+				["Loot"] = "name-date",
+				["DKPHistory"] = "name-date"
+			},
+			["1"] = {
+				["Loot"] = "start",
+				["DKPHistory"] = "start"
+			}
+		}
+	--]]
+
+	CommDKP.Sync:SendData("CommDKPSeed", latestIndexForTeam) -- requests role and spec data and sends current seeds (index of newest DKP and Loot entries)
+
 end
 
 function CommDKP_OnEvent(self, event, arg1, ...)

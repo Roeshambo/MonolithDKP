@@ -497,7 +497,9 @@ function CommDKP:StartTimer(seconds, ...)
 end
 
 function CommDKP:StatusVerify_Update()
-	if (CommDKP.UIConfig and not CommDKP.UIConfig:IsShown()) or (#CommDKP:GetTable(CommDKP_DKPHistory, true) == 0 and #CommDKP:GetTable(CommDKP_Loot, true) == 0) then     -- blocks update if dkp window is closed. Updated when window is opened anyway
+	if (CommDKP.UIConfig and not CommDKP.UIConfig:IsShown()) or 
+	   (#CommDKP:GetTable(CommDKP_DKPHistory, true, CommDKP:GetCurrentTeamIndex()) == 0 and #CommDKP:GetTable(CommDKP_Loot, true, CommDKP:GetCurrentTeamIndex()) == 0) then
+		-- blocks update if dkp window is closed. Updated when window is opened anyway
 		return;
 	end
 
@@ -506,13 +508,16 @@ function CommDKP:StatusVerify_Update()
 
 		local missing = {}
 
-		if CommDKP:GetTable(CommDKP_Loot, true).seed and CommDKP:GetTable(CommDKP_DKPHistory, true).seed and strfind(CommDKP:GetTable(CommDKP_Loot, true).seed, "-") and strfind(CommDKP:GetTable(CommDKP_DKPHistory, true).seed, "-") then
-			local search_dkp = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPHistory, true), CommDKP:GetTable(CommDKP_DKPHistory, true).seed, "index")
-			local search_loot = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Loot, true), CommDKP:GetTable(CommDKP_Loot, true).seed, "index")
+		if (CommDKP:GetTable(CommDKP_Loot, true, CommDKP:GetCurrentTeamIndex()).seed and strfind(CommDKP:GetTable(CommDKP_Loot, true, CommDKP:GetCurrentTeamIndex()).seed, "-")) or
+		   (CommDKP:GetTable(CommDKP_DKPHistory, true, CommDKP:GetCurrentTeamIndex()).seed and strfind(CommDKP:GetTable(CommDKP_DKPHistory, true, CommDKP:GetCurrentTeamIndex()).seed, "-"))
+		then
 
+			local search_dkp = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPHistory, true, CommDKP:GetCurrentTeamIndex()), CommDKP:GetTable(CommDKP_DKPHistory, true, CommDKP:GetCurrentTeamIndex()).seed, "index")
+			local search_loot = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Loot, true, CommDKP:GetCurrentTeamIndex()), CommDKP:GetTable(CommDKP_Loot, true, CommDKP:GetCurrentTeamIndex()).seed, "index")
+	
 			if not search_dkp then
 				core.OOD = true
-				local officer1, date1 = strsplit("-", CommDKP:GetTable(CommDKP_DKPHistory, true).seed)
+				local officer1, date1 = strsplit("-", CommDKP:GetTable(CommDKP_DKPHistory, true, CommDKP:GetCurrentTeamIndex()).seed)
 				if (date1 and tonumber(date1) < (time() - 1209600)) or not CommDKP:ValidateSender(officer1) then   -- does not consider if claimed entry was made more than two weeks ago or name is not an officer
 					core.OOD = false
 				else
@@ -520,10 +525,10 @@ function CommDKP:StatusVerify_Update()
 					missing[officer1] = date1 			-- if both missing seeds identify the same officer, it'll only list once
 				end
 			end
-
-			if not search_loot then
+			
+			if not search_loot and not core.OOD then
 				core.OOD = true
-				local officer2, date2 = strsplit("-", CommDKP:GetTable(CommDKP_Loot, true).seed)
+				local officer2, date2 = strsplit("-", CommDKP:GetTable(CommDKP_Loot, true, CommDKP:GetCurrentTeamIndex()).seed)
 				if (date2 and tonumber(date2) < (time() - 1209600)) or not CommDKP:ValidateSender(officer2) then   -- does not consider if claimed entry was made more than two weeks ago or name is not an officer
 					core.OOD = false
 				else
@@ -555,7 +560,7 @@ function CommDKP:StatusVerify_Update()
 			CommDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
 				GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
-				if #CommDKP:GetTable(CommDKP_Loot, true) == 0 and #CommDKP:GetTable(CommDKP_DKPHistory, true) == 0 then
+				if #CommDKP:GetTable(CommDKP_Loot, true, CommDKP:GetCurrentTeamIndex()) == 0 and #CommDKP:GetTable(CommDKP_DKPHistory, true, CommDKP:GetCurrentTeamIndex()) == 0 then
 					GameTooltip:AddLine(L["TABLESAREEMPTY"], 1.0, 1.0, 1.0, false);
 				else
 					GameTooltip:AddLine(L["ONETABLEOOD"].." |cffff0000"..L["OUTOFDATE"].."|r.", 1.0, 1.0, 1.0, false);
@@ -565,10 +570,10 @@ function CommDKP:StatusVerify_Update()
 				GameTooltip:AddLine(" ")
 				GameTooltip:AddDoubleLine(L["PLAYER"], L["CREATED"],1,1,1,1,1,1)
 				for k,v in pairs(missing) do
-					local classSearch = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), k)
+					local classSearch = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, CommDKP:GetCurrentTeamIndex()), k)
 
 					if classSearch then
-						c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[classSearch[1][1]].class)
+						c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true, CommDKP:GetCurrentTeamIndex())[classSearch[1][1]].class)
 					else
 						c = { hex="ffffff" }
 					end
@@ -604,7 +609,7 @@ end
 -------
 -- TEAM FUNCTIONS
 -------
-local function tablelength(T)
+function CommDKP:tablelength(T)
 	local count = 0
 	for _ in pairs(T) do
 		count = count + 1 
@@ -621,7 +626,7 @@ function CommDKP:GetCurrentTeamName()
 	local _string = "Unguilded";
 	local teams = CommDKP:GetTable(CommDKP_DB, false)["teams"];
 
-	if tablelength(teams) > 0 then
+	if CommDKP:tablelength(teams) > 0 then
 		_string = CommDKP:GetTable(CommDKP_DB, false)["teams"][CommDKP:GetCurrentTeamIndex()].name
 	end
 
@@ -665,7 +670,7 @@ end
 -- moved to core from ManageEntries as this is called from comm.lua aswell
 function CommDKP:SetCurrentTeam(index)
 	CommDKP:GetTable(CommDKP_DB, false)["defaults"]["CurrentTeam"] = tostring(index)
-
+	CommDKP:StatusVerify_Update();
 	UIDropDownMenu_SetText(CommDKP.UIConfig.TeamViewChangerDropDown, CommDKP:GetCurrentTeamName())
 
 	-- reset dkp table and update it

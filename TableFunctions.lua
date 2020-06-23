@@ -851,9 +851,7 @@ function CommDKP:DKPTable_Create()
 	end)
 	CommDKP.DKPTable.SeedVerify:SetScript("OnMouseDown", function()  -- broadcast button
 		if core.IsOfficer then	
-			local seed
-			if #CommDKP:GetTable(CommDKP_DKPHistory, true) > 0 and #CommDKP:GetTable(CommDKP_Loot, true) > 0 then seed = CommDKP:GetTable(CommDKP_DKPHistory, true)[1].index..","..CommDKP:GetTable(CommDKP_Loot, true)[1].index else seed = "start" end
-			CommDKP.Sync:SendData("CommDKPQuery", seed) 	-- requests role and spec data and sets current seeds
+			CommDKP:SendSeedData();
 			CommDKP_BroadcastFull_Init() 	-- launches Broadcast UI
 		end
 	end)
