@@ -333,12 +333,12 @@ end
 function CommDKP:WhisperAvailableDKP(name, cmd)
   local cmd = cmd or name;
   
-  local teams = CommDKP:GetTable(CommDKP_DB, false)["teams"];
+  local teams = CommDKP:GetGuildTeamList(true);
   local response = "";
   local playerFound = false;
 
   for k, v in pairs(teams) do
-    local teamIndex = k;
+    local teamIndex = tostring(v.index);
     local team = v
 
     local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex), cmd, "player")

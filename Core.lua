@@ -638,16 +638,19 @@ function CommDKP:GetTeamName(index)
 	return teamName;
 end
 
-function CommDKP:GetGuildTeamList() 
+function CommDKP:GetGuildTeamList(asObject) 
+	local asObject = asObject or false
 	local _list = {};
 	local _tmp = CommDKP:GetTable(CommDKP_DB, false)["teams"]
-	local index = 1
 
 	for k,v in pairs(_tmp) do
 		if(type(v) == "table") then
-			for z,x in pairs(v) do
+			if asObject then
+				local team = v;
+				team["index"] = tonumber(k);
+				table.insert(_list, team);
+			else
 				table.insert(_list, {tonumber(k), v.name})
-				index = index + 1
 			end
 		end
 	end
@@ -655,7 +658,11 @@ function CommDKP:GetGuildTeamList()
 	-- about order of adding elements to "string" indexed table so we have to unfuck it
 	table.sort(_list,  
 		function(a, b)
-			return a[1] < b[1]
+			if asObject then
+				return a.index < b.index
+			else
+				return a[1] < b[1]
+			end
 		end
 	)
 
