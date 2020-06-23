@@ -59,6 +59,7 @@ function CommDKP.Sync:OnEnable()
   CommDKP.Sync:RegisterComm("CommDKPRaidTime", CommDKP.Sync:OnCommReceived())      -- broadcasts Raid Timer Commands
   CommDKP.Sync:RegisterComm("CommDKPZSumBank", CommDKP.Sync:OnCommReceived())    -- broadcasts ZeroSum Bank
   CommDKP.Sync:RegisterComm("CommDKPQuery", CommDKP.Sync:OnCommReceived())        -- Querys guild for spec/role data
+  CommDKP.Sync:RegisterComm("CommDKPSeed", CommDKP.Sync:OnCommReceived())
   CommDKP.Sync:RegisterComm("CommDKPBuild", CommDKP.Sync:OnCommReceived())        -- broadcasts Addon build number to inform others an update is available.
   CommDKP.Sync:RegisterComm("CommDKPTalents", CommDKP.Sync:OnCommReceived())      -- broadcasts current spec
   CommDKP.Sync:RegisterComm("CommDKPRoles", CommDKP.Sync:OnCommReceived())        -- broadcasts current role info
@@ -106,7 +107,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
     end
 
     -- decompresed is not null meaning data is coming from 2.3.0, lets go
-    local success, _objReceived = LibAceSerializer:Deserialize(decompressed);
+    success, _objReceived = LibAceSerializer:Deserialize(decompressed);
     
     --[[ 
       _objReceived = {
@@ -118,41 +119,68 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 
     if success then
       if prefix == "CommDKPQuery" then
-        -- set remote seed
-        if sender ~= UnitName("player") and _objReceived.Data ~= "start" then  -- logs seed. Used to determine if the officer has entries required.
-          local DKP, Loot = strsplit(",", _objReceived.Data)
-          local off1,date1 = strsplit("-", DKP)
-          local off2,date2 = strsplit("-", Loot)
+          -- talents check
+          local TalTrees={}; table.insert(TalTrees, {GetTalentTabInfo(1)}); table.insert(TalTrees, {GetTalentTabInfo(2)}); table.insert(TalTrees, {GetTalentTabInfo(3)}); 
+          local talBuild = "("..TalTrees[1][3].."/"..TalTrees[2][3].."/"..TalTrees[3][3]..")"
+          local talRole;
 
-          if CommDKP:ValidateSender(off1) and CommDKP:ValidateSender(off2) and tonumber(date1) > core.DB.defaults.installed210 and tonumber(date2) > core.DB.defaults.installed210 then  -- send only if posting officer validates and the post was made after 2.1s installation
-            local search1 = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPHistory, true, _objReceived.CurrentTeam), DKP, "index")
-            local search2 = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Loot, true, _objReceived.CurrentTeam), Loot, "index")
-            
-            if not search1 then
-              CommDKP:GetTable(CommDKP_DKPHistory, true, _objReceived.CurrentTeam).seed = DKP
-            end
-            if not search2 then
-              CommDKP:GetTable(CommDKP_Loot, true, _objReceived.CurrentTeam).seed = Loot
+          table.sort(TalTrees, function(a, b)
+            return a[3] > b[3]
+          end)
+          
+          talBuild = TalTrees[1][1].." "..talBuild;
+          talRole = TalTrees[1][4];
+          
+          CommDKP.Sync:SendData("CommDKPTalents", talBuild)
+          CommDKP.Sync:SendData("CommDKPRoles", talRole)
+
+          table.wipe(TalTrees);
+          return;
+      elseif prefix == "CommDKPSeed" then
+        if sender ~= UnitName("player") then
+        
+          --[[ 
+            Data = {
+              ["0"] = {
+                ["Loot"] = "name-date",
+                ["DKPHistory"] = "name-date"
+              },
+              ["1"] = {
+                ["Loot"] = "start",
+                ["DKPHistory"] = "start"
+              }
+            }
+          --]]
+
+          for tableIndex,v in pairs(_objReceived.Data) do
+            if(type(v) == "table") then
+              for property,value in pairs(v) do
+                if value ~= "start" then
+
+                  local off1,date1 = strsplit("-", value);
+
+                  if CommDKP:ValidateSender(off1) and tonumber(date1) > core.DB.defaults.installed210 then
+                    if property == "Loot" then
+
+                      local searchLoot = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Loot, true, tostring(tableIndex)), Loot, "index")
+
+                      if not searchLoot then
+                        CommDKP:GetTable(CommDKP_Loot, true, tostring(tableIndex)).seed = value
+                      end
+
+                    elseif property == "DKPHistory" then
+                      local searchDKPHistory = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPHistory, true, tostring(tableIndex)), Loot, "index")
+                      
+                      if not searchDKPHistory then
+                        CommDKP:GetTable(CommDKP_DKPHistory, true, tostring(tableIndex)).seed = value
+                      end
+                    end
+                  end
+                end
+              end
             end
           end
         end
-        -- talents check
-        local TalTrees={}; table.insert(TalTrees, {GetTalentTabInfo(1)}); table.insert(TalTrees, {GetTalentTabInfo(2)}); table.insert(TalTrees, {GetTalentTabInfo(3)}); 
-        local talBuild = "("..TalTrees[1][3].."/"..TalTrees[2][3].."/"..TalTrees[3][3]..")"
-        local talRole;
-
-        table.sort(TalTrees, function(a, b)
-          return a[3] > b[3]
-        end)
-        
-        talBuild = TalTrees[1][1].." "..talBuild;
-        talRole = TalTrees[1][4];
-        
-        CommDKP.Sync:SendData("CommDKPTalents", talBuild)
-        CommDKP.Sync:SendData("CommDKPRoles", talRole)
-
-        table.wipe(TalTrees);
-        return;
       elseif prefix == "CommDKPBidder" then
         if core.BidInProgress and core.IsOfficer then
           if _objReceived.Data == "pass" then
