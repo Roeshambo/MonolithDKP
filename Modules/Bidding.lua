@@ -246,42 +246,8 @@ function CommDKP_CHAT_MSG_WHISPER(text, ...)
       CommDKP:WhisperAvailableDKP(name, cmd);
       return;
     else
-      local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
-      local minimum;
-      local maximum;
-      local range = "";
-      local perc = "";
-
-      if core.DB.modes.mode == "Roll Based Bidding" and search then
-        if core.DB.modes.rolls.UsePerc then
-          if core.DB.modes.rolls.min == 0 then
-            minimum = 1;
-          else
-            minimum = CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp * (core.DB.modes.rolls.min / 100);
-          end
-          perc = " ("..core.DB.modes.rolls.min.."% - "..core.DB.modes.rolls.max.."%)";
-          maximum = CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp * (core.DB.modes.rolls.max / 100) + core.DB.modes.rolls.AddToMax;
-        elseif not core.DB.modes.rolls.UsePerc then
-          minimum = core.DB.modes.rolls.min;
-
-          if core.DB.modes.rolls.max == 0 then
-            maximum = CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp + core.DB.modes.rolls.AddToMax;
-          else
-            maximum = core.DB.modes.rolls.max + core.DB.modes.rolls.AddToMax;
-          end
-          if maximum < 0 then maximum = 0 end
-          if minimum < 0 then minimum = 0 end
-        end
-
-        range = range.." "..L["USE"].." /random "..CommDKP_round(minimum, 0).."-"..CommDKP_round(maximum, 0).." "..L["TOBID"].." "..perc..".";
-      end
-
-      if search then
-        CommDKP:WhisperAvailableDKP(name);
-        return;
-      else
-        response = "CommunityDKP: "..L["PLAYERNOTFOUND"]
-      end
+      CommDKP:WhisperAvailableDKP(name);
+      return;
     end
 
     SendChatMessage(response, "WHISPER", nil, name)
@@ -336,10 +302,15 @@ function CommDKP:WhisperAvailableDKP(name, cmd)
   local teams = CommDKP:GetGuildTeamList(true);
   local response = "";
   local playerFound = false;
+  local currentTeam = CommDKP:GetCurrentTeamIndex();
 
   for k, v in pairs(teams) do
     local teamIndex = tostring(v.index);
     local team = v
+    local minimum;
+    local maximum;
+    local range = "";
+    local perc = "";
 
     local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex), cmd, "player")
 
@@ -350,11 +321,40 @@ function CommDKP:WhisperAvailableDKP(name, cmd)
       playerFound = true;
     end
 
+    if core.DB.modes.mode == "Roll Based Bidding" and search then
+      if core.DB.modes.rolls.UsePerc then
+        if core.DB.modes.rolls.min == 0 then
+          minimum = 1;
+        else
+          minimum = CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex)[search[1][1]].dkp * (core.DB.modes.rolls.min / 100);
+        end
+        perc = " ("..core.DB.modes.rolls.min.."% - "..core.DB.modes.rolls.max.."%)";
+        maximum = CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex)[search[1][1]].dkp * (core.DB.modes.rolls.max / 100) + core.DB.modes.rolls.AddToMax;
+      elseif not core.DB.modes.rolls.UsePerc then
+        minimum = core.DB.modes.rolls.min;
+
+        if core.DB.modes.rolls.max == 0 then
+          maximum = CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex)[search[1][1]].dkp + core.DB.modes.rolls.AddToMax;
+        else
+          maximum = core.DB.modes.rolls.max + core.DB.modes.rolls.AddToMax;
+        end
+        if maximum < 0 then maximum = 0 end
+        if minimum < 0 then minimum = 0 end
+      end
+
+      range = range.." "..L["USE"].." /random "..CommDKP_round(minimum, 0).."-"..CommDKP_round(maximum, 0).." "..L["TOBID"].." "..perc..".";
+    end
+
     if search and playerFound then
       -- [Laughing Jester Tavern] 213 DKP Available
       -- [The Red Hand] 123 DKP Available
       response = "["..team.name.."] "..CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex)[search[1][1]].dkp.." "..L["DKPAVAILABLE"];
       SendChatMessage(response, "WHISPER", nil, name)
+      if teamIndex == currentTeam then
+        if name == cmd then
+          SendChatMessage(range, "WHISPER", nil, name)
+        end
+      end
     end
   end
   if not playerFound then
