@@ -486,7 +486,14 @@ function CommDKP:Options()
           OnAccept = function()
             local temptable = {}
             table.insert(temptable, core.DB.MinBidBySlot)
-            table.insert(temptable, CommDKP:GetTable(CommDKP_MinBids, true))
+            local teams = CommDKP:GetGuildTeamList(true);
+            local teamTable = {}
+          
+            for k, v in pairs(teams) do
+              local teamIndex = tostring(v.index);
+              table.insert(teamTable, {teamIndex, CommDKP:GetTable(CommDKP_MinBids, true, teamIndex)});
+            end
+            table.insert(temptable, teamTable);
             CommDKP.Sync:SendData("CommDKPMinBid", temptable)
             CommDKP:Print(L["MINBIDVALUESSENT"])
           end,
@@ -725,7 +732,14 @@ function CommDKP:Options()
           OnAccept = function()
             local temptable = {}
             table.insert(temptable, core.DB.MaxBidBySlot)
-            table.insert(temptable, CommDKP:GetTable(CommDKP_MaxBids, true))
+            local teams = CommDKP:GetGuildTeamList(true);
+            local teamTable = {}
+          
+            for k, v in pairs(teams) do
+              local teamIndex = tostring(v.index);
+              table.insert(teamTable, {teamIndex, CommDKP:GetTable(CommDKP_MaxBids, true, teamIndex)});
+            end
+            table.insert(temptable, teamTable);
             CommDKP.Sync:SendData("CommDKPMaxBid", temptable)
             CommDKP:Print(L["MAXBIDVALUESSENT"])
           end,

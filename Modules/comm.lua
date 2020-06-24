@@ -382,7 +382,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
         if (sender ~= UnitName("player")) then
           if prefix == "CommDKPLootDist" or prefix == "CommDKPDKPDist" or prefix == "CommDKPDelLoot" or prefix == "CommDKPDelSync" or prefix == "CommDKPMinBid" or prefix == "CDKPWhitelist"
           or prefix == "CommDKPDKPModes" or prefix == "CommDKPStand" or prefix == "CommDKPZSumBank" or prefix == "CommDKPBossLoot" or prefix == "CommDKPDecay" or prefix == "CommDKPDelUsers" or
-          prefix == "CommDKPAllTabs" or prefix == "CommDKPBidShare" or prefix == "CommDKPMerge" or prefix == "CommDKPSetPrice" then
+          prefix == "CommDKPAllTabs" or prefix == "CommDKPBidShare" or prefix == "CommDKPMerge" or prefix == "CommDKPSetPrice" or prefix == "CommDKPMaxBid" then
 
             if prefix == "CommDKPAllTabs" then   -- receives full table broadcast
               --print("[CommunityDKP] COMMS: Full Broadcast Receive Started for team "..CommDKP:GetTeamName(_objReceived.CurrentTeam));
@@ -758,31 +758,44 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 core.DB.MinBidBySlot = _objReceived.Data[1]
 
                 for i=1, #_objReceived.Data[2] do
-                  local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true, _objReceived.CurrentTeam), _objReceived.Data[2][i].item)
-                  if search then
-                    CommDKP:GetTable(CommDKP_MinBids, true, _objReceived.CurrentTeam)[search[1][1]].minbid = _objReceived.Data[2][i].minbid
-                    if _objReceived.Data[2][i]["link"] ~= nil then
-                      CommDKP:GetTable(CommDKP_MinBids, true, _objReceived.CurrentTeam)[search[1][1]].link = _objReceived.Data[2][i].link
+                  local bidInfo = _objReceived.Data[2][i]
+                  local bidTeam = bidInfo[1]
+                  local bidItems = bidInfo[2]
+                  for j=1, #bidItems do
+                    local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true, bidTeam), bidItems[j].item)
+                    if search then
+                      CommDKP:GetTable(CommDKP_MinBids, true, bidTeam)[search[1][1]].minbid = bidItems[j].minbid
+                      if bidItems[j]["link"] ~= nil then
+                        CommDKP:GetTable(CommDKP_MinBids, true, bidTeam)[search[1][1]].link = bidItems[j].link
+                      end
+                      if bidItems[j]["icon"] ~= nil then
+                        CommDKP:GetTable(CommDKP_MinBids, true, bidTeam)[search[1][1]].icon = bidItems[j].icon
+                      end
+                    else
+                      table.insert(CommDKP:GetTable(CommDKP_MinBids, true, bidTeam), bidItems[j])
                     end
-                    if _objReceived.Data[2][i]["icon"] ~= nil then
-                      CommDKP:GetTable(CommDKP_MinBids, true, _objReceived.CurrentTeam)[search[1][1]].icon = _objReceived.Data[2][i].icon
-                    end
-                  else
-                    table.insert(CommDKP:GetTable(CommDKP_MinBids, true, _objReceived.CurrentTeam), _objReceived.Data[2][i])
-                  end
+                  end 
                 end
               end
             elseif prefix == "CommDKPMaxBid" then
+
               if core.IsOfficer then
+
                 core.DB.MaxBidBySlot = _objReceived.Data[1]
 
                 for i=1, #_objReceived.Data[2] do
-                  local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MaxBids, true, _objReceived.CurrentTeam), _objReceived.Data[2][i].item)
-                  if search then
-                    CommDKP:GetTable(CommDKP_MaxBids, true, _objReceived.CurrentTeam)[search[1][1]].maxbid = _objReceived.Data[2][i].maxbid
-                  else
-                    table.insert(CommDKP:GetTable(CommDKP_MaxBids, true, _objReceived.CurrentTeam), _objReceived.Data[2][i])
-                  end
+                  local bidInfo = _objReceived.Data[2][i]
+                  local bidTeam = bidInfo[1]
+                  local bidItems = bidInfo[2]
+
+                  for j=1, #bidItems do
+                    local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MaxBids, true, bidTeam), bidItems[j].item)
+                    if search then
+                      CommDKP:GetTable(CommDKP_MaxBids, true, bidTeam)[search[1][1]].maxbid = bidItems[j].maxbid
+                    else
+                      table.insert(CommDKP:GetTable(CommDKP_MaxBids, true, bidTeam), bidItems[j])
+                    end
+                  end 
                 end
               end
             elseif prefix == "CDKPWhitelist" and CommDKP:GetGuildRankIndex(UnitName("player")) > 1 then -- only applies if not GM
