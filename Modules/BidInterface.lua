@@ -370,6 +370,11 @@ function CommDKP:CurrItem_Set(item, value, icon, value2)
 
   local _,tmpLink,_,_,_,_,_,_,_,tmpIcon = GetItemInfo(item)
   local currItemInLoot = false
+  
+  if tmpLink == nil then
+    C_Timer.After(0.5, function () CommDKP:CurrItem_Set(item, value, icon, value2); end);
+    return;
+  end
 
   for _,_i in pairs(lootTable) do
     if _i.link == tmpLink then currItemInLoot = true end
