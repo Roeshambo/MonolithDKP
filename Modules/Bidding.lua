@@ -253,47 +253,7 @@ function CommDKP_CHAT_MSG_WHISPER(text, ...)
     SendChatMessage(response, "WHISPER", nil, name)
   end
 
-  ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", function(self, event, msg, ...)      -- suppresses outgoing whisper responses to limit spam
-    if core.BidInProgress and core.DB.defaults.SupressTells then
-      if strfind(msg, L["YOURBIDOF"]) == 1 then
-        return true
-      elseif strfind(msg, L["BIDDENIEDFILTER"]) == 1 then
-        return true
-      elseif strfind(msg, L["BIDACCEPTEDFILTER"]) == 1 then
-        return true;
-      elseif strfind(msg, L["NOTSUBMITTEDBID"]) == 1 then
-        return true;
-      elseif strfind(msg, L["ONLYONEROLLWARN"]) == 1 then
-        return true;
-      elseif strfind(msg, L["ROLLNOTACCEPTED"]) == 1 then
-        return true;
-      elseif strfind(msg, L["YOURBID"].." "..L["MANUALLYDENIED"]) == 1 then
-        return true;
-      elseif strfind(msg, L["CANTCANCELROLL"]) == 1 then
-        return true;
-      end
-    end
 
-    if strfind(msg, "CommunityDKP: ") == 1 then
-      return true
-    elseif strfind(msg, L["NOBIDINPROGRESS"]) == 1 then
-      return true
-    elseif strfind(msg, L["BIDCANCELLED"]) == 1 then
-      return true
-    end
-  end)
-
-  ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", function(self, event, msg, ...)      -- suppresses incoming whisper responses to limit spam
-    if core.BidInProgress and core.DB.defaults.SupressTells then
-      if strfind(msg, "!bid") == 1 then
-        return true
-      end
-    end
-
-    if strfind(msg, "!dkp") == 1 and core.DB.defaults.SupressTells then
-      return true
-    end
-  end)
 end
 
 function CommDKP:WhisperAvailableDKP(name, cmd)
