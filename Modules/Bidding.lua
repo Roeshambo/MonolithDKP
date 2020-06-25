@@ -544,6 +544,7 @@ local function StartBidding()
       CommDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), CurrItemIcon)
     end
     CommDKP.Sync:SendData("CommDKPCommand", "BidInfo#"..core.BiddingWindow.item:GetText().."#"..core.BiddingWindow.minBid:GetText().."#"..CurrItemIcon.."#"..core.BiddingWindow.maxBid:GetText())
+    
     CommDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.minBid:GetText(), CurrItemIcon, core.BiddingWindow.maxBid:GetText())
 
     if core.DB.defaults.AutoOpenBid then  -- toggles bid window if option is set to
@@ -595,6 +596,7 @@ local function StartBidding()
     CommDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Cost: "..core.BiddingWindow.cost:GetNumber()..perc, CurrItemIcon)
     CommDKP.Sync:SendData("CommDKPCommand", "BidInfo#"..core.BiddingWindow.item:GetText().."#"..core.BiddingWindow.cost:GetText()..perc.."#"..CurrItemIcon.."#0")
     CommDKP:BidInterface_Toggle()
+    
     CommDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.cost:GetText()..perc, CurrItemIcon, 0)
   end
 
