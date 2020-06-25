@@ -174,6 +174,56 @@ local function HandleSlashCommands(str)
   end
 end
 
+ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", function(self, event, msg, ...)      -- suppresses outgoing whisper responses to limit spam
+	if core.DB.defaults.SuppressTells then
+		if core.BidInProgress then
+			if strfind(msg, L["YOURBIDOF"]) == 1 then
+			  return true
+			elseif strfind(msg, L["BIDDENIEDFILTER"]) == 1 then
+			  return true
+			elseif strfind(msg, L["BIDACCEPTEDFILTER"]) == 1 then
+			  return true;
+			elseif strfind(msg, L["NOTSUBMITTEDBID"]) == 1 then
+			  return true;
+			elseif strfind(msg, L["ONLYONEROLLWARN"]) == 1 then
+			  return true;
+			elseif strfind(msg, L["ROLLNOTACCEPTED"]) == 1 then
+			  return true;
+			elseif strfind(msg, L["YOURBID"].." "..L["MANUALLYDENIED"]) == 1 then
+			  return true;
+			elseif strfind(msg, L["CANTCANCELROLL"]) == 1 then
+			  return true;
+			end
+		end
+	  
+		if strfind(msg, "CommunityDKP: ") == 1 then
+			return true
+		elseif strfind(msg, L["DKPAVAILABLE"]) ~= nil and strfind(msg, '%[') ~= nil and strfind(msg, '%]') ~= nil then
+			return true
+		elseif strfind(msg, L["NOBIDINPROGRESS"]) == 1 then
+			return true
+		elseif strfind(msg, L["BIDCANCELLED"]) == 1 then
+			return true
+		end
+	end
+end)
+
+ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", function(self, event, msg, ...)      -- suppresses incoming whisper responses to limit spam
+
+	if core.DB.defaults.SuppressTells then
+		if core.BidInProgress then
+			if strfind(msg, "!bid") == 1 then
+			  return true
+			end
+		end
+
+		if strfind(msg, "!dkp") == 1 then
+			return true
+		end
+	end
+end)
+
+
 function CommDKP_wait(delay, func, ...)
 	if(type(delay)~="number" or type(func)~="function") then
 		return false;
@@ -231,23 +281,63 @@ local function DoGuildUpdate()
 				core.DB.defaults.installed = nil
 			end
 
-			local seed
-			if #CommDKP:GetTable(CommDKP_DKPHistory, true) > 0 and #CommDKP:GetTable(CommDKP_Loot, true) > 0 and strfind(CommDKP:GetTable(CommDKP_DKPHistory, true)[1].index, "-") and strfind(CommDKP:GetTable(CommDKP_Loot, true)[1].index, "-") then
-				local off1,date1 = strsplit("-", CommDKP:GetTable(CommDKP_DKPHistory, true)[1].index)
-				local off2,date2 = strsplit("-", CommDKP:GetTable(CommDKP_Loot, true)[1].index)
-				
-				if CommDKP:ValidateSender(off1) and CommDKP:ValidateSender(off2) and tonumber(date1) > core.DB.defaults.installed210 and tonumber(date2) > core.DB.defaults.installed210 then
-					seed = CommDKP:GetTable(CommDKP_DKPHistory, true)[1].index..","..CommDKP:GetTable(CommDKP_Loot, true)[1].index  -- seed is only sent if the seed dates are post 2.1 installation and the posting officer is an officer in the current guild
-				else
-					seed = "start"
-				end
-			else
-				seed = "start"
-			end
 
-			CommDKP.Sync:SendData("CommDKPQuery", seed) -- requests role and spec data and sends current seeds (index of newest DKP and Loot entries)
+			-- send seed for every team in guild
+			-- this basically sends index of latest entry in loot and DKP tables to everyone online in guild,
+			-- if they have this entry it does nothing since they are up to date, if they dont it changes seed in those tables to the index being sent
+			CommDKP:SendSeedData();
 		end)
 	end
+end
+
+function CommDKP:SendSeedData()
+
+	local latestIndexForTeam = {}
+	local _teams = CommDKP:GetGuildTeamList();
+	local _numberOfTeams = CommDKP:tablelength(_teams);
+
+	for i=1, _numberOfTeams do
+
+		latestIndexForTeam[tostring(_teams[i][1])] = {}
+
+		if 	#CommDKP:GetTable(CommDKP_DKPHistory, true, tostring(_teams[i][1])) > 0 and strfind(CommDKP:GetTable(CommDKP_DKPHistory, true, tostring(_teams[i][1]))[1].index, "-") then
+			local off1,date1 = strsplit("-", CommDKP:GetTable(CommDKP_DKPHistory, true, tostring(_teams[i][1]))[1].index)
+			if CommDKP:ValidateSender(off1) and tonumber(date1) > core.DB.defaults.installed210 then
+				latestIndexForTeam[tostring(_teams[i][1])]["DKPHistory"] = CommDKP:GetTable(CommDKP_DKPHistory, true, tostring(_teams[i][1]))[1].index
+			else
+				latestIndexForTeam[tostring(_teams[i][1])]["DKPHistory"] = "start"
+			end
+		else
+			latestIndexForTeam[tostring(_teams[i][1])]["DKPHistory"] = "start"
+		end
+		
+		if #CommDKP:GetTable(CommDKP_Loot, true, tostring(_teams[i][1])) > 0 and strfind(CommDKP:GetTable(CommDKP_Loot, true, tostring(_teams[i][1]))[1].index, "-") then
+			local off2,date2 = strsplit("-", CommDKP:GetTable(CommDKP_Loot, true, tostring(_teams[i][1]))[1].index)
+			if CommDKP:ValidateSender(off2) and tonumber(date2) > core.DB.defaults.installed210 then
+				latestIndexForTeam[tostring(_teams[i][1])]["Loot"] = CommDKP:GetTable(CommDKP_Loot, true, tostring(_teams[i][1]))[1].index
+			else
+				latestIndexForTeam[tostring(_teams[i][1])]["Loot"] = "start"
+			end
+		else
+			latestIndexForTeam[tostring(_teams[i][1])]["Loot"] = "start"
+		end
+	end
+
+	--[[ 
+		latestIndexForTeam = {
+			["0"] = {
+				["Loot"] = "name-date",
+				["DKPHistory"] = "name-date"
+			},
+			["1"] = {
+				["Loot"] = "start",
+				["DKPHistory"] = "start"
+			}
+		}
+	--]]
+
+	CommDKP.Sync:SendData("CommDKPSeed", latestIndexForTeam) -- requests role and spec data and sends current seeds (index of newest DKP and Loot entries)
+
 end
 
 function CommDKP_OnEvent(self, event, arg1, ...)
@@ -347,6 +437,7 @@ function CommDKP_OnEvent(self, event, arg1, ...)
 	elseif event == "CHAT_MSG_WHISPER" then
 		CommDKP:CheckOfficer()
 		if core.IsOfficer then
+
 			arg1 = strlower(arg1)
 			if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "！dkp") == 1) then
 				CommDKP_CHAT_MSG_WHISPER(arg1, ...)
@@ -683,11 +774,21 @@ function CommDKP:UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
 	if (not retOK) or (retOK and not hasInfo) then
 		newDbTable = CommDKP:InitPlayerTable(oldDbTable, hasTeams, tableName)
 	end
+
+	-- Verify that build and priorbuild elements exist.
+	if  newDbTable.dbinfo.build == nil then
+		newDbTable.dbinfo.build = 0;
+	end
+
+	if  newDbTable.dbinfo.priorbuild == nil then
+		newDbTable.dbinfo.priorbuild = 0;
+	end
+	
 	--Set Prior Build
 	newDbTable.dbinfo.priorbuild = newDbTable.dbinfo.build;
 
 	-- Build 20205 (2.2.5) Changes
-	if newDbTable.dbinfo.build < 20205 then
+	if newDbTable.dbinfo.build < 20205 and newDbTable.dbinfo.priorbuild ~= core.BuildNumber then
 		if newDbTable.dbinfo.name == "CommDKP_DB" then
 
 			local defaultTable = {}
@@ -719,7 +820,7 @@ function CommDKP:InitializeCommDKPDB(dbTable)
 
 	if not dbTable.defaults or not dbTable.defaults.HistoryLimit then
 		dbTable.defaults = {
-			HistoryLimit = 2500, DKPHistoryLimit = 2500, BidTimerSize = 1.0, CommDKPScaleSize = 1.0, supressNotifications = false, TooltipHistoryCount = 15, SupressTells = true,
+			HistoryLimit = 2500, DKPHistoryLimit = 2500, BidTimerSize = 1.0, CommDKPScaleSize = 1.0, SuppressNotifications = false, TooltipHistoryCount = 15, SuppressTells = true,
 		}
 	end
 	if not dbTable.defaults.ChatFrames then 

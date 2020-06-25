@@ -238,7 +238,7 @@ function CommDKP:StartRaidTimer(pause, syncTimer, syncSecondCount, syncMinuteCou
 			CommDKP.ConfigTab2.RaidTimerContainer.BonusHeader:Show();
 			CommDKP.ConfigTab2.RaidTimerContainer.Bonus:SetText("|cff00ff00"..totalAwarded.."|r");
 
-			if IsInRaid() and CommDKP:CheckRaidLeader() then
+			if IsInRaid() and CommDKP:CheckRaidLeader() and core.RaidInProgress then
 				AwardRaid(core.DB.DKPBonus.IntervalBonus, L["TIMEINTERVALBONUS"])
 			end
 		end

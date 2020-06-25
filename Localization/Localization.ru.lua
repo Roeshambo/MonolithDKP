@@ -674,8 +674,8 @@ if GetLocale() == "ruRU" then
     SUPPRESSNOTIFICATIONS = "Убрать уведомления аддона",
     SUPPRESSNOTIFYTTDESC = "Скрытие всех сообщений аддона из окна чата.",
     SUPPRESSNOTIFYTTWARN = "Уведомления настроек все равно будут отображаться.",
-    SUPRESSBIDWHISPTTDESC = "Скрывает входящие и исходящие сообщения, связанные со ставками, пока идет ставка.",
-    SUPRESSBIDWHISPTTWARN = "Все остальные, не связанные со ставками, сообщения все равно будут отображаться.",
+    SuppressBIDWHISPTTDESC = "Скрывает входящие и исходящие сообщения, связанные со ставками, пока идет ставка.",
+    SuppressBIDWHISPTTWARN = "Все остальные, не связанные со ставками, сообщения все равно будут отображаться.",
     SYNCALREADY = "Синхронизация данных уже запущена. ",
     SYNCCOMPLETE = "Синхронизация завершена",
     SYNCCOMPLETE2 = "Синхронизация завершена. У всех игроков актуальные данные.",
@@ -785,12 +785,13 @@ if GetLocale() == "ruRU" then
     ZONE = "зона",
     PASS                  = "Отказаться",
 
-    MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?",
-    MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.",
-    MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?",
-    MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
-    MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
+    MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?", --TODO TRANSLATE:
+    MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.", --TODO TRANSLATE:
+    MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?", --TODO TRANSLATE:
+    MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.", --TODO TRANSLATE:
+    MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
 
+    --TODO TRANSLATE:
     CHANGELOG1 = "CommunityDKP - WoW Classic Phase 5",
     CHANGELOG2 = " - Updated Interface",
     CHANGELOG3 = " - Additional enchancements to in-game migration from MonolithDKP (Thanks matthi!)",

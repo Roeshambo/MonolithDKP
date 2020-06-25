@@ -195,7 +195,7 @@ function CommDKP_BroadcastFull_Init()
 				if PlayerList[i] then
 					local c = CommDKP:GetCColors(PlayerList[i].class)
 
-					filterName.text, filterName.arg1, filterName.arg2, filterName.checked, filterName.isNotRadio = "|cff"..c.hex..PlayerList[i].player.."|r", PlayerList[i].player, "|cff"..c.hex..PlayerList[i].player.."|r", PlayerList[i].player == player, true
+					filterName.text, filterName.arg1, filterName.arg2, filterName.checked, filterName.isNotRadio = "|c"..c.hex..PlayerList[i].player.."|r", PlayerList[i].player, "|c"..c.hex..PlayerList[i].player.."|r", PlayerList[i].player == player, true
 					UIDropDownMenu_AddButton(filterName, level)
 				end
 			end

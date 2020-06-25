@@ -656,12 +656,12 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     |cffff0000Valores mínimos de oferta|r: Permite a los jugadores ofertar más dkp de los que tienen, hasta el Oferta máxima (establecida a continuación) que les permite ir a lo negativo. 
 
     |cffff0000Otros|r: Permite al jugador presentar una oferta incluso si su DKP disponible es excedido por el costo del artículo.]=],
-    SUPPRESSBIDWHISP = "Supress Whispers de oferta",
+    SUPPRESSBIDWHISP = "Suppress Whispers de oferta",
     SUPPRESSNOTIFICATIONS = "Suprimir notificaciones de complementos",
     SUPPRESSNOTIFYTTDESC = "Oculta todos los mensajes adicionales para que no se muestren en su marco de chat.",
     SUPPRESSNOTIFYTTWARN = "Se seguirán recibiendo actualizaciones de transmisión.",
-    SUPRESSBIDWHISPTTDESC = "Suprime los susurros entrantes y salientes relacionados con las ofertas mientras hay una oferta en curso.",
-    SUPRESSBIDWHISPTTWARN = "Todos los demás susurros no relacionados con la licitación se seguirán mostrando.",
+    SuppressBIDWHISPTTDESC = "Suprime los susurros entrantes y salientes relacionados con las ofertas mientras hay una oferta en curso.",
+    SuppressBIDWHISPTTWARN = "Todos los demás susurros no relacionados con la licitación se seguirán mostrando.",
     SYNCALREADY = "Ya hay una sincronización actualmente en progreso.",
     SYNCCOMPLETE = "Sincronización completada",
     SYNCCOMPLETE2 = "Sincronización completada. Todos los jugadores están al día.",
@@ -790,12 +790,13 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     VALIDATEWARN          = "Esto volverá a calcular el dkp de todos los jugadores, la vida ganada y la vida gastada en función de su historial completo. Asegúrese de hacer una copia de seguridad del archivo de variables guardado en caso de que el resultado sea incorrecto debido a la falta de entradas en el historial. Debes restablecer dkp anterior (menú contextual> seleccionar todo> restablecer dkp anterior) para todos los jugadores antes de correr para que puedas ver cuánto cambiaron. ¿Te gustaria continuar?",
     PASS                  = "Pasar",
 
-    MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?",
-    MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.",
-    MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?",
-    MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
-    MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
+    MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?", --TODO TRANSLATE:
+    MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.", --TODO TRANSLATE:
+    MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?", --TODO TRANSLATE:
+    MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.", --TODO TRANSLATE:
+    MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
 
+    --TODO TRANSLATE:
     CHANGELOG1 = "CommunityDKP - WoW Classic Phase 5",
     CHANGELOG2 = " - Updated Interface",
     CHANGELOG3 = " - Additional enchancements to in-game migration from MonolithDKP (Thanks matthi!)",

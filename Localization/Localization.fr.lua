@@ -656,12 +656,12 @@ if GetLocale() == "frFR" then
     |cffff0000Valeurs minimales de l'enchère|r: Permet aux joueurs d'enchérir plus que leur nombre maximum, jusqu'à la Enchère maximum (définie ci-dessous) leur permettant d'entrer dans le négatif. 
 
     |cffff0000Autres|r: Permet au joueur de soumettre une enchère même si le prix de ses DKP disponibles est dépassé.]=],
-    SUPPRESSBIDWHISP = "Supress Bid Whispers",
+    SUPPRESSBIDWHISP = "Suppress Bid Whispers",
     SUPPRESSNOTIFICATIONS = "Supprimer les notifications d'addon",
     SUPPRESSNOTIFYTTDESC = "Masque tous les messages complémentaires affichés dans votre cadre de discussion.",
     SUPPRESSNOTIFYTTWARN = "Les mises à jour diffusées seront toujours reçues.",
-    SUPRESSBIDWHISPTTDESC = "Supprime les chuchotements entrants et sortants liés aux enchères en cours.",
-    SUPRESSBIDWHISPTTWARN = "Tous les autres chuchotements liés aux enchères ne seront toujours pas affichés.",
+    SuppressBIDWHISPTTDESC = "Supprime les chuchotements entrants et sortants liés aux enchères en cours.",
+    SuppressBIDWHISPTTWARN = "Tous les autres chuchotements liés aux enchères ne seront toujours pas affichés.",
     SYNCALREADY = "Il y a déjà une synchronisation en cours.",
     SYNCCOMPLETE = "Synchronisation terminée",
     SYNCCOMPLETE2 = "Synchronisation terminée. Tous les joueurs sont à jour.",
@@ -790,12 +790,13 @@ if GetLocale() == "frFR" then
     VALIDATEWARN          = "Cela recalculera tous les dkp des joueurs, la durée de vie gagnée et la durée de vie dépensée en fonction de leur historique complet. Assurez-vous de sauvegarder votre fichier de variables enregistré dans le cas où le résultat serait incorrect en raison d'entrées d'historique manquantes. Vous devez réinitialiser le dkp précédent (menu contextuel> sélectionner tout> réinitialiser le dkp précédent) pour tous les joueurs avant de courir afin que vous puissiez voir combien ils ont changé. Voulez-vous continuer?",
     PASS                  = "Passer",
 
-    MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?",
-    MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.",
-    MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?",
-    MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
-    MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
+    MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?", --TODO TRANSLATE:
+    MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.", --TODO TRANSLATE:
+    MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?", --TODO TRANSLATE:
+    MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.", --TODO TRANSLATE:
+    MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
 
+    --TODO TRANSLATE:
     CHANGELOG1 = "CommunityDKP - WoW Classic Phase 5",
     CHANGELOG2 = " - Updated Interface",
     CHANGELOG3 = " - Additional enchancements to in-game migration from MonolithDKP (Thanks matthi!)",

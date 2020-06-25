@@ -243,95 +243,85 @@ function CommDKP_CHAT_MSG_WHISPER(text, ...)
       return CommDKP_CHAT_MSG_WHISPER("!bid "..cmd, name)
     elseif cmd and cmd:gsub("%s+", "") ~= "nil" and cmd:gsub("%s+", "") ~= "" then    -- allows command if it has content (removes empty spaces)
       cmd = cmd:gsub("%s+", "") -- removes unintended spaces from string
-      local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), cmd, "player")
-
-      if search then
-        response = "CommunityDKP: "..CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].player.." "..L["CURRENTLYHAS"].." "..CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp.." "..L["DKPAVAILABLE"].."."
-      else
-        response = "CommunityDKP: "..L["PLAYERNOTFOUND"]
-      end
+      CommDKP:WhisperAvailableDKP(name, cmd);
+      return;
     else
-      local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
-      local minimum;
-      local maximum;
-      local range = "";
-      local perc = "";
-
-      if core.DB.modes.mode == "Roll Based Bidding" and search then
-        if core.DB.modes.rolls.UsePerc then
-          if core.DB.modes.rolls.min == 0 then
-                  minimum = 1;
-                else
-                  minimum = CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp * (core.DB.modes.rolls.min / 100);
-                end
-
-              perc = " ("..core.DB.modes.rolls.min.."% - "..core.DB.modes.rolls.max.."%)";
-              maximum = CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp * (core.DB.modes.rolls.max / 100) + core.DB.modes.rolls.AddToMax;
-            elseif not core.DB.modes.rolls.UsePerc then
-              minimum = core.DB.modes.rolls.min;
-
-              if core.DB.modes.rolls.max == 0 then
-                maximum = CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp + core.DB.modes.rolls.AddToMax;
-              else
-                maximum = core.DB.modes.rolls.max + core.DB.modes.rolls.AddToMax;
-              end
-              if maximum < 0 then maximum = 0 end
-                if minimum < 0 then minimum = 0 end
-            end
-            range = range.." "..L["USE"].." /random "..CommDKP_round(minimum, 0).."-"..CommDKP_round(maximum, 0).." "..L["TOBID"].." "..perc..".";
-          end
-
-      if search then
-        response = "CommunityDKP: "..L["YOUCURRENTLYHAVE"].." "..CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp.." "..L["DKP"].."."..range;
-      else
-        response = "CommunityDKP: "..L["PLAYERNOTFOUND"]
-      end
+      CommDKP:WhisperAvailableDKP(name);
+      return;
     end
 
     SendChatMessage(response, "WHISPER", nil, name)
   end
 
-  ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", function(self, event, msg, ...)      -- suppresses outgoing whisper responses to limit spam
-    if core.BidInProgress and core.DB.defaults.SupressTells then
-      if strfind(msg, L["YOURBIDOF"]) == 1 then
-        return true
-      elseif strfind(msg, L["BIDDENIEDFILTER"]) == 1 then
-        return true
-      elseif strfind(msg, L["BIDACCEPTEDFILTER"]) == 1 then
-        return true;
-      elseif strfind(msg, L["NOTSUBMITTEDBID"]) == 1 then
-        return true;
-      elseif strfind(msg, L["ONLYONEROLLWARN"]) == 1 then
-        return true;
-      elseif strfind(msg, L["ROLLNOTACCEPTED"]) == 1 then
-        return true;
-      elseif strfind(msg, L["YOURBID"].." "..L["MANUALLYDENIED"]) == 1 then
-        return true;
-      elseif strfind(msg, L["CANTCANCELROLL"]) == 1 then
-        return true;
+
+end
+
+function CommDKP:WhisperAvailableDKP(name, cmd)
+  local cmd = cmd or name;
+  
+  local teams = CommDKP:GetGuildTeamList(true);
+  local response = "";
+  local playerFound = false;
+  local currentTeam = CommDKP:GetCurrentTeamIndex();
+
+  for k, v in pairs(teams) do
+    local teamIndex = tostring(v.index);
+    local team = v
+    local minimum;
+    local maximum;
+    local range = "";
+    local perc = "";
+
+    local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex), cmd, "player")
+
+    if search and not playerFound then
+      -- CommunityDKP: Kyliee
+      local playerResponse = "CommunityDKP: "..CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex)[search[1][1]].player;
+      SendChatMessage(playerResponse, "WHISPER", nil, name)
+      playerFound = true;
+    end
+
+    if core.DB.modes.mode == "Roll Based Bidding" and search then
+      if core.DB.modes.rolls.UsePerc then
+        if core.DB.modes.rolls.min == 0 then
+          minimum = 1;
+        else
+          minimum = CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex)[search[1][1]].dkp * (core.DB.modes.rolls.min / 100);
+        end
+        perc = " ("..core.DB.modes.rolls.min.."% - "..core.DB.modes.rolls.max.."%)";
+        maximum = CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex)[search[1][1]].dkp * (core.DB.modes.rolls.max / 100) + core.DB.modes.rolls.AddToMax;
+      elseif not core.DB.modes.rolls.UsePerc then
+        minimum = core.DB.modes.rolls.min;
+
+        if core.DB.modes.rolls.max == 0 then
+          maximum = CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex)[search[1][1]].dkp + core.DB.modes.rolls.AddToMax;
+        else
+          maximum = core.DB.modes.rolls.max + core.DB.modes.rolls.AddToMax;
+        end
+        if maximum < 0 then maximum = 0 end
+        if minimum < 0 then minimum = 0 end
+      end
+
+      range = range.." "..L["USE"].." /random "..CommDKP_round(minimum, 0).."-"..CommDKP_round(maximum, 0).." "..L["TOBID"].." "..perc..".";
+    end
+
+    if search and playerFound then
+      -- [Laughing Jester Tavern] 213 DKP Available
+      -- [The Red Hand] 123 DKP Available
+      response = "["..team.name.."] "..CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex)[search[1][1]].dkp.." "..L["DKPAVAILABLE"];
+      SendChatMessage(response, "WHISPER", nil, name)
+      if teamIndex == currentTeam then
+        if name == cmd then
+          SendChatMessage(range, "WHISPER", nil, name)
+        end
       end
     end
-
-    if strfind(msg, "CommunityDKP: ") == 1 then
-      return true
-    elseif strfind(msg, L["NOBIDINPROGRESS"]) == 1 then
-      return true
-    elseif strfind(msg, L["BIDCANCELLED"]) == 1 then
-      return true
-    end
-  end)
-
-  ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", function(self, event, msg, ...)      -- suppresses incoming whisper responses to limit spam
-    if core.BidInProgress and core.DB.defaults.SupressTells then
-      if strfind(msg, "!bid") == 1 then
-        return true
-      end
-    end
-
-    if strfind(msg, "!dkp") == 1 and core.DB.defaults.SupressTells then
-      return true
-    end
-  end)
+  end
+  if not playerFound then
+    response = "CommunityDKP: "..L["PLAYERNOTFOUND"]
+    SendChatMessage(response, "WHISPER", nil, name)
+  end
+  return;
 end
 
 function CommDKP:GetMinBid(itemLink)
@@ -553,7 +543,8 @@ local function StartBidding()
     else
       CommDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Min Bid: "..core.BiddingWindow.minBid:GetText(), CurrItemIcon)
     end
-    CommDKP.Sync:SendData("CommDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText().."#"..core.BiddingWindow.minBid:GetText().."#"..CurrItemIcon.."#"..core.BiddingWindow.maxBid:GetText())
+    CommDKP.Sync:SendData("CommDKPCommand", "BidInfo#"..core.BiddingWindow.item:GetText().."#"..core.BiddingWindow.minBid:GetText().."#"..CurrItemIcon.."#"..core.BiddingWindow.maxBid:GetText())
+    
     CommDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.minBid:GetText(), CurrItemIcon, core.BiddingWindow.maxBid:GetText())
 
     if core.DB.defaults.AutoOpenBid then  -- toggles bid window if option is set to
@@ -603,8 +594,9 @@ local function StartBidding()
   else
     if core.DB.modes.costvalue == "Percent" then perc = "%" else perc = " DKP" end;
     CommDKP:BroadcastBidTimer(core.BiddingWindow.bidTimer:GetText(), core.BiddingWindow.item:GetText().." Cost: "..core.BiddingWindow.cost:GetNumber()..perc, CurrItemIcon)
-    CommDKP.Sync:SendData("CommDKPCommand", "BidInfo,"..core.BiddingWindow.item:GetText().."#"..core.BiddingWindow.cost:GetText()..perc.."#"..CurrItemIcon.."#0")
+    CommDKP.Sync:SendData("CommDKPCommand", "BidInfo#"..core.BiddingWindow.item:GetText().."#"..core.BiddingWindow.cost:GetText()..perc.."#"..CurrItemIcon.."#0")
     CommDKP:BidInterface_Toggle()
+    
     CommDKP:CurrItem_Set(core.BiddingWindow.item:GetText(), core.BiddingWindow.cost:GetText()..perc, CurrItemIcon, 0)
   end
 
@@ -733,7 +725,7 @@ end
 
 function CommDKP:BroadcastBidTimer(seconds, title, itemIcon)       -- broadcasts timer and starts it natively
   local title = title;
-  CommDKP.Sync:SendData("CommDKPCommand", "StartBidTimer,"..seconds..","..title..","..itemIcon)
+  CommDKP.Sync:SendData("CommDKPCommand", "StartBidTimer#"..seconds.."#"..title.."#"..itemIcon)
   CommDKP:StartBidTimer(seconds, title, itemIcon)
 
   if strfind(seconds, "{") then
@@ -842,7 +834,7 @@ function CommDKP:StartBidTimer(seconds, title, itemIcon)
       extend = true;
     end
   end
-
+  
   CommDKP.BidTimer = CommDKP.BidTimer or CommDKP:CreateTimer();    -- recycles bid timer frame so multiple instances aren't created
   if not extend then CommDKP.BidTimer:SetShown(not CommDKP.BidTimer:IsShown()); end          -- shows if not shown
   if core.BidInterface and core.BidInterface:IsShown() == false then CommDKP.BidTimer.OpenBid:Show() end

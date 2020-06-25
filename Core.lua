@@ -10,36 +10,44 @@ local L = core.L;
 core.CommDKP = {};       -- UI Frames global
 local CommDKP = core.CommDKP;
 
-local tc_colors = {
-	["Druid"] = { r = 1, g = 0.49, b = 0.04, hex = "FF7D0A" },
-	["Hunter"] = {  r = 0.67, g = 0.83, b = 0.45, hex = "ABD473" },
-	["Mage"] = { r = 0.25, g = 0.78, b = 0.92, hex = "40C7EB" },
-	["Priest"] = { r = 1, g = 1, b = 1, hex = "FFFFFF" },
-	["Rogue"] = { r = 1, g = 0.96, b = 0.41, hex = "FFF569" },
-	["Shaman"] = { r = 0.96, g = 0.55, b = 0.73, hex = "F58CBA" },
-	["Paladin"] = { r = 0.96, g = 0.55, b = 0.73, hex = "F58CBA" },
-	["Warlock"] = { r = 0.53, g = 0.53, b = 0.93, hex = "8787ED" },
-	["Warrior"] = { r = 0.78, g = 0.61, b = 0.43, hex = "C79C6E" }
-}
-
-local tc_classes = {}
 
 core.faction = UnitFactionGroup("player")
-if core.faction == "Horde" then
-	tc_classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
-elseif core.faction == "Alliance" then
-	tc_classes = { "Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Warlock", "Warrior" }
-end
+
+
+API_CLASSES = LOCALIZED_CLASS_NAMES_MALE;
 
 core.CColors = {
 	["UNKNOWN"] = { r = 0.627, g = 0.627, b = 0.627, hex = "A0A0A0" }
 }
 core.classes = {}
-for i = 1, #tc_classes do
-	local cname = tc_classes[i]
-	local lname = string.upper(cname)
-	core.CColors[lname] = tc_colors[cname]
-	table.insert(core.classes, lname)
+
+for class,friendlyClass in pairs(API_CLASSES) do
+	local colorTable = {};
+	local addColor = false;
+
+	-- There appears to be no WoW API that lists out specific classes to a single faction
+	-- Nor is there an API that identifies a specific class to a specific faction.
+	-- I'd love to not hard code this though, but I seem to be out of luck.
+
+	if core.faction == "Horde" then
+		if class ~= "PALADIN" then
+			addColor = true;
+		end
+	end
+
+	if core.faction == "Alliance" then
+		if class ~= "SHAMAN" then
+			addColor = true;
+		end
+	end
+
+	if addColor then
+		colorTable.class = friendlyClass;
+		colorTable.r, colorTable.g, colorTable.b, colorTable.hex = GetClassColor(class);
+
+		core.CColors[class] = colorTable;
+		table.insert(core.classes, class)
+	end
 end
 
 --------------------------------------
@@ -357,7 +365,7 @@ function CommDKP:FormatTime(time)
 end
 
 function CommDKP:Print(...)        --print function to add "CommunityDKP:" to the beginning of print() outputs.
-	if core.DB == nil or not core.DB.defaults.supressNotifications then
+	if core.DB == nil or not core.DB.defaults.SuppressNotifications then
 		local defaults = CommDKP:GetThemeColor();
 		local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "CommunityDKP:", defaults[2].hex:upper());
 		local suffix = "|r";
@@ -391,7 +399,7 @@ function CommDKP:BroadcastTimer(seconds, ...)       -- broadcasts timer and star
 			return;
 		end
 		CommDKP:StartTimer(seconds, ...)
-		CommDKP.Sync:SendData("CommDKPCommand", "StartTimer,"..seconds..","..title)
+		CommDKP.Sync:SendData("CommDKPCommand", "StartTimer#"..seconds.."#"..title)
 	end
 end
 
@@ -497,7 +505,9 @@ function CommDKP:StartTimer(seconds, ...)
 end
 
 function CommDKP:StatusVerify_Update()
-	if (CommDKP.UIConfig and not CommDKP.UIConfig:IsShown()) or (#CommDKP:GetTable(CommDKP_DKPHistory, true) == 0 and #CommDKP:GetTable(CommDKP_Loot, true) == 0) then     -- blocks update if dkp window is closed. Updated when window is opened anyway
+	if (CommDKP.UIConfig and not CommDKP.UIConfig:IsShown()) or 
+	   (#CommDKP:GetTable(CommDKP_DKPHistory, true, CommDKP:GetCurrentTeamIndex()) == 0 and #CommDKP:GetTable(CommDKP_Loot, true, CommDKP:GetCurrentTeamIndex()) == 0) then
+		-- blocks update if dkp window is closed. Updated when window is opened anyway
 		return;
 	end
 
@@ -506,13 +516,16 @@ function CommDKP:StatusVerify_Update()
 
 		local missing = {}
 
-		if CommDKP:GetTable(CommDKP_Loot, true).seed and CommDKP:GetTable(CommDKP_DKPHistory, true).seed and strfind(CommDKP:GetTable(CommDKP_Loot, true).seed, "-") and strfind(CommDKP:GetTable(CommDKP_DKPHistory, true).seed, "-") then
-			local search_dkp = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPHistory, true), CommDKP:GetTable(CommDKP_DKPHistory, true).seed, "index")
-			local search_loot = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Loot, true), CommDKP:GetTable(CommDKP_Loot, true).seed, "index")
+		if (CommDKP:GetTable(CommDKP_Loot, true, CommDKP:GetCurrentTeamIndex()).seed and strfind(CommDKP:GetTable(CommDKP_Loot, true, CommDKP:GetCurrentTeamIndex()).seed, "-")) or
+		   (CommDKP:GetTable(CommDKP_DKPHistory, true, CommDKP:GetCurrentTeamIndex()).seed and strfind(CommDKP:GetTable(CommDKP_DKPHistory, true, CommDKP:GetCurrentTeamIndex()).seed, "-"))
+		then
 
+			local search_dkp = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPHistory, true, CommDKP:GetCurrentTeamIndex()), CommDKP:GetTable(CommDKP_DKPHistory, true, CommDKP:GetCurrentTeamIndex()).seed, "index")
+			local search_loot = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Loot, true, CommDKP:GetCurrentTeamIndex()), CommDKP:GetTable(CommDKP_Loot, true, CommDKP:GetCurrentTeamIndex()).seed, "index")
+	
 			if not search_dkp then
 				core.OOD = true
-				local officer1, date1 = strsplit("-", CommDKP:GetTable(CommDKP_DKPHistory, true).seed)
+				local officer1, date1 = strsplit("-", CommDKP:GetTable(CommDKP_DKPHistory, true, CommDKP:GetCurrentTeamIndex()).seed)
 				if (date1 and tonumber(date1) < (time() - 1209600)) or not CommDKP:ValidateSender(officer1) then   -- does not consider if claimed entry was made more than two weeks ago or name is not an officer
 					core.OOD = false
 				else
@@ -520,10 +533,10 @@ function CommDKP:StatusVerify_Update()
 					missing[officer1] = date1 			-- if both missing seeds identify the same officer, it'll only list once
 				end
 			end
-
-			if not search_loot then
+			
+			if not search_loot and not core.OOD then
 				core.OOD = true
-				local officer2, date2 = strsplit("-", CommDKP:GetTable(CommDKP_Loot, true).seed)
+				local officer2, date2 = strsplit("-", CommDKP:GetTable(CommDKP_Loot, true, CommDKP:GetCurrentTeamIndex()).seed)
 				if (date2 and tonumber(date2) < (time() - 1209600)) or not CommDKP:ValidateSender(officer2) then   -- does not consider if claimed entry was made more than two weeks ago or name is not an officer
 					core.OOD = false
 				else
@@ -555,7 +568,7 @@ function CommDKP:StatusVerify_Update()
 			CommDKP.DKPTable.SeedVerify:SetScript("OnEnter", function(self)
 				GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
 				GameTooltip:SetText(L["DKPSTATUS"], 0.25, 0.75, 0.90, 1, true);
-				if #CommDKP:GetTable(CommDKP_Loot, true) == 0 and #CommDKP:GetTable(CommDKP_DKPHistory, true) == 0 then
+				if #CommDKP:GetTable(CommDKP_Loot, true, CommDKP:GetCurrentTeamIndex()) == 0 and #CommDKP:GetTable(CommDKP_DKPHistory, true, CommDKP:GetCurrentTeamIndex()) == 0 then
 					GameTooltip:AddLine(L["TABLESAREEMPTY"], 1.0, 1.0, 1.0, false);
 				else
 					GameTooltip:AddLine(L["ONETABLEOOD"].." |cffff0000"..L["OUTOFDATE"].."|r.", 1.0, 1.0, 1.0, false);
@@ -565,14 +578,14 @@ function CommDKP:StatusVerify_Update()
 				GameTooltip:AddLine(" ")
 				GameTooltip:AddDoubleLine(L["PLAYER"], L["CREATED"],1,1,1,1,1,1)
 				for k,v in pairs(missing) do
-					local classSearch = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), k)
+					local classSearch = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, CommDKP:GetCurrentTeamIndex()), k)
 
 					if classSearch then
-						c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[classSearch[1][1]].class)
+						c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true, CommDKP:GetCurrentTeamIndex())[classSearch[1][1]].class)
 					else
 						c = { hex="ffffff" }
 					end
-					GameTooltip:AddDoubleLine("|cff"..c.hex..k.."|r",v,1,1,1,1,1,1);
+					GameTooltip:AddDoubleLine("|c"..c.hex..k.."|r",v,1,1,1,1,1,1);
 				end
 				if core.IsOfficer then
 					GameTooltip:AddLine(" ")
@@ -604,7 +617,7 @@ end
 -------
 -- TEAM FUNCTIONS
 -------
-local function tablelength(T)
+function CommDKP:tablelength(T)
 	local count = 0
 	for _ in pairs(T) do
 		count = count + 1 
@@ -621,7 +634,7 @@ function CommDKP:GetCurrentTeamName()
 	local _string = "Unguilded";
 	local teams = CommDKP:GetTable(CommDKP_DB, false)["teams"];
 
-	if tablelength(teams) > 0 then
+	if CommDKP:tablelength(teams) > 0 then
 		_string = CommDKP:GetTable(CommDKP_DB, false)["teams"][CommDKP:GetCurrentTeamIndex()].name
 	end
 
@@ -638,16 +651,19 @@ function CommDKP:GetTeamName(index)
 	return teamName;
 end
 
-function CommDKP:GetGuildTeamList() 
+function CommDKP:GetGuildTeamList(asObject) 
+	local asObject = asObject or false
 	local _list = {};
 	local _tmp = CommDKP:GetTable(CommDKP_DB, false)["teams"]
-	local index = 1
 
 	for k,v in pairs(_tmp) do
 		if(type(v) == "table") then
-			for z,x in pairs(v) do
+			if asObject then
+				local team = v;
+				team["index"] = tonumber(k);
+				table.insert(_list, team);
+			else
 				table.insert(_list, {tonumber(k), v.name})
-				index = index + 1
 			end
 		end
 	end
@@ -655,7 +671,11 @@ function CommDKP:GetGuildTeamList()
 	-- about order of adding elements to "string" indexed table so we have to unfuck it
 	table.sort(_list,  
 		function(a, b)
-			return a[1] < b[1]
+			if asObject then
+				return a.index < b.index
+			else
+				return a[1] < b[1]
+			end
 		end
 	)
 
@@ -665,7 +685,7 @@ end
 -- moved to core from ManageEntries as this is called from comm.lua aswell
 function CommDKP:SetCurrentTeam(index)
 	CommDKP:GetTable(CommDKP_DB, false)["defaults"]["CurrentTeam"] = tostring(index)
-
+	CommDKP:StatusVerify_Update();
 	UIDropDownMenu_SetText(CommDKP.UIConfig.TeamViewChangerDropDown, CommDKP:GetCurrentTeamName())
 
 	-- reset dkp table and update it

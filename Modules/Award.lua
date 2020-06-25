@@ -385,7 +385,7 @@ function CommDKP:AwardConfirm(player, cost, boss, zone, loot, reassign)
 		core.AwardConfirm.setPriceButton:SetShown(true);
 	end
 
-	--core.AwardConfirm.player:SetText("|cff"..class.hex..player.."|r")
+	--core.AwardConfirm.player:SetText("|c"..class.hex..player.."|r")
 	core.AwardConfirm.lootIcon:SetTexture(itemIcon)
 	core.AwardConfirm.loot:SetText(loot)
 	core.AwardConfirm.cost:SetNumber(cost)
@@ -439,7 +439,7 @@ function CommDKP:AwardConfirm(player, cost, boss, zone, loot, reassign)
 		UIDropDownMenu_SetText(core.AwardConfirm.team, CommDKP:GetCurrentTeamName())
 	
 	if player then
-		UIDropDownMenu_SetText(core.AwardConfirm.player, "|cff"..class.hex..player.."|r")
+		UIDropDownMenu_SetText(core.AwardConfirm.player, "|c"..class.hex..player.."|r")
 	else
 		UIDropDownMenu_SetText(core.AwardConfirm.player, "")
 	end
@@ -475,7 +475,7 @@ function CommDKP:AwardConfirm(player, cost, boss, zone, loot, reassign)
 				    else
 				     	c = { hex="444444" }
 				    end
-					filterName.text, filterName.arg1, filterName.arg2, filterName.checked, filterName.isNotRadio = "|cff"..c.hex..PlayerList[i].."|r", PlayerList[i], "|cff"..c.hex..PlayerList[i].."|r", PlayerList[i] == player, true
+					filterName.text, filterName.arg1, filterName.arg2, filterName.checked, filterName.isNotRadio = "|c"..c.hex..PlayerList[i].."|r", PlayerList[i], "|c"..c.hex..PlayerList[i].."|r", PlayerList[i] == player, true
 					UIDropDownMenu_AddButton(filterName, level)
 				end
 			end

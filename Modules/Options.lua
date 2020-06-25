@@ -486,7 +486,14 @@ function CommDKP:Options()
           OnAccept = function()
             local temptable = {}
             table.insert(temptable, core.DB.MinBidBySlot)
-            table.insert(temptable, CommDKP:GetTable(CommDKP_MinBids, true))
+            local teams = CommDKP:GetGuildTeamList(true);
+            local teamTable = {}
+          
+            for k, v in pairs(teams) do
+              local teamIndex = tostring(v.index);
+              table.insert(teamTable, {teamIndex, CommDKP:GetTable(CommDKP_MinBids, true, teamIndex)});
+            end
+            table.insert(temptable, teamTable);
             CommDKP.Sync:SendData("CommDKPMinBid", temptable)
             CommDKP:Print(L["MINBIDVALUESSENT"])
           end,
@@ -725,7 +732,14 @@ function CommDKP:Options()
           OnAccept = function()
             local temptable = {}
             table.insert(temptable, core.DB.MaxBidBySlot)
-            table.insert(temptable, CommDKP:GetTable(CommDKP_MaxBids, true))
+            local teams = CommDKP:GetGuildTeamList(true);
+            local teamTable = {}
+          
+            for k, v in pairs(teams) do
+              local teamIndex = tostring(v.index);
+              table.insert(teamTable, {teamIndex, CommDKP:GetTable(CommDKP_MaxBids, true, teamIndex)});
+            end
+            table.insert(temptable, teamTable);
             CommDKP.Sync:SendData("CommDKPMaxBid", temptable)
             CommDKP:Print(L["MAXBIDVALUESSENT"])
           end,
@@ -1044,29 +1058,29 @@ function CommDKP:Options()
   CommDKP.ConfigTab4.UIScaleSize:SetPoint("TOP", CommDKP.ConfigTab4.CommDKPScaleSize, "BOTTOM", 0, -3)     
   CommDKP.ConfigTab4.UIScaleSize:SetText(CommDKP.ConfigTab4.CommDKPScaleSize:GetValue())
 
-  -- Supress Broadcast Notifications checkbox
-  CommDKP.ConfigTab4.supressNotifications = CreateFrame("CheckButton", nil, CommDKP.ConfigTab4, "UICheckButtonTemplate");
-  CommDKP.ConfigTab4.supressNotifications:SetPoint("TOP", CommDKP.ConfigTab4.TimerSizeSlider, "BOTTOMLEFT", 0, -35)
-  CommDKP.ConfigTab4.supressNotifications:SetChecked(core.DB.defaults.supressNotifications)
-  CommDKP.ConfigTab4.supressNotifications:SetScale(0.8)
-  CommDKP.ConfigTab4.supressNotifications.text:SetText("|cff5151de"..L["SUPPRESSNOTIFICATIONS"].."|r");
-  CommDKP.ConfigTab4.supressNotifications.text:SetFontObject("CommDKPSmall")
-  CommDKP.ConfigTab4.supressNotifications:SetScript("OnEnter", function(self)
+  -- Suppress Broadcast Notifications checkbox
+  CommDKP.ConfigTab4.SuppressNotifications = CreateFrame("CheckButton", nil, CommDKP.ConfigTab4, "UICheckButtonTemplate");
+  CommDKP.ConfigTab4.SuppressNotifications:SetPoint("TOP", CommDKP.ConfigTab4.TimerSizeSlider, "BOTTOMLEFT", 0, -35)
+  CommDKP.ConfigTab4.SuppressNotifications:SetChecked(core.DB.defaults.SuppressNotifications)
+  CommDKP.ConfigTab4.SuppressNotifications:SetScale(0.8)
+  CommDKP.ConfigTab4.SuppressNotifications.text:SetText("|cff5151de"..L["SUPPRESSNOTIFICATIONS"].."|r");
+  CommDKP.ConfigTab4.SuppressNotifications.text:SetFontObject("CommDKPSmall")
+  CommDKP.ConfigTab4.SuppressNotifications:SetScript("OnEnter", function(self)
     GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
     GameTooltip:SetText(L["SUPPRESSNOTIFICATIONS"], 0.25, 0.75, 0.90, 1, true)
     GameTooltip:AddLine(L["SUPPRESSNOTIFYTTDESC"], 1.0, 1.0, 1.0, true);
     GameTooltip:AddLine(L["SUPPRESSNOTIFYTTWARN"], 1.0, 0, 0, true);
     GameTooltip:Show()
   end)
-  CommDKP.ConfigTab4.supressNotifications:SetScript("OnLeave", function()
+  CommDKP.ConfigTab4.SuppressNotifications:SetScript("OnLeave", function()
     GameTooltip:Hide()
   end)
-  CommDKP.ConfigTab4.supressNotifications:SetScript("OnClick", function()
-    if CommDKP.ConfigTab4.supressNotifications:GetChecked() then
+  CommDKP.ConfigTab4.SuppressNotifications:SetScript("OnClick", function()
+    if CommDKP.ConfigTab4.SuppressNotifications:GetChecked() then
       CommDKP:Print(L["NOTIFICATIONSLIKETHIS"].." |cffff0000"..L["HIDDEN"].."|r.")
-      core.DB["defaults"]["supressNotifications"] = true;
+      core.DB["defaults"]["SuppressNotifications"] = true;
     else
-      core.DB["defaults"]["supressNotifications"] = false;
+      core.DB["defaults"]["SuppressNotifications"] = false;
       CommDKP:Print(L["NOTIFICATIONSLIKETHIS"].." |cff00ff00"..L["VISIBLE"].."|r.")
     end
     PlaySound(808)
@@ -1074,7 +1088,7 @@ function CommDKP:Options()
 
   -- Combat Logging checkbox
   CommDKP.ConfigTab4.CombatLogging = CreateFrame("CheckButton", nil, CommDKP.ConfigTab4, "UICheckButtonTemplate");
-  CommDKP.ConfigTab4.CombatLogging:SetPoint("TOP", CommDKP.ConfigTab4.supressNotifications, "BOTTOM", 0, 0)
+  CommDKP.ConfigTab4.CombatLogging:SetPoint("TOP", CommDKP.ConfigTab4.SuppressNotifications, "BOTTOM", 0, 0)
   CommDKP.ConfigTab4.CombatLogging:SetChecked(core.DB.defaults.AutoLog)
   CommDKP.ConfigTab4.CombatLogging:SetScale(0.8)
   CommDKP.ConfigTab4.CombatLogging.text:SetText("|cff5151de"..L["AUTOCOMBATLOG"].."|r");
@@ -1119,29 +1133,29 @@ function CommDKP:Options()
   end)
 
   if core.IsOfficer == true then
-    -- Supress Broadcast Notifications checkbox
-    CommDKP.ConfigTab4.supressTells = CreateFrame("CheckButton", nil, CommDKP.ConfigTab4, "UICheckButtonTemplate");
-    CommDKP.ConfigTab4.supressTells:SetPoint("LEFT", CommDKP.ConfigTab4.supressNotifications, "RIGHT", 200, 0)
-    CommDKP.ConfigTab4.supressTells:SetChecked(core.DB.defaults.SupressTells)
-    CommDKP.ConfigTab4.supressTells:SetScale(0.8)
-    CommDKP.ConfigTab4.supressTells.text:SetText("|cff5151de"..L["SUPPRESSBIDWHISP"].."|r");
-    CommDKP.ConfigTab4.supressTells.text:SetFontObject("CommDKPSmall")
-    CommDKP.ConfigTab4.supressTells:SetScript("OnEnter", function(self)
+    -- Suppress Broadcast Notifications checkbox
+    CommDKP.ConfigTab4.SuppressTells = CreateFrame("CheckButton", nil, CommDKP.ConfigTab4, "UICheckButtonTemplate");
+    CommDKP.ConfigTab4.SuppressTells:SetPoint("LEFT", CommDKP.ConfigTab4.SuppressNotifications, "RIGHT", 200, 0)
+    CommDKP.ConfigTab4.SuppressTells:SetChecked(core.DB.defaults.SuppressTells)
+    CommDKP.ConfigTab4.SuppressTells:SetScale(0.8)
+    CommDKP.ConfigTab4.SuppressTells.text:SetText("|cff5151de"..L["SUPPRESSBIDWHISP"].."|r");
+    CommDKP.ConfigTab4.SuppressTells.text:SetFontObject("CommDKPSmall")
+    CommDKP.ConfigTab4.SuppressTells:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
       GameTooltip:SetText(L["SUPPRESSBIDWHISP"], 0.25, 0.75, 0.90, 1, true)
-      GameTooltip:AddLine(L["SUPRESSBIDWHISPTTDESC"], 1.0, 1.0, 1.0, true);
-      GameTooltip:AddLine(L["SUPRESSBIDWHISPTTWARN"], 1.0, 0, 0, true);
+      GameTooltip:AddLine(L["SuppressBIDWHISPTTDESC"], 1.0, 1.0, 1.0, true);
+      GameTooltip:AddLine(L["SuppressBIDWHISPTTWARN"], 1.0, 0, 0, true);
       GameTooltip:Show()
     end)
-    CommDKP.ConfigTab4.supressTells:SetScript("OnLeave", function()
+    CommDKP.ConfigTab4.SuppressTells:SetScript("OnLeave", function()
       GameTooltip:Hide()
     end)
-    CommDKP.ConfigTab4.supressTells:SetScript("OnClick", function()
-      if CommDKP.ConfigTab4.supressTells:GetChecked() then
+    CommDKP.ConfigTab4.SuppressTells:SetScript("OnClick", function()
+      if CommDKP.ConfigTab4.SuppressTells:GetChecked() then
         CommDKP:Print(L["BIDWHISPARENOW"].." |cffff0000"..L["HIDDEN"].."|r.")
-        core.DB["defaults"]["SupressTells"] = true;
+        core.DB["defaults"]["SuppressTells"] = true;
       else
-        core.DB["defaults"]["SupressTells"] = false;
+        core.DB["defaults"]["SuppressTells"] = false;
         CommDKP:Print(L["BIDWHISPARENOW"].." |cff00ff00"..L["VISIBLE"].."|r.")
       end
       PlaySound(808)
