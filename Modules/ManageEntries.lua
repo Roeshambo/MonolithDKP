@@ -44,7 +44,7 @@ local function Remove_Entries()
 			if i==1 then
 				removedUsers = "|c"..c.hex..core.SelectedData[i]["player"].."|r"
 			else
-				removedUsers = removedUsers..", |cff"..c.hex..core.SelectedData[i]["player"].."|r"
+				removedUsers = removedUsers..", |c"..c.hex..core.SelectedData[i]["player"].."|r"
 			end
 			numPlayers = numPlayers + 1
 
@@ -121,7 +121,7 @@ local function AddRaidToDKPTable()
 					if addedUsers == nil then
 						addedUsers = "|c"..c.hex..tempName.."|r"; 
 					else
-						addedUsers = addedUsers..", |cff"..c.hex..tempName.."|r"
+						addedUsers = addedUsers..", |c"..c.hex..tempName.."|r"
 					end
 					if CommDKP:GetTable(CommDKP_Archive, true)[tempName] and CommDKP:GetTable(CommDKP_Archive, true)[tempName].deleted then
 						CommDKP:GetTable(CommDKP_Archive, true)[tempName].deleted = "Recovered"
@@ -179,7 +179,7 @@ local function AddGuildToDKPTable(rank, level)
 			if addedUsers == nil then
 				addedUsers = "|c"..c.hex..name.."|r"; 
 			else
-				addedUsers = addedUsers..", |cff"..c.hex..name.."|r"
+				addedUsers = addedUsers..", |c"..c.hex..name.."|r"
 			end
 			if CommDKP:GetTable(CommDKP_Archive, true)[name] and CommDKP:GetTable(CommDKP_Archive, true)[name].deleted then
 				CommDKP:GetTable(CommDKP_Archive, true)[name].deleted = "Recovered"
@@ -459,7 +459,7 @@ function CommDKP:ManageEntries()
 						if i == 1 then
 							selected = selected.."|c"..c.hex..core.SelectedData[i].player.."|r"
 						else
-							selected = selected..", |cff"..c.hex..core.SelectedData[i].player.."|r"
+							selected = selected..", |c"..c.hex..core.SelectedData[i].player.."|r"
 						end
 					end
 					selected = selected.."?"
@@ -719,7 +719,7 @@ function CommDKP:ManageEntries()
 								if purgeString == nil then
 									purgeString = "|c"..c.hex..name.."|r"; 
 								else
-									purgeString = purgeString..", |cff"..c.hex..name.."|r"
+									purgeString = purgeString..", |c"..c.hex..name.."|r"
 								end
 
 								count = count + 1;

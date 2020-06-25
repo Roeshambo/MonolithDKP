@@ -651,7 +651,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                     if i==1 then
                       removedUsers = "|c"..c.hex..CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam)[search[1][1]].player.."|r"
                     else
-                      removedUsers = removedUsers..", |cff"..c.hex..CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam)[search[1][1]].player.."|r"
+                      removedUsers = removedUsers..", |c"..c.hex..CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam)[search[1][1]].player.."|r"
                     end
                     numPlayers = numPlayers + 1
 

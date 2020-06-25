@@ -98,7 +98,7 @@ local function CommDKPDeleteMenu(index)
 	local c, deleteString;
 	if search2 then
 		c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[search2[1][1]].class)
-		deleteString = L["CONFIRMDELETEENTRY1"]..": |cff"..c.hex..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["player"].."|r "..L["WON"].." "..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["loot"].." "..L["FOR"].." "..-CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["cost"].." "..L["DKP"].."?\n\n("..L["THISWILLREFUND"].." |c"..c.hex..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]].player.."|r "..-CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["cost"].." "..L["DKP"]..")";
+		deleteString = L["CONFIRMDELETEENTRY1"]..": |c"..c.hex..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["player"].."|r "..L["WON"].." "..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["loot"].." "..L["FOR"].." "..-CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["cost"].." "..L["DKP"].."?\n\n("..L["THISWILLREFUND"].." |c"..c.hex..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]].player.."|r "..-CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["cost"].." "..L["DKP"]..")";
 	else
 		deleteString = L["CONFIRMDELETEENTRY1"]..": |cff444444"..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["player"].."|r "..L["WON"].." "..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["loot"].." "..L["FOR"].." "..-CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["cost"].." "..L["DKP"].."?\n\n("..L["THISWILLREFUND"].." |cff444444"..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]].player.."|r "..-DKP_Loot[search[1][1]]["cost"].." "..L["DKP"]..")";
 	end
