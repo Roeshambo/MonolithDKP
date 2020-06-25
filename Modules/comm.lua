@@ -296,7 +296,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
             print("[CommunityDKP] COMMS: You started Full Broadcast for team "..CommDKP:GetTeamName(_objReceived.CurrentTeam));
           end
         elseif (prefix == "CommDKPCommand") then
-          local command, arg1, arg2, arg3, arg4 = strsplit(",", _objReceived.Data);
+          local command, arg1, arg2, arg3, arg4 = strsplit("#", _objReceived.Data);
           if sender ~= UnitName("player") then
             if command == "StartTimer" then
               CommDKP:StartTimer(arg1, arg2)

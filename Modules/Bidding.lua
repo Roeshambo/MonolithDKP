@@ -763,7 +763,7 @@ end
 
 function CommDKP:BroadcastBidTimer(seconds, title, itemIcon)       -- broadcasts timer and starts it natively
   local title = title;
-  CommDKP.Sync:SendData("CommDKPCommand", "StartBidTimer,"..seconds..","..title..","..itemIcon)
+  CommDKP.Sync:SendData("CommDKPCommand", "StartBidTimer#"..seconds.."#"..title.."#"..itemIcon)
   CommDKP:StartBidTimer(seconds, title, itemIcon)
 
   if strfind(seconds, "{") then
@@ -872,7 +872,7 @@ function CommDKP:StartBidTimer(seconds, title, itemIcon)
       extend = true;
     end
   end
-
+  
   CommDKP.BidTimer = CommDKP.BidTimer or CommDKP:CreateTimer();    -- recycles bid timer frame so multiple instances aren't created
   if not extend then CommDKP.BidTimer:SetShown(not CommDKP.BidTimer:IsShown()); end          -- shows if not shown
   if core.BidInterface and core.BidInterface:IsShown() == false then CommDKP.BidTimer.OpenBid:Show() end
