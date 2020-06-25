@@ -458,7 +458,7 @@ function CommDKP:AdjustDKPTab_Create()
 				if i == 1 then
 					selected = selected.."|c"..c.hex..core.SelectedData[i].player.."|r"
 				else
-					selected = selected..", |cff"..c.hex..core.SelectedData[i].player.."|r"
+					selected = selected..", |c"..c.hex..core.SelectedData[i].player.."|r"
 				end
 			end
 			StaticPopupDialogs["ADJUST_DKP"] = {
