@@ -723,6 +723,13 @@ function CommDKP:UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
 	if (not retOK) or (retOK and not hasInfo) then
 		newDbTable = CommDKP:InitPlayerTable(oldDbTable, hasTeams, tableName)
 	end
+
+	-- Verify that build and priorbuild elements exist.
+	if  newDbTable.dbinfo.priorbuild == nil and newDbTable.dbinfo.build == nil then
+		newDbTable.dbinfo.priorbuild = 0;
+		newDbTable.dbinfo.build = 0;
+	end
+	
 	--Set Prior Build
 	newDbTable.dbinfo.priorbuild = newDbTable.dbinfo.build;
 

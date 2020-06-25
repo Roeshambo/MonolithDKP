@@ -29,9 +29,9 @@ function CommDKP:AdjustDKP(value)
 				if search then
 					if not IsInRaid() then
 						if i < #core.SelectedData then
-							tempString = tempString.."|cff"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r, ";
+							tempString = tempString.."|c"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r, ";
 						else
-							tempString = tempString.."|cff"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r";
+							tempString = tempString.."|c"..c[core.SelectedData[i]["class"]].hex..core.SelectedData[i]["player"].."|r";
 						end
 					end
 					dkpHistoryString = dkpHistoryString..core.SelectedData[i]["player"]..","
@@ -456,7 +456,7 @@ function CommDKP:AdjustDKPTab_Create()
 					c = { hex="ffffff" }
 				end
 				if i == 1 then
-					selected = selected.."|cff"..c.hex..core.SelectedData[i].player.."|r"
+					selected = selected.."|c"..c.hex..core.SelectedData[i].player.."|r"
 				else
 					selected = selected..", |cff"..c.hex..core.SelectedData[i].player.."|r"
 				end

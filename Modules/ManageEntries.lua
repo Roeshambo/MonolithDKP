@@ -42,7 +42,7 @@ local function Remove_Entries()
 
 			c = CommDKP:GetCColors(core.SelectedData[i]["class"])
 			if i==1 then
-				removedUsers = "|cff"..c.hex..core.SelectedData[i]["player"].."|r"
+				removedUsers = "|c"..c.hex..core.SelectedData[i]["player"].."|r"
 			else
 				removedUsers = removedUsers..", |cff"..c.hex..core.SelectedData[i]["player"].."|r"
 			end
@@ -119,7 +119,7 @@ local function AddRaidToDKPTable()
 					numPlayers = numPlayers + 1;
 					c = CommDKP:GetCColors(tempClass)
 					if addedUsers == nil then
-						addedUsers = "|cff"..c.hex..tempName.."|r"; 
+						addedUsers = "|c"..c.hex..tempName.."|r"; 
 					else
 						addedUsers = addedUsers..", |cff"..c.hex..tempName.."|r"
 					end
@@ -177,7 +177,7 @@ local function AddGuildToDKPTable(rank, level)
 			numPlayers = numPlayers + 1;
 			c = CommDKP:GetCColors(class)
 			if addedUsers == nil then
-				addedUsers = "|cff"..c.hex..name.."|r"; 
+				addedUsers = "|c"..c.hex..name.."|r"; 
 			else
 				addedUsers = addedUsers..", |cff"..c.hex..name.."|r"
 			end
@@ -226,7 +226,7 @@ local function AddTargetToDKPTable()
 
 		CommDKP:FilterDKPTable(core.currentSort, "reset")
 		c = CommDKP:GetCColors(class)
-		CommDKP:Print(L["ADDED"].." |cff"..c.hex..name.."|r")
+		CommDKP:Print(L["ADDED"].." |c"..c.hex..name.."|r")
 
 		if core.ClassGraph then
 			CommDKP:ClassGraph_Update()
@@ -457,7 +457,7 @@ function CommDKP:ManageEntries()
 							c = { hex="ffffff" }
 						end
 						if i == 1 then
-							selected = selected.."|cff"..c.hex..core.SelectedData[i].player.."|r"
+							selected = selected.."|c"..c.hex..core.SelectedData[i].player.."|r"
 						else
 							selected = selected..", |cff"..c.hex..core.SelectedData[i].player.."|r"
 						end
@@ -717,7 +717,7 @@ function CommDKP:ManageEntries()
 								name = CommDKP:GetTable(CommDKP_DKPTable, true)[i].player;
 
 								if purgeString == nil then
-									purgeString = "|cff"..c.hex..name.."|r"; 
+									purgeString = "|c"..c.hex..name.."|r"; 
 								else
 									purgeString = purgeString..", |cff"..c.hex..name.."|r"
 								end

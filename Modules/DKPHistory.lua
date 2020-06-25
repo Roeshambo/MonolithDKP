@@ -115,7 +115,7 @@ function CommDKP:DKPHistoryFilterBox_Create()
 				    else
 				     	c = { hex="444444" }
 				    end
-					filterName.text, filterName.arg1, filterName.arg2, filterName.checked, filterName.isNotRadio = "|cff"..c.hex..PlayerList[i].."|r", PlayerList[i], "|cff"..c.hex..PlayerList[i].."|r", PlayerList[i] == curfilterName, true
+					filterName.text, filterName.arg1, filterName.arg2, filterName.checked, filterName.isNotRadio = "|c"..c.hex..PlayerList[i].."|r", PlayerList[i], "|c"..c.hex..PlayerList[i].."|r", PlayerList[i] == curfilterName, true
 					UIDropDownMenu_AddButton(filterName, level)
 				end
 			end
@@ -394,9 +394,9 @@ function CommDKP:DKPHistory_Update(reset)
 				if classSearch then
 					c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[classSearch[1][1]].class)
 					if k < #player_table then
-						playerString = playerString.."|cff"..c.hex..player_table[k].."|r, "
+						playerString = playerString.."|c"..c.hex..player_table[k].."|r, "
 					elseif k == #player_table then
-						playerString = playerString.."|cff"..c.hex..player_table[k].."|r"
+						playerString = playerString.."|c"..c.hex..player_table[k].."|r"
 					end
 				end
 			end
@@ -476,7 +476,7 @@ function CommDKP:DKPHistory_Update(reset)
 				    	end
 						GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 0);
 						GameTooltip:SetText(L["DELETEDBY"], 0.25, 0.75, 0.90, 1, true);
-						GameTooltip:AddDoubleLine("|cff"..col.hex..delOfficer.."|r", delete_month.."/"..delete_day.."/"..delete_year.." @ "..delete_timeofday, 1,0,0,1,1,1)
+						GameTooltip:AddDoubleLine("|c"..col.hex..delOfficer.."|r", delete_month.."/"..delete_day.."/"..delete_year.." @ "..delete_timeofday, 1,0,0,1,1,1)
 						GameTooltip:Show()
 					end);
 					CommDKP.ConfigTab6.history[i].b:SetScript("OnLeave", function(self)

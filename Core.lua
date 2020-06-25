@@ -10,36 +10,43 @@ local L = core.L;
 core.CommDKP = {};       -- UI Frames global
 local CommDKP = core.CommDKP;
 
-local tc_colors = {
-	["Druid"] = { r = 1, g = 0.49, b = 0.04, hex = "FF7D0A" },
-	["Hunter"] = {  r = 0.67, g = 0.83, b = 0.45, hex = "ABD473" },
-	["Mage"] = { r = 0.25, g = 0.78, b = 0.92, hex = "40C7EB" },
-	["Priest"] = { r = 1, g = 1, b = 1, hex = "FFFFFF" },
-	["Rogue"] = { r = 1, g = 0.96, b = 0.41, hex = "FFF569" },
-	["Shaman"] = { r = 0.96, g = 0.55, b = 0.73, hex = "F58CBA" },
-	["Paladin"] = { r = 0.96, g = 0.55, b = 0.73, hex = "F58CBA" },
-	["Warlock"] = { r = 0.53, g = 0.53, b = 0.93, hex = "8787ED" },
-	["Warrior"] = { r = 0.78, g = 0.61, b = 0.43, hex = "C79C6E" }
-}
-
-local tc_classes = {}
 
 core.faction = UnitFactionGroup("player")
-if core.faction == "Horde" then
-	tc_classes = { "Druid", "Hunter", "Mage", "Priest", "Rogue", "Shaman", "Warlock", "Warrior" }
-elseif core.faction == "Alliance" then
-	tc_classes = { "Druid", "Hunter", "Mage", "Paladin", "Priest", "Rogue", "Warlock", "Warrior" }
-end
 
+local api_classes = {}
+api_classes = LOCALIZED_CLASS_NAMES_MALE;
 core.CColors = {
 	["UNKNOWN"] = { r = 0.627, g = 0.627, b = 0.627, hex = "A0A0A0" }
 }
 core.classes = {}
-for i = 1, #tc_classes do
-	local cname = tc_classes[i]
-	local lname = string.upper(cname)
-	core.CColors[lname] = tc_colors[cname]
-	table.insert(core.classes, lname)
+
+for class,friendlyClass in pairs(api_classes) do
+	local colorTable = {};
+	local addColor = false;
+
+	-- There appears to be no WoW API that lists out specific classes to a single faction
+	-- Nor is there an API that identifies a specific class to a specific faction.
+	-- I'd love to not hard code this though, but I seem to be out of luck.
+
+	if core.faction == "Horde" then
+		if class ~= "PALADIN" then
+			addColor = true;
+		end
+	end
+
+	if core.faction == "Alliance" then
+		if class ~= "SHAMAN" then
+			addColor = true;
+		end
+	end
+
+	if addColor then
+		colorTable.class = friendlyClass;
+		colorTable.r, colorTable.g, colorTable.b, colorTable.hex = GetClassColor(class);
+
+		core.CColors[class] = colorTable;
+		table.insert(core.classes, class)
+	end
 end
 
 --------------------------------------
@@ -577,7 +584,7 @@ function CommDKP:StatusVerify_Update()
 					else
 						c = { hex="ffffff" }
 					end
-					GameTooltip:AddDoubleLine("|cff"..c.hex..k.."|r",v,1,1,1,1,1,1);
+					GameTooltip:AddDoubleLine("|c"..c.hex..k.."|r",v,1,1,1,1,1,1);
 				end
 				if core.IsOfficer then
 					GameTooltip:AddLine(" ")

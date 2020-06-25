@@ -649,7 +649,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                     
                     c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam)[search[1][1]].class)
                     if i==1 then
-                      removedUsers = "|cff"..c.hex..CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam)[search[1][1]].player.."|r"
+                      removedUsers = "|c"..c.hex..CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam)[search[1][1]].player.."|r"
                     else
                       removedUsers = removedUsers..", |cff"..c.hex..CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam)[search[1][1]].player.."|r"
                     end

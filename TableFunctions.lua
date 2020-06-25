@@ -115,7 +115,7 @@ local function DisplayUserHistory(self, player)
 	c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[LifetimeSearch[1][1]].class)
 
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
-	GameTooltip:SetText(L["RECENTHISTORYFOR"].." |cff"..c.hex..player.."|r\n", 0.25, 0.75, 0.90, 1, true);
+	GameTooltip:SetText(L["RECENTHISTORYFOR"].." |c"..c.hex..player.."|r\n", 0.25, 0.75, 0.90, 1, true);
 
 	if PlayerSearch then
 		for i=1, #PlayerSearch do
