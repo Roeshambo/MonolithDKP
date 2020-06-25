@@ -13,14 +13,15 @@ local CommDKP = core.CommDKP;
 
 core.faction = UnitFactionGroup("player")
 
-local api_classes = {}
-api_classes = LOCALIZED_CLASS_NAMES_MALE;
+
+API_CLASSES = LOCALIZED_CLASS_NAMES_MALE;
+
 core.CColors = {
 	["UNKNOWN"] = { r = 0.627, g = 0.627, b = 0.627, hex = "A0A0A0" }
 }
 core.classes = {}
 
-for class,friendlyClass in pairs(api_classes) do
+for class,friendlyClass in pairs(API_CLASSES) do
 	local colorTable = {};
 	local addColor = false;
 

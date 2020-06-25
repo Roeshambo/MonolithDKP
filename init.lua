@@ -725,16 +725,19 @@ function CommDKP:UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
 	end
 
 	-- Verify that build and priorbuild elements exist.
-	if  newDbTable.dbinfo.priorbuild == nil and newDbTable.dbinfo.build == nil then
-		newDbTable.dbinfo.priorbuild = 0;
+	if  newDbTable.dbinfo.build == nil then
 		newDbTable.dbinfo.build = 0;
+	end
+
+	if  newDbTable.dbinfo.priorbuild == nil then
+		newDbTable.dbinfo.priorbuild = 0;
 	end
 	
 	--Set Prior Build
 	newDbTable.dbinfo.priorbuild = newDbTable.dbinfo.build;
 
 	-- Build 20205 (2.2.5) Changes
-	if newDbTable.dbinfo.build < 20205 then
+	if newDbTable.dbinfo.build < 20205 and newDbTable.dbinfo.priorbuild ~= core.BuildNumber then
 		if newDbTable.dbinfo.name == "CommDKP_DB" then
 
 			local defaultTable = {}

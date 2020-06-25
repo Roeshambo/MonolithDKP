@@ -456,7 +456,7 @@ local function RightClickMenu(self)
 	end
 
 	for i=1, #core.classes do       -- create Filter selections in context menu
-		menu[7].menuList[i] = { text = core.LocalClass[core.classes[i]], isNotRadio = true, keepShownOnClick = true, checked = CommDKP.ConfigTab1.checkBtn[i]:GetChecked(), func = function()
+		menu[7].menuList[i] = { text = API_CLASSES[core.classes[i]], isNotRadio = true, keepShownOnClick = true, checked = CommDKP.ConfigTab1.checkBtn[i]:GetChecked(), func = function()
 			CommDKP.ConfigTab1.checkBtn[i]:SetChecked(not CommDKP.ConfigTab1.checkBtn[i]:GetChecked())
 			CommDKPFilterChecks(CommDKP.ConfigTab1.checkBtn[9])
 			for j=1, #core.classes+1 do
@@ -695,7 +695,7 @@ function CommDKP:DKPTable_Update()
 			row.DKPInfo[1]:SetTextColor(c.r, c.g, c.b, 1)
 			
 			if core.CenterSort == "class" then
-				row.DKPInfo[2]:SetText(core.LocalClass[core.WorkingTable[index].class])
+				row.DKPInfo[2]:SetText(API_CLASSES[core.WorkingTable[index].class])
 			elseif core.CenterSort == "rank" then
 				row.DKPInfo[2]:SetText(rank)
 			elseif core.CenterSort == "spec" then

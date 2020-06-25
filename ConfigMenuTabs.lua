@@ -173,7 +173,7 @@ function CommDKP:ConfigMenuTabs()
 		if i <= 9 then CommDKP.ConfigTab1.checkBtn[i]:SetChecked(true) else CommDKP.ConfigTab1.checkBtn[i]:SetChecked(false) end;
 		CommDKP.ConfigTab1.checkBtn[i]:SetID(i)
 		if i <= 8 then
-			CommDKP.ConfigTab1.checkBtn[i].text:SetText("|cff5151de"..core.LocalClass[core.classes[i]].."|r");
+			CommDKP.ConfigTab1.checkBtn[i].text:SetText("|cff5151de"..API_CLASSES[core.classes[i]].."|r");
 		end
 		if i==9 then
 			CommDKP.ConfigTab1.checkBtn[i]:SetScript("OnClick",
