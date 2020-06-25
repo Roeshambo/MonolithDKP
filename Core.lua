@@ -399,7 +399,7 @@ function CommDKP:BroadcastTimer(seconds, ...)       -- broadcasts timer and star
 			return;
 		end
 		CommDKP:StartTimer(seconds, ...)
-		CommDKP.Sync:SendData("CommDKPCommand", "StartTimer,"..seconds..","..title)
+		CommDKP.Sync:SendData("CommDKPCommand", "StartTimer#"..seconds.."#"..title)
 	end
 end
 
