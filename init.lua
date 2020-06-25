@@ -174,6 +174,56 @@ local function HandleSlashCommands(str)
   end
 end
 
+ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", function(self, event, msg, ...)      -- suppresses outgoing whisper responses to limit spam
+	if core.DB.defaults.SuppressTells then
+		if core.BidInProgress then
+			if strfind(msg, L["YOURBIDOF"]) == 1 then
+			  return true
+			elseif strfind(msg, L["BIDDENIEDFILTER"]) == 1 then
+			  return true
+			elseif strfind(msg, L["BIDACCEPTEDFILTER"]) == 1 then
+			  return true;
+			elseif strfind(msg, L["NOTSUBMITTEDBID"]) == 1 then
+			  return true;
+			elseif strfind(msg, L["ONLYONEROLLWARN"]) == 1 then
+			  return true;
+			elseif strfind(msg, L["ROLLNOTACCEPTED"]) == 1 then
+			  return true;
+			elseif strfind(msg, L["YOURBID"].." "..L["MANUALLYDENIED"]) == 1 then
+			  return true;
+			elseif strfind(msg, L["CANTCANCELROLL"]) == 1 then
+			  return true;
+			end
+		end
+	  
+		if strfind(msg, "CommunityDKP: ") == 1 then
+			return true
+		elseif strfind(msg, L["DKPAVAILABLE"]) ~= nil and strfind(msg, '%[') ~= nil and strfind(msg, '%]') ~= nil then
+			return true
+		elseif strfind(msg, L["NOBIDINPROGRESS"]) == 1 then
+			return true
+		elseif strfind(msg, L["BIDCANCELLED"]) == 1 then
+			return true
+		end
+	end
+end)
+
+ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", function(self, event, msg, ...)      -- suppresses incoming whisper responses to limit spam
+
+	if core.DB.defaults.SuppressTells then
+		if core.BidInProgress then
+			if strfind(msg, "!bid") == 1 then
+			  return true
+			end
+		end
+
+		if strfind(msg, "!dkp") == 1 then
+			return true
+		end
+	end
+end)
+
+
 function CommDKP_wait(delay, func, ...)
 	if(type(delay)~="number" or type(func)~="function") then
 		return false;
@@ -387,6 +437,7 @@ function CommDKP_OnEvent(self, event, arg1, ...)
 	elseif event == "CHAT_MSG_WHISPER" then
 		CommDKP:CheckOfficer()
 		if core.IsOfficer then
+
 			arg1 = strlower(arg1)
 			if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "！dkp") == 1) then
 				CommDKP_CHAT_MSG_WHISPER(arg1, ...)
@@ -769,7 +820,7 @@ function CommDKP:InitializeCommDKPDB(dbTable)
 
 	if not dbTable.defaults or not dbTable.defaults.HistoryLimit then
 		dbTable.defaults = {
-			HistoryLimit = 2500, DKPHistoryLimit = 2500, BidTimerSize = 1.0, CommDKPScaleSize = 1.0, supressNotifications = false, TooltipHistoryCount = 15, SupressTells = true,
+			HistoryLimit = 2500, DKPHistoryLimit = 2500, BidTimerSize = 1.0, CommDKPScaleSize = 1.0, SuppressNotifications = false, TooltipHistoryCount = 15, SuppressTells = true,
 		}
 	end
 	if not dbTable.defaults.ChatFrames then 

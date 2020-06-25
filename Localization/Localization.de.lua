@@ -675,8 +675,8 @@ if GetLocale() == "deDE" then
     SUPPRESSNOTIFICATIONS = "Unterdrücken Sie die Addon-Benachrichtigungen",
     SUPPRESSNOTIFYTTDESC = "Verbirgt alle Zusatznachrichten vor der Anzeige in Ihrem Chat-Frame.",
     SUPPRESSNOTIFYTTWARN = "Broadcast-Updates werden weiterhin empfangen.",
-    SUPRESSBIDWHISPTTDESC = "Unterdrückt eingehendes und ausgehendes Flüstern im Zusammenhang mit Geboten, während ein Gebot ausgeführt wird.",
-    SUPRESSBIDWHISPTTWARN = "Alle anderen Nachrichten, die nicht mit dem Bieten zusammenhängen, werden weiterhin angezeigt.",
+    SuppressBIDWHISPTTDESC = "Unterdrückt eingehendes und ausgehendes Flüstern im Zusammenhang mit Geboten, während ein Gebot ausgeführt wird.",
+    SuppressBIDWHISPTTWARN = "Alle anderen Nachrichten, die nicht mit dem Bieten zusammenhängen, werden weiterhin angezeigt.",
     SYNCALREADY = "Derzeit wird bereits eine Synchronisierung durchgeführt.",
     SYNCCOMPLETE = "Synchronisierung abgeschlossen",
     SYNCCOMPLETE2 = "Synchronisierung abgeschlossen. Alle Spieler sind auf dem neuesten Stand.",
@@ -781,16 +781,16 @@ if GetLocale() == "deDE" then
 
     Ex: |cffa335ee|Hitem:18824::::::::120:577::::::|h[Magma Tempered Boots]|h|r fällt und hat statische Kosten von 30 DKP. Spieler A gewinnt das Gebot, indem er die meisten DKP hat (oder nach Ermessen des Schlachtzugsführers verteilt wird, wenn ein Gleichstand besteht) und seine DKP um 30 reduziert wird. Dann erhält jedes Schlachtzugsmitglied 0,75 DKP.]=],
     ZEROSUMHEAD = "Nullsumme",
-    ZEROSUMITEMCOST = "Zero Sum Item Costs",
+    ZEROSUMITEMCOST = "Zero Sum Item Costs", --TODO TRANSLATE:
     ZEROSUMITEMCOSTTTDESC = "Wählen Sie die Art der Artikelkosten aus, die Sie verwenden möchten. Static gibt Artikeln einen definierten Preis. Während Mindestgebot ermöglicht es den Spielern, ein Gebot abzugeben, das die Kosten definiert, während Sie einen Mindestgebotsschwellenwert festlegen.",
-    ZONE = "Zone",
+    ZONE = "Zone", --TODO TRANSLATE:
     PASS                  = "Passen",
 
-    MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?",
-    MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.",
-    MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?",
-    MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
-    MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
+    MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?", --TODO TRANSLATE:
+    MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.", --TODO TRANSLATE:
+    MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?", --TODO TRANSLATE:
+    MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.", --TODO TRANSLATE:
+    MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
 
     CHANGELOG1 = "Initial Release of CommunityDKP",
     CHANGELOG2 = " - Contains Multi-Guild, Multi-Team Syncing.",

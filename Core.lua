@@ -365,7 +365,7 @@ function CommDKP:FormatTime(time)
 end
 
 function CommDKP:Print(...)        --print function to add "CommunityDKP:" to the beginning of print() outputs.
-	if core.DB == nil or not core.DB.defaults.supressNotifications then
+	if core.DB == nil or not core.DB.defaults.SuppressNotifications then
 		local defaults = CommDKP:GetThemeColor();
 		local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "CommunityDKP:", defaults[2].hex:upper());
 		local suffix = "|r";

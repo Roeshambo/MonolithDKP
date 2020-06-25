@@ -77,7 +77,7 @@ function CommDKP_Standby_Handler(text, ...)
 	end
 
 	ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", function(self, event, msg, ...)		-- suppresses outgoing whisper responses to limit spam
-		if core.StandbyActive and core.DB.defaults.SupressTells then
+		if core.StandbyActive and core.DB.defaults.SuppressTells then
 			if strfind(msg, "CommunityDKP: ") then
 				return true
 			end
