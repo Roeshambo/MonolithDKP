@@ -42,6 +42,7 @@ end
 
 function CommDKP.Sync:OnEnable()
   CommDKP.Sync:RegisterComm("CommDKPDelUsers", CommDKP.Sync:OnCommReceived())      -- Broadcasts deleted users (archived users not on the DKP table)
+  CommDKP.Sync:RegisterComm("CommDKPAddUsers", CommDKP.Sync:OnCommReceived())   -- Broadcasts newly added users (or recovers)
   CommDKP.Sync:RegisterComm("CommDKPMerge", CommDKP.Sync:OnCommReceived())      -- Broadcasts 2 weeks of data from officers (for merging)
   -- Normal broadcast Prefixs
   CommDKP.Sync:RegisterComm("CommDKPDecay", CommDKP.Sync:OnCommReceived())        -- Broadcasts a weekly decay adjustment
@@ -382,7 +383,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
         if (sender ~= UnitName("player")) then
           if prefix == "CommDKPLootDist" or prefix == "CommDKPDKPDist" or prefix == "CommDKPDelLoot" or prefix == "CommDKPDelSync" or prefix == "CommDKPMinBid" or prefix == "CDKPWhitelist"
           or prefix == "CommDKPDKPModes" or prefix == "CommDKPStand" or prefix == "CommDKPZSumBank" or prefix == "CommDKPBossLoot" or prefix == "CommDKPDecay" or prefix == "CommDKPDelUsers" or
-          prefix == "CommDKPAllTabs" or prefix == "CommDKPBidShare" or prefix == "CommDKPMerge" or prefix == "CommDKPSetPrice" or prefix == "CommDKPMaxBid" then
+          prefix == "CommDKPAllTabs" or prefix == "CommDKPBidShare" or prefix == "CommDKPMerge" or prefix == "CommDKPSetPrice" or prefix == "CommDKPMaxBid" or prefix == "CommDKPAddUsers" then
 
             if prefix == "CommDKPAllTabs" then   -- receives full table broadcast
               --print("[CommunityDKP] COMMS: Full Broadcast Receive Started for team "..CommDKP:GetTeamName(_objReceived.CurrentTeam));
@@ -501,9 +502,9 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                             local class
 
                             if (tonumber(_objReceived.Data.DKP[i].dkp) > 0 and not _objReceived.Data.DKP[i].deletes) or (tonumber(_objReceived.Data.DKP[i].dkp) < 0 and _objReceived.Data.DKP[i].deletes) then
-                              CommDKP_Profile_Create(players[j], tonumber(deserialized.DKP[i].dkp), tonumber(deserialized.DKP[i].dkp), nil, _objReceived.CurrentTeam)
+                              CommDKP_Profile_Create(players[j], tonumber(_objReceived.Data.DKP[i].dkp), tonumber(_objReceived.Data.DKP[i].dkp), nil, _objReceived.CurrentTeam)
                             else
-                              CommDKP_Profile_Create(players[j], tonumber(deserialized.DKP[i].dkp), nil, nil, _objReceived.CurrentTeam)
+                              CommDKP_Profile_Create(players[j], tonumber(_objReceived.Data.DKP[i].dkp), nil, nil, _objReceived.CurrentTeam)
                             end
                           end
                         end
@@ -630,6 +631,8 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 CommDKP:DKPHistory_Update(true)
               end
               CommDKP:FilterDKPTable(core.currentSort, "reset")
+            elseif prefix == "CommDKPAddUsers" and UnitName("player") ~= sender then
+              CommDKP:AddEntitiesToDKPTable(_objReceived.Data);
             elseif prefix == "CommDKPDelUsers" and UnitName("player") ~= sender then
               local numPlayers = 0
               local removedUsers = ""
@@ -638,10 +641,14 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam), _objReceived.Data[i].player, "player")
 
                 if search and _objReceived.Data[i].deleted and _objReceived.Data[i].deleted ~= "Recovered" then
-                  if (CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player] and CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player].edited < _objReceived.Data[i].edited) or not CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player] then
+                  if _objReceived.Data[i].edited == nil then
+                    _objReceived.Data[i].edited = time();
+                  end
+
+                  if (CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player] and _objReceived.Data[i].deleted) or (CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player] and CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player].edited < _objReceived.Data[i].edited) or (not CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player]) then
                     --delete user, archive data
                     if not CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player] then    -- creates/adds to archive entry for user
-                      CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player] = { dkp=0, lifetime_spent=0, lifetime_gained=0, deleted=deserialized[i].deleted, edited=deserialized[i].edited }
+                      CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player] = { dkp=0, lifetime_spent=0, lifetime_gained=0, deleted=_objReceived.Data[i].deleted, edited=_objReceived.Data[i].edited }
                     else
                       CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player].deleted = _objReceived.Data[i].deleted
                       CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player].edited = _objReceived.Data[i].edited

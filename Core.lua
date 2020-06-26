@@ -583,7 +583,7 @@ function CommDKP:StatusVerify_Update()
 					if classSearch then
 						c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true, CommDKP:GetCurrentTeamIndex())[classSearch[1][1]].class)
 					else
-						c = { hex="ffffff" }
+						c = { hex="ffffffff" }
 					end
 					GameTooltip:AddDoubleLine("|c"..c.hex..k.."|r",v,1,1,1,1,1,1);
 				end

@@ -113,7 +113,7 @@ function CommDKP:DKPHistoryFilterBox_Create()
 				    if classSearch then
 				     	c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[classSearch[1][1]].class)
 				    else
-				     	c = { hex="444444" }
+				     	c = { hex="ff444444" }
 				    end
 					filterName.text, filterName.arg1, filterName.arg2, filterName.checked, filterName.isNotRadio = "|c"..c.hex..PlayerList[i].."|r", PlayerList[i], "|c"..c.hex..PlayerList[i].."|r", PlayerList[i] == curfilterName, true
 					UIDropDownMenu_AddButton(filterName, level)
@@ -432,7 +432,7 @@ function CommDKP:DKPHistory_Update(reset)
 	    	if officer_search then
 		     	c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[officer_search[1][1]].class)
 		    else
-		     	c = { hex="444444" }
+		     	c = { hex="ff444444" }
 		    end
 			
 			if not strfind(dkp, "-") then
@@ -472,7 +472,7 @@ function CommDKP:DKPHistory_Update(reset)
 				    	if s then
 				    		col = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[s[1][1]].class)
 				    	else
-				    		col = { hex="444444"}
+				    		col = { hex="ff444444"}
 				    	end
 						GameTooltip:SetOwner(self, "ANCHOR_TOP", 0, 0);
 						GameTooltip:SetText(L["DELETEDBY"], 0.25, 0.75, 0.90, 1, true);
