@@ -22,9 +22,10 @@ jobs:
     steps:
     - name: Split Action
       uses: JungWinter/split@v1.1.0
+      id: steps
       with:
         # String to split
-        msg: $VERSION
+        msg: ${{ github.ref }}
         # The delimiter to split the string
         seperator: '/'  
         # Maximum number of splits
@@ -40,5 +41,5 @@ jobs:
     # Runs a set of commands using the runners shell
     - name: Run a multi-line script
       run: |
-        echo "Add other actions to build",
-        echo "test, and deploy your project."
+        echo "Add other actions to build - ${{ steps.split.outputs._0 }}",
+        echo "test, and deploy your project. - ${{ steps.split.outputs._1 }}"
