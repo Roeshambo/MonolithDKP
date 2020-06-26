@@ -20,10 +20,15 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-    - uses: jungwinter/split@v1
-        id: split
-        with:
-          msg: "$VERSION"
+    - name: Split Action
+      uses: JungWinter/split@v1.1.0
+      with:
+        # String to split
+        msg: "$VERSION"
+        # The delimiter to split the string
+        seperator: '/'  
+        # Maximum number of splits
+        maxsplit: 3
           
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
