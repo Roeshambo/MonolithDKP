@@ -22,14 +22,12 @@ jobs:
     steps:
     - name: Split Action
       uses: JungWinter/split@v1.1.0
-      id: steps
+      id: split
       with:
         # String to split
         msg: ${{ github.ref }}
         # The delimiter to split the string
         seperator: '/'  
-        # Maximum number of splits
-        maxsplit: 3
           
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
