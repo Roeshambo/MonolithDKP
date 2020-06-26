@@ -24,7 +24,7 @@ jobs:
       uses: JungWinter/split@v1.1.0
       with:
         # String to split
-        msg: "$VERSION"
+        msg: $VERSION
         # The delimiter to split the string
         seperator: '/'  
         # Maximum number of splits
