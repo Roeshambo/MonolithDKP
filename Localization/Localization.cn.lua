@@ -658,12 +658,12 @@ if GetLocale() == "zhCN" then
     |cffff0000其他|r：允许最高出价（设置如下）。
 
     |cffff0000其他|r：即使项目费用超出了其可用的DKP，也允许玩家提交出价。]=],
-    SUPPRESSBIDWHISP = "Supress竞价耳语",
-    SUPPRESSNOTIFICATIONS = "Supress插件通知",
+    SUPPRESSBIDWHISP = "Suppress竞价耳语",
+    SUPPRESSNOTIFICATIONS = "Suppress插件通知",
     SUPPRESSNOTIFYTTDESC = "隐藏所有附加消息，使其不会显示在聊天框中。",
     SUPPRESSNOTIFYTTWARN = "广播更新仍将被接收。",
-    SUPRESSBIDWHISPTTDESC = "在进行投标时，抑制与投标有关的传入和传出耳语。",
-    SUPRESSBIDWHISPTTWARN = "所有其他与非出价相关的耳语仍将显示。",
+    SuppressBIDWHISPTTDESC = "在进行投标时，抑制与投标有关的传入和传出耳语。",
+    SuppressBIDWHISPTTWARN = "所有其他与非出价相关的耳语仍将显示。",
     SYNCALREADY = "当前正在进行同步。",
     SYNCCOMPLETE = "同步完成",
     SYNCCOMPLETE2 = "同步完成。 所有玩家都是最新的。",
@@ -792,17 +792,18 @@ if GetLocale() == "zhCN" then
     VALIDATEWARN          = "这将根据他们的完整历史记录重新计算所有玩家的dkp，获得的生命和花费的生命。 如果由于缺少历史记录而导致结果不正确，请确保备份已保存的变量文件。 在运行之前，您应该为所有播放器重置先前的dkp（上下文菜单>全选>重置先前的dkp），以便可以看到它们已更改了多少。 你想继续吗？",
     PASS                  = "通过",
 
-    MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?",
-    MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.",
-    MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?",
-    MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
-    MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
+    MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?", --TODO TRANSLATE:
+    MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.", --TODO TRANSLATE:
+    MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?", --TODO TRANSLATE:
+    MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.", --TODO TRANSLATE:
+    MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
 
+    --TODO TRANSLATE:
     CHANGELOG1 = "CommunityDKP - WoW Classic Phase 5",
     CHANGELOG2 = " - Updated Interface",
     CHANGELOG3 = " - Additional enchancements to in-game migration from MonolithDKP (Thanks matthi!)",
     CHANGELOG4 = " - A few more edge case bugfixes.",
-    CHANGELOG5 = "",
+    CHANGELOG5 = " - Awesome texture pack upgrade (Thanks to @Vergil and Essential@MirageRaceway)",
     CHANGELOG6 = "",
     CHANGELOG7 = "",
     CHANGELOG8 = "CommunityDKP Discord: https://discord.gg/HGgvYFB",

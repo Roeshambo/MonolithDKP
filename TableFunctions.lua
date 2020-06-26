@@ -115,7 +115,7 @@ local function DisplayUserHistory(self, player)
 	c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[LifetimeSearch[1][1]].class)
 
 	GameTooltip:SetOwner(self, "ANCHOR_RIGHT", 0, 0);
-	GameTooltip:SetText(L["RECENTHISTORYFOR"].." |cff"..c.hex..player.."|r\n", 0.25, 0.75, 0.90, 1, true);
+	GameTooltip:SetText(L["RECENTHISTORYFOR"].." |c"..c.hex..player.."|r\n", 0.25, 0.75, 0.90, 1, true);
 
 	if PlayerSearch then
 		for i=1, #PlayerSearch do
@@ -456,7 +456,7 @@ local function RightClickMenu(self)
 	end
 
 	for i=1, #core.classes do       -- create Filter selections in context menu
-		menu[7].menuList[i] = { text = core.LocalClass[core.classes[i]], isNotRadio = true, keepShownOnClick = true, checked = CommDKP.ConfigTab1.checkBtn[i]:GetChecked(), func = function()
+		menu[7].menuList[i] = { text = API_CLASSES[core.classes[i]], isNotRadio = true, keepShownOnClick = true, checked = CommDKP.ConfigTab1.checkBtn[i]:GetChecked(), func = function()
 			CommDKP.ConfigTab1.checkBtn[i]:SetChecked(not CommDKP.ConfigTab1.checkBtn[i]:GetChecked())
 			CommDKPFilterChecks(CommDKP.ConfigTab1.checkBtn[9])
 			for j=1, #core.classes+1 do
@@ -695,7 +695,7 @@ function CommDKP:DKPTable_Update()
 			row.DKPInfo[1]:SetTextColor(c.r, c.g, c.b, 1)
 			
 			if core.CenterSort == "class" then
-				row.DKPInfo[2]:SetText(core.LocalClass[core.WorkingTable[index].class])
+				row.DKPInfo[2]:SetText(API_CLASSES[core.WorkingTable[index].class])
 			elseif core.CenterSort == "rank" then
 				row.DKPInfo[2]:SetText(rank)
 			elseif core.CenterSort == "spec" then
@@ -851,9 +851,7 @@ function CommDKP:DKPTable_Create()
 	end)
 	CommDKP.DKPTable.SeedVerify:SetScript("OnMouseDown", function()  -- broadcast button
 		if core.IsOfficer then	
-			local seed
-			if #CommDKP:GetTable(CommDKP_DKPHistory, true) > 0 and #CommDKP:GetTable(CommDKP_Loot, true) > 0 then seed = CommDKP:GetTable(CommDKP_DKPHistory, true)[1].index..","..CommDKP:GetTable(CommDKP_Loot, true)[1].index else seed = "start" end
-			CommDKP.Sync:SendData("CommDKPQuery", seed) 	-- requests role and spec data and sets current seeds
+			CommDKP:SendSeedData();
 			CommDKP_BroadcastFull_Init() 	-- launches Broadcast UI
 		end
 	end)

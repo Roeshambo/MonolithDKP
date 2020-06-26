@@ -4,7 +4,7 @@ This is the development repository for CommunityDKP and may not necessarily refl
 
 CommunityDKP is the leading DKP Management Tool supporting a number of different loot rules including ZeroSum, Roll-Based Bidding, Minimum Value Bidding, and Statis Value Bidding. Any suggestions or requests are also welcome!  
 
-CommunityDKP Discord Server: https://discord.gg/HGgvYFB
+CommunityDKP Discord Server: https://discord.gg/dXXK4vH
   
 **General Features Include:**
 

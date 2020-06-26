@@ -98,7 +98,7 @@ local function CommDKPDeleteMenu(index)
 	local c, deleteString;
 	if search2 then
 		c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[search2[1][1]].class)
-		deleteString = L["CONFIRMDELETEENTRY1"]..": |cff"..c.hex..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["player"].."|r "..L["WON"].." "..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["loot"].." "..L["FOR"].." "..-CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["cost"].." "..L["DKP"].."?\n\n("..L["THISWILLREFUND"].." |cff"..c.hex..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]].player.."|r "..-CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["cost"].." "..L["DKP"]..")";
+		deleteString = L["CONFIRMDELETEENTRY1"]..": |c"..c.hex..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["player"].."|r "..L["WON"].." "..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["loot"].." "..L["FOR"].." "..-CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["cost"].." "..L["DKP"].."?\n\n("..L["THISWILLREFUND"].." |c"..c.hex..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]].player.."|r "..-CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["cost"].." "..L["DKP"]..")";
 	else
 		deleteString = L["CONFIRMDELETEENTRY1"]..": |cff444444"..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["player"].."|r "..L["WON"].." "..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["loot"].." "..L["FOR"].." "..-CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]]["cost"].." "..L["DKP"].."?\n\n("..L["THISWILLREFUND"].." |cff444444"..CommDKP:GetTable(CommDKP_Loot, true)[search[1][1]].player.."|r "..-DKP_Loot[search[1][1]]["cost"].." "..L["DKP"]..")";
 	end
@@ -282,8 +282,8 @@ function CommDKP:CreateSortBox()
 						else
 							c = { hex="444444" }
 						end
-						dropDownMenuItem.text = "|cff"..c.hex..PlayerList[i].."|r" 
-						dropDownMenuItem.value = "|cff"..c.hex..PlayerList[i].."|r" 
+						dropDownMenuItem.text = "|c"..c.hex..PlayerList[i].."|r" 
+						dropDownMenuItem.value = "|c"..c.hex..PlayerList[i].."|r" 
 						dropDownMenuItem.arg1 = PlayerList[i]
 						dropDownMenuItem.arg2 = L["PLAYERS"]
 						dropDownMenuItem.isNotRadio = true
@@ -524,10 +524,10 @@ function CommDKP:LootHistory_Update(filter)				-- if "filter" is included in cal
 		    if strtrim(strsub(thedate, 1, 8), " ") ~= curDate or LootTable[i]["zone"] ~= curZone then
 		    	if strtrim(strsub(thedate, 1, 8), " ") ~= curDate then
 					feedString = date2.."/"..date3.."/"..date1.."\n  |cff616ccf"..LootTable[i]["zone"].."|r\n   |cffff0000"..LootTable[i]["boss"].."|r |cff555555("..strtrim(strsub(thedate, 10), " ")..")|r".."\n"
-					feedString = feedString.."    "..itemToLink.." "..L["WONBY"].." |cff"..c.hex..LootTable[i]["player"].."|r |cff555555("..lootCost.." "..L["DKP"]..")|r"
+					feedString = feedString.."    "..itemToLink.." "..L["WONBY"].." |c"..c.hex..LootTable[i]["player"].."|r |cff555555("..lootCost.." "..L["DKP"]..")|r"
 				else
 					feedString = "  |cff616ccf"..LootTable[i]["zone"].."|r\n   |cffff0000"..LootTable[i]["boss"].."|r |cff555555("..strtrim(strsub(thedate, 10), " ")..")|r".."\n"
-					feedString = feedString.."    "..itemToLink.." "..L["WONBY"].." |cff"..c.hex..LootTable[i]["player"].."|r |cff555555("..lootCost.." "..L["DKP"]..")|r"
+					feedString = feedString.."    "..itemToLink.." "..L["WONBY"].." |c"..c.hex..LootTable[i]["player"].."|r |cff555555("..lootCost.." "..L["DKP"]..")|r"
 				end
 				        
 				CommDKP.ConfigTab5.looter[i]:SetText(feedString);
@@ -536,13 +536,13 @@ function CommDKP:LootHistory_Update(filter)				-- if "filter" is included in cal
 				curBoss = LootTable[i]["boss"];
 		    elseif LootTable[i]["boss"] ~= curBoss then
 		    	feedString = "   |cffff0000"..LootTable[i]["boss"].."|r |cff555555("..strtrim(strsub(thedate, 10), " ")..")|r".."\n"
-		    	feedString = feedString.."    "..itemToLink.." "..L["WONBY"].." |cff"..c.hex..LootTable[i]["player"].."|r |cff555555("..lootCost.." "..L["DKP"]..")|r"
+		    	feedString = feedString.."    "..itemToLink.." "..L["WONBY"].." |c"..c.hex..LootTable[i]["player"].."|r |cff555555("..lootCost.." "..L["DKP"]..")|r"
 		    	 
 		    	CommDKP.ConfigTab5.looter[i]:SetText(feedString);
 		    	curDate = strtrim(strsub(thedate, 1, 8), " ")
 		    	curBoss = LootTable[i]["boss"]
 		    else
-		    	feedString = "    "..itemToLink.." "..L["WONBY"].." |cff"..c.hex..LootTable[i]["player"].."|r |cff555555("..lootCost.." "..L["DKP"]..")|r"
+		    	feedString = "    "..itemToLink.." "..L["WONBY"].." |c"..c.hex..LootTable[i]["player"].."|r |cff555555("..lootCost.." "..L["DKP"]..")|r"
 		    	
 		    	CommDKP.ConfigTab5.looter[i]:SetText(feedString);
 		    	curZone = LootTable[i]["zone"];
@@ -608,9 +608,9 @@ function CommDKP:LootHistory_Update(filter)				-- if "filter" is included in cal
 		    				col = { hex="444444" }
 		    			end
 		    			if bidder == LootTable[i].player then
-		    				tooltip:AddLine("|cff"..col.hex..bidder.."|r: |cff00ff00"..path2.."|r")
+		    				tooltip:AddLine("|c"..col.hex..bidder.."|r: |cff00ff00"..path2.."|r")
 		    			else
-		    				tooltip:AddLine("|cff"..col.hex..bidder.."|r: |cffff0000"..path2.."|r")
+		    				tooltip:AddLine("|c"..col.hex..bidder.."|r: |cffff0000"..path2.."|r")
 		    			end
 		    		end
 		    	end
@@ -628,7 +628,7 @@ function CommDKP:LootHistory_Update(filter)				-- if "filter" is included in cal
 		    				tooltip:AddLine(L["ALSOWONBY"]..":", 0.25, 0.75, 0.90, 1, true);
 		    				history = 1;
 		    			end
-		    			tooltip:AddDoubleLine("|cff"..col.hex..CommDKP:GetTable(CommDKP_Loot, true)[j].player.."|r |cffffffff("..date("%m/%d/%y", CommDKP:GetTable(CommDKP_Loot, true)[j].date)..")|r", "|cffff0000"..-CommDKP:GetTable(CommDKP_Loot, true)[j].cost.." "..L["DKP"].."|r", 1.0, 0, 0)
+		    			tooltip:AddDoubleLine("|c"..col.hex..CommDKP:GetTable(CommDKP_Loot, true)[j].player.."|r |cffffffff("..date("%m/%d/%y", CommDKP:GetTable(CommDKP_Loot, true)[j].date)..")|r", "|cffff0000"..-CommDKP:GetTable(CommDKP_Loot, true)[j].cost.." "..L["DKP"].."|r", 1.0, 0, 0)
 		    		end
 		    	end
 			    if filter == L["DELETEDENTRY"] then
@@ -644,10 +644,10 @@ function CommDKP:LootHistory_Update(filter)				-- if "filter" is included in cal
 			    	end
 			    	tooltip:AddLine(" ")
 			    	tooltip:AddLine(L["DELETEDBY"], 0.25, 0.75, 0.90, 1, true)
-			    	tooltip:AddDoubleLine("|cff"..col.hex..delOfficer.."|r", del_date2.."/"..del_date3.."/"..del_date1.." @ "..strtrim(strsub(del_date, 10), " "),1,0,0,1,1,1)
+			    	tooltip:AddDoubleLine("|c"..col.hex..delOfficer.."|r", del_date2.."/"..del_date3.."/"..del_date1.." @ "..strtrim(strsub(del_date, 10), " "),1,0,0,1,1,1)
 			    end
 			    tooltip:AddLine(" ")
-			    tooltip:AddDoubleLine(L["AWARDEDBY"], "|cff"..c.hex..awardOfficer.."|r", 0.25, 0.75, 0.90)
+			    tooltip:AddDoubleLine(L["AWARDEDBY"], "|c"..c.hex..awardOfficer.."|r", 0.25, 0.75, 0.90)
 		    	tooltip:Show();
 		    end)
 		    CommDKP.ConfigTab5.lootFrame[i]:SetScript("OnMouseDown", function(self, button)

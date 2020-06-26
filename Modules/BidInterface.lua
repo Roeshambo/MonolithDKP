@@ -358,6 +358,32 @@ end
 function CommDKP:CurrItem_Set(item, value, icon, value2)
   CurrItemForBid = item;
   CurrItemIcon = icon;
+
+  
+
+  ----------------------------------------------------------------------
+  -- Check if item is in the item list
+  -- If not then we have out of kill bid
+  -- Overwrite the list to contain only the item
+  -- Thank you to lantisnt of EssentialDKP for the assist on this.
+  -- https://github.com/lantisnt/EssentialDKP/pull/26/files#diff-c2e2b9359e4bbfc335111a2a4472c9c6
+
+  local _,tmpLink,_,_,_,_,_,_,_,tmpIcon = GetItemInfo(item)
+  local currItemInLoot = false
+  
+  if tmpLink == nil then
+    C_Timer.After(0.5, function () CommDKP:CurrItem_Set(item, value, icon, value2); end);
+    return;
+  end
+
+  for _,_i in pairs(lootTable) do
+    if _i.link == tmpLink then currItemInLoot = true end
+  end
+
+  if not currItemInLoot then
+    CommDKP:LootTable_Set({{icon=tmpIcon, link=tmpLink}})
+  end
+  ----------------------------------------------------------------------
   
   UpdateBidderWindow()
 

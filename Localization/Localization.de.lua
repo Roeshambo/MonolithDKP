@@ -675,8 +675,8 @@ if GetLocale() == "deDE" then
     SUPPRESSNOTIFICATIONS = "Unterdrücken Sie die Addon-Benachrichtigungen",
     SUPPRESSNOTIFYTTDESC = "Verbirgt alle Zusatznachrichten vor der Anzeige in Ihrem Chat-Frame.",
     SUPPRESSNOTIFYTTWARN = "Broadcast-Updates werden weiterhin empfangen.",
-    SUPRESSBIDWHISPTTDESC = "Unterdrückt eingehendes und ausgehendes Flüstern im Zusammenhang mit Geboten, während ein Gebot ausgeführt wird.",
-    SUPRESSBIDWHISPTTWARN = "Alle anderen Nachrichten, die nicht mit dem Bieten zusammenhängen, werden weiterhin angezeigt.",
+    SuppressBIDWHISPTTDESC = "Unterdrückt eingehendes und ausgehendes Flüstern im Zusammenhang mit Geboten, während ein Gebot ausgeführt wird.",
+    SuppressBIDWHISPTTWARN = "Alle anderen Nachrichten, die nicht mit dem Bieten zusammenhängen, werden weiterhin angezeigt.",
     SYNCALREADY = "Derzeit wird bereits eine Synchronisierung durchgeführt.",
     SYNCCOMPLETE = "Synchronisierung abgeschlossen",
     SYNCCOMPLETE2 = "Synchronisierung abgeschlossen. Alle Spieler sind auf dem neuesten Stand.",
@@ -781,22 +781,22 @@ if GetLocale() == "deDE" then
 
     Ex: |cffa335ee|Hitem:18824::::::::120:577::::::|h[Magma Tempered Boots]|h|r fällt und hat statische Kosten von 30 DKP. Spieler A gewinnt das Gebot, indem er die meisten DKP hat (oder nach Ermessen des Schlachtzugsführers verteilt wird, wenn ein Gleichstand besteht) und seine DKP um 30 reduziert wird. Dann erhält jedes Schlachtzugsmitglied 0,75 DKP.]=],
     ZEROSUMHEAD = "Nullsumme",
-    ZEROSUMITEMCOST = "Zero Sum Item Costs",
+    ZEROSUMITEMCOST = "Nullsumme Item-Kosten", --TODO TRANSLATE:
     ZEROSUMITEMCOSTTTDESC = "Wählen Sie die Art der Artikelkosten aus, die Sie verwenden möchten. Static gibt Artikeln einen definierten Preis. Während Mindestgebot ermöglicht es den Spielern, ein Gebot abzugeben, das die Kosten definiert, während Sie einen Mindestgebotsschwellenwert festlegen.",
-    ZONE = "Zone",
+    ZONE = "Gebiet", --TODO TRANSLATE:
     PASS                  = "Passen",
 
-    MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?",
-    MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.",
-    MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?",
-    MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
-    MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
+    MIGRATIONDETECTED     = "CommunityDKP hat ein aktives MonolithDKP-Addon entdeckt. Möchten Sie die aktuellen Tabellen und Einstellungen zu CommunityDKP migrieren?", --TODO TRANSLATE:
+    MIGRATIONUNAVAILABLE  = "Bitte deaktivieren Sie MonolithDKP und laden Sie das UI (/reload) neu, wenn Sie mit CommunityDKP fortfahren möchten.", --TODO TRANSLATE:
+    MIGRATIONCONFIRM      = "Dadurch werden Ihre bestehenden CommunityDKP-Tabellen und Einstellungen überschrieben.|n|n Wollen Sie fortfahren?", --TODO TRANSLATE:
+    MIGRATIONCANCELED     = "Migration abgebrochen.|n|nBitte deaktivieren Sie MonolithDKP und laden Sie die Benutzeroberfläche neu (/reload), wenn Sie mit CommunityDKP fortfahren möchten, ohne Ihre aktuellen Tabellen und Einstellungen zu verwenden.", --TODO TRANSLATE:
+    MIGRATIONCOMPLETED    = "Migration abgeschlossen.|n|nBitte deaktivieren Sie MonolithDKP und laden Sie das UI neu. (/reload)", --TODO TRANSLATE:
 
     CHANGELOG1 = "CommunityDKP - WoW Classic Phase 5",
     CHANGELOG2 = " - Updated Interface",
     CHANGELOG3 = " - Additional enchancements to in-game migration from MonolithDKP (Thanks matthi!)",
     CHANGELOG4 = " - A few more edge case bugfixes.",
-    CHANGELOG5 = "",
+    CHANGELOG5 = " - Awesome texture pack upgrade (Thanks to @Vergil and Essential@MirageRaceway)",
     CHANGELOG6 = "",
     CHANGELOG7 = "",
     CHANGELOG8 = "CommunityDKP Discord: https://discord.gg/HGgvYFB",
