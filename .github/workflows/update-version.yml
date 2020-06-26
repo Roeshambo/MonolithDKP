@@ -7,7 +7,7 @@ name: Release Number Update
 on:
   push:
     tags:
-      - v*
+      - '**'
 env:
   VERSION: ${{ github.ref }}
   
