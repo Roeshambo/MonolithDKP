@@ -473,7 +473,7 @@ function CommDKP:AwardConfirm(player, cost, boss, zone, loot, reassign)
 				    if classSearch then
 				     	c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[classSearch[1][1]].class)
 				    else
-				     	c = { hex="444444" }
+				     	c = { hex="ff444444" }
 				    end
 					filterName.text, filterName.arg1, filterName.arg2, filterName.checked, filterName.isNotRadio = "|c"..c.hex..PlayerList[i].."|r", PlayerList[i], "|c"..c.hex..PlayerList[i].."|r", PlayerList[i] == player, true
 					UIDropDownMenu_AddButton(filterName, level)

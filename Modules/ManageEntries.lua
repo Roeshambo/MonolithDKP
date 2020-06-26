@@ -8,7 +8,7 @@ local function Remove_Entries()
 	CommDKP:StatusVerify_Update()
 	local numPlayers = 0;
 	local removedUsers, c;
-	local deleted = {}
+	local deleted = {};
 
 	for i=1, #core.SelectedData do
 		local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), core.SelectedData[i]["player"]);
@@ -37,7 +37,6 @@ local function Remove_Entries()
 					CommDKP:GetTable(CommDKP_Archive, true)[core.SelectedData[i].player].deleted = true
 					CommDKP:GetTable(CommDKP_Archive, true)[core.SelectedData[i].player].edited = curTime
 				end
-				table.insert(deleted, { player=path.player, deleted=true })
 			end
 
 			c = CommDKP:GetCColors(core.SelectedData[i]["class"])
@@ -49,6 +48,7 @@ local function Remove_Entries()
 			numPlayers = numPlayers + 1
 
 			tremove(CommDKP:GetTable(CommDKP_DKPTable, true), search[1][1])
+			tinsert(deleted, { player=path.player, deleted=true })
 
 			local search2 = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Standby, true), core.SelectedData[i].player, "player");
 
@@ -62,6 +62,7 @@ local function Remove_Entries()
 	CommDKP:FilterDKPTable(core.currentSort, "reset")
 	CommDKP:Print("Removed "..numPlayers.." player(s): "..removedUsers)
 	CommDKP:ClassGraph_Update()
+
 	if #deleted >0 then
 		CommDKP.Sync:SendData("CommDKPDelUsers", deleted)
 	end
@@ -86,6 +87,7 @@ local function AddRaidToDKPTable()
 		local GroupSize;
 		local FlagRecovery = false
 		local curTime = time()
+		local entities = {}
 
 		if GroupType == "raid" then
 			GroupSize = 40
@@ -102,20 +104,38 @@ local function AddRaidToDKPTable()
 					InGuild = true;
 				end
 			end
-			if tempName and InGuild then
+			if tempName then
 				if not CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), tempName) then
-					tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), {
-						player=tempName,
-						class=tempClass,
-						dkp=0,
-						previous_dkp=0,
-						lifetime_gained = 0,
-						lifetime_spent = 0,
-						rank = rankIndex,
-						rankName = rank,
-						spec = "No Spec Reported",
-						role = "No Role Reported",
-					});
+					if InGuild then
+						tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), {
+							player=tempName,
+							class=tempClass,
+							dkp=0,
+							previous_dkp=0,
+							lifetime_gained = 0,
+							lifetime_spent = 0,
+							rank = rankIndex,
+							rankName = rank,
+							spec = "No Spec Reported",
+							role = "No Role Reported",
+						});
+						tinsert(entities, {name=tempName, class=tempClass, rank=rankIndex, rankName=rank});
+					else
+						tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), {
+							player=tempName,
+							class=tempClass,
+							dkp=0,
+							previous_dkp=0,
+							lifetime_gained = 0,
+							lifetime_spent = 0,
+							rank = 20,
+							rankName = "None",
+							spec = "No Spec Reported",
+							role = "No Role Reported",
+						});
+						tinsert(entities, {name=tempName, class=tempClass, rank=20, rankName="None"});
+					end
+
 					numPlayers = numPlayers + 1;
 					c = CommDKP:GetCColors(tempClass)
 					if addedUsers == nil then
@@ -130,7 +150,6 @@ local function AddRaidToDKPTable()
 					end
 				end
 			end
-			InGuild = false;
 		end
 		if addedUsers then
 			CommDKP:Print(L["ADDED"].." "..numPlayers.." "..L["PLAYERS"]..": "..addedUsers)
@@ -144,6 +163,9 @@ local function AddRaidToDKPTable()
 			CommDKP:Print(L["YOUHAVERECOVERED"])
 		end
 		CommDKP:FilterDKPTable(core.currentSort, "reset")
+		if numPlayers > 0 then
+			CommDKP.Sync:SendData("CommDKPAddUsers", entities)
+		end
 	else
 		CommDKP:Print(L["NOPARTYORRAID"])
 	end
@@ -155,6 +177,7 @@ local function AddGuildToDKPTable(rank, level)
 	local numPlayers = 0;
 	local FlagRecovery = false
 	local curTime = time()
+	local entities = {}
 
 	for i=1, guildSize do
 		name,rankName,rankIndex,charLevel,_,_,_,_,_,_,class = GetGuildRosterInfo(i)
@@ -174,6 +197,7 @@ local function AddGuildToDKPTable(rank, level)
 				spec = "No Spec Reported",
 				role = "No Role Reported",
 			});
+			tinsert(entities, {name=name, class=class, rank=rankIndex, rankName=rankName});
 			numPlayers = numPlayers + 1;
 			c = CommDKP:GetCColors(class)
 			if addedUsers == nil then
@@ -200,6 +224,9 @@ local function AddGuildToDKPTable(rank, level)
 	else
 		CommDKP:ClassGraph()
 	end
+	if numPlayers > 0 then
+		CommDKP.Sync:SendData("CommDKPAddUsers", entities)
+	end
 end
 
 local function AddTargetToDKPTable()
@@ -207,26 +234,36 @@ local function AddTargetToDKPTable()
 	local _,class = UnitClass("target");
 	local c;
 	local curTime = time()
+	local entities = {}
 
 	local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
+	local newEntry = {
+		player=name,
+		class=class,
+		dkp=0,
+		previous_dkp=0,
+		lifetime_gained = 0,
+		lifetime_spent = 0,
+		rank=20,
+		rankName="None",
+		spec = "No Spec Reported",
+		role = "No Role Reported",
+	}
 
 	if not search then
-		tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), {
-			player=name,
-			class=class,
-			dkp=0,
-			previous_dkp=0,
-			lifetime_gained = 0,
-			lifetime_spent = 0,
-			rank=20,
-			rankName="None",
-			spec = "No Spec Reported",
-			role = "No Role Reported",
-		});
+		tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), newEntry);
+		tinsert(entities, {name=name, class=class, rank=20, rankName="None"});
 
 		CommDKP:FilterDKPTable(core.currentSort, "reset")
 		c = CommDKP:GetCColors(class)
 		CommDKP:Print(L["ADDED"].." |c"..c.hex..name.."|r")
+
+		if addedUsers == nil then
+			addedUsers = "|c"..c.hex..name.."|r"; 
+		else
+			addedUsers = addedUsers..", |c"..c.hex..name.."|r"
+		end
+
 
 		if core.ClassGraph then
 			CommDKP:ClassGraph_Update()
@@ -238,8 +275,69 @@ local function AddTargetToDKPTable()
 			CommDKP:GetTable(CommDKP_Archive, true)[name].edited = curTime
 			CommDKP:Print(L["YOUHAVERECOVERED"])
 		end
+		CommDKP.Sync:SendData("CommDKPAddUsers", entities)
 	end
 end
+
+function CommDKP:AddEntitiesToDKPTable(entities)
+	-- Entities should be in the form of {name="name", class="class", rank="rank", rankName="rankName"}
+	local addedUsers;
+	local numPlayers = 0;
+	local curTime = time()
+
+	for i=1, #entities do
+		local name = entities[i].name;
+		local class = entities[i].class;
+		local c;
+	
+		local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
+		local newEntry = {
+			player=name,
+			class=class,
+			dkp=0,
+			previous_dkp=0,
+			lifetime_gained = 0,
+			lifetime_spent = 0,
+			rank=entities[i].rank,
+			rankName=entities[i].rankName,
+			spec = "No Spec Reported",
+			role = "No Role Reported",
+		}
+	
+		if not search then
+			tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), newEntry);
+	
+			numPlayers = numPlayers + 1;
+			c = CommDKP:GetCColors(class)
+			if addedUsers == nil then
+				addedUsers = "|c"..c.hex..name.."|r"; 
+			else
+				addedUsers = addedUsers..", |c"..c.hex..name.."|r"
+			end
+			if CommDKP:GetTable(CommDKP_Archive, true)[name] and CommDKP:GetTable(CommDKP_Archive, true)[name].deleted then
+				CommDKP:GetTable(CommDKP_Archive, true)[name].deleted = "Recovered"
+				CommDKP:GetTable(CommDKP_Archive, true)[name].edited = curTime
+				FlagRecovery = true
+			end
+		end
+	end
+
+	if numPlayers > 0  then
+		CommDKP:FilterDKPTable(core.currentSort, "reset")
+		if addedUsers then
+			CommDKP:Print(L["ADDED"].." "..numPlayers.." "..L["PLAYERS"]..": "..addedUsers)
+		end
+		if FlagRecovery then 
+			CommDKP:Print(L["YOUHAVERECOVERED"])
+		end
+		if core.ClassGraph then
+			CommDKP:ClassGraph_Update()
+		else
+			CommDKP:ClassGraph()
+		end
+	end
+end
+
 
 function CommDKP:GetGuildRankList()
 	local numRanks = GuildControlGetNumRanks()
@@ -454,7 +552,7 @@ function CommDKP:ManageEntries()
 						if classSearch then
 							c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[classSearch[1][1]].class)
 						else
-							c = { hex="ffffff" }
+							c = { hex="ffffffff" }
 						end
 						if i == 1 then
 							selected = selected.."|c"..c.hex..core.SelectedData[i].player.."|r"

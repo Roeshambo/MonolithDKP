@@ -280,7 +280,7 @@ function CommDKP:CreateSortBox()
 
 							c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[classSearch[1][1]].class)
 						else
-							c = { hex="444444" }
+							c = { hex="ff444444" }
 						end
 						dropDownMenuItem.text = "|c"..c.hex..PlayerList[i].."|r" 
 						dropDownMenuItem.value = "|c"..c.hex..PlayerList[i].."|r" 
@@ -516,7 +516,7 @@ function CommDKP:LootHistory_Update(filter)				-- if "filter" is included in cal
 		    if classSearch then
 		     	c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[classSearch[1][1]].class)
 		    else
-		     	c = { hex="444444" }
+		     	c = { hex="ff444444" }
 		    end
 
 		    if tonumber(LootTable[i].cost) < 0 then lootCost = tonumber(LootTable[i].cost) * -1 else lootCost = tonumber(LootTable[i].cost) end
@@ -570,7 +570,7 @@ function CommDKP:LootHistory_Update(filter)				-- if "filter" is included in cal
 		    	if awarded_by_search then
 			     	c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[awarded_by_search[1][1]].class)
 			    else
-			     	c = { hex="444444" }
+			     	c = { hex="ff444444" }
 			    end
 
 		    	if LootTable[i].bids or LootTable[i].dkp or LootTable[i].rolls then  		-- displays bids/rolls/dkp values if "Log Bids" checked in modes
@@ -605,7 +605,7 @@ function CommDKP:LootHistory_Update(filter)				-- if "filter" is included in cal
 		    			if s then
 		    				col = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[s[1][1]].class)
 		    			else
-		    				col = { hex="444444" }
+		    				col = { hex="ff444444" }
 		    			end
 		    			if bidder == LootTable[i].player then
 		    				tooltip:AddLine("|c"..col.hex..bidder.."|r: |cff00ff00"..path2.."|r")
@@ -621,7 +621,7 @@ function CommDKP:LootHistory_Update(filter)				-- if "filter" is included in cal
 		    			if s then
 		    				col = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[s[1][1]].class)
 		    			else
-		    				col = { hex="444444" }
+		    				col = { hex="ff444444" }
 		    			end
 		    			if history == 0 then
 		    				tooltip:AddLine(" ");
@@ -640,7 +640,7 @@ function CommDKP:LootHistory_Update(filter)				-- if "filter" is included in cal
 			    	if s then
 			    		col = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[s[1][1]].class)
 			    	else
-			    		col = { hex="444444"}
+			    		col = { hex="ff444444"}
 			    	end
 			    	tooltip:AddLine(" ")
 			    	tooltip:AddLine(L["DELETEDBY"], 0.25, 0.75, 0.90, 1, true)
