@@ -1057,11 +1057,11 @@ function CommDKP:MonolithMigrationLegacySeed()
 	local lootSeed = 0
 	local historySeed = 0
 
-	if MonDKP_Loot ~= nil and MonDKP_Loot.seed ~= nil and strfind(MonDKP_Loot.seed, "-") ~= nil then
-		lootSeed = tonumber(strsub(MonDKP_Loot.seed, strfind(MonDKP_Loot.seed, "-") + 1))
+	if MonDKP_Loot ~= nil and #MonDKP_Loot > 0 and MonDKP_Loot[1].index ~= nil and strfind(MonDKP_Loot[1].index, "-") ~= nil then
+		lootSeed = tonumber(strsub(MonDKP_Loot[1].index, strfind(MonDKP_Loot[1].index, "-") + 1))
 	end
-	if MonDKP_DKPHistory ~= nil and MonDKP_DKPHistory.seed ~= nil and strfind(MonDKP_DKPHistory.seed, "-") ~= nil then
-		historySeed = tonumber(strsub(MonDKP_DKPHistory.seed, strfind(MonDKP_DKPHistory.seed, "-") + 1))
+	if MonDKP_DKPHistory ~= nil and #MonDKP_DKPHistory > 0 and MonDKP_DKPHistory[1].index ~= nil and strfind(MonDKP_DKPHistory[1].index, "-") ~= nil then
+		historySeed = tonumber(strsub(MonDKP_DKPHistory[1].index, strfind(MonDKP_DKPHistory[1].index, "-") + 1))
 	end
 
 	return math.max(lootSeed or 0, historySeed or 0)
