@@ -384,7 +384,7 @@ function CommDKP_OnEvent(self, event, arg1, ...)
 
 	if event == "BOSS_KILL" then
 		CommDKP:CheckOfficer()
-		if core.IsOfficer and IsInRaid() and core.RaidInProgress then
+		if core.IsOfficer and IsInRaid() then
 			local boss_name = ...;
 
 			if CommDKP:Table_Search(core.EncounterList, arg1) then
@@ -394,7 +394,7 @@ function CommDKP_OnEvent(self, event, arg1, ...)
 					CommDKP_Standby_Announce(boss_name)
 				end
 
-				if core.DB.modes.AutoAward then
+				if core.DB.modes.AutoAward and core.RaidInProgress then
 					if not core.DB.modes.StandbyOptIn and core.DB.DKPBonus.IncStandby then
 						CommDKP:AutoAward(3, core.DB.DKPBonus.BossKillBonus, core.DB.bossargs.CurrentRaidZone..": "..core.DB.bossargs.LastKilledBoss)
 					else

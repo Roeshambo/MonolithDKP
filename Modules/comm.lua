@@ -329,8 +329,8 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
               if core.DB.defaults.AutoOpenBid and not core.BidInterface:IsShown() then  -- toggles bid window if option is set to
                 CommDKP:BidInterface_Toggle()
               end
-              local subarg1, subarg2, subarg3, subarg4 = strsplit("#", arg1);
-              CommDKP:CurrItem_Set(subarg1, subarg2, subarg3, subarg4)  -- populates bid window
+
+              CommDKP:CurrItem_Set(arg1, arg2, arg3, arg4)  -- populates bid window
             end
           end
         elseif prefix == "CommDKPRaidTime" and sender ~= UnitName("player") and core.IsOfficer and CommDKP.ConfigTab2 then
