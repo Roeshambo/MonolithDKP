@@ -44,18 +44,18 @@ if GetLocale() == "ruRU" then
 
   core.L = {
     ADD = "Добавить",
-    ADDED = "добавленной",
+    ADDED = "Добавлено",
     ADDGUILDCONFIRM = "Вы уверены, что хотите добавить всех членов гильдии ранга",
-    ADDGUILDDKPTABLE = "Добавить участников гильдии",
-    ADDGUILDDKPTABLETT = "Добавляет всех участников гильдии по рангу, который был выбран в списке слева.",
+    ADDGUILDDKPTABLE = "Добавить Гильдию в таблицу DKP",
+    ADDGUILDDKPTABLETT = "Добавляет всех членов гильдии указаного ранга, если их еще нет в таблице DKP.",
     ADDGUILDMEMBERS = "Добавить участников гильдии",
-    ADDNEGTTDESC = "Если выбрано, у любого игрока с отрицательным DKP очки уменьшаются на вышеуказанный процент. Если не выбрано, игроки с отрицальным DKP не будут подвержены еженедельному снижению.",
-    ADDNEGTTWARN = "Эта опция влияет ТОЛЬКО на еженедельное снижение.",
+    ADDNEGTTDESC = "Если выбрано, то сумма будет вычтена из задолженности игроков с негативным значением DKP. Очки остальных игроков будут уменьшены на указанный процент. Если не выбрано, то игроки с негативным значением DKP не затрагиваются.",
+    ADDNEGTTWARN = "Эта опция влияет ТОЛЬКО на игроков с негативным значением DKP.",
     ADDNEGVALUES = "Применять к негативных значениям",
     ADDRAIDMEMBERS = "Добавить участников рейда",
-    ADDRAIDMEMBERSCONFIRM = "Вы уверены, что хотите добавить участников рейда в таблицу DKP?",
-    ADDRAIDMEMBERSTTDESC = "Добавьте всех участников рейда/группы, которые находятся в гильдии, в таблицу DKP.",
-    ADDREMDKPTABLEENTRIES = "Добавить/удалить записи таблицы DKP",
+    ADDRAIDMEMBERSCONFIRM = "Вы уверены, что хотите добавить нехватающих участников рейда в таблицу DKP?",
+    ADDRAIDMEMBERSTTDESC = "Добавляет всех участников рейда/группы, которые находятся в гильдии в таблицу DKP.",
+    ADDREMDKPTABLEENTRIES = "Добавить/Удалить записи таблицы DKP",
     ADDTARGET = "Добавить цель",
     ADDTARGETTODKPTABLE = "Добавить цель в таблицу DKP",
     ADDTARGETTTDESC = "Добавляет вашу текущую цель в таблицу DKP. Эта функция игнорирует все требования и добавляет игрока даже если его нет в гильдии.",
@@ -783,18 +783,17 @@ if GetLocale() == "ruRU" then
     ZEROSUMITEMCOST = "Режим нулевой суммы",
     ZEROSUMITEMCOSTTTDESC = "Выберите тип стоимости предмета, который вы хотите использовать. Статика дает предметам определенную стоимость. Минимальная ставка позволяет игрокам сделать ставку, которая определяет стоимость, а Вы устанавливаете минимальный порог ставки.",
     ZONE = "зона",
-    PASS                  = "Отказаться",
+    PASS = "Отказаться",
 
-    MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?", --TODO TRANSLATE:
-    MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.", --TODO TRANSLATE:
-    MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?", --TODO TRANSLATE:
-    MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.", --TODO TRANSLATE:
-    MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
+    MIGRATIONDETECTED     = "CommunityDKP обнаружила активную модификацию MonolithDKP.|n|nЖелаете мигрировать нынешнии таблицы и настройки в CommunityDKP?",
+    MIGRATIONUNAVAILABLE  = "Пожалуйста отключите MonolithDKP и перезагрузите интерфейс, если желаете использовать CommunityDKP.",
+    MIGRATIONCONFIRM      = "Это перезапишет существующие таблицы и настройки CommunityDKP.|n|nЖелаете продолжить?",
+    MIGRATIONCANCELED     = "Миграция отменена.|n|nПожалуйста отключите MonolithDKP и перезагрузите интерфейс, если желаете использовать CommunityDKP без нынешних таблиц и настроек.",
+    MIGRATIONCOMPLETED    = "Миграция завершена.|n|nПожалуйста отключите MonolithDKP и перезагрузите интерфейс.",
 
-    --TODO TRANSLATE:
-    CHANGELOG1 = "Initial Release of CommunityDKP",
-    CHANGELOG2 = " - Contains Multi-Guild, Multi-Team Syncing.",
-    CHANGELOG3 = " - Refactored function names to not conflict with MonolithDKP",
+    CHANGELOG1 = "Предварительная версия CommunityDKP",
+    CHANGELOG2 = " - Поддерживает мульти-гильдийную и мульти-командную синхронизацию",
+    CHANGELOG3 = " - Измененные имена функций для бесконфликтной работы с MonolithDKP",
     CHANGELOG4 = "",
     CHANGELOG5 = "",
     CHANGELOG6 = "",
