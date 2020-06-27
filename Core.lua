@@ -98,8 +98,10 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 
 core.CommDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
 core.MonVersion = "v3.0.0";
-core.defaultTable = "__default";
 core.BuildNumber = 30000;
+core.ReleaseNumber = 26
+core.defaultTable = "__default";
+core.SemVer = core.MonVersion.."-r"..tostring(core.ReleaseNumber);
 core.UpgradeSchema = false;
 core.TableWidth, core.TableRowHeight, core.TableNumRows, core.PriceNumRows = 500, 18, 27, 22; -- width, row height, number of rows
 core.SelectedData = { player="none"};         -- stores data of clicked row for manipulation.
@@ -171,6 +173,24 @@ function CommDKP:GetGuildRank(player)
 		return L["NOTINGUILD"];
 	end
 	return L["NOGUILD"]
+end
+
+function CommDKP:GetDefaultEntity()
+	local entityProfile = {}
+	entityProfile = {
+		player="",
+		class="None",
+		dkp=0,
+		previous_dkp=0,
+		lifetime_gained = 0,
+		lifetime_spent = 0,
+		rank = 20,
+		rankName = "None",
+		spec = "No Spec Reported",
+		role = "No Role Reported",
+		version = "Unknown"
+  };
+  return entityProfile;
 end
 
 function CommDKP:GetRealmName()
@@ -701,7 +721,8 @@ function CommDKP:SetCurrentTeam(index)
 	CommDKP:ClassGraph_Update()
 	-- update price table
 	CommDKP:PriceTable_Update(0)
-
+	-- Broadcast Query Ping
+	CommDKP.Sync:SendData("CommDKPQuery",{ping = true});
 end
 
 -------

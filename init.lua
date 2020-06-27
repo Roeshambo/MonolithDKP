@@ -335,6 +335,7 @@ function CommDKP:SendSeedData()
 			}
 		}
 	--]]
+
 	CommDKP.Sync:SendData("CommDKPQuery",{ping = true});
 	CommDKP.Sync:SendData("CommDKPSeed", latestIndexForTeam) -- requests role and spec data and sends current seeds (index of newest DKP and Loot entries)
 
@@ -657,7 +658,7 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 		if not CommDKP:VerifyDBSchema(CommDKP_Whitelist) then CommDKP_Whitelist = CommDKP:UpgradeDBSchema(CommDKP_Whitelist, CommDKP_Whitelist, false, "CommDKP_Whitelist") end;
 		if not CommDKP:VerifyDBSchema(CommDKP_Standby) then CommDKP_Standby = CommDKP:UpgradeDBSchema(CommDKP_Standby, CommDKP_Standby, true, "CommDKP_Standby") end;
 		if not CommDKP:VerifyDBSchema(CommDKP_Archive) then CommDKP_Archive = CommDKP:UpgradeDBSchema(CommDKP_Archive, CommDKP_Archive, true, "CommDKP_Archive") end;
-		
+		if not CommDKP:VerifyDBSchema(CommDKP_Profiles) then CommDKP_Profiles = CommDKP:UpgradeDBSchema(CommDKP_Profiles, CommDKP_Profiles, true, "CommDKP_Profiles") end;
 
 
 		------------------------------------

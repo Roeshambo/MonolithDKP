@@ -657,7 +657,7 @@ function CommDKP:CreateMenu()
 	CommDKP.UIConfig.Version:SetScale("0.9")
 	CommDKP.UIConfig.Version:SetTextColor(c[1].r, c[1].g, c[1].b, 0.5);
 	CommDKP.UIConfig.Version:SetPoint("BOTTOMRIGHT", CommDKP.UIConfig.TitleBar, "BOTTOMRIGHT", -8, 4);
-	CommDKP.UIConfig.Version:SetText(core.MonVersion); 
+	CommDKP.UIConfig.Version:SetText(core.SemVer); 
 
 	CommDKP.UIConfig:Hide(); -- hide menu after creation until called.
 	CommDKP:FilterDKPTable(core.currentSort)   -- initial sort and populates data values in DKPTable.Rows{} CommDKP:FilterDKPTable() -> CommDKP:SortDKPTable() -> CommDKP:DKPTable_Update()
