@@ -128,7 +128,9 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
         ---------------------------------------------------------------
 
         --Does a Profile Exist? If no, exit, nothing to do here.
-        if CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[UnitName("player")] == nil then
+        local oldProfile = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam), UnitName("player"), "player")
+        local newProfile = CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[UnitName("player")]
+        if newProfile == nil and oldProfile == nil then
           return;
         end
         
@@ -144,9 +146,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
         talBuild = TalTrees[1][1].." "..talBuild;
         talRole = TalTrees[1][4];
 
-        local profile = CommDKP:GetDefaultEntity();
-        profile = CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[UnitName("player")]
-        
+        local profile = newProfile or CommDKP:GetDefaultEntity();
         profile.player=UnitName("player");
         profile.version=core.SemVer;
 
