@@ -335,7 +335,7 @@ function CommDKP:SendSeedData()
 			}
 		}
 	--]]
-
+	CommDKP.Sync:SendData("CommDKPQuery",{ping = true});
 	CommDKP.Sync:SendData("CommDKPSeed", latestIndexForTeam) -- requests role and spec data and sends current seeds (index of newest DKP and Loot entries)
 
 end
