@@ -798,8 +798,8 @@ if GetLocale() == "ruRU" then
     CHANGELOG5 = " - Отлично выглядящие текстуры (Спасибо @Vergil и Essential@MirageRaceway!)",
     CHANGELOG6 = "",
     CHANGELOG7 = "",
-    CHANGELOG8 = "CommunityDKP Discord: https://discord.gg/HGgvYFB",
+    CHANGELOG8 = "CommunityDKP Discord: https://discord.gg/dXXK4vH",
     CHANGELOG9 = "",
     CHANGELOG10 = "",
-        }
+          }
 end

@@ -806,7 +806,7 @@ if GetLocale() == "zhCN" then
     CHANGELOG5 = " - Awesome texture pack upgrade (Thanks to @Vergil and Essential@MirageRaceway)",
     CHANGELOG6 = "",
     CHANGELOG7 = "",
-    CHANGELOG8 = "CommunityDKP Discord: https://discord.gg/HGgvYFB",
+    CHANGELOG8 = "CommunityDKP Discord: https://discord.gg/dXXK4vH",
     CHANGELOG9 = "",
     CHANGELOG10 = "",
       }

@@ -453,7 +453,7 @@ function CommDKP:AdjustDKPTab_Create()
 				if classSearch then
 					c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[classSearch[1][1]].class)
 				else
-					c = { hex="ffffff" }
+					c = { hex="ffffffff" }
 				end
 				if i == 1 then
 					selected = selected.."|c"..c.hex..core.SelectedData[i].player.."|r"

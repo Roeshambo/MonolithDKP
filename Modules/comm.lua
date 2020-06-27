@@ -42,6 +42,7 @@ end
 
 function CommDKP.Sync:OnEnable()
   CommDKP.Sync:RegisterComm("CommDKPDelUsers", CommDKP.Sync:OnCommReceived())      -- Broadcasts deleted users (archived users not on the DKP table)
+  CommDKP.Sync:RegisterComm("CommDKPAddUsers", CommDKP.Sync:OnCommReceived())   -- Broadcasts newly added users (or recovers)
   CommDKP.Sync:RegisterComm("CommDKPMerge", CommDKP.Sync:OnCommReceived())      -- Broadcasts 2 weeks of data from officers (for merging)
   -- Normal broadcast Prefixs
   CommDKP.Sync:RegisterComm("CommDKPDecay", CommDKP.Sync:OnCommReceived())        -- Broadcasts a weekly decay adjustment
@@ -75,9 +76,11 @@ function CommDKP.Sync:OnEnable()
   --CommDKP.Sync:RegisterComm("CommDKPDataSync", CommDKP.Sync:OnCommReceived())    -- not in use
   --CommDKP.Sync:RegisterComm("CommDKPDKPLogSync", CommDKP.Sync:OnCommReceived())  -- not in use
   --CommDKP.Sync:RegisterComm("CommDKPLogSync", CommDKP.Sync:OnCommReceived())    -- not in use
+  CommDKP.Sync:RegisterComm("CDKProfileSend", CommDKP.Sync:OnCommReceived()) -- Broadcast Player Profile for Update or Create
 end
 
 function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
+  
   if not core.Initialized or core.IsOfficer == nil then return end
   if prefix then
 
@@ -119,23 +122,42 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 
     if success then
       if prefix == "CommDKPQuery" then
-          -- talents check
-          local TalTrees={}; table.insert(TalTrees, {GetTalentTabInfo(1)}); table.insert(TalTrees, {GetTalentTabInfo(2)}); table.insert(TalTrees, {GetTalentTabInfo(3)}); 
-          local talBuild = "("..TalTrees[1][3].."/"..TalTrees[2][3].."/"..TalTrees[3][3]..")"
-          local talRole;
+         
+        ---------------------------------------------------------------
+        --This is information about Receiving Player. Not the Sender.
+        ---------------------------------------------------------------
 
-          table.sort(TalTrees, function(a, b)
-            return a[3] > b[3]
-          end)
-          
-          talBuild = TalTrees[1][1].." "..talBuild;
-          talRole = TalTrees[1][4];
-          
-          CommDKP.Sync:SendData("CommDKPTalents", talBuild)
-          CommDKP.Sync:SendData("CommDKPRoles", talRole)
-
-          table.wipe(TalTrees);
+        --Does a Profile Exist? If no, exit, nothing to do here.
+        local oldProfile = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam), UnitName("player"), "player")
+        local newProfile = CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[UnitName("player")]
+        if newProfile == nil and oldProfile == nil then
           return;
+        end
+        
+        -- talents check
+        local TalTrees={}; table.insert(TalTrees, {GetTalentTabInfo(1)}); table.insert(TalTrees, {GetTalentTabInfo(2)}); table.insert(TalTrees, {GetTalentTabInfo(3)}); 
+        local talBuild = "("..TalTrees[1][3].."/"..TalTrees[2][3].."/"..TalTrees[3][3]..")"
+        local talRole;
+
+        table.sort(TalTrees, function(a, b)
+          return a[3] > b[3]
+        end)
+
+        talBuild = TalTrees[1][1].." "..talBuild;
+        talRole = TalTrees[1][4];
+
+        local profile = newProfile or CommDKP:GetDefaultEntity();
+        profile.player=UnitName("player");
+        profile.version=core.SemVer;
+
+        CommDKP.Sync:SendData("CDKProfileSend", profile)
+        CommDKP.Sync:SendData("CommDKPTalents", talBuild)
+        CommDKP.Sync:SendData("CommDKPRoles", talRole)
+
+        CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[UnitName("player")] = profile;
+
+        table.wipe(TalTrees);
+        return;
       elseif prefix == "CommDKPSeed" then
         if sender ~= UnitName("player") then
         
@@ -196,15 +218,25 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
       elseif prefix == "CommDKPTeams" then
         CommDKP:GetTable(CommDKP_DB, false)["teams"] = _objReceived.Teams
         return;
+      elseif prefix == "CDKProfileSend" then
+        local profile = _objReceived.Data;
+        CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[profile.player] = profile;
       elseif prefix == "CommDKPCurTeam" then
         CommDKP:SetCurrentTeam(_objReceived.CurrentTeam) -- this also refreshes all the tables/views/graphs
         return;
       elseif prefix == "CommDKPTalents" then
+        
         local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam), sender, "player")
 
         if search then
           local curSelection = CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam)[search[1][1]]
           curSelection.spec = _objReceived.Data;
+          
+          if CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[sender] == nil then
+            CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[sender] = CommDKP:GetDefaultEntity();
+          end
+
+          CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[sender].spec = _objReceived.Data;
         end
         return
       elseif prefix == "CommDKPRoles" then
@@ -263,7 +295,14 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
           else
             curSelection.role = L["NOROLEDETECTED"]
           end
+
+          if CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[sender] == nil then
+            CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[sender] = CommDKP:GetDefaultEntity();
+          end
+
+          CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[sender].role = curSelection.role;
         end
+
         return;
       elseif prefix == "CommDKPBuild" and sender ~= UnitName("player") then
 
@@ -382,7 +421,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
         if (sender ~= UnitName("player")) then
           if prefix == "CommDKPLootDist" or prefix == "CommDKPDKPDist" or prefix == "CommDKPDelLoot" or prefix == "CommDKPDelSync" or prefix == "CommDKPMinBid" or prefix == "CDKPWhitelist"
           or prefix == "CommDKPDKPModes" or prefix == "CommDKPStand" or prefix == "CommDKPZSumBank" or prefix == "CommDKPBossLoot" or prefix == "CommDKPDecay" or prefix == "CommDKPDelUsers" or
-          prefix == "CommDKPAllTabs" or prefix == "CommDKPBidShare" or prefix == "CommDKPMerge" or prefix == "CommDKPSetPrice" or prefix == "CommDKPMaxBid" then
+          prefix == "CommDKPAllTabs" or prefix == "CommDKPBidShare" or prefix == "CommDKPMerge" or prefix == "CommDKPSetPrice" or prefix == "CommDKPMaxBid" or prefix == "CommDKPAddUsers" then
 
             if prefix == "CommDKPAllTabs" then   -- receives full table broadcast
               --print("[CommunityDKP] COMMS: Full Broadcast Receive Started for team "..CommDKP:GetTeamName(_objReceived.CurrentTeam));
@@ -501,9 +540,9 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                             local class
 
                             if (tonumber(_objReceived.Data.DKP[i].dkp) > 0 and not _objReceived.Data.DKP[i].deletes) or (tonumber(_objReceived.Data.DKP[i].dkp) < 0 and _objReceived.Data.DKP[i].deletes) then
-                              CommDKP_Profile_Create(players[j], tonumber(deserialized.DKP[i].dkp), tonumber(deserialized.DKP[i].dkp), nil, _objReceived.CurrentTeam)
+                              CommDKP_Profile_Create(players[j], tonumber(_objReceived.Data.DKP[i].dkp), tonumber(_objReceived.Data.DKP[i].dkp), nil, _objReceived.CurrentTeam)
                             else
-                              CommDKP_Profile_Create(players[j], tonumber(deserialized.DKP[i].dkp), nil, nil, _objReceived.CurrentTeam)
+                              CommDKP_Profile_Create(players[j], tonumber(_objReceived.Data.DKP[i].dkp), nil, nil, _objReceived.CurrentTeam)
                             end
                           end
                         end
@@ -630,6 +669,8 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 CommDKP:DKPHistory_Update(true)
               end
               CommDKP:FilterDKPTable(core.currentSort, "reset")
+            elseif prefix == "CommDKPAddUsers" and UnitName("player") ~= sender then
+              CommDKP:AddEntitiesToDKPTable(_objReceived.Data);
             elseif prefix == "CommDKPDelUsers" and UnitName("player") ~= sender then
               local numPlayers = 0
               local removedUsers = ""
@@ -638,10 +679,14 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam), _objReceived.Data[i].player, "player")
 
                 if search and _objReceived.Data[i].deleted and _objReceived.Data[i].deleted ~= "Recovered" then
-                  if (CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player] and CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player].edited < _objReceived.Data[i].edited) or not CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player] then
+                  if _objReceived.Data[i].edited == nil then
+                    _objReceived.Data[i].edited = time();
+                  end
+
+                  if (CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player] and _objReceived.Data[i].deleted) or (CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player] and CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player].edited < _objReceived.Data[i].edited) or (not CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player]) then
                     --delete user, archive data
                     if not CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player] then    -- creates/adds to archive entry for user
-                      CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player] = { dkp=0, lifetime_spent=0, lifetime_gained=0, deleted=deserialized[i].deleted, edited=deserialized[i].edited }
+                      CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player] = { dkp=0, lifetime_spent=0, lifetime_gained=0, deleted=_objReceived.Data[i].deleted, edited=_objReceived.Data[i].edited }
                     else
                       CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player].deleted = _objReceived.Data[i].deleted
                       CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player].edited = _objReceived.Data[i].edited
@@ -656,6 +701,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                     numPlayers = numPlayers + 1
 
                     tremove(CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam), search[1][1])
+                    CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player] = nil;
 
                     local search2 = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Standby, true, _objReceived.CurrentTeam), _objReceived.Data[i].player, "player");
 
