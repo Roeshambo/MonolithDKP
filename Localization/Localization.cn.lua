@@ -799,15 +799,15 @@ if GetLocale() == "zhCN" then
     MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "Initial Release of CommunityDKP",
-    CHANGELOG2 = " - Contains Multi-Guild, Multi-Team Syncing.",
-    CHANGELOG3 = " - Refactored function names to not conflict with MonolithDKP",
-    CHANGELOG4 = "",
+    CHANGELOG1 = "CommunityDKP - Update 1",
+    CHANGELOG2 = " - Numerous Bug Fixes and Enhancements",
+    CHANGELOG3 = " - Migration Assitant from MonolithDKP",
+    CHANGELOG4 = " - Better Syncing of DKP Table when Profiles are added",
     CHANGELOG5 = "",
     CHANGELOG6 = "",
     CHANGELOG7 = "",
-    CHANGELOG8 = "",
-    CHANGELOG9 = "CommunityDKP Discord: https://discord.gg/HGgvYFB",
+    CHANGELOG8 = "CommunityDKP Discord: https://discord.gg/dXXK4vH",
+    CHANGELOG9 = "",
     CHANGELOG10 = "",
-      }
+        }
 end

@@ -791,15 +791,16 @@ if GetLocale() == "ruRU" then
     MIGRATIONCANCELED     = "Миграция отменена.|n|nПожалуйста отключите MonolithDKP и перезагрузите интерфейс, если желаете использовать CommunityDKP без нынешних таблиц и настроек.",
     MIGRATIONCOMPLETED    = "Миграция завершена.|n|nПожалуйста отключите MonolithDKP и перезагрузите интерфейс.",
 
-    CHANGELOG1 = "Предварительная версия CommunityDKP",
-    CHANGELOG2 = " - Поддерживает мульти-гильдийную и мульти-командную синхронизацию",
-    CHANGELOG3 = " - Измененные имена функций для бесконфликтной работы с MonolithDKP",
-    CHANGELOG4 = "",
+    --TODO TRANSLATE
+    CHANGELOG1 = "CommunityDKP - Update 1",
+    CHANGELOG2 = " - Numerous Bug Fixes and Enhancements",
+    CHANGELOG3 = " - Migration Assitant from MonolithDKP",
+    CHANGELOG4 = " - Better Syncing of DKP Table when Profiles are added",
     CHANGELOG5 = "",
     CHANGELOG6 = "",
     CHANGELOG7 = "",
-    CHANGELOG8 = "",
-    CHANGELOG9 = "CommunityDKP Discord: https://discord.gg/HGgvYFB",
+    CHANGELOG8 = "CommunityDKP Discord: https://discord.gg/dXXK4vH",
+    CHANGELOG9 = "",
     CHANGELOG10 = "",
-        }
+          }
 end
