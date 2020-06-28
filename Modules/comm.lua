@@ -80,7 +80,7 @@ function CommDKP.Sync:OnEnable()
 end
 
 function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
-  
+
   if not core.Initialized or core.IsOfficer == nil then return end
   if prefix then
 
@@ -123,40 +123,10 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
     if success then
       if prefix == "CommDKPQuery" then
          
-        ---------------------------------------------------------------
-        --This is information about Receiving Player. Not the Sender.
-        ---------------------------------------------------------------
+        ------------------------------
+        -- This has been deprecated --
+        ------------------------------
 
-        --Does a Profile Exist? If no, exit, nothing to do here.
-        local oldProfile = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam), UnitName("player"), "player")
-        local newProfile = CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[UnitName("player")]
-        if newProfile == nil and oldProfile == nil then
-          return;
-        end
-        
-        -- talents check
-        local TalTrees={}; table.insert(TalTrees, {GetTalentTabInfo(1)}); table.insert(TalTrees, {GetTalentTabInfo(2)}); table.insert(TalTrees, {GetTalentTabInfo(3)}); 
-        local talBuild = "("..TalTrees[1][3].."/"..TalTrees[2][3].."/"..TalTrees[3][3]..")"
-        local talRole;
-
-        table.sort(TalTrees, function(a, b)
-          return a[3] > b[3]
-        end)
-
-        talBuild = TalTrees[1][1].." "..talBuild;
-        talRole = TalTrees[1][4];
-
-        local profile = newProfile or CommDKP:GetDefaultEntity();
-        profile.player=UnitName("player");
-        profile.version=core.SemVer;
-
-        CommDKP.Sync:SendData("CDKProfileSend", profile)
-        CommDKP.Sync:SendData("CommDKPTalents", talBuild)
-        CommDKP.Sync:SendData("CommDKPRoles", talRole)
-
-        CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[UnitName("player")] = profile;
-
-        table.wipe(TalTrees);
         return;
       elseif prefix == "CommDKPSeed" then
         if sender ~= UnitName("player") then

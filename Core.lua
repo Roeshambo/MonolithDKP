@@ -704,25 +704,61 @@ end
 
 -- moved to core from ManageEntries as this is called from comm.lua aswell
 function CommDKP:SetCurrentTeam(index)
-	CommDKP:GetTable(CommDKP_DB, false)["defaults"]["CurrentTeam"] = tostring(index)
+	CommDKP:GetTable(CommDKP_DB, false)["defaults"]["CurrentTeam"] = tostring(index);
 	CommDKP:StatusVerify_Update();
-	UIDropDownMenu_SetText(CommDKP.UIConfig.TeamViewChangerDropDown, CommDKP:GetCurrentTeamName())
+	UIDropDownMenu_SetText(CommDKP.UIConfig.TeamViewChangerDropDown, CommDKP:GetCurrentTeamName());
 
 	-- reset dkp table and update it
 	core.WorkingTable = CommDKP:GetTable(CommDKP_DKPTable, true);
 	core.PriceTable	= CommDKP:GetTable(CommDKP_MinBids, true);
-	CommDKP:DKPTable_Update()
+	CommDKP:DKPTable_Update();
 
 	-- reset dkp history table and update it
-	CommDKP:DKPHistory_Update(true)
+	CommDKP:DKPHistory_Update(true);
 	-- reset loot history
-	CommDKP:LootHistory_Update(L["NOFILTER"])
+	CommDKP:LootHistory_Update(L["NOFILTER"]);
 	-- update class graph
-	CommDKP:ClassGraph_Update()
+	CommDKP:ClassGraph_Update();
 	-- update price table
-	CommDKP:PriceTable_Update(0)
-	-- Broadcast Query Ping
-	CommDKP.Sync:SendData("CommDKPQuery",{ping = true});
+	CommDKP:PriceTable_Update(0);
+	-- broadcast Talents and Roles
+	CommDKP:SendTalentsAndRole();
+end
+
+function CommDKP:SendTalentsAndRole()
+
+	print("Firing SendTalentsAndRole: "..UnitName("player"))
+	
+	--Does a Profile Exist? If no, exit, nothing to do here.
+	local oldProfile = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), UnitName("player"), "player")
+	local newProfile = CommDKP:GetTable(CommDKP_Profiles, true)[UnitName("player")]
+	if newProfile == nil and oldProfile == nil then
+		return;
+	end
+
+	-- talents check
+	local TalTrees={}; table.insert(TalTrees, {GetTalentTabInfo(1)}); table.insert(TalTrees, {GetTalentTabInfo(2)}); table.insert(TalTrees, {GetTalentTabInfo(3)});
+	local talBuild = "("..TalTrees[1][3].."/"..TalTrees[2][3].."/"..TalTrees[3][3]..")"
+	local talRole;
+
+	table.sort(TalTrees, function(a, b)
+		return a[3] > b[3]
+	end) 
+
+	talBuild = TalTrees[1][1].." "..talBuild;
+	talRole = TalTrees[1][4];
+
+	local profile = newProfile or CommDKP:GetDefaultEntity();
+	profile.player=UnitName("player");
+	profile.version=core.SemVer;
+
+	CommDKP.Sync:SendData("CDKProfileSend", profile)
+	CommDKP.Sync:SendData("CommDKPTalents", talBuild)
+	CommDKP.Sync:SendData("CommDKPRoles", talRole)
+
+	CommDKP:GetTable(CommDKP_Profiles, true)[UnitName("player")] = profile;
+
+	table.wipe(TalTrees);
 end
 
 -------
