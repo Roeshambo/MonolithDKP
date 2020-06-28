@@ -99,7 +99,7 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 core.CommDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
 core.MonVersion = "v3.0.1";
 core.BuildNumber = 30001;
-core.ReleaseNumber = 29
+core.ReleaseNumber = 30
 core.defaultTable = "__default";
 core.SemVer = core.MonVersion.."-r"..tostring(core.ReleaseNumber);
 core.UpgradeSchema = false;
@@ -738,7 +738,6 @@ function CommDKP:SendTalentsAndRole()
 	local TalTrees={}; table.insert(TalTrees, {GetTalentTabInfo(1)}); table.insert(TalTrees, {GetTalentTabInfo(2)}); table.insert(TalTrees, {GetTalentTabInfo(3)});
 	local talBuild = "("..TalTrees[1][3].."/"..TalTrees[2][3].."/"..TalTrees[3][3]..")"
 	local talRole;
-
 	table.sort(TalTrees, function(a, b)
 		return a[3] > b[3]
 	end) 
@@ -749,12 +748,11 @@ function CommDKP:SendTalentsAndRole()
 	local profile = newProfile or CommDKP:GetDefaultEntity();
 	profile.player=UnitName("player");
 	profile.version=core.SemVer;
+	CommDKP:GetTable(CommDKP_Profiles, true)[UnitName("player")] = profile;
 
 	CommDKP.Sync:SendData("CDKProfileSend", profile)
 	CommDKP.Sync:SendData("CommDKPTalents", talBuild)
 	CommDKP.Sync:SendData("CommDKPRoles", talRole)
-
-	CommDKP:GetTable(CommDKP_Profiles, true)[UnitName("player")] = profile;
 
 	table.wipe(TalTrees);
 end

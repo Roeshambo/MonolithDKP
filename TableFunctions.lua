@@ -714,6 +714,9 @@ function CommDKP:DKPTable_Update()
 					local SetRole = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), core.WorkingTable[index].player, "player")		-- writes "No Role Detected" to players profile if role field doesn't exist
 					CommDKP:GetTable(CommDKP_DKPTable, true)[SetRole[1][1]].role = L["NOROLEDETECTED"]
 				end
+			elseif core.CenterSort == "version" then
+				local profile = CommDKP:GetTable(CommDKP_Profiles, true)[core.WorkingTable[index].player] or CommDKP:GetDefaultEntity();
+				row.DKPInfo[2]:SetText(profile.version);
 			end
 			
 			row.DKPInfo[3]:SetText(CommDKP_round(core.WorkingTable[index].dkp, core.DB.modes.rounding))
