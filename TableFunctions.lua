@@ -717,6 +717,7 @@ function CommDKP:DKPTable_Update()
 			elseif core.CenterSort == "version" then
 				local profile = CommDKP:GetTable(CommDKP_Profiles, true)[core.WorkingTable[index].player] or CommDKP:GetDefaultEntity();
 				row.DKPInfo[2]:SetText(profile.version);
+				core.WorkingTable[index].version = profile.version;
 			end
 			
 			row.DKPInfo[3]:SetText(CommDKP_round(core.WorkingTable[index].dkp, core.DB.modes.rounding))
