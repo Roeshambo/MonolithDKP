@@ -99,7 +99,7 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 core.CommDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
 core.MonVersion = "v3.0.1";
 core.BuildNumber = 30001;
-core.ReleaseNumber = 28
+core.ReleaseNumber = 29
 core.defaultTable = "__default";
 core.SemVer = core.MonVersion.."-r"..tostring(core.ReleaseNumber);
 core.UpgradeSchema = false;
@@ -727,8 +727,6 @@ end
 
 function CommDKP:SendTalentsAndRole()
 
-	print("Firing SendTalentsAndRole: "..UnitName("player"))
-	
 	--Does a Profile Exist? If no, exit, nothing to do here.
 	local oldProfile = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), UnitName("player"), "player")
 	local newProfile = CommDKP:GetTable(CommDKP_Profiles, true)[UnitName("player")]
