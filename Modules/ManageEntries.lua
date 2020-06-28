@@ -226,7 +226,7 @@ local function AddTargetToDKPTable()
 
 	if not search then
 		tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), profile);
-		tinsert(entities, newEntry);
+		tinsert(entities, profile);
 		CommDKP:GetTable(CommDKP_Profiles, true)[name] = profile;
 
 		CommDKP:FilterDKPTable(core.currentSort, "reset")
