@@ -195,6 +195,13 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
       elseif prefix == "CDKProfileSend" then
         local profile = _objReceived.Data;
         CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[profile.player] = profile;
+        
+        --Legacy Version Tracking
+        local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), profile.player, "player")
+        if search then
+          CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].version = profile.version;
+        end
+        
       elseif prefix == "CommDKPCurTeam" then
         CommDKP:SetCurrentTeam(_objReceived.CurrentTeam) -- this also refreshes all the tables/views/graphs
         return;

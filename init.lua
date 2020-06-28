@@ -670,6 +670,18 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 		core.WorkingTable 		= CommDKP:GetTable(CommDKP_DKPTable, true); -- imports full DKP table to WorkingTable for list manipulation
 		core.PriceTable			= CommDKP:GetTable(CommDKP_MinBids, true);
 
+		for i=1, #core.WorkingTable do
+			local CurPlayer = core.WorkingTable[i].player;
+			local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), CurPlayer);
+
+			if search then
+				--Set Version Info on Legacy Record First
+				local profile = CommDKP:GetTable(CommDKP_Profiles, true)[CurPlayer] or CommDKP:GetDefaultEntity();
+				core.WorkingTable[i].version = profile.version;
+			end
+		end
+
+
 		if not CommDKP:GetTable(CommDKP_DKPHistory, true).seed then CommDKP:GetTable(CommDKP_DKPHistory, true).seed = 0 end
 		if not CommDKP:GetTable(CommDKP_Loot, true).seed then CommDKP:GetTable(CommDKP_Loot, true).seed = 0 end
 		if CommDKP:GetTable(CommDKP_DKPTable, true).seed then CommDKP:GetTable(CommDKP_DKPTable, true).seed = nil end
