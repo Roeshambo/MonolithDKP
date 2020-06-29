@@ -99,7 +99,7 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 core.CommDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
 core.MonVersion = "v3.0.1";
 core.BuildNumber = 30001;
-core.ReleaseNumber = 28
+core.ReleaseNumber = 33
 core.defaultTable = "__default";
 core.SemVer = core.MonVersion.."-r"..tostring(core.ReleaseNumber);
 core.UpgradeSchema = false;
@@ -342,6 +342,7 @@ function CommDKP:PurgeDKPHistory()     -- purges old entries and stores relevant
 		while #CommDKP:GetTable(CommDKP_DKPHistory, true) > limit do
 			CommDKP:SortDKPHistoryTable()
 			local path = CommDKP:GetTable(CommDKP_DKPHistory, true)[#CommDKP:GetTable(CommDKP_DKPHistory, true)]
+
 			local players = {strsplit(",", strsub(path.players, 1, -2))}
 			local dkp = {strsplit(",", path.dkp)}
 
@@ -363,8 +364,9 @@ function CommDKP:PurgeDKPHistory()     -- purges old entries and stores relevant
 						CommDKP:GetTable(CommDKP_Archive, true)[players[i]] = { dkp=dkp[i], lifetime_spent=0, lifetime_gained=0 }
 					end
 				else
-					CommDKP:GetTable(CommDKP_Archive, true)[players[i]].dkp = CommDKP:GetTable(CommDKP_Archive, true)[players[i]].dkp + dkp[i]
-					if ((dkp[i] > 0 and not path.deletes) or (dkp[i] < 0 and path.deletes)) and not strfind(path.dkp, "%-%d*%.?%d+%%") then 	--lifetime gained if dkp addition and not a delete entry, dkp decrease and IS a delete entry
+					local dkpAmount = dkp[i] or 0
+					CommDKP:GetTable(CommDKP_Archive, true)[players[i]].dkp = CommDKP:GetTable(CommDKP_Archive, true)[players[i]].dkp + dkpAmount
+					if ((dkpAmount > 0 and not path.deletes) or (dkpAmount < 0 and path.deletes)) and not strfind(path.dkp, "%-%d*%.?%d+%%") then 	--lifetime gained if dkp addition and not a delete entry, dkp decrease and IS a delete entry
 						CommDKP:GetTable(CommDKP_Archive, true)[players[i]].lifetime_gained = CommDKP:GetTable(CommDKP_Archive, true)[players[i]].lifetime_gained + path.dkp 				--or is NOT a decay
 					end
 				end
@@ -704,25 +706,62 @@ end
 
 -- moved to core from ManageEntries as this is called from comm.lua aswell
 function CommDKP:SetCurrentTeam(index)
-	CommDKP:GetTable(CommDKP_DB, false)["defaults"]["CurrentTeam"] = tostring(index)
+	CommDKP:GetTable(CommDKP_DB, false)["defaults"]["CurrentTeam"] = tostring(index);
 	CommDKP:StatusVerify_Update();
-	UIDropDownMenu_SetText(CommDKP.UIConfig.TeamViewChangerDropDown, CommDKP:GetCurrentTeamName())
+	UIDropDownMenu_SetText(CommDKP.UIConfig.TeamViewChangerDropDown, CommDKP:GetCurrentTeamName());
 
 	-- reset dkp table and update it
 	core.WorkingTable = CommDKP:GetTable(CommDKP_DKPTable, true);
 	core.PriceTable	= CommDKP:GetTable(CommDKP_MinBids, true);
-	CommDKP:DKPTable_Update()
+	CommDKP:DKPTable_Update();
 
 	-- reset dkp history table and update it
-	CommDKP:DKPHistory_Update(true)
+	CommDKP:DKPHistory_Update(true);
 	-- reset loot history
-	CommDKP:LootHistory_Update(L["NOFILTER"])
+	CommDKP:LootHistory_Update(L["NOFILTER"]);
 	-- update class graph
-	CommDKP:ClassGraph_Update()
+	CommDKP:ClassGraph_Update();
 	-- update price table
-	CommDKP:PriceTable_Update(0)
-	-- Broadcast Query Ping
-	CommDKP.Sync:SendData("CommDKPQuery",{ping = true});
+	CommDKP:PriceTable_Update(0);
+	-- broadcast Talents and Roles
+	CommDKP:SendTalentsAndRole();
+end
+
+function CommDKP:SendTalentsAndRole()
+
+	--Does a Profile Exist? If no, exit, nothing to do here.
+	local oldProfile = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), UnitName("player"), "player")
+	local newProfile = CommDKP:GetTable(CommDKP_Profiles, true)[UnitName("player")]
+	if newProfile == nil and not oldProfile then
+		return;
+	end
+
+	-- talents check
+	local TalTrees={}; table.insert(TalTrees, {GetTalentTabInfo(1)}); table.insert(TalTrees, {GetTalentTabInfo(2)}); table.insert(TalTrees, {GetTalentTabInfo(3)});
+	local talBuild = "("..TalTrees[1][3].."/"..TalTrees[2][3].."/"..TalTrees[3][3]..")"
+	local talRole;
+	table.sort(TalTrees, function(a, b)
+		return a[3] > b[3]
+	end) 
+
+	talBuild = TalTrees[1][1].." "..talBuild;
+	talRole = TalTrees[1][4];
+
+	local profile = newProfile or CommDKP:GetDefaultEntity();
+	profile.player=UnitName("player");
+	profile.version=core.SemVer;
+
+	CommDKP:GetTable(CommDKP_Profiles, true)[UnitName("player")] = profile;
+
+	if oldProfile then
+		CommDKP:GetTable(CommDKP_DKPTable, true)[oldProfile[1][1]].version = core.SemVer;
+	end
+
+	CommDKP.Sync:SendData("CDKProfileSend", profile)
+	CommDKP.Sync:SendData("CommDKPTalents", talBuild)
+	CommDKP.Sync:SendData("CommDKPRoles", talRole)
+
+	table.wipe(TalTrees);
 end
 
 -------

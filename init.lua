@@ -175,6 +175,11 @@ local function HandleSlashCommands(str)
 end
 
 ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", function(self, event, msg, ...)      -- suppresses outgoing whisper responses to limit spam
+	
+	if core.DB == nil then
+		return false;
+	end
+
 	if core.DB.defaults.SuppressTells then
 		if core.BidInProgress then
 			if strfind(msg, L["YOURBIDOF"]) == 1 then
@@ -209,6 +214,10 @@ ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", function(self, event,
 end)
 
 ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", function(self, event, msg, ...)      -- suppresses incoming whisper responses to limit spam
+
+	if core.DB == nil then
+		return false;
+	end
 
 	if core.DB.defaults.SuppressTells then
 		if core.BidInProgress then
@@ -274,6 +283,7 @@ local function DoGuildUpdate()
 			CommDKP:Print(L["LOADED"].." "..#CommDKP:GetTable(CommDKP_DKPTable, true).." "..L["PLAYERRECORDS"]..", "..#CommDKP:GetTable(CommDKP_Loot, true).." "..L["LOOTHISTRECORDS"].." "..#CommDKP:GetTable(CommDKP_DKPHistory, true).." "..L["DKPHISTRECORDS"]..".");
 			CommDKP:Print(L["USE"].." /dkp ? "..L["SUBMITBUGS"].." @ https://github.com/Vapok/CommunityDKP/issues");
 			CommDKP.Sync:SendData("CommDKPBuild", tostring(core.BuildNumber)) -- broadcasts build number to guild to check if a newer version is available
+			CommDKP:SendTalentsAndRole()
 
 			if not core.DB.defaults.installed210 then
 				core.DB.defaults.installed210 = time(); -- identifies when 2.1.0 was installed to block earlier posts from broadcasting in sync (for now)
@@ -336,7 +346,6 @@ function CommDKP:SendSeedData()
 		}
 	--]]
 
-	CommDKP.Sync:SendData("CommDKPQuery",{ping = true});
 	CommDKP.Sync:SendData("CommDKPSeed", latestIndexForTeam) -- requests role and spec data and sends current seeds (index of newest DKP and Loot entries)
 
 end
@@ -434,6 +443,9 @@ function CommDKP_OnEvent(self, event, arg1, ...)
 					CommDKP:Print(L["NOWLOGGINGCOMBAT"])
 				end
 			end
+		end
+		if core.Initialized then
+			CommDKP:SendTalentsAndRole()
 		end
 	elseif event == "CHAT_MSG_WHISPER" then
 		CommDKP:CheckOfficer()
@@ -667,6 +679,18 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 		core.WorkingTable 		= CommDKP:GetTable(CommDKP_DKPTable, true); -- imports full DKP table to WorkingTable for list manipulation
 		core.PriceTable			= CommDKP:GetTable(CommDKP_MinBids, true);
 
+		for i=1, #core.WorkingTable do
+			local CurPlayer = core.WorkingTable[i].player;
+			local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), CurPlayer);
+
+			if search then
+				--Set Version Info on Legacy Record First
+				local profile = CommDKP:GetTable(CommDKP_Profiles, true)[CurPlayer] or CommDKP:GetDefaultEntity();
+				core.WorkingTable[i].version = profile.version;
+			end
+		end
+
+
 		if not CommDKP:GetTable(CommDKP_DKPHistory, true).seed then CommDKP:GetTable(CommDKP_DKPHistory, true).seed = 0 end
 		if not CommDKP:GetTable(CommDKP_Loot, true).seed then CommDKP:GetTable(CommDKP_Loot, true).seed = 0 end
 		if CommDKP:GetTable(CommDKP_DKPTable, true).seed then CommDKP:GetTable(CommDKP_DKPTable, true).seed = nil end
@@ -860,7 +884,10 @@ function CommDKP:InitializeCommDKPDB(dbTable)
 	if not dbTable.teams then dbTable.teams = {} end;
 
 	if IsInGuild() then
-		if not dbTable.teams["0"] then dbTable.teams["0"] = {name=CommDKP:GetGuildName()} end;
+		if not dbTable.teams["0"] then 
+			dbTable.teams["0"] = {name=CommDKP:GetGuildName()}
+			dbTable.defaults.CurrentTeam = "0";
+		end;
 	end
 
 	return dbTable;
