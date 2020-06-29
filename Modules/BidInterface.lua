@@ -150,7 +150,7 @@ function CommDKP_BidInterface_Update()
       row:Hide()
     end    
   if Bids_Submitted[1] and Bids_Submitted[1].bid and core.BidInterface.bidTable:IsShown() and
-    core.BidInterface.Bid:GetNumber() ~= nil and tonumber(core.BidInterface.Bid:GetNumber()) ~= nil and Bids_Submitted[1].bid > tonumber(core.BidInterface.Bid:GetNumber()) then      
+    (core.BidInterface.Bid:GetNumber() == nil or tonumber(core.BidInterface.Bid:GetNumber()) == nil or Bids_Submitted[1].bid > tonumber(core.BidInterface.Bid:GetNumber())) then
     core.BidInterface.Bid:SetNumber(Bids_Submitted[1].bid)
   end
     for i=1, showRows do
