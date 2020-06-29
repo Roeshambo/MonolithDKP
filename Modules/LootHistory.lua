@@ -47,9 +47,17 @@ local function GetItemHistoryList()
 	_ItemList = {}
 	-- we look at saved variable and find every unique item looted?
 	for i=1, #CommDKP:GetTable(CommDKP_Loot, true) do
-		local itemSearch = CommDKP:Table_Search(_ItemList, CommDKP:GetTable(CommDKP_Loot, true)[i].loot)
-		if not itemSearch then
-			tinsert(_ItemList, CommDKP:GetTable(CommDKP_Loot, true)[i].loot)
+		
+		--Validate that the value is ACTUALLY an item link.
+		local itemString = string.match(CommDKP:GetTable(CommDKP_Loot, true)[i].loot, "item[%-?%d:]+")
+
+		if itemString then
+
+			local itemSearch = CommDKP:Table_Search(_ItemList, CommDKP:GetTable(CommDKP_Loot, true)[i].loot)
+
+			if not itemSearch then
+				tinsert(_ItemList, CommDKP:GetTable(CommDKP_Loot, true)[i].loot)
+			end
 		end
 	end
 	SortItemTable(_ItemList)

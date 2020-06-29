@@ -175,6 +175,11 @@ local function HandleSlashCommands(str)
 end
 
 ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", function(self, event, msg, ...)      -- suppresses outgoing whisper responses to limit spam
+	
+	if core.DB == nil then
+		return false;
+	end
+
 	if core.DB.defaults.SuppressTells then
 		if core.BidInProgress then
 			if strfind(msg, L["YOURBIDOF"]) == 1 then
@@ -209,6 +214,10 @@ ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER_INFORM", function(self, event,
 end)
 
 ChatFrame_AddMessageEventFilter("CHAT_MSG_WHISPER", function(self, event, msg, ...)      -- suppresses incoming whisper responses to limit spam
+
+	if core.DB == nil then
+		return false;
+	end
 
 	if core.DB.defaults.SuppressTells then
 		if core.BidInProgress then
