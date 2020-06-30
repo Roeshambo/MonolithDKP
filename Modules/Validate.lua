@@ -278,11 +278,12 @@ function CommDKP_ReindexTables()
 	end
 
 	i=1
+	
 	while i <= #CommDKP:GetTable(CommDKP_DKPHistory, true) do
 		if CommDKP:GetTable(CommDKP_DKPHistory, true)[i].deletes or CommDKP:GetTable(CommDKP_DKPHistory, true)[i].deletedby or CommDKP:GetTable(CommDKP_DKPHistory, true)[i].reason == "Migration Correction" then
 			table.remove(CommDKP:GetTable(CommDKP_DKPHistory, true), i)
 		else
-			if (CommDKP_DB.defaults.installed and CommDKP:GetTable(CommDKP_DKPHistory, true)[i].date < CommDKP_DB.defaults.installed) or (not CommDKP_DB.defaults.installed and CommDKP:GetTable(CommDKP_DKPHistory, true)[i].date < CommDKP_DB.defaults.installed210) then
+			if (core.DB.defaults.installed and CommDKP:GetTable(CommDKP_DKPHistory, true)[i].date < core.DB.defaults.installed) or (not core.DB.defaults.installed and CommDKP:GetTable(CommDKP_DKPHistory, true)[i].date < core.DB.defaults.installed210) then
 				CommDKP:GetTable(CommDKP_DKPHistory, true)[i].index = GM.."-"..CommDKP:GetTable(CommDKP_DKPHistory, true)[i].date  	-- reindexes under GMs name if the entry was created prior to 2.1 (for uniformity)
 			end
 			i=i+1
@@ -294,7 +295,7 @@ function CommDKP_ReindexTables()
 		if CommDKP:GetTable(CommDKP_Loot, true)[i].deletes or CommDKP:GetTable(CommDKP_Loot, true)[i].deletedby then
 			table.remove(CommDKP:GetTable(CommDKP_Loot, true), i)
 		else
-			if (CommDKP_DB.defaults.installed and CommDKP:GetTable(CommDKP_Loot, true)[i].date < CommDKP_DB.defaults.installed) or (not CommDKP_DB.defaults.installed and CommDKP:GetTable(CommDKP_Loot, true)[i].date < CommDKP_DB.defaults.installed210) then
+			if (core.DB.defaults.installed and CommDKP:GetTable(CommDKP_Loot, true)[i].date < core.DB.defaults.installed) or (not core.DB.defaults.installed and CommDKP:GetTable(CommDKP_Loot, true)[i].date < core.DB.defaults.installed210) then
 				CommDKP:GetTable(CommDKP_Loot, true)[i].index = GM.."-"..CommDKP:GetTable(CommDKP_Loot, true)[i].date 				-- reindexes under GMs name if the entry was created prior to 2.1 (for uniformity)
 			end
 			i=i+1
