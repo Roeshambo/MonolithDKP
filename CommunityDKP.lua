@@ -492,6 +492,7 @@ function CommDKP:CreateMenu()
 			if tonumber(CommDKP:GetCurrentTeamIndex()) ~= arg2 then
 				if core.RaidInProgress == false and core.RaidInPause == false then
 					CommDKP:SetCurrentTeam(arg2)
+					CommDKP:SortDKPTable(core.currentSort, "reset")
 					UIDropDownMenu_SetText(CommDKP.UIConfig.TeamViewChangerDropDown, arg1)
 				else
 					StaticPopupDialogs["RAID_IN_PROGRESS"] = {
