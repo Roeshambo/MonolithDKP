@@ -747,34 +747,37 @@ function CommDKP_Register_ShiftClickLootWindowHook()      -- hook function into 
       local searchHook = CommDKP:Table_Search(hookedSlots, i)  -- blocks repeated hooking
 
       if not searchHook then
-        getglobal("ElvLootSlot"..i):HookScript("OnClick", function()
-              if ( IsShiftKeyDown() and IsAltKeyDown() ) then
-                local pass, err = pcall(function()
-                  lootIcon, itemName, _, _, _ = GetLootSlotInfo(i)
-                  itemLink = GetLootSlotLink(i)
-                    CommDKP:ToggleBidWindow(itemLink, lootIcon, itemName)
-                end)
+        local lootSlot = getglobal("ElvLootSlot"..i)
+        if lootSlot then
+          lootSlot:HookScript("OnClick", function()
+                if ( IsShiftKeyDown() and IsAltKeyDown() ) then
+                  local pass, err = pcall(function()
+                    lootIcon, itemName, _, _, _ = GetLootSlotInfo(i)
+                    itemLink = GetLootSlotLink(i)
+                      CommDKP:ToggleBidWindow(itemLink, lootIcon, itemName)
+                  end)
 
-            if not pass then
-              CommDKP:Print(err)
-              core.BiddingWindow:SetShown(false)
-              StaticPopupDialogs["SUGGEST_RELOAD"] = {
-                text = "|CFFFF0000"..L["WARNING"].."|r: "..L["MUSTRELOADUI"],
-                button1 = L["YES"],
-                button2 = L["NO"],
-                OnAccept = function()
-                  ReloadUI();
-                end,
-                timeout = 0,
-                whileDead = true,
-                hideOnEscape = true,
-                preferredIndex = 3,
-              }
-              StaticPopup_Show ("SUGGEST_RELOAD")
-            end
+              if not pass then
+                CommDKP:Print(err)
+                core.BiddingWindow:SetShown(false)
+                StaticPopupDialogs["SUGGEST_RELOAD"] = {
+                  text = "|CFFFF0000"..L["WARNING"].."|r: "..L["MUSTRELOADUI"],
+                  button1 = L["YES"],
+                  button2 = L["NO"],
+                  OnAccept = function()
+                    ReloadUI();
+                  end,
+                  timeout = 0,
+                  whileDead = true,
+                  hideOnEscape = true,
+                  preferredIndex = 3,
+                }
+                StaticPopup_Show ("SUGGEST_RELOAD")
               end
-        end)
-        table.insert(hookedSlots, i)
+            end
+          end)
+          table.insert(hookedSlots, i)
+        end
       end
     end
   else
