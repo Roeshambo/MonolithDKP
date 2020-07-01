@@ -76,9 +76,15 @@ function CommDKP.Sync:OnEnable()
   --CommDKP.Sync:RegisterComm("CommDKPDataSync", CommDKP.Sync:OnCommReceived())    -- not in use
   --CommDKP.Sync:RegisterComm("CommDKPDKPLogSync", CommDKP.Sync:OnCommReceived())  -- not in use
   --CommDKP.Sync:RegisterComm("CommDKPLogSync", CommDKP.Sync:OnCommReceived())    -- not in use
+  CommDKP.Sync:RegisterComm("CDKProfileSend", CommDKP.Sync:OnCommReceived()) -- Broadcast Player Profile for Update or Create
 end
 
 function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
+
+  --local msgType = prefix or "nil";
+  --local name = sender or "nil";
+  --print("Comms Prefix: "..msgType.." Sender: "..name);
+
   if not core.Initialized or core.IsOfficer == nil then return end
   if prefix then
 
@@ -120,23 +126,12 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 
     if success then
       if prefix == "CommDKPQuery" then
-          -- talents check
-          local TalTrees={}; table.insert(TalTrees, {GetTalentTabInfo(1)}); table.insert(TalTrees, {GetTalentTabInfo(2)}); table.insert(TalTrees, {GetTalentTabInfo(3)}); 
-          local talBuild = "("..TalTrees[1][3].."/"..TalTrees[2][3].."/"..TalTrees[3][3]..")"
-          local talRole;
+         
+        ------------------------------
+        -- This has been deprecated --
+        ------------------------------
 
-          table.sort(TalTrees, function(a, b)
-            return a[3] > b[3]
-          end)
-          
-          talBuild = TalTrees[1][1].." "..talBuild;
-          talRole = TalTrees[1][4];
-          
-          CommDKP.Sync:SendData("CommDKPTalents", talBuild)
-          CommDKP.Sync:SendData("CommDKPRoles", talRole)
-
-          table.wipe(TalTrees);
-          return;
+        return;
       elseif prefix == "CommDKPSeed" then
         if sender ~= UnitName("player") then
         
@@ -197,72 +192,101 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
       elseif prefix == "CommDKPTeams" then
         CommDKP:GetTable(CommDKP_DB, false)["teams"] = _objReceived.Teams
         return;
+      elseif prefix == "CDKProfileSend" then
+        local profile = _objReceived.Data;
+        CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[profile.player] = profile;
+        
+        --Legacy Version Tracking
+        local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), profile.player, "player")
+        if search then
+          CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].version = profile.version;
+        end
+        
       elseif prefix == "CommDKPCurTeam" then
         CommDKP:SetCurrentTeam(_objReceived.CurrentTeam) -- this also refreshes all the tables/views/graphs
         return;
       elseif prefix == "CommDKPTalents" then
-        local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam), sender, "player")
 
-        if search then
-          local curSelection = CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam)[search[1][1]]
-          curSelection.spec = _objReceived.Data;
+        for teamIndex,team in pairs(_objReceived.Teams) do
+          local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex), sender, "player")
+
+          if search then
+            local curSelection = CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex)[search[1][1]]
+            curSelection.spec = _objReceived.Data;
+            
+            if CommDKP:GetTable(CommDKP_Profiles, true, teamIndex)[sender] == nil then
+              CommDKP:GetTable(CommDKP_Profiles, true, teamIndex)[sender] = CommDKP:GetDefaultEntity();
+            end
+  
+            CommDKP:GetTable(CommDKP_Profiles, true, teamIndex)[sender].spec = _objReceived.Data;
+          end
+          
         end
+
         return
       elseif prefix == "CommDKPRoles" then
-        local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam), sender, "player")
-        local curClass = "None";
-
-        if search then
-          local curSelection = CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam)[search[1][1]]
-          curClass = CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam)[search[1][1]].class
-        
-          if curClass == "WARRIOR" then
-            local a,b,c = strsplit("/", _objReceived.Data)
-            if strfind(_objReceived.Data, "Protection") or (tonumber(c) and tonumber(strsub(c, 1, -2)) > 15) then
-              curSelection.role = L["TANK"]
-            else
+        for teamIndex,team in pairs(_objReceived.Teams) do
+          local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex), sender, "player")
+          local curClass = "None";
+  
+          if search then
+            local curSelection = CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex)[search[1][1]]
+            curClass = CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex)[search[1][1]].class
+          
+            if curClass == "WARRIOR" then
+              local a,b,c = strsplit("/", _objReceived.Data)
+              if strfind(_objReceived.Data, "Protection") or (tonumber(c) and tonumber(strsub(c, 1, -2)) > 15) then
+                curSelection.role = L["TANK"]
+              else
+                curSelection.role = L["MELEEDPS"]
+              end
+            elseif curClass == "PALADIN" then
+              if strfind(_objReceived.Data, "Protection") then
+                curSelection.role = L["TANK"]
+              elseif strfind(_objReceived.Data, "Holy") then
+                curSelection.role = L["HEALER"]
+              else
+                curSelection.role = L["MELEEDPS"]
+              end
+            elseif curClass == "HUNTER" then
+              curSelection.role = L["RANGEDPS"]
+            elseif curClass == "ROGUE" then
               curSelection.role = L["MELEEDPS"]
-            end
-          elseif curClass == "PALADIN" then
-            if strfind(_objReceived.Data, "Protection") then
-              curSelection.role = L["TANK"]
-            elseif strfind(_objReceived.Data, "Holy") then
-              curSelection.role = L["HEALER"]
-            else
-              curSelection.role = L["MELEEDPS"]
-            end
-          elseif curClass == "HUNTER" then
-            curSelection.role = L["RANGEDPS"]
-          elseif curClass == "ROGUE" then
-            curSelection.role = L["MELEEDPS"]
-          elseif curClass == "PRIEST" then
-            if strfind(_objReceived.Data, "Shadow") then
+            elseif curClass == "PRIEST" then
+              if strfind(_objReceived.Data, "Shadow") then
+                curSelection.role = L["CASTERDPS"]
+              else
+                curSelection.role = L["HEALER"]
+              end
+            elseif curClass == "SHAMAN" then
+              if strfind(_objReceived.Data, "Restoration") then
+                curSelection.role = L["HEALER"]
+              elseif strfind(_objReceived.Data, "Elemental") then
+                curSelection.role = L["CASTERDPS"]
+              else
+                curSelection.role = L["MELEEDPS"]
+              end
+            elseif curClass == "MAGE" then
               curSelection.role = L["CASTERDPS"]
-            else
-              curSelection.role = L["HEALER"]
-            end
-          elseif curClass == "SHAMAN" then
-            if strfind(_objReceived.Data, "Restoration") then
-              curSelection.role = L["HEALER"]
-            elseif strfind(_objReceived.Data, "Elemental") then
+            elseif curClass == "WARLOCK" then
               curSelection.role = L["CASTERDPS"]
+            elseif curClass == "DRUID" then
+              if strfind(_objReceived.Data, "Feral") then
+                curSelection.role = L["TANK"]
+              elseif strfind(_objReceived.Data, "Balance") then
+                curSelection.role = L["CASTERDPS"]
+              else
+                curSelection.role = L["HEALER"]
+              end
             else
-              curSelection.role = L["MELEEDPS"]
+              curSelection.role = L["NOROLEDETECTED"]
             end
-          elseif curClass == "MAGE" then
-            curSelection.role = L["CASTERDPS"]
-          elseif curClass == "WARLOCK" then
-            curSelection.role = L["CASTERDPS"]
-          elseif curClass == "DRUID" then
-            if strfind(_objReceived.Data, "Feral") then
-              curSelection.role = L["TANK"]
-            elseif strfind(_objReceived.Data, "Balance") then
-              curSelection.role = L["CASTERDPS"]
-            else
-              curSelection.role = L["HEALER"]
+  
+            if CommDKP:GetTable(CommDKP_Profiles, true, teamIndex)[sender] == nil then
+              CommDKP:GetTable(CommDKP_Profiles, true, teamIndex)[sender] = CommDKP:GetDefaultEntity();
             end
-          else
-            curSelection.role = L["NOROLEDETECTED"]
+  
+            CommDKP:GetTable(CommDKP_Profiles, true, teamIndex)[sender].role = curSelection.role;
           end
         end
         return;
@@ -663,6 +687,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                     numPlayers = numPlayers + 1
 
                     tremove(CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam), search[1][1])
+                    CommDKP:GetTable(CommDKP_Profiles, true, _objReceived.CurrentTeam)[_objReceived.Data[i].player] = nil;
 
                     local search2 = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Standby, true, _objReceived.CurrentTeam), _objReceived.Data[i].player, "player");
 
@@ -909,7 +934,7 @@ function CommDKP.Sync:SendData(prefix, data, target)
   
   -- non officers / not encoded
   if IsInGuild() then
-    if prefix == "CommDKPQuery" or prefix == "CommDKPBuild" or prefix == "CommDKPTalents" or prefix == "CommDKPRoles" then
+    if prefix == "CommDKPQuery" or prefix == "CommDKPBuild" or prefix == "CommDKPTalents" or prefix == "CommDKPRoles" or prefix == "CDKProfileSend" then
       CommDKP.Sync:SendCommMessage(prefix, _compressedObj, "GUILD")
       return;
     elseif prefix == "CommDKPBidder" then    -- bid submissions. Keep to raid.

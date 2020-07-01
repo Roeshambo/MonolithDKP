@@ -654,6 +654,7 @@ function CommDKP:DKPTable_Update()
 			local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), core.WorkingTable[i].player)
 
 			if search then
+				
 				table.insert(tempTable, CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]])
 			end
 		end
@@ -683,7 +684,7 @@ function CommDKP:DKPTable_Update()
 			row:Show()
 			row.index = index
 			local CurPlayer = core.WorkingTable[index].player;
-			
+
 			if core.CenterSort == "rank" then
 				local SetRank = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), core.WorkingTable[index].player, "player")
 				rank, rankIndex = CommDKP:GetGuildRank(core.WorkingTable[index].player)
@@ -714,6 +715,8 @@ function CommDKP:DKPTable_Update()
 					local SetRole = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), core.WorkingTable[index].player, "player")		-- writes "No Role Detected" to players profile if role field doesn't exist
 					CommDKP:GetTable(CommDKP_DKPTable, true)[SetRole[1][1]].role = L["NOROLEDETECTED"]
 				end
+			elseif core.CenterSort == "version" then
+				row.DKPInfo[2]:SetText(core.WorkingTable[index].version);
 			end
 			
 			row.DKPInfo[3]:SetText(CommDKP_round(core.WorkingTable[index].dkp, core.DB.modes.rounding))

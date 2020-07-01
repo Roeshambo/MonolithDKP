@@ -49,6 +49,7 @@ local function Remove_Entries()
 
 			tremove(CommDKP:GetTable(CommDKP_DKPTable, true), search[1][1])
 			tinsert(deleted, { player=path.player, deleted=true })
+			CommDKP:GetTable(CommDKP_Profiles, true)[path.player] = nil;
 
 			local search2 = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Standby, true), core.SelectedData[i].player, "player");
 
@@ -105,37 +106,20 @@ local function AddRaidToDKPTable()
 				end
 			end
 			if tempName then
+				local profile = CommDKP:GetDefaultEntity();
 				if not CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), tempName) then
 					if InGuild then
-						tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), {
-							player=tempName,
-							class=tempClass,
-							dkp=0,
-							previous_dkp=0,
-							lifetime_gained = 0,
-							lifetime_spent = 0,
-							rank = rankIndex,
-							rankName = rank,
-							spec = "No Spec Reported",
-							role = "No Role Reported",
-						});
-						tinsert(entities, {name=tempName, class=tempClass, rank=rankIndex, rankName=rank});
+						profile.player=tempName;
+						profile.class=tempClass;
+						profile.rank = rankIndex;
+						profile.rankName = rank;
 					else
-						tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), {
-							player=tempName,
-							class=tempClass,
-							dkp=0,
-							previous_dkp=0,
-							lifetime_gained = 0,
-							lifetime_spent = 0,
-							rank = 20,
-							rankName = "None",
-							spec = "No Spec Reported",
-							role = "No Role Reported",
-						});
-						tinsert(entities, {name=tempName, class=tempClass, rank=20, rankName="None"});
+						profile.player=tempName;
+						profile.class=tempClass;
 					end
-
+					tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), profile);
+					tinsert(entities, profile);
+					CommDKP:GetTable(CommDKP_Profiles, true)[name] = profile;
 					numPlayers = numPlayers + 1;
 					c = CommDKP:GetCColors(tempClass)
 					if addedUsers == nil then
@@ -185,19 +169,17 @@ local function AddGuildToDKPTable(rank, level)
 		local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
 
 		if not search and (level == nil or charLevel >= level) and (rank == nil or rankIndex == rank) then
-			tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), {
-				player=name,
-				class=class,
-				dkp=0,
-				previous_dkp=0,
-				lifetime_gained = 0,
-				lifetime_spent = 0,
-				rank=rankIndex,
-				rankName=rankName,
-				spec = "No Spec Reported",
-				role = "No Role Reported",
-			});
-			tinsert(entities, {name=name, class=class, rank=rankIndex, rankName=rankName});
+			local profile = CommDKP:GetDefaultEntity();
+
+			profile.player=name;
+			profile.class=class;
+			profile.rank = rankIndex;
+			profile.rankName = rank;
+
+			tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), profile);
+			tinsert(entities, profile);
+			CommDKP:GetTable(CommDKP_Profiles, true)[name] = profile;
+
 			numPlayers = numPlayers + 1;
 			c = CommDKP:GetCColors(class)
 			if addedUsers == nil then
@@ -237,22 +219,15 @@ local function AddTargetToDKPTable()
 	local entities = {}
 
 	local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
-	local newEntry = {
-		player=name,
-		class=class,
-		dkp=0,
-		previous_dkp=0,
-		lifetime_gained = 0,
-		lifetime_spent = 0,
-		rank=20,
-		rankName="None",
-		spec = "No Spec Reported",
-		role = "No Role Reported",
-	}
+	local profile = CommDKP:GetDefaultEntity();
+	
+	profile.player=name;
+	profile.class=class;
 
 	if not search then
-		tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), newEntry);
-		tinsert(entities, {name=name, class=class, rank=20, rankName="None"});
+		tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), profile);
+		tinsert(entities, profile);
+		CommDKP:GetTable(CommDKP_Profiles, true)[name] = profile;
 
 		CommDKP:FilterDKPTable(core.currentSort, "reset")
 		c = CommDKP:GetCColors(class)
@@ -280,32 +255,23 @@ local function AddTargetToDKPTable()
 end
 
 function CommDKP:AddEntitiesToDKPTable(entities)
-	-- Entities should be in the form of {name="name", class="class", rank="rank", rankName="rankName"}
+	
 	local addedUsers;
 	local numPlayers = 0;
 	local curTime = time()
 
 	for i=1, #entities do
-		local name = entities[i].name;
+		local name = entities[i].player;
 		local class = entities[i].class;
+		local profile = entities[i];
 		local c;
 	
 		local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
-		local newEntry = {
-			player=name,
-			class=class,
-			dkp=0,
-			previous_dkp=0,
-			lifetime_gained = 0,
-			lifetime_spent = 0,
-			rank=entities[i].rank,
-			rankName=entities[i].rankName,
-			spec = "No Spec Reported",
-			role = "No Role Reported",
-		}
 	
+		CommDKP:GetTable(CommDKP_Profiles, true)[name] = profile;
+
 		if not search then
-			tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), newEntry);
+			tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), profile);
 	
 			numPlayers = numPlayers + 1;
 			c = CommDKP:GetCColors(class)

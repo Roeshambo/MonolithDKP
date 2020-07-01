@@ -167,7 +167,7 @@ end
 function CommDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable based on id passed. Avail IDs are "class", "player" and "dkp"
 	local button;                                 -- passing "reset" forces it to do initial sort (A to Z repeatedly instead of A to Z then Z to A toggled)
 
-	if id == "class" or id == "rank" or id == "role" or id == "spec" then
+	if id == "class" or id == "rank" or id == "role" or id == "spec" or id == "version" then
 		button = SortButtons.class
 	elseif id == "spec" then                -- doesn't allow "spec" to be sorted.
 		CommDKP:DKPTable_Update()
@@ -190,7 +190,7 @@ function CommDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable
 		if button.Ascend then
 			if id == "dkp" then
 				return a[button.Id] > b[button.Id]
-			elseif id == "class" or id == "rank" or id == "role" or id == "spec" then
+			elseif id == "class" or id == "rank" or id == "role" or id == "spec" or id == "version" then
 				if a[button.Id] < b[button.Id] then
 					return true
 				elseif a[button.Id] > b[button.Id] then
@@ -204,7 +204,7 @@ function CommDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable
 		else
 			if id == "dkp" then
 				return a[button.Id] < b[button.Id]
-			elseif id == "class" or id == "rank" or id == "role" or id == "spec" then
+			elseif id == "class" or id == "rank" or id == "role" or id == "spec" or id == "version" then
 				if a[button.Id] > b[button.Id] then
 					return true
 				elseif a[button.Id] < b[button.Id] then
@@ -332,6 +332,8 @@ function CommDKP:CreateMenu()
 		reason.text, reason.arg1, reason.arg2, reason.checked, reason.isNotRadio = L["RANK"], "rank", L["RANK"], "rank" == core.CenterSort, true
 		UIDropDownMenu_AddButton(reason)
 		reason.text, reason.arg1, reason.arg2, reason.checked, reason.isNotRadio = L["ROLE"], "role", L["ROLE"], "role" == core.CenterSort, true
+		UIDropDownMenu_AddButton(reason)
+		reason.text, reason.arg1, reason.arg2, reason.checked, reason.isNotRadio = L["VERSION"], "version", L["VERSION"], "version" == core.CenterSort, true
 		UIDropDownMenu_AddButton(reason)
 	end)
 	-- Dropdown Menu Function
@@ -657,7 +659,7 @@ function CommDKP:CreateMenu()
 	CommDKP.UIConfig.Version:SetScale("0.9")
 	CommDKP.UIConfig.Version:SetTextColor(c[1].r, c[1].g, c[1].b, 0.5);
 	CommDKP.UIConfig.Version:SetPoint("BOTTOMRIGHT", CommDKP.UIConfig.TitleBar, "BOTTOMRIGHT", -8, 4);
-	CommDKP.UIConfig.Version:SetText(core.MonVersion); 
+	CommDKP.UIConfig.Version:SetText(core.SemVer); 
 
 	CommDKP.UIConfig:Hide(); -- hide menu after creation until called.
 	CommDKP:FilterDKPTable(core.currentSort)   -- initial sort and populates data values in DKPTable.Rows{} CommDKP:FilterDKPTable() -> CommDKP:SortDKPTable() -> CommDKP:DKPTable_Update()

@@ -4,7 +4,7 @@
 ## Notes: Feature-rich DKP Management Tool 
 ## Version: 3.0.0
 ## DefaultState: enabled
-## SavedVariables: CommDKP_DB, CommDKP_Loot, CommDKP_DKPTable, CommDKP_DKPHistory, CommDKP_MinBids, CommDKP_MaxBids, CommDKP_Whitelist, CommDKP_Standby, CommDKP_Archive
+## SavedVariables: CommDKP_DB, CommDKP_Loot, CommDKP_DKPTable, CommDKP_DKPHistory, CommDKP_MinBids, CommDKP_MaxBids, CommDKP_Whitelist, CommDKP_Standby, CommDKP_Archive, CommDKP_Profiles
 
 
 
