@@ -94,7 +94,7 @@ if GetLocale() == "zhCN" then
     ARTIFICIALINFLATION = "人工通胀",
     ARTINFLATTTDESC = "分配给每个玩家的DKP的TOP积分，在各个玩家之间分配。银行价值除后，此值将添加到他们的收入DKP中。",
     AUTOAWARD = "汽车奖DKP",
-    AUTOAWARDTTDESC = "杀死老板时自动奖励Boss Kill Bonus DKP（在“选项”选项卡中设置）。 只有突袭首领会以此分配分数。",
+    AUTOAWARDTTDESC = "Automatically awards Boss Kill Bonus DKP (set in Options tab) when a boss is killed. Only the raid leader will distribute points with this. Raid must be initialized on the Adjust DKP tab.", -- Need Translation
     AUTOCOMBATLOG = "自动战斗记录",
     AUTOCOMBATLOGTTDESC = "在突袭中进入突袭区域或在遭遇突袭时进入战斗时自动激活/ combatlog。",
     AUTOCOMBATLOGTTWARN = "如果尚未激活，请在系统>网络中手动激活高级战斗日志。",

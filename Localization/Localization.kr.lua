@@ -94,7 +94,7 @@ if GetLocale() == "koKR" then
     ARTIFICIALINFLATION = "인공 인플레이션",
     ARTINFLATTTDESC = "DKP에서 각 플레이어에게 나누어주는 포인트. 이 값은 뱅킹 된 값이 분할 된 후 획득 한 DKP에 추가됩니다.",
     AUTOAWARD = "자동 수상 DKP",
-    AUTOAWARDTTDESC = "보스를 처치하면 보스 처치 보너스 DKP (옵션 탭에서 설정)가 자동으로 부여됩니다. 공격대 장만이 이것으로 점수를 분배합니다.",
+    AUTOAWARDTTDESC = "Automatically awards Boss Kill Bonus DKP (set in Options tab) when a boss is killed. Only the raid leader will distribute points with this. Raid must be initialized on the Adjust DKP tab.", -- NEED TRANSLATION
     AUTOCOMBATLOG = "자동 전투 기록",
     AUTOCOMBATLOGTTDESC = "공격대와 공격대에 들어가거나 전투 대전에서 전투에 참가할 때 / combatlog를 자동으로 활성화합니다.",
     AUTOCOMBATLOGTTWARN = "시스템> 네트워크에서 고급 전투 로깅을 아직 활성화하지 않은 경우 여전히 수동으로 활성화해야합니다.",

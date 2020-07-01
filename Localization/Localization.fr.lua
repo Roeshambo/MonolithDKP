@@ -94,7 +94,7 @@ if GetLocale() == "frFR" then
     ARTIFICIALINFLATION = "Inflation artificielle",
     ARTINFLATTTDESC = "Points à donner à chaque joueur SUR LE DKP divisé et réparti entre eux. Cette valeur est ajoutée à leur DKP gagné APRÈS que la valeur mise en banque soit divisée.",
     AUTOAWARD = "Prix ​​Auto DKP",
-    AUTOAWARDTTDESC = "Attribue automatiquement le bonus DKP au boss Kill (défini dans l'onglet Options) lorsqu'un boss est tué. Seul le chef de raid distribuera des points avec cela.",
+    AUTOAWARDTTDESC = "Automatically awards Boss Kill Bonus DKP (set in Options tab) when a boss is killed. Only the raid leader will distribute points with this. Raid must be initialized on the Adjust DKP tab.", -- NEEDS TRANSLATION
     AUTOCOMBATLOG = "Journal de combat automatique",
     AUTOCOMBATLOGTTDESC = "Active automatiquement / combatlog lorsque vous êtes dans un raid et que vous entrez dans une zone de raid ou entrez dans un combat avec une rencontre de raid.",
     AUTOCOMBATLOGTTWARN = "Vous devez toujours activer manuellement la journalisation de combat avancée dans Système> Réseau si vous ne l'avez pas déjà fait.",
