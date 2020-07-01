@@ -94,7 +94,7 @@ if GetLocale() == "deDE" then
     ARTIFICIALINFLATION = "Künstliche Inflation",
     ARTINFLATTTDESC = "Punkte, die jedem Spieler OBEN auf die DKP gegeben werden, die unter ihnen aufgeteilt und verteilt wird. Dieser Wert wird zu ihrem verdienten DKP addiert, nachdem der Bankwert geteilt wurde.",
     AUTOAWARD = "Auto Award DKP",
-    AUTOAWARDTTDESC = "Gewährt automatisch eine DKP Prämie, wenn ein Boss getötet wird. Nur der Schlachtzugsführer wird Punkte damit verteilen.",
+    AUTOAWARDTTDESC = "Automatically awards Boss Kill Bonus DKP (set in Options tab) when a boss is killed. Only the raid leader will distribute points with this. Raid must be initialized on the Adjust DKP tab.", -- Needs TRANSLATION
     AUTOCOMBATLOG = "Auto Combat Log",
     AUTOCOMBATLOGTTDESC = "Aktiviert / Combatlog automatisch, wenn Sie sich in einem Schlachtzug befinden und eine Schlachtzugszone betreten oder wenn Sie mit einem Schlachtzug in einen Kampf treten.",
     AUTOCOMBATLOGTTWARN = "Sie müssen Advanced Combat Logging immer noch manuell unter System> Netzwerk aktivieren, falls Sie dies noch nicht getan haben.",
