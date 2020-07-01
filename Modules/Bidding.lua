@@ -1210,8 +1210,8 @@ function CommDKP:BidScrollFrame_Update()
       elseif core.DB.modes.CostSelection == "Second Bidder" then
         if Bids_Submitted[2] then
           core.BiddingWindow.cost:SetText(Bids_Submitted[2].bid)
-        elseif Bids_Submitted[1] then
-          core.BiddingWindow.cost:SetText(Bids_Submitted[1].bid)
+        else
+          core.BiddingWindow.cost:SetText(core.BiddingWindow.minBid:GetText())
         end
       end
   end
