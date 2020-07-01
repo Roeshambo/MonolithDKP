@@ -1207,8 +1207,12 @@ function CommDKP:BidScrollFrame_Update()
     if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
       if core.DB.modes.CostSelection == "First Bidder" and Bids_Submitted[1] then
         core.BiddingWindow.cost:SetText(Bids_Submitted[1].bid)
-      elseif core.DB.modes.CostSelection == "Second Bidder" and Bids_Submitted[2] then
-        core.BiddingWindow.cost:SetText(Bids_Submitted[2].bid)
+      elseif core.DB.modes.CostSelection == "Second Bidder" then
+        if Bids_Submitted[2] then
+          core.BiddingWindow.cost:SetText(Bids_Submitted[2].bid)
+        elseif Bids_Submitted[1] then
+          core.BiddingWindow.cost:SetText(Bids_Submitted[1].bid)
+        end
       end
   end
     --FauxScrollFrame_Update(core.BiddingWindow.bidTable, numOptions, numrows, height, nil, nil, nil, nil, nil, nil, true) -- alwaysShowScrollBar= true to stop frame from hiding
