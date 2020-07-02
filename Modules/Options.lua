@@ -13,10 +13,12 @@ local function DrawPercFrame(box)
   CommDKP.ConfigTab4.DefaultMinBids.SlotBox[box].perc:SetPoint("LEFT", CommDKP.ConfigTab4.DefaultMinBids.SlotBox[box], "RIGHT", -15, 0);
   CommDKP.ConfigTab4.DefaultMinBids.SlotBox[box].perc:SetText("%")
   
-  CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[box].perc = CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[box]:CreateFontString(nil, "OVERLAY")
-  CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[box].perc:SetFontObject("CommDKPNormalLeft");
-  CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[box].perc:SetPoint("LEFT", CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[box], "RIGHT", -15, 0);
-  CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[box].perc:SetText("%")
+  if core.DB.modes.mode == "Minimum Bid Values" or (core.DB.modes.mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
+    CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[box].perc = CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[box]:CreateFontString(nil, "OVERLAY")
+    CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[box].perc:SetFontObject("CommDKPNormalLeft");
+    CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[box].perc:SetPoint("LEFT", CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[box], "RIGHT", -15, 0);
+    CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[box].perc:SetText("%")
+  end
 end
 
 local function SaveSettings()

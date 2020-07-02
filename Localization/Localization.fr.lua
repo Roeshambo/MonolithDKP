@@ -94,7 +94,7 @@ if GetLocale() == "frFR" then
     ARTIFICIALINFLATION = "Inflation artificielle",
     ARTINFLATTTDESC = "Points à donner à chaque joueur SUR LE DKP divisé et réparti entre eux. Cette valeur est ajoutée à leur DKP gagné APRÈS que la valeur mise en banque soit divisée.",
     AUTOAWARD = "Prix ​​Auto DKP",
-    AUTOAWARDTTDESC = "Attribue automatiquement le bonus DKP au boss Kill (défini dans l'onglet Options) lorsqu'un boss est tué. Seul le chef de raid distribuera des points avec cela.",
+    AUTOAWARDTTDESC = "Automatically awards Boss Kill Bonus DKP (set in Options tab) when a boss is killed. Only the raid leader will distribute points with this. Raid must be initialized on the Adjust DKP tab.", -- NEEDS TRANSLATION
     AUTOCOMBATLOG = "Journal de combat automatique",
     AUTOCOMBATLOGTTDESC = "Active automatiquement / combatlog lorsque vous êtes dans un raid et que vous entrez dans une zone de raid ou entrez dans un combat avec une rencontre de raid.",
     AUTOCOMBATLOGTTWARN = "Vous devez toujours activer manuellement la journalisation de combat avancée dans Système> Réseau si vous ne l'avez pas déjà fait.",
@@ -194,13 +194,7 @@ if GetLocale() == "frFR" then
     CONTINUERAID = "Continuer le raid",
     CORRECTINGERROR = "Erreur de correction",
     COSTAUTOUPDATE = "Mise à jour automatique des coûts",
-    COSTAUTOUPDATETTDESC = [=[Sélectionnez ce que vous souhaitez que le coût des articles soit automatiquement mis à jour lors d'une session d'enchères. 
-
-    |CFFFF0000Le premier enchérisseur|r: le coût de l'article situé au bas de la fenêtre d'enchères sera mis à jour au plus offrant.
-
-     |CFFFF0000Seconde enchérisseur|r: Ceci mettra à jour le coût de l'article en bas de la fenêtre d'enchères au deuxième plus offrant ou, s'il n'y a qu'un seul enchérisseur, à la valeur de l'enchère minimum. 
-
-    Pour chaque objet, le coût est toujours modifiable à la volée.]=],
+    COSTAUTOUPDATETTDESC = "Select what you'd like the item cost to be automatically updated to during a bid session.\n\n|CFFFF0000First Bidder|r: This will update the cost of the item at the bottom of the bid window to the highest bidder.\n\n|CFFFF0000Second Bidder|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the bidder's value.\n\n|CFFFF0000Second Bidder or Min Value|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the minimum bid value.\n\nFor each, the cost is always editable on the fly.", --NEEDS TRANSLATION
     COSTAUTOUPDATEVALUE = "Valeur de mise à jour automatique des coûts",
     CREATEDMAINTAIN = "créé et maintenu par",
     CREATERAIDTIMER = "Crée une minuterie de raid (officiers uniquement) (par exemple. / Dkp timer 120 Pizza Break!)",
@@ -607,6 +601,7 @@ if GetLocale() == "frFR" then
     SEARCH = "Recherche   ",
     SEARCHDESC = "Filtres liste DKP. Recherches par nom, classe, spécification, rang et rôle.",
     SECONDBIDDER = "Deuxième soumissionnaire",
+    SECONDBIDDERORMIN = "Second Bidder or Min Value", -- NEEDS TRANSLATION
     SECONDS = "Secondes",
     SELECTALL = "Tout sélectionner",
     SELECTALLVISIBLE = "Sélectionner tout visible",

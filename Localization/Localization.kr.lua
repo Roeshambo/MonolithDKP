@@ -94,7 +94,7 @@ if GetLocale() == "koKR" then
     ARTIFICIALINFLATION = "인공 인플레이션",
     ARTINFLATTTDESC = "DKP에서 각 플레이어에게 나누어주는 포인트. 이 값은 뱅킹 된 값이 분할 된 후 획득 한 DKP에 추가됩니다.",
     AUTOAWARD = "자동 수상 DKP",
-    AUTOAWARDTTDESC = "보스를 처치하면 보스 처치 보너스 DKP (옵션 탭에서 설정)가 자동으로 부여됩니다. 공격대 장만이 이것으로 점수를 분배합니다.",
+    AUTOAWARDTTDESC = "Automatically awards Boss Kill Bonus DKP (set in Options tab) when a boss is killed. Only the raid leader will distribute points with this. Raid must be initialized on the Adjust DKP tab.", -- NEED TRANSLATION
     AUTOCOMBATLOG = "자동 전투 기록",
     AUTOCOMBATLOGTTDESC = "공격대와 공격대에 들어가거나 전투 대전에서 전투에 참가할 때 / combatlog를 자동으로 활성화합니다.",
     AUTOCOMBATLOGTTWARN = "시스템> 네트워크에서 고급 전투 로깅을 아직 활성화하지 않은 경우 여전히 수동으로 활성화해야합니다.",
@@ -194,13 +194,7 @@ if GetLocale() == "koKR" then
     CONTINUERAID = "계속 습격",
     CORRECTINGERROR = "오류 수정",
     COSTAUTOUPDATE = "비용 자동 업데이트",
-    COSTAUTOUPDATETTDESC = [=[입찰 세션 중에 항목 비용이 자동으로 업데이트되도록하려는 항목을 선택하십시오. 
-
-    |CFFFF0000첫 입찰자|r: 입찰 창 하단에있는 항목의 비용이 최고 입찰자에게 업데이트됩니다. 
-
-    |CFFFF0000두 번째 입찰자|r: 입찰 창 하단에있는 항목의 비용을 두 번째로 높은 입찰자 또는 입찰자가 한 명인 경우 최소 입찰 값으로 업데이트합니다. 
-
-    각각의 비용은 항상 즉시 편집 할 수 있습니다.]=],
+    COSTAUTOUPDATETTDESC = "Select what you'd like the item cost to be automatically updated to during a bid session.\n\n|CFFFF0000First Bidder|r: This will update the cost of the item at the bottom of the bid window to the highest bidder.\n\n|CFFFF0000Second Bidder|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the bidder's value.\n\n|CFFFF0000Second Bidder or Min Value|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the minimum bid value.\n\nFor each, the cost is always editable on the fly.", --NEEDS TRANSLATION
     COSTAUTOUPDATEVALUE = "비용 자동 업데이트 값",
     CREATEDMAINTAIN = "에 의해 생성 및 유지",
     CREATERAIDTIMER = "레이드 타이머 생성 (직원 만 해당) (예 : / dkp timer 120 Pizza Break!)",
@@ -607,6 +601,7 @@ if GetLocale() == "koKR" then
     SEARCH = "검색   ",
     SEARCHDESC = "DKP 목록을 필터링합니다. 이름, 클래스, 사양, 순위 및 역할을 검색합니다.",
     SECONDBIDDER = "두 번째 입찰자",
+    SECONDBIDDERORMIN = "Second Bidder or Min Value", -- NEEDS TRANSLATION
     SECONDS = "초",
     SELECTALL = "모두 선택",
     SELECTALLVISIBLE = "보이는 모든 것을 선택하십시오",

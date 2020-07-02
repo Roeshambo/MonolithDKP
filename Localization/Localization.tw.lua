@@ -94,7 +94,7 @@ if GetLocale() == "zhTW" then
     ARTIFICIALINFLATION = "人工通脹",
     ARTINFLATTTDESC = "分配給每個玩家的DKP的TOP積分，在各個玩家之間分配。銀行價值除後，此值將添加到他們的收入DKP中。",
     AUTOAWARD = "汽車獎DKP",
-    AUTOAWARDTTDESC = "殺死老闆時自動獎勵Boss Kill Bonus DKP（在“選項”選項卡中設置）。 只有突襲首領會以此分配分數。",
+    AUTOAWARDTTDESC = "Automatically awards Boss Kill Bonus DKP (set in Options tab) when a boss is killed. Only the raid leader will distribute points with this. Raid must be initialized on the Adjust DKP tab.", -- NEED TRANSLATION
     AUTOCOMBATLOG = "自動戰鬥記錄",
     AUTOCOMBATLOGTTDESC = "在突襲中進入突襲區域或在遭遇突襲時進入戰鬥時自動激活/ combatlog。",
     AUTOCOMBATLOGTTWARN = "如果尚未激活“高級戰鬥日誌”，則仍必須在系統>網絡中手動激活它。",
@@ -194,11 +194,7 @@ if GetLocale() == "zhTW" then
     CONTINUERAID = "繼續RAID",
     CORRECTINGERROR = "修正誤差",
     COSTAUTOUPDATE = "費用自動更新",
-    COSTAUTOUPDATETTDESC = [=[選擇您希望在投標過程中將物料成本自動更新為的價格。
-
-    |CFFFF0000第一投標人|r：這會將投標窗口底部的物料成本更新為最高投標人。
-
-    |CFFFF0000第二投標人|r：這會將投標窗口底部的項目成本更新為第二高的投標人，或者如果只有一個投標人，則將最低投標值更新。 n  n費用總是可以隨時編輯。]=],
+    COSTAUTOUPDATETTDESC = "Select what you'd like the item cost to be automatically updated to during a bid session.\n\n|CFFFF0000First Bidder|r: This will update the cost of the item at the bottom of the bid window to the highest bidder.\n\n|CFFFF0000Second Bidder|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the bidder's value.\n\n|CFFFF0000Second Bidder or Min Value|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the minimum bid value.\n\nFor each, the cost is always editable on the fly.", --NEEDS TRANSLATION
     COSTAUTOUPDATEVALUE = "費用自動更新值",
     CREATEDMAINTAIN = "由...創建和維護",
     CREATERAIDTIMER = "創建Raid計時器（僅限官員）（例如/ dkp計時器120 Pizza Break！）",
@@ -605,6 +601,7 @@ if GetLocale() == "zhTW" then
     SEARCH = "搜索   ",
     SEARCHDESC = "過濾DKP列表。搜索名稱，類別，規格，等級和角色。",
     SECONDBIDDER = "第二投標人",
+    SECONDBIDDERORMIN = "Second Bidder or Min Value", -- NEEDS TRANSLATION
     SECONDS = "秒",
     SELECTALL = "全選",
     SELECTALLVISIBLE = "選擇所有可見",
