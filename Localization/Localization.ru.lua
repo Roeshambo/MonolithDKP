@@ -199,11 +199,7 @@ if GetLocale() == "ruRU" then
     CONTINUERAID = "Продолжить рейд",
     CORRECTINGERROR = "Исправление ошибки",
     COSTAUTOUPDATE = "Стоимость автоматического обновления",
-    COSTAUTOUPDATETTDESC = [=[Выберите, какую стоимость товара вы хотите автоматически обновлять во время торгов.
-
-    |CFFFF0000Первая ставка|r: Это обновит стоимость товара в нижней части окна ставки до самой высокой цены.
-
-    |CFFFF0000Вторая ставка|r: При этом стоимость элемента в нижней части окна ставки будет обновлена либо до второй по величине ставки, либо, если есть только один, с минимальным значением ставки.]=],
+    COSTAUTOUPDATETTDESC = "Select what you'd like the item cost to be automatically updated to during a bid session.\n\n|CFFFF0000First Bidder|r: This will update the cost of the item at the bottom of the bid window to the highest bidder.\n\n|CFFFF0000Second Bidder|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the bidder's value.\n\n|CFFFF0000Second Bidder or Min Value|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the minimum bid value.\n\nFor each, the cost is always editable on the fly.", --NEEDS TRANSLATION
     COSTAUTOUPDATEVALUE = "Автоматическое обновление стоимости",
     CREATED = "Создано",
     CREATEDMAINTAIN = "переведена Имидж@Пламегор-ПвП, создана и поддерживается",
@@ -621,6 +617,7 @@ if GetLocale() == "ruRU" then
     SEARCH = "Поиск",
     SEARCHDESC = "Фильтр таблицы DKP. Поиск по Имени, Классу, Спеку, Рангу и Роли.",
     SECONDBIDDER = "Вторая ставка",
+    SECONDBIDDERORMIN = "Second Bidder or Min Value", -- NEEDS TRANSLATION
     SECONDS = "секунд",
     SELECTALL = "Выбрать всех",
     SELECTALLVISIBLE = "Выбрать все видимые",
@@ -812,7 +809,7 @@ if GetLocale() == "ruRU" then
     MIGRATIONCOMPLETED    = "Миграция завершена.|n|nПожалуйста отключите MonolithDKP и перезагрузите интерфейс.",
 
     
-    CHANGELOG1 = "CommunityDKP - Обновление 1",
+    CHANGELOG1 = "CommunityDKP - Обновление 2",
     CHANGELOG2 = " - Множественные исправления и улучшения",
     CHANGELOG3 = " - Помощник при миграции с MonolithDKP",
     CHANGELOG4 = " - Лучшая синхронизация DKP таблиц при добавлении профилей",

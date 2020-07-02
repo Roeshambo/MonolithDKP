@@ -123,7 +123,11 @@ function CommDKP:DKPModes_Main()
           f.DKPModesMain.AllowNegativeBidders:Show()
           f.DKPModesMain.AllowNegativeBidders:SetChecked(core.DB.modes.AllowNegativeBidders)
         end
-        UIDropDownMenu_SetText(f.DKPModesMain.ItemCostDropDown, "Integer")
+        UIDropDownMenu_SetText(f.DKPModesMain.ItemCostDropDown, L["INTEGER"])
+      else
+        f.DKPModesMain.SubZeroBidding:Hide()
+        f.DKPModesMain.AllowNegativeBidders:Hide()
+        UIDropDownMenu_SetText(f.DKPModesMain.ItemCostDropDown, L["PERCENT"])
       end
     elseif newValue == "Roll Based Bidding" then
       core.DB.modes.mode = "Roll Based Bidding"
@@ -431,6 +435,8 @@ function CommDKP:DKPModes_Main()
     LocalCostSel = L["FIRSTBIDDER"]
   elseif core.DB.modes.CostSelection == "Second Bidder" then
     LocalCostSel = L["SECONDBIDDER"]
+  elseif core.DB.modes.CostSelection == "Second Bidder or Min" then
+    LocalCostSel = L["SECONDBIDDERORMIN"]
   end
 
   -- Create and bind the initialization function to the dropdown menu
@@ -442,7 +448,11 @@ function CommDKP:DKPModes_Main()
     UIDropDownMenu_AddButton(CostSelect)
     CostSelect.text, CostSelect.arg1, CostSelect.checked, CostSelect.isNotRadio = L["SECONDBIDDER"], "Second Bidder", "Second Bidder" == core.DB.modes.CostSelection, false
     UIDropDownMenu_AddButton(CostSelect)
+    CostSelect.text, CostSelect.arg1, CostSelect.checked, CostSelect.isNotRadio = L["SECONDBIDDERORMIN"], "Second Bidder or Min", "Second Bidder or Min" == core.DB.modes.CostSelection, false
+    UIDropDownMenu_AddButton(CostSelect)
   end)
+  
+  
 
   UIDropDownMenu_SetWidth(f.DKPModesMain.CostSelection, 150)
   UIDropDownMenu_SetText(f.DKPModesMain.CostSelection, LocalCostSel)
@@ -453,8 +463,10 @@ function CommDKP:DKPModes_Main()
 
     if arg1 == "First Bidder" then
       LocalCostSel = L["FIRSTBIDDER"]
-    else
+    elseif arg1 == "Second Bidder" then
       LocalCostSel = L["SECONDBIDDER"]
+    else
+      LocalCostSel = L["SECONDBIDDERORMIN"]
     end
 
     UIDropDownMenu_SetText(f.DKPModesMain.CostSelection, LocalCostSel)
@@ -613,7 +625,7 @@ function CommDKP:DKPModes_Main()
   
   f.DKPModesMain.ItemCostDropDown:SetPoint("TOPLEFT", f.DKPModesMain.ModesDropDown, "BOTTOMLEFT", 0, -50)
   UIDropDownMenu_SetWidth(f.DKPModesMain.ItemCostDropDown, 150)
-  UIDropDownMenu_SetText(f.DKPModesMain.ItemCostDropDown, L[core.DB.modes.costvalue])
+  UIDropDownMenu_SetText(f.DKPModesMain.ItemCostDropDown, L[string.upper(core.DB.modes.costvalue)])
 
   -- Dropdown Menu Function
   function f.DKPModesMain.ItemCostDropDown:SetValue(arg1)
@@ -625,15 +637,17 @@ function CommDKP:DKPModes_Main()
         f.DKPModesMain.AllowNegativeBidders:Show()
         f.DKPModesMain.AllowNegativeBidders:SetChecked(core.DB.modes.AllowNegativeBidders)
       end
+      UIDropDownMenu_SetText(f.DKPModesMain.ItemCostDropDown, L["INTEGER"])
     elseif arg1 == "Percent" then
       core.DB.modes.costvalue = "Percent"
       f.DKPModesMain.SubZeroBidding:Hide()
       f.DKPModesMain.AllowNegativeBidders:Hide()
       core.DB.modes.SubZeroBidding = false;
       f.DKPModesMain.SubZeroBidding:SetChecked(false)
+      UIDropDownMenu_SetText(f.DKPModesMain.ItemCostDropDown, L["PERCENT"])
     end
 
-    UIDropDownMenu_SetText(f.DKPModesMain.ItemCostDropDown, L[arg1])
+    
     CloseDropDownMenus()
   end
 

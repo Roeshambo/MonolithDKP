@@ -194,13 +194,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     CONTINUERAID = "Continuar incursión",
     CORRECTINGERROR = "Error de corrección",
     COSTAUTOUPDATE = "Actualización automática de costos",
-    COSTAUTOUPDATETTDESC = [=[Seleccione el costo del artículo que desea actualizar automáticamente durante una sesión de oferta. 
-
-    |CFFFF0000Primer postor|r: Esto actualizará el costo del artículo en la parte inferior de la ventana de oferta al mejor postor. 
-
-    |CFFFF0000Segundo postor|r: Esto actualizará el costo del artículo en la parte inferior de la ventana de oferta al segundo postor más alto o, si solo hay un postor, el valor mínimo de la oferta. 
-
-    Para cada uno, El costo siempre es editable sobre la marcha.]=],
+    COSTAUTOUPDATETTDESC = "Select what you'd like the item cost to be automatically updated to during a bid session.\n\n|CFFFF0000First Bidder|r: This will update the cost of the item at the bottom of the bid window to the highest bidder.\n\n|CFFFF0000Second Bidder|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the bidder's value.\n\n|CFFFF0000Second Bidder or Min Value|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the minimum bid value.\n\nFor each, the cost is always editable on the fly.", --NEEDS TRANSLATION
     COSTAUTOUPDATEVALUE = "Costo Valor de actualización automática",
     CREATEDMAINTAIN = "creado y mantenido por",
     CREATERAIDTIMER = "Crea temporizador de incursión (solo oficiales) (por ejemplo, / dkp timer 120 Pizza Break!)",
@@ -607,6 +601,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     SEARCH = "Buscar   ",
     SEARCHDESC = "Filtra la lista DKP. Búsquedas contra Nombre, Clase, Especificación, Rango y Rol.",
     SECONDBIDDER = "Segundo postor",
+    SECONDBIDDERORMIN = "Second Bidder or Min Value", -- NEEDS TRANSLATION
     SECONDS = "Segundos",
     SELECTALL = "Seleccionar todo",
     SELECTALLVISIBLE = "Seleccionar todo visible",
@@ -817,7 +812,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - Update 1",
+    CHANGELOG1 = "CommunityDKP - Update 2",
     CHANGELOG2 = " - Numerous Bug Fixes and Enhancements",
     CHANGELOG3 = " - Migration Assitant from MonolithDKP",
     CHANGELOG4 = " - Better Syncing of DKP Table when Profiles are added",

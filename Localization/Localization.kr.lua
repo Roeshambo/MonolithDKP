@@ -194,13 +194,7 @@ if GetLocale() == "koKR" then
     CONTINUERAID = "계속 습격",
     CORRECTINGERROR = "오류 수정",
     COSTAUTOUPDATE = "비용 자동 업데이트",
-    COSTAUTOUPDATETTDESC = [=[입찰 세션 중에 항목 비용이 자동으로 업데이트되도록하려는 항목을 선택하십시오. 
-
-    |CFFFF0000첫 입찰자|r: 입찰 창 하단에있는 항목의 비용이 최고 입찰자에게 업데이트됩니다. 
-
-    |CFFFF0000두 번째 입찰자|r: 입찰 창 하단에있는 항목의 비용을 두 번째로 높은 입찰자 또는 입찰자가 한 명인 경우 최소 입찰 값으로 업데이트합니다. 
-
-    각각의 비용은 항상 즉시 편집 할 수 있습니다.]=],
+    COSTAUTOUPDATETTDESC = "Select what you'd like the item cost to be automatically updated to during a bid session.\n\n|CFFFF0000First Bidder|r: This will update the cost of the item at the bottom of the bid window to the highest bidder.\n\n|CFFFF0000Second Bidder|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the bidder's value.\n\n|CFFFF0000Second Bidder or Min Value|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the minimum bid value.\n\nFor each, the cost is always editable on the fly.", --NEEDS TRANSLATION
     COSTAUTOUPDATEVALUE = "비용 자동 업데이트 값",
     CREATEDMAINTAIN = "에 의해 생성 및 유지",
     CREATERAIDTIMER = "레이드 타이머 생성 (직원 만 해당) (예 : / dkp timer 120 Pizza Break!)",
@@ -607,6 +601,7 @@ if GetLocale() == "koKR" then
     SEARCH = "검색   ",
     SEARCHDESC = "DKP 목록을 필터링합니다. 이름, 클래스, 사양, 순위 및 역할을 검색합니다.",
     SECONDBIDDER = "두 번째 입찰자",
+    SECONDBIDDERORMIN = "Second Bidder or Min Value", -- NEEDS TRANSLATION
     SECONDS = "초",
     SELECTALL = "모두 선택",
     SELECTALLVISIBLE = "보이는 모든 것을 선택하십시오",
@@ -817,7 +812,7 @@ if GetLocale() == "koKR" then
     MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - Update 1",
+    CHANGELOG1 = "CommunityDKP - Update 2",
     CHANGELOG2 = " - Numerous Bug Fixes and Enhancements",
     CHANGELOG3 = " - Migration Assitant from MonolithDKP",
     CHANGELOG4 = " - Better Syncing of DKP Table when Profiles are added",

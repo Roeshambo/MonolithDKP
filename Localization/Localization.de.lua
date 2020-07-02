@@ -198,13 +198,7 @@ if GetLocale() == "deDE" then
     CONTINUERAID = "Schlachtzug fortsetzen",
     CORRECTINGERROR = "Fehler beheben",
     COSTAUTOUPDATE = "Preis Auto Update",
-    COSTAUTOUPDATETTDESC = [=[Wählen Sie aus, auf welche Kosten der Artikel während einer Gebotssitzung automatisch aktualisiert werden soll. 
-
-    |CFFFF0000Erster Bieter|r: Dadurch werden die Kosten des Artikels am unteren Rand des Gebotsfensters auf den Höchstbietenden aktualisiert. 
-
-    |CFFFF0000Zweiter Bieter|r: Hiermit werden die Kosten für den Artikel am unteren Rand des Gebotsfensters entweder auf den zweithöchsten Bieter oder, falls es nur einen Bieter gibt, auf den Mindestgebotswert aktualisiert. 
-
-    Für jeden Die Kosten können jederzeit im laufenden Betrieb bearbeitet werden.]=],
+    COSTAUTOUPDATETTDESC = "Select what you'd like the item cost to be automatically updated to during a bid session.\n\n|CFFFF0000First Bidder|r: This will update the cost of the item at the bottom of the bid window to the highest bidder.\n\n|CFFFF0000Second Bidder|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the bidder's value.\n\n|CFFFF0000Second Bidder or Min Value|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the minimum bid value.\n\nFor each, the cost is always editable on the fly.", --NEEDS TRANSLATION
     COSTAUTOUPDATEVALUE = "Preis Auto-Update-Wert",
     CREATED = "Erstellt",
     CREATEDMAINTAIN = "erstellt und gepflegt von",
@@ -624,6 +618,7 @@ if GetLocale() == "deDE" then
     SEARCH = "Suche   ",
     SEARCHDESC = "Filtert die DKP-Liste. Sucht nach Name, Klasse, Spezifikation, Rang und Rolle.",
     SECONDBIDDER = "Zweiter Bieter",
+    SECONDBIDDERORMIN = "Second Bidder or Min Value", -- NEEDS TRANSLATION
     SECONDS = "Sekunden",
     SELECTALL = "Alle auswählen",
     SELECTALLVISIBLE = "Alle sichtbaren auswählen",
@@ -812,7 +807,7 @@ if GetLocale() == "deDE" then
     MIGRATIONCANCELED     = "Migration abgebrochen.|n|nBitte deaktivieren Sie MonolithDKP und laden Sie die Benutzeroberfläche neu (/reload), wenn Sie mit CommunityDKP fortfahren möchten, ohne Ihre aktuellen Tabellen und Einstellungen zu verwenden.", --TODO TRANSLATE:
     MIGRATIONCOMPLETED    = "Migration abgeschlossen.|n|nBitte deaktivieren Sie MonolithDKP und laden Sie das UI neu. (/reload)", --TODO TRANSLATE:
 
-    CHANGELOG1 = "CommunityDKP - Update 1",
+    CHANGELOG1 = "CommunityDKP - Update 2",
     CHANGELOG2 = " - Numerous Bug Fixes and Enhancements",
     CHANGELOG3 = " - Migration Assitant from MonolithDKP",
     CHANGELOG4 = " - Better Syncing of DKP Table when Profiles are added",

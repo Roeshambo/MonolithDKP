@@ -194,11 +194,7 @@ if GetLocale() == "zhTW" then
     CONTINUERAID = "繼續RAID",
     CORRECTINGERROR = "修正誤差",
     COSTAUTOUPDATE = "費用自動更新",
-    COSTAUTOUPDATETTDESC = [=[選擇您希望在投標過程中將物料成本自動更新為的價格。
-
-    |CFFFF0000第一投標人|r：這會將投標窗口底部的物料成本更新為最高投標人。
-
-    |CFFFF0000第二投標人|r：這會將投標窗口底部的項目成本更新為第二高的投標人，或者如果只有一個投標人，則將最低投標值更新。 n  n費用總是可以隨時編輯。]=],
+    COSTAUTOUPDATETTDESC = "Select what you'd like the item cost to be automatically updated to during a bid session.\n\n|CFFFF0000First Bidder|r: This will update the cost of the item at the bottom of the bid window to the highest bidder.\n\n|CFFFF0000Second Bidder|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the bidder's value.\n\n|CFFFF0000Second Bidder or Min Value|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the minimum bid value.\n\nFor each, the cost is always editable on the fly.", --NEEDS TRANSLATION
     COSTAUTOUPDATEVALUE = "費用自動更新值",
     CREATEDMAINTAIN = "由...創建和維護",
     CREATERAIDTIMER = "創建Raid計時器（僅限官員）（例如/ dkp計時器120 Pizza Break！）",
@@ -605,6 +601,7 @@ if GetLocale() == "zhTW" then
     SEARCH = "搜索   ",
     SEARCHDESC = "過濾DKP列表。搜索名稱，類別，規格，等級和角色。",
     SECONDBIDDER = "第二投標人",
+    SECONDBIDDERORMIN = "Second Bidder or Min Value", -- NEEDS TRANSLATION
     SECONDS = "秒",
     SELECTALL = "全選",
     SELECTALLVISIBLE = "選擇所有可見",
@@ -817,7 +814,7 @@ if GetLocale() == "zhTW" then
     MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - Update 1",
+    CHANGELOG1 = "CommunityDKP - Update 2",
     CHANGELOG2 = " - Numerous Bug Fixes and Enhancements",
     CHANGELOG3 = " - Migration Assitant from MonolithDKP",
     CHANGELOG4 = " - Better Syncing of DKP Table when Profiles are added",
