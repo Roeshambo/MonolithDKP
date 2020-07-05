@@ -977,7 +977,7 @@ function CommDKP:MonolithMigration()
 	if not activeCommunity and (activeMonolith21x or activeMonolith21x) then
 		-- CommunityDKP is fresh and there are MonolithDKP 2.1.x or 2.2.x tables available
 		self:MonolithMigrationLegacyDetected(function() self:MonolithMigrationProcess(false) end)
-	elseif activeCommunity and activeCommunitySchema and activeMonolith21x then
+	elseif activeCommunity and activeCommunitySchema and activeMonolith21x and IsInGuild() then
 		-- CommunityDKP already has data we can import MonolithDKP 2.1.x data as a new team
 		self:MonolithMigrationAsNewTeam(function() self:MonolithMigrationProcess(true) end)
 	else
