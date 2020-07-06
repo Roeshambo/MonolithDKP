@@ -803,6 +803,7 @@ if GetLocale() == "ruRU" then
     PASS = "Отказаться",
 
     MIGRATIONDETECTED     = "CommunityDKP обнаружила активную модификацию MonolithDKP.|n|nЖелаете мигрировать нынешнии таблицы и настройки в CommunityDKP?",
+    MIGRATIONTEAM         = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables|nas a NEW TEAM for your current GUILD|nto CommunityDKP?", --TODO TRANSLATE:
     MIGRATIONUNAVAILABLE  = "Пожалуйста отключите MonolithDKP и перезагрузите интерфейс, если желаете использовать CommunityDKP.",
     MIGRATIONCONFIRM      = "Это перезапишет существующие таблицы и настройки CommunityDKP.|n|nЖелаете продолжить?",
     MIGRATIONCANCELED     = "Миграция отменена.|n|nПожалуйста отключите MonolithDKP и перезагрузите интерфейс, если желаете использовать CommunityDKP без нынешних таблиц и настроек.",

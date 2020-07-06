@@ -968,28 +968,79 @@ function CommDKP:MonolithMigration()
 
 	-- MonolithDKP is up & running - CommunityDKP will not initialise
 	CommDKP:Print("Legacy MonolithDKP addon detected - please disable it to continue with CommunityDKP!")
+	local activeCommunity = self:MonolithMigrationDbEntries("CommDKP") -- check if CommunityDKP already has table entries
+	local activeCommunitySchema = CommDKP_DB ~= nil and CommDKP:GetTable(CommDKP_DB, false)["teams"] ~= nil -- check if CommunityDKP finished schema migration
+	local activeMonolith21x = self:MonolithMigrationLegacySeed() > 0 -- check if there are usable MonolithDKP 2.1.x tables available
+	local activeMonolith22x = self:MonolithMigrationDbBuild() > 0 and self:MonolithMigrationDbEntries("MonDKP") -- same for MonolithDKP 2.2.x
 
 	-- check if we should offer migration
-	if self:MonolithMigrationDbEntries("CommDKP") -- CommunityDKP already has table entries - ABORT MIGRATION!
-		or not (self:MonolithMigrationLegacySeed() > 0 -- check if there are usable MonolithDKP 2.1.x tables available
-		or self:MonolithMigrationDbBuild() > 0 and self:MonolithMigrationDbEntries("MonDKP")) -- check if there are usable MonolithDKP 2.2.x tables available
-	then
+	if not activeCommunity and (activeMonolith21x or activeMonolith21x) then
+		-- CommunityDKP is fresh and there are MonolithDKP 2.1.x or 2.2.x tables available
+		self:MonolithMigrationLegacyDetected(function() self:MonolithMigrationProcess(false) end)
+	elseif activeCommunity and activeCommunitySchema and activeMonolith21x and IsInGuild() and CommDKP:ValidateSender(UnitName("player")) then
+		-- CommunityDKP already has data we can import MonolithDKP 2.1.x data as a new team
+		self:MonolithMigrationAsNewTeam(function() self:MonolithMigrationProcess(true) end)
+	else
+ 		-- CommunityDKP already has table entries and there is no legacy data to add as an additional team
 		self:MonolithMigrationGenericPopup(L["MIGRATIONUNAVAILABLE"])
-		return true
 	end
 
-	-- CommunityDKP is fresh and there are MonolithDKP 2.1.x or 2.2.x tables available - OFFER MIGRATION!
-	self:MonolithMigrationLegacyDetected(function()
-		local copyTableRecursive
-		copyTableRecursive = function(obj)
-    		if type(obj) ~= "table"	then return obj end
-    		local res = {}
-    		for k, v in pairs(obj) do res[copyTableRecursive(k)] = copyTableRecursive(v) end
-    		return res
-		end
+	return true -- don't initialise CommunityDKP
+end
 
-		-- copy everything from legacy addon
-		CommDKP_DB         = copyTableRecursive(MonDKP_DB) -- deep copy so we don't modify the source data
+function CommDKP:MonolithMigrationProcess(asNewTeam)
+	asNewTeam = asNewTeam or false;
+
+ 	-- add a new team?
+	local teamIndex
+	if asNewTeam then
+		teamIndex = CommDKP:AddNewTeamToGuild()
+	end
+
+ 	-- deep copy so we don't modify the source data
+	local copyTableRecursive
+	copyTableRecursive = function(obj)
+		if type(obj) ~= "table" then return obj end
+		local res = {}
+		for k, v in pairs(obj) do res[copyTableRecursive(k)] = copyTableRecursive(v) end
+		return res
+	end
+
+ 	-- rename MonDKPScaleSize property to CommDKPScaleSize for each guild / team
+	local migrateDefaultsRecursive
+	migrateDefaultsRecursive = function(table)
+		for k, v in pairs(table) do
+			if k == "defaults" then
+				if v.MonDKPScaleSize ~= nil then
+					v.CommDKPScaleSize = v.MonDKPScaleSize
+					v.MonDKPScaleSize = nil
+				end
+			elseif type(v) == "table" then
+				migrateDefaultsRecursive(v)
+			end
+		end
+	end
+
+	-- copy everything from legacy addon
+	if asNewTeam then
+	 -- local tempDB = copyTableRecursive(MonDKP_DB)
+	 -- migrateDefaultsRecursive(tempDB)
+	 -- CommDKP:SetTable(CommDKP_DB,         true, tempDB,            teamIndex)
+
+	 -- CommDKP:GetTable(CommDKP_DKPTable,   false)[teamIndex] = MonDKP_DKPTable
+		CommDKP:SetTable(CommDKP_DKPTable,   true, MonDKP_DKPTable,   teamIndex)
+		CommDKP:SetTable(CommDKP_Loot,       true, MonDKP_Loot,       teamIndex)
+		CommDKP:SetTable(CommDKP_DKPHistory, true, MonDKP_DKPHistory, teamIndex)
+		CommDKP:SetTable(CommDKP_MinBids,    true, MonDKP_MinBids,    teamIndex)
+		CommDKP:SetTable(CommDKP_MaxBids,    true, MonDKP_MaxBids,    teamIndex)
+		CommDKP:SetTable(CommDKP_Whitelist,  true, MonDKP_Whitelist,  teamIndex)
+		CommDKP:SetTable(CommDKP_Standby,    true, MonDKP_Standby,    teamIndex)
+		CommDKP:SetTable(CommDKP_Archive,    true, MonDKP_Archive,    teamIndex)
+	else
+		local tempDB = copyTableRecursive(MonDKP_DB)
+		migrateDefaultsRecursive(tempDB)
+		CommDKP_DB         = tempDB
+
 		CommDKP_DKPTable   = MonDKP_DKPTable
 		CommDKP_Loot       = MonDKP_Loot
 		CommDKP_DKPHistory = MonDKP_DKPHistory
@@ -998,33 +1049,13 @@ function CommDKP:MonolithMigration()
 		CommDKP_Whitelist  = MonDKP_Whitelist
 		CommDKP_Standby    = MonDKP_Standby
 		CommDKP_Archive    = MonDKP_Archive
+	end
 
-		-- rename MonDKPScaleSize property to CommDKPScaleSize for each guild / team
-		local migrateDefaultsRecursive
-		migrateDefaultsRecursive = function(table)
-			for k, v in pairs(table) do
-				if k == "defaults" then
-					if v.MonDKPScaleSize ~= nil then
-						v.CommDKPScaleSize = v.MonDKPScaleSize
-						v.MonDKPScaleSize = nil
-					end
-				elseif type(v) == "table" then
-					migrateDefaultsRecursive(v)
-				end
-			end
-		end
-		migrateDefaultsRecursive(CommDKP_DB)
-
-		-- show completion popup
-		self:MonolithMigrationGenericPopup(L["MIGRATIONCOMPLETED"])
-	end)
-
-	return true
+	-- show completion popup
+	self:MonolithMigrationGenericPopup(L["MIGRATIONCOMPLETED"])
 end
 
 function CommDKP:MonolithMigrationLegacyDetected(migration)
-	L["MIGRATIONDETECTED"] = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?"
-
 	StaticPopupDialogs["MONOLITH_MIGRATION_DETECTED"] = {
 		text = L["MIGRATIONDETECTED"],
 		button1 = L["YES"],
@@ -1039,9 +1070,22 @@ function CommDKP:MonolithMigrationLegacyDetected(migration)
 	StaticPopup_Show("MONOLITH_MIGRATION_DETECTED")
 end
 
-function CommDKP:MonolithMigrationConfirmationPopup(migration)
-	L["MIGRATIONCONFIRM"] = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?"
+function CommDKP:MonolithMigrationAsNewTeam(migration)
+	StaticPopupDialogs["MONOLITH_MIGRATION_TEAM"] = {
+		text = L["MIGRATIONTEAM"],
+		button1 = L["YES"],
+		button2 = L["NO"],
+		OnAccept = migration,
+		OnCancel = function() self:MonolithMigrationCancelationPopup() end,
+		timeout = 0,
+		whileDead = true,
+		hideOnEscape = true,
+		preferredIndex = 3,
+	}
+	StaticPopup_Show("MONOLITH_MIGRATION_TEAM")
+end
 
+function CommDKP:MonolithMigrationConfirmationPopup(migration)
 	StaticPopupDialogs["MONOLITH_MIGRATION_CONFIRMATION"] = {
 		text = "|CFFFF0000"..L["WARNING"].."|r: "..L["MIGRATIONCONFIRM"],
 		button1 = L["YES"],
