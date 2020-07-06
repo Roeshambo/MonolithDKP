@@ -39,7 +39,20 @@ Forked from: https://www.curseforge.com/wow/addons/monolith-dkp
 **To Upgrade from MonolithDKP 2.1.2 or higher AUTOMATICALLY:**
  - Follow prompts for migrating MonolithDKP settings to CommunityDKP
  - Once done, unload MonolithDKP.
- - **ONLY WORKS FOR 1 TABLE AT THE MOMENT**
+ 
+## Multiple Team Import
+**To Upgrade additional MonolithDKP 2.1.2 Saved Variable LUA as a Second Team**
+ - Ensure you are an Officer of the Guild (can write to officer notes)
+ - Follow instructions above for the first table, which will be come Team #1.
+ - Make sure CommunityDKP has successfully imported your first team by running it at least once while having MonolithDKP disabled (CommunityDKP has to upgrade your DKP table schema after the initial import)
+ - Exit WoW, install second MonolithDKP.lua Saved Variables (for second table)
+ - Start WoW, re-enable MonolithDKP
+ - Community will prompt if you want to import the table found as a Second Team.
+ - Choose wisely, if confirmed, second team will be created.
+ - Lather, Rinse, Repeat for additional teams.
+ - Disabled MonolithDKP once done.
+ - Sync all team tables to Guild (including all officers/whitelist and GM)
+ - Once all tables are synced, Guild Master should rename teams as needed and perform another Guild Sync.
 
 **To Upgrade from MonolithDKP 2.1.2 or higher MANUALLY:**
    - Copy WTF\Account\<account>\SavedVariables\MonolithDKP.lua -> WTF\Account\<account>\SavedVariables\CommunityDKP.lua
