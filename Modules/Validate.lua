@@ -38,11 +38,12 @@ function CommDKP:ValidateDKPTable_Loot()
 	local i=1
 	local timer = 0
 	local processing = false
-	
+	local total = #CommDKP:GetTable(CommDKP_Loot, true);
+	CommDKP:Print("Building Validation Temp Table...");
 	local ValidateTimer = ValidateTimer or CreateFrame("StatusBar", nil, UIParent)
 	ValidateTimer:SetScript("OnUpdate", function(self, elapsed)
 		timer = timer + elapsed
-		if timer > 0.01 and i <= #CommDKP:GetTable(CommDKP_Loot, true) and not processing then
+		if timer > 0.01 and i <= total and not processing then
 			processing = true
 			local search = CommDKP:Table_Search(DKPTableTemp, CommDKP:GetTable(CommDKP_Loot, true)[i].player, "player")
 
@@ -71,11 +72,12 @@ function CommDKP:ValidateDKPTable_DKP()
 	local processing = false
 	local pause = false
 	local proc2 = false
+	local total = #CommDKP:GetTable(CommDKP_DKPHistory, true)
 	
 	local ValidateTimer = ValidateTimer or CreateFrame("StatusBar", nil, UIParent)
 	ValidateTimer:SetScript("OnUpdate", function(self, elapsed)
 		timer = timer + elapsed
-		if timer > 0.0001 and i <= #CommDKP:GetTable(CommDKP_DKPHistory, true) and not processing and not pause then
+		if timer > 0.0001 and i <= total and not processing and not pause then
 			processing = true
 			pause = true
 
@@ -127,6 +129,7 @@ function CommDKP:ValidateDKPTable_DKP()
 		elseif i > #CommDKP:GetTable(CommDKP_DKPHistory, true) and not processing and not proc2 and not pause then
 			ValidateTimer:SetScript("OnUpdate", nil)
 			timer = 0
+			CommDKP:Print("Validation Temp Table built.");
 			CommDKP:ValidateDKPTable_Final()
 		end
 	end)
@@ -139,6 +142,8 @@ function CommDKP:ValidateDKPTable_Final()
 	local processing = false
 	local rectified = 0
 	
+	CommDKP:Print("Validating Profiles...");
+
 	local ValidateTimer = ValidateTimer or CreateFrame("StatusBar", nil, UIParent)
 	ValidateTimer:SetScript("OnUpdate", function(self, elapsed)
 		timer = timer + elapsed
@@ -148,25 +153,28 @@ function CommDKP:ValidateDKPTable_Final()
 			local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), DKPTableTemp[i].player, "player")
 
 			if search then
-				if CommDKP_Archive[DKPTableTemp[i].player] then
-					DKPTableTemp[i].dkp = DKPTableTemp[i].dkp + tonumber(CommDKP_Archive[DKPTableTemp[i].player].dkp)
-					DKPTableTemp[i].lifetime_gained = DKPTableTemp[i].lifetime_gained + tonumber(CommDKP_Archive[DKPTableTemp[i].player].lifetime_gained)
-					DKPTableTemp[i].lifetime_spent = DKPTableTemp[i].lifetime_spent + tonumber(CommDKP_Archive[DKPTableTemp[i].player].lifetime_spent)
+				if CommDKP:GetTable(CommDKP_Archive, true)[DKPTableTemp[i].player] then
+					DKPTableTemp[i].dkp = DKPTableTemp[i].dkp + tonumber(CommDKP:GetTable(CommDKP_Archive, true)[DKPTableTemp[i].player].dkp)
+					DKPTableTemp[i].lifetime_gained = DKPTableTemp[i].lifetime_gained + tonumber(CommDKP:GetTable(CommDKP_Archive, true)[DKPTableTemp[i].player].lifetime_gained)
+					DKPTableTemp[i].lifetime_spent = DKPTableTemp[i].lifetime_spent + tonumber(CommDKP:GetTable(CommDKP_Archive, true)[DKPTableTemp[i].player].lifetime_spent)
 				end
-				if tonumber(DKPTableTemp[i].dkp) ~= CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp then
+				if CommDKP_round(tonumber(DKPTableTemp[i].dkp), core.DB.modes.rounding) ~= CommDKP_round(tonumber(CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp), core.DB.modes.rounding) then
 					CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp = tonumber(DKPTableTemp[i].dkp)
 					flag = true
 				end
-				if tonumber(DKPTableTemp[i].lifetime_gained) ~= CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].lifetime_gained then
+				if CommDKP_round(tonumber(DKPTableTemp[i].lifetime_gained), core.DB.modes.rounding) ~= CommDKP_round(tonumber(CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].lifetime_gained), core.DB.modes.rounding) then
 					CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].lifetime_gained = tonumber(DKPTableTemp[i].lifetime_gained)
 					flag = true
 				end
-				if tonumber(DKPTableTemp[i].lifetime_spent) ~= CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].lifetime_spent then
+				if CommDKP_round(tonumber(DKPTableTemp[i].lifetime_spent), core.DB.modes.rounding) ~= CommDKP_round(tonumber(CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].lifetime_spent), core.DB.modes.rounding) then
 					CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].lifetime_spent = tonumber(DKPTableTemp[i].lifetime_spent)
 					flag = true
 				end
 			end
-			if flag then rectified = rectified + 1 end
+			if flag then 
+				rectified = rectified + 1 
+				CommDKP:Print("DKP Profile for "..DKPTableTemp[i].player.." adjusted.");
+			end
 			i=i+1
 			processing = false
 			timer = 0
@@ -220,6 +228,7 @@ function CommDKP:ValidateDKPHistory()
 			timer = 0
 		elseif i > #CommDKP:GetTable(CommDKP_DKPHistory, true) then
 			ValidateTimer:SetScript("OnUpdate", nil)
+			CommDKP:Print("History Table Validated. "..deleted_entries.." entries deleted.");
 			timer = 0
 			CommDKP:ValidateDKPTable_Loot()
 		end
@@ -258,6 +267,7 @@ function CommDKP:ValidateLootTable()  -- validation starts here
 			timer = 0
 		elseif i > #CommDKP:GetTable(CommDKP_Loot, true) then
 			ValidateTimer:SetScript("OnUpdate", nil)
+			CommDKP:Print("Loot Table Validated. "..deleted_entries.." entries deleted.");
 			timer = 0
 			CommDKP:ValidateDKPHistory()
 		end

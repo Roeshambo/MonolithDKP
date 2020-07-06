@@ -163,8 +163,8 @@ local function DisplayUserHistory(self, player)
 			end
 		end
 		GameTooltip:AddDoubleLine(" ", " ", 1.0, 1.0, 1.0);
-		GameTooltip:AddLine("  |cff00ff00"..L["LIFETIMEEARNED"]..": "..CommDKP:GetTable(CommDKP_DKPTable, true)[LifetimeSearch[1][1]].lifetime_gained.."|r", 1.0, 1.0, 1.0, true);
-		GameTooltip:AddLine("  |cffff0000"..L["LIFETIMESPENT"]..": "..CommDKP:GetTable(CommDKP_DKPTable, true)[LifetimeSearch[1][1]].lifetime_spent.."|r", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("  |cff00ff00"..L["LIFETIMEEARNED"]..": "..CommDKP_round(CommDKP:GetTable(CommDKP_DKPTable, true)[LifetimeSearch[1][1]].lifetime_gained, core.DB.modes.rounding).."|r", 1.0, 1.0, 1.0, true);
+		GameTooltip:AddLine("  |cffff0000"..L["LIFETIMESPENT"]..": "..CommDKP_round(CommDKP:GetTable(CommDKP_DKPTable, true)[LifetimeSearch[1][1]].lifetime_spent, core.DB.modes.rounding).."|r", 1.0, 1.0, 1.0, true);
 	else
 		GameTooltip:AddLine("No DKP Entries", 1.0, 1.0, 1.0, true);
 	end
