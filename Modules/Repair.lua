@@ -138,7 +138,7 @@ local function ConsolidateTables(keepDKP)
 				local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), DKPTableTemp[i].player)
 
 				if not search then
-					CommDKP_Archive[DKPTableTemp[i].player] = { dkp=0, lifetime_spent=0, lifetime_gained=0, deleted=true, edited=curTime } 
+					CommDKP:GetTable(CommDKP_Archive, true)[DKPTableTemp[i].player] = { dkp=0, lifetime_spent=0, lifetime_gained=0, deleted=true, edited=curTime } 
 				end
 			end
 
