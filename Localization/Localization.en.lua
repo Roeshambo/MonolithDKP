@@ -793,7 +793,7 @@ core.L = {
 
   CHANGELOG1 = "CommunityDKP - WoW Classic Phase 5",
   CHANGELOG2 = " - Updated Interface",
-  CHANGELOG3 = " - Additional enchancements to in-game migration from MonolithDKP (Thanks matthi!)",
+  CHANGELOG3 = " - Additional enhancements to in-game migration from MonolithDKP (Thanks matthi!)",
   CHANGELOG4 = " - A few more edge case bugfixes.",
   CHANGELOG5 = " - Awesome texture pack upgrade (Thanks to @Vergil and Essential@MirageRaceway)",
   CHANGELOG6 = "",
