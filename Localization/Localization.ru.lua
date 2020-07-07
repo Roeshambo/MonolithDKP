@@ -809,12 +809,11 @@ if GetLocale() == "ruRU" then
     MIGRATIONCANCELED     = "Миграция отменена.|n|nПожалуйста отключите MonolithDKP и перезагрузите интерфейс, если желаете использовать CommunityDKP без нынешних таблиц и настроек.",
     MIGRATIONCOMPLETED    = "Миграция завершена.|n|nПожалуйста отключите MonolithDKP и перезагрузите интерфейс.",
 
-    
-    CHANGELOG1 = "CommunityDKP - Обновление 2",
-    CHANGELOG2 = " - Множественные исправления и улучшения",
-    CHANGELOG3 = " - Помощник при миграции с MonolithDKP",
-    CHANGELOG4 = " - Лучшая синхронизация DKP таблиц при добавлении профилей",
-    CHANGELOG5 = "",
+    CHANGELOG1 = "CommunityDKP - WoW Classic Фаза 5",
+    CHANGELOG2 = " - Обновленный интерфейс;",
+    CHANGELOG3 = " - Дополнительные улучшения для внутриигровой миграции с MonolithDKP (Спасибо matthi!)",
+    CHANGELOG4 = " - Еще несколько исправлений алгоритмов;",
+    CHANGELOG5 = " - Отлично выглядящие текстуры (Спасибо @Vergil и Essential@MirageRaceway!)",
     CHANGELOG6 = "",
     CHANGELOG7 = "",
     CHANGELOG8 = "CommunityDKP Discord: https://discord.gg/dXXK4vH",

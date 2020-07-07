@@ -815,15 +815,15 @@ if GetLocale() == "zhCN" then
     MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - Update 2",
-    CHANGELOG2 = " - Numerous Bug Fixes and Enhancements",
-    CHANGELOG3 = " - Migration Assitant from MonolithDKP",
-    CHANGELOG4 = " - Better Syncing of DKP Table when Profiles are added",
-    CHANGELOG5 = "",
+    CHANGELOG1 = "CommunityDKP - WoW Classic Phase 5",
+    CHANGELOG2 = " - Updated Interface",
+    CHANGELOG3 = " - Additional enchancements to in-game migration from MonolithDKP (Thanks matthi!)",
+    CHANGELOG4 = " - A few more edge case bugfixes.",
+    CHANGELOG5 = " - Awesome texture pack upgrade (Thanks to @Vergil and Essential@MirageRaceway)",
     CHANGELOG6 = "",
     CHANGELOG7 = "",
     CHANGELOG8 = "CommunityDKP Discord: https://discord.gg/dXXK4vH",
     CHANGELOG9 = "",
     CHANGELOG10 = "",
-        }
+      }
 end
