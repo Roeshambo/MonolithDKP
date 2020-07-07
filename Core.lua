@@ -97,8 +97,8 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 }
 
 core.CommDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v3.0.2";
-core.BuildNumber = 30002;
+core.MonVersion = "v3.1.0";
+core.BuildNumber = 30100;
 core.ReleaseNumber = 37
 core.defaultTable = "__default";
 core.SemVer = core.MonVersion.."-r"..tostring(core.ReleaseNumber);
