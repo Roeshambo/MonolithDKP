@@ -353,6 +353,8 @@ function CommDKP:AddNewTeamToGuild()
 		CommDKP:GetTable(CommDKP_Archive, false)[tostring(_index)] = {}
 
 		CommDKP.Sync:SendData("CommDKPTeams", {Teams =  CommDKP:GetTable(CommDKP_DB, false)["teams"]} , nil)
+
+	return tostring(_index)
 end
 
 -------

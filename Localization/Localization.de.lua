@@ -801,11 +801,12 @@ if GetLocale() == "deDE" then
     ZONE = "Gebiet", --TODO TRANSLATE:
     PASS                  = "Passen",
 
-    MIGRATIONDETECTED     = "CommunityDKP hat ein aktives MonolithDKP-Addon entdeckt. Möchten Sie die aktuellen Tabellen und Einstellungen zu CommunityDKP migrieren?", --TODO TRANSLATE:
-    MIGRATIONUNAVAILABLE  = "Bitte deaktivieren Sie MonolithDKP und laden Sie das UI (/reload) neu, wenn Sie mit CommunityDKP fortfahren möchten.", --TODO TRANSLATE:
-    MIGRATIONCONFIRM      = "Dadurch werden Ihre bestehenden CommunityDKP-Tabellen und Einstellungen überschrieben.|n|n Wollen Sie fortfahren?", --TODO TRANSLATE:
-    MIGRATIONCANCELED     = "Migration abgebrochen.|n|nBitte deaktivieren Sie MonolithDKP und laden Sie die Benutzeroberfläche neu (/reload), wenn Sie mit CommunityDKP fortfahren möchten, ohne Ihre aktuellen Tabellen und Einstellungen zu verwenden.", --TODO TRANSLATE:
-    MIGRATIONCOMPLETED    = "Migration abgeschlossen.|n|nBitte deaktivieren Sie MonolithDKP und laden Sie das UI neu. (/reload)", --TODO TRANSLATE:
+    MIGRATIONDETECTED     = "CommunityDKP hat ein aktives MonolithDKP-Addon entdeckt.|n|nMöchten Sie die aktuellen Tabellen und Einstellungen zu CommunityDKP migrieren?",
+    MIGRATIONTEAM         = "CommunityDKP hat ein aktives MonolithDKP-Addon entdeckt.|n|nMöchten Sie die aktuellen Tabellen und Einstellungen|nals NEUES TEAM für deine aktuelle GILDE|nzu CommunityDKP migrieren?",
+    MIGRATIONUNAVAILABLE  = "Bitte deaktivieren Sie MonolithDKP und laden Sie das UI (/reload) neu, wenn Sie mit CommunityDKP fortfahren möchten.",
+    MIGRATIONCONFIRM      = "Dadurch werden Ihre bestehenden CommunityDKP-Tabellen und Einstellungen überschrieben.|n|n Wollen Sie fortfahren?",
+    MIGRATIONCANCELED     = "Migration abgebrochen.|n|nBitte deaktivieren Sie MonolithDKP und laden Sie die Benutzeroberfläche neu (/reload), wenn Sie mit CommunityDKP fortfahren möchten, ohne Ihre aktuellen Tabellen und Einstellungen zu verwenden.",
+    MIGRATIONCOMPLETED    = "Migration abgeschlossen.|n|nBitte deaktivieren Sie MonolithDKP und laden Sie das UI neu. (/reload)",
 
     CHANGELOG1 = "CommunityDKP - WoW Classic Phase 5",
     CHANGELOG2 = " - Updated Interface",

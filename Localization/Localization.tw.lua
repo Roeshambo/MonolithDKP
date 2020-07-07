@@ -808,6 +808,7 @@ if GetLocale() == "zhTW" then
     PASS                  = "通過",
 
     MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?", --TODO TRANSLATE:
+    MIGRATIONTEAM         = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables|nas a NEW TEAM for your current GUILD|nto CommunityDKP?", --TODO TRANSLATE:
     MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.", --TODO TRANSLATE:
     MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?", --TODO TRANSLATE:
     MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.", --TODO TRANSLATE:
