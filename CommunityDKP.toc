@@ -2,7 +2,7 @@
 ## Title: |cff9900ffCommunity|r |cff595959DKP|r
 ## Author: Vapok-BloodsailBuccaneers
 ## Notes: Feature-rich DKP Management Tool 
-## Version: 3.0.1
+## Version: 3.1.0
 ## DefaultState: enabled
 ## SavedVariables: CommDKP_DB, CommDKP_Loot, CommDKP_DKPTable, CommDKP_DKPHistory, CommDKP_MinBids, CommDKP_MaxBids, CommDKP_Whitelist, CommDKP_Standby, CommDKP_Archive, CommDKP_Profiles
 
