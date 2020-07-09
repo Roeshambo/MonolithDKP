@@ -176,6 +176,10 @@ function CommDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable
 		button = SortButtons[id]
 	end
 
+	if button == nil then
+		return;
+	end
+
 	if reset and reset ~= "Clear" then                         -- reset is useful for check boxes when you don't want it repeatedly reversing the sort
 		button.Ascend = button.Ascend
 	else
