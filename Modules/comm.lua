@@ -158,14 +158,14 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                   if CommDKP:ValidateSender(off1) and tonumber(date1) > core.DB.defaults.installed210 then
                     if property == "Loot" then
 
-                      local searchLoot = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Loot, true, tostring(tableIndex)), Loot, "index")
+                      local searchLoot = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Loot, true, tostring(tableIndex)), value, "index")
 
                       if not searchLoot then
                         CommDKP:GetTable(CommDKP_Loot, true, tostring(tableIndex)).seed = value
                       end
 
                     elseif property == "DKPHistory" then
-                      local searchDKPHistory = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPHistory, true, tostring(tableIndex)), Loot, "index")
+                      local searchDKPHistory = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPHistory, true, tostring(tableIndex)), value, "index")
                       
                       if not searchDKPHistory then
                         CommDKP:GetTable(CommDKP_DKPHistory, true, tostring(tableIndex)).seed = value

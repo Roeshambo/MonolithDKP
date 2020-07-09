@@ -54,11 +54,13 @@ local function AwardRaid(amount, reason)
 	local curTime = time();
 	local curOfficer = UnitName("player")
 
+	local OnlineOnly = core.DB.modes.OnlineOnly
+	local limitToZone = core.DB.modes.SameZoneOnly
+
 	for i=1, 40 do
 		local tempName, _rank, _subgroup, _level, _class, _fileName, zone, online = GetRaidRosterInfo(i)
+
 		local search_DKP = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), tempName)
-		local OnlineOnly = core.DB.modes.OnlineOnly
-		local limitToZone = core.DB.modes.SameZoneOnly
 		local isSameZone = zone == GetRealZoneText()
 
 		if search_DKP and (not OnlineOnly or online) and (not limitToZone or isSameZone) then
@@ -71,11 +73,15 @@ local function AwardRaid(amount, reason)
 		local i = 1
 
 		while i <= #CommDKP:GetTable(CommDKP_Standby, true) do
-			if strfind(tempList, CommDKP:GetTable(CommDKP_Standby, true)[i].player) then
+			local standbyProfile = CommDKP:GetTable(CommDKP_Standby, true)[i].player;
+			local isOnline = UnitIsConnected(standbyProfile);
+			if strfind(tempList, standbyProfile) then
 				table.remove(CommDKP:GetTable(CommDKP_Standby, true), i)
 			else
-				CommDKP:AwardPlayer(CommDKP:GetTable(CommDKP_Standby, true)[i].player, amount)
-				tempList = tempList..CommDKP:GetTable(CommDKP_Standby, true)[i].player..",";
+				if standbyProfile and (not OnlineOnly or isOnline) then
+					CommDKP:AwardPlayer(standbyProfile, amount)
+					tempList = tempList..standbyProfile..",";
+				end
 				i=i+1
 			end
 		end
@@ -137,7 +143,6 @@ function CommDKP:StartRaidTimer(pause, syncTimer, syncSecondCount, syncMinuteCou
 	local increment;
 	
 	CommDKP.RaidTimer = CommDKP.RaidTimer or CreateFrame("StatusBar", nil, UIParent)
-
 	if not syncTimer then
 		if not pause then -- pause == false
 			CommDKP.ConfigTab2.RaidTimerContainer.StartTimer:SetText(L["ENDRAID"])
@@ -170,7 +175,6 @@ function CommDKP:StartRaidTimer(pause, syncTimer, syncSecondCount, syncMinuteCou
 			core.RaidInPause = true
 			return;
 		end
-
 		if IsInRaid() and CommDKP:CheckRaidLeader() and not pause and core.IsOfficer then
 			if not StartAwarded and core.DB.DKPBonus.GiveRaidStart then -- Award On Time Bonus
 				AwardRaid(core.DB.DKPBonus.OnTimeBonus, L["ONTIMEBONUS"])

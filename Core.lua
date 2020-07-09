@@ -283,12 +283,13 @@ function CommDKP:GetGuildRankGroup(index)                -- returns all members 
 end
 
 function CommDKP:CheckRaidLeader()
-	local tempName,tempRank;
+	local tempName,tempRank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole;
 
 	for i=1, 40 do
-		tempName, tempRank = GetRaidRosterInfo(i)
+		 
+		 tempName, tempRank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(i);
 
-		if tempName == UnitName("player") and tempRank == 2 then
+		if tempName == UnitName("player") and (tempRank == 2 or isML) then
 			return true
 		elseif tempName == UnitName("player") and tempRank < 2 then
 			return false
