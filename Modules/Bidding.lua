@@ -405,7 +405,7 @@ function CommDKP:GetMaxBid(itemLink)
 end
 
 function CommDKP:ToggleBidWindow(loot, lootIcon, itemName)
-  local minBid;
+  local minBid, maxBid;
   mode = core.DB.modes.mode;
 
   if core.IsOfficer then
@@ -446,18 +446,8 @@ function CommDKP:ToggleBidWindow(loot, lootIcon, itemName)
         local search_max = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MaxBids, true), itemName)
         if search_max then
           maxBid = CommDKP:GetTable(CommDKP_MaxBids, true)[search_max[1][1]].maxbid
-          core.BiddingWindow.CustomMaxBid:Show();
-          core.BiddingWindow.CustomMaxBid:SetChecked(true)
-          core.BiddingWindow.CustomMaxBid:SetScript("OnClick", function(self)
-            if self:GetChecked() == true then
-              core.BiddingWindow.maxBid:SetText(CommDKP_round(maxBid, core.DB.modes.rounding))
-            else
-              core.BiddingWindow.maxBid:SetText(CommDKP:GetMaxBid(CurrItemForBid))
-            end
-          end)
         else
           maxBid = CommDKP:GetMaxBid(CurrItemForBid)
-          core.BiddingWindow.CustomMaxBid:Hide();
         end
       end
       -- search min bid value(item cost)
@@ -482,7 +472,15 @@ function CommDKP:ToggleBidWindow(loot, lootIcon, itemName)
             if self:GetChecked() == true then
               core.BiddingWindow.maxBid:SetText(CommDKP_round(maxBid, core.DB.modes.rounding))
             else
-              core.BiddingWindow.maxBid:SetText(CommDKP:GetMaxBid(CurrItemForBid))
+              local behavior = core.DB.modes.MaxBehavior
+              local dkpValue = 0;
+
+              if behavior == "Max DKP" then
+                  dkpValue = "MAX";
+              else
+                dkpValue = maxBid;
+              end
+              core.BiddingWindow.maxBid:SetText(dkpValue);
             end
           end)
         elseif mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then

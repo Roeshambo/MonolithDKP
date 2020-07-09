@@ -396,7 +396,17 @@ function CommDKP:CurrItem_Set(item, value, icon, value2)
   
   if core.BidInterface.MaxBid then
     if not strfind(value2, "%%") and not strfind(value2, "DKP") then
-      core.BidInterface.MaxBid:SetText(value2.." DKP");
+      if value2 == "MAX" then
+        local dkpValue = 0;
+
+        local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), UnitName("player"), "player")
+        if search then
+          dkpValue = CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]].dkp;
+        end
+        core.BidInterface.MaxBid:SetText(dkpValue.." DKP");
+      else
+        core.BidInterface.MaxBid:SetText(value2.." DKP");
+      end
     else
       core.BidInterface.MaxBid:SetText(value2);
     end
