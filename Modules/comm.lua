@@ -793,20 +793,22 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                   local bidInfo = _objReceived.Data[2][i]
                   local bidTeam = bidInfo[1]
                   local bidItems = bidInfo[2]
-                  for j=1, #bidItems do
-                    local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true, bidTeam), bidItems[j].item)
-                    if search then
-                      CommDKP:GetTable(CommDKP_MinBids, true, bidTeam)[search[1][1]].minbid = bidItems[j].minbid
-                      if bidItems[j]["link"] ~= nil then
-                        CommDKP:GetTable(CommDKP_MinBids, true, bidTeam)[search[1][1]].link = bidItems[j].link
+                  if bidItems ~= nil then
+                    for j=1, #bidItems do
+                      local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true, bidTeam), bidItems[j].item)
+                      if search then
+                        CommDKP:GetTable(CommDKP_MinBids, true, bidTeam)[search[1][1]].minbid = bidItems[j].minbid
+                        if bidItems[j]["link"] ~= nil then
+                          CommDKP:GetTable(CommDKP_MinBids, true, bidTeam)[search[1][1]].link = bidItems[j].link
+                        end
+                        if bidItems[j]["icon"] ~= nil then
+                          CommDKP:GetTable(CommDKP_MinBids, true, bidTeam)[search[1][1]].icon = bidItems[j].icon
+                        end
+                      else
+                        table.insert(CommDKP:GetTable(CommDKP_MinBids, true, bidTeam), bidItems[j])
                       end
-                      if bidItems[j]["icon"] ~= nil then
-                        CommDKP:GetTable(CommDKP_MinBids, true, bidTeam)[search[1][1]].icon = bidItems[j].icon
-                      end
-                    else
-                      table.insert(CommDKP:GetTable(CommDKP_MinBids, true, bidTeam), bidItems[j])
-                    end
-                  end 
+                    end 
+                  end
                 end
               end
             elseif prefix == "CommDKPMaxBid" then
