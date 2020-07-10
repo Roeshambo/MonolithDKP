@@ -812,7 +812,6 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 end
               end
             elseif prefix == "CommDKPMaxBid" then
-
               if core.IsOfficer then
 
                 core.DB.MaxBidBySlot = _objReceived.Data[1]
@@ -837,19 +836,17 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
             elseif prefix == "CommDKPStand" then
               CommDKP:GetTable(CommDKP_Standby, true, _objReceived.Data, _objReceived.CurrentTeam);
             elseif prefix == "CommDKPSetPrice" then
-              local mode = core.DB.modes.mode;
+              _objSetPrice = _objReceived.Data;
 
-              if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
-                local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true, _objReceived.CurrentTeam), itemName)
-            
-                if not search then
-                  tinsert(CommDKP:GetTable(CommDKP_MinBids, true, _objReceived.CurrentTeam), _objReceived.Data)
-                elseif search and cost ~= tonumber(val) then
-                  CommDKP:GetTable(CommDKP_MinBids, true, _objReceived.CurrentTeam)[search[1][1]] = _objReceived.Data;
-                end
+              local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true, _objReceived.CurrentTeam), _objSetPrice.item);
 
-                CommDKP:PriceTable_Update(0);
+              if not search then
+                tinsert(CommDKP:GetTable(CommDKP_MinBids, true, _objReceived.CurrentTeam), _objSetPrice)
+              elseif search then
+                CommDKP:GetTable(CommDKP_MinBids, true, _objReceived.CurrentTeam)[search[1][1]] = _objSetPrice;
               end
+
+              CommDKP:PriceTable_Update(0);
             
             elseif prefix == "CommDKPZSumBank" then
               if core.IsOfficer then

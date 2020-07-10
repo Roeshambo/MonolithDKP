@@ -146,7 +146,6 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 		CommDKP:LootHistory_Update(L["NOFILTER"])
 
 		if core.BiddingWindow and core.BiddingWindow:IsShown() then  -- runs below if award is through bidding window (update minbids and zerosum bank)
-			print("Bid Window Open");
 			if _G["CommDKPBiddingStartBiddingButton"] then
 				_G["CommDKPBiddingStartBiddingButton"]:SetText(L["STARTBIDDING"])
 				_G["CommDKPBiddingStartBiddingButton"]:SetScript("OnClick", function (self)
@@ -163,30 +162,49 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 				SendChatMessage(L["CONGRATS"].." "..winner.." "..L["ON"].." "..loot.." @ "..-cost.." "..L["DKP"], "GUILD")
         	end
 			
+			local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true), itemName)
+			local minBidAmount = nil;
+
 			if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
-				local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true), itemName)
+				
 				local val = CommDKP:GetMinBid(loot);
 
-				if not search and core.BiddingWindow.cost:GetNumber() ~= tonumber(val) then
-					tinsert(CommDKP:GetTable(CommDKP_MinBids, true), {item=itemName, minbid=core.BiddingWindow.cost:GetNumber(), link=itemLink, icon=itemIcon})
-					core.BiddingWindow.CustomMinBid:SetShown(true);
-					core.BiddingWindow.CustomMinBid:SetChecked(true);
-				elseif search and core.BiddingWindow.cost:GetNumber() ~= tonumber(val) and core.BiddingWindow.CustomMinBid:GetChecked() == true then
-					if CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].minbid ~= core.BiddingWindow.cost:GetText() then
-						CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].minbid = CommDKP_round(core.BiddingWindow.cost:GetNumber(), core.DB.modes.rounding);
-						CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].link = itemLink;
-						CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].icon = itemIcon;
-						core.BiddingWindow.CustomMinBid:SetShown(true);
-						core.BiddingWindow.CustomMinBid:SetChecked(true);
-				    end
+				if core.BiddingWindow.cost:GetNumber() ~= tonumber(val) then
+					minBidAmount = CommDKP_round(core.BiddingWindow.cost:GetNumber(), core.DB.modes.rounding);
+				else
+					minBidAmount = CommDKP_round(val, core.DB.modes.rounding);
 				end
 				
 				if search and core.BiddingWindow.CustomMinBid:GetChecked() == false then
-					table.remove(CommDKP:GetTable(CommDKP_MinBids, true), search[1][1])
-					core.BiddingWindow.CustomMinBid:SetShown(false);
+					minBidAmount = nil;
+				end
+			else
+				minBidAmount = cost * -1;
+			end
+
+			--set table here
+			if not search then
+				tinsert(CommDKP:GetTable(CommDKP_MinBids, true), {item=itemName, minbid=minBidAmount, link=itemLink, icon=itemIcon})
+				if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
+					core.BiddingWindow.CustomMinBid:SetShown(true);
+					core.BiddingWindow.CustomMinBid:SetChecked(true);
+				end
+				CommDKP.Sync:SendData("CommDKPSetPrice", {item=itemName, minbid=minBidAmount, link=itemLink, icon=itemIcon});
+			elseif search then
+				if CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].minbid ~= minBidAmount then
+					CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].minbid = CommDKP_round(minBidAmount, core.DB.modes.rounding);
+					CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].link = itemLink;
+					CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].icon = itemIcon;
+
+					if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
+						core.BiddingWindow.CustomMinBid:SetShown(true);
+						core.BiddingWindow.CustomMinBid:SetChecked(true);
+					end
+					CommDKP.Sync:SendData("CommDKPSetPrice", {item=itemName, minbid=minBidAmount, link=itemLink, icon=itemIcon});
 				end
 			end
-				
+			CommDKP:PriceTable_Update(0);
+
 			if mode == "Zero Sum" and not reassign then
 				core.DB.modes.ZeroSumBank.balance = core.DB.modes.ZeroSumBank.balance + -tonumber(cost)
 				table.insert(core.DB.modes.ZeroSumBank, { loot = loot, cost = -tonumber(cost) })
