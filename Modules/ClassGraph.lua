@@ -70,46 +70,14 @@ function CommDKP:ClassGraph()
 		graph.icons[i].count:SetText(classCount[i])
 		graph.icons[i].count:SetTextColor(1, 1, 1, 1)
 
+		local className = core.classes[i] or "nil";
+
+		local coords = CLASS_ICON_TCOORDS[className]
+		
+		graph.icons[i]:SetTexCoord(unpack(coords))
+
 		--CommDKP.ConfigTab2.header:SetScale(1.2)
 	end
-
-	if core.faction == "Horde" then
-		--druid
-		graph.icons[1]:SetTexCoord(0.740, 0.9921, 0.005, 0.247)
-		--hunter
-		graph.icons[2]:SetTexCoord(0, 0.25, 0.2549, 0.5019)
-		--mage
-		graph.icons[3]:SetTexCoord(0.25, 0.494, 0, 0.25)
-		--priest
-		graph.icons[4]:SetTexCoord(0.5, 0.75, 0.25, 0.5)
-		--rogue
-		graph.icons[5]:SetTexCoord(0.5, 0.74, 0, 0.25)
-		--shaman
-		graph.icons[6]:SetTexCoord(0.25, 0.5, 0.25, 0.5)
-		--warlock
-		graph.icons[7]:SetTexCoord(0.74, 1, 0.25, 0.5)
-		--warrior
-		graph.icons[8]:SetTexCoord(0, 0.25, 0, 0.255)
-	elseif core.faction == "Alliance" then
-		--druid
-		graph.icons[1]:SetTexCoord(0.740, 0.9921, 0.005, 0.247)
-		--hunter
-		graph.icons[2]:SetTexCoord(0, 0.25, 0.2549, 0.5019)
-		--mage
-		graph.icons[3]:SetTexCoord(0.25, 0.494, 0, 0.25)
-		--paladin
-		graph.icons[4]:SetTexCoord(0, 0.25, 0.5, 0.75)
-		--priest
-		graph.icons[5]:SetTexCoord(0.5, 0.75, 0.25, 0.5)
-		--rogue
-		graph.icons[6]:SetTexCoord(0.5, 0.74, 0, 0.25)
-		--warlock
-		graph.icons[7]:SetTexCoord(0.74, 1, 0.25, 0.5)
-		--warrior
-		graph.icons[8]:SetTexCoord(0, 0.25, 0, 0.255)
-	end
-	
-	--tex:SetTexCoord(left, right, top, bottom)
 
 	return graph;
 end
