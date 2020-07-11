@@ -594,6 +594,7 @@ core.L = {
   TEAMCURRENTLISTDESC2 = "All tabs/tables base their data on value coming from this dropdown. Be sure to always check which team you have selected before awarding any DKP or starting the raid timer.",
   TEAMCURRENTLISTDESC3 = "You cannot change the currently selected team from this drop down. To change currently selected team go to /dkp main window",
   TEAMLIST = "List of teams",
+  TEAMCURRENTLISTLABEL = "Team selector",
   TEAMLISTDESC = "List of all the teams defined for current player's realm/guild. Team is a smaller subsection of a guild. Usefull for guilds with more than one raiding groups",
   TEAMMANAGEMENTHEADER = "Guild team management section",
   TEAMSELECT = "Select Team",

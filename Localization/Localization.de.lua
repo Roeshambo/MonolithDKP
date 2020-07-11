@@ -701,6 +701,7 @@ if GetLocale() == "deDE" then
     TEAMCURRENTLISTDESC2 = "Diese Auswahl bestimmt, welche Optionen und DKP Tabelle verwendet wird. Stellen Sie immer sicher, dass sie das richtige Team eingestellt haben, bevor Sie DKP vergeben oder den Schlachtzugstimer starten.",
     TEAMCURRENTLISTDESC3 = "Sie können das momentan ausgewählte Team hier nicht ändern. Dazu gehen sie ins Hauptfenster mit /dkp main window",
     TEAMLIST = "Liste der Teams",
+    TEAMCURRENTLISTLABEL = "Team selector",
     TEAMLISTDESC = "Liste aller Teams, die mit dem Realm oder der Gilde des Spielers assoziiert sind. Ein Team ist eine Untergruppe einer Gilde. Gilden mit mehreren Schlachtzugs-Gruppen können für jede ein Team erstellen",
     TEAMMANAGEMENTHEADER = "Team Managment",
     TEAMSELECT = "Team auswählen",
