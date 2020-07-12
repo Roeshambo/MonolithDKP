@@ -553,7 +553,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
               for i=1, #_objReceived.Data.Loot do
                 local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Loot, true, _objReceived.CurrentTeam), _objReceived.Data.Loot[i].index, "index")
 
-                if not search and ((CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam).LootMeta and CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam).LootMeta < _objReceived.Data.DKP[i].date) or (not CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam).LootMeta)) then -- prevents adding entry if this entry has already been archived
+                if not search and ((CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam).LootMeta and CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam).LootMeta < _objReceived.Data.Loot[i].date) or (not CommDKP:GetTable(CommDKP_Archive, true, _objReceived.CurrentTeam).LootMeta)) then -- prevents adding entry if this entry has already been archived
                   if _objReceived.Data.Loot[i].deletes then
                     local search_del = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Loot, true, _objReceived.CurrentTeam), _objReceived.Data.Loot[i].deletes, "index")
 
