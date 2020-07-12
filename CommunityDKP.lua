@@ -449,7 +449,7 @@ function CommDKP:CreateMenu()
 
 		CommDKP.UIConfig.TeamViewChangerDropDown = CreateFrame("FRAME", "CommDKPConfigReasonDropDown", CommDKP.UIConfig, "CommunityDKPUIDropDownMenuTemplate")
 		--CommDKP.ConfigTab3.TeamManagementContainer.TeamListDropDown:ClearAllPoints()
-		CommDKP.UIConfig.TeamViewChangerDropDown:SetPoint("BOTTOMLEFT", CommDKP.UIConfig, "BOTTOMLEFT", 340, 13)
+		CommDKP.UIConfig.TeamViewChangerDropDown:SetPoint("BOTTOMLEFT", CommDKP.UIConfig, "BOTTOMLEFT", 340, 4)
 		-- tooltip on mouseOver
 		CommDKP.UIConfig.TeamViewChangerDropDown:SetScript("OnEnter", 
 			function(self) 
@@ -513,6 +513,12 @@ function CommDKP:CreateMenu()
 				CloseDropDownMenus()
 			end
 		end
+
+		CommDKP.UIConfig.TeamViewChangerLabel = CommDKP.UIConfig.TeamViewChangerDropDown:CreateFontString(nil, "OVERLAY")
+		CommDKP.UIConfig.TeamViewChangerLabel:SetPoint("TOPLEFT", CommDKP.UIConfig.TeamViewChangerDropDown, "TOPLEFT", 17, 13);
+		CommDKP.UIConfig.TeamViewChangerLabel:SetFontObject("CommDKPTiny");
+		CommDKP.UIConfig.TeamViewChangerLabel:SetTextColor(1, 1, 1, 0.7);
+		CommDKP.UIConfig.TeamViewChangerLabel:SetText(L["TEAMCURRENTLISTLABEL"]);
 
 	---------------------------------------
 	-- Expand / Collapse Arrow

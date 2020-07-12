@@ -316,9 +316,17 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
           CommDKP:Print(_objReceived.Data)
         elseif prefix == "CommDKPPreBroad" then
           if sender ~= UnitName("player") then
-            print("[CommunityDKP] COMMS: Full Broadcast started by "..sender.." for team "..CommDKP:GetTeamName(_objReceived.CurrentTeam));
+            if _objReceived.Data == "CommDKPAllTabs" then
+              print("[CommunityDKP] COMMS: Full broadcast started by "..sender.." for team "..CommDKP:GetTeamName(_objReceived.CurrentTeam));
+            elseif _objReceived.Data == "CommDKPMerge" then
+              print("[CommunityDKP] COMMS: 2-week merge broadcast started by "..sender.." for team "..CommDKP:GetTeamName(_objReceived.CurrentTeam));
+            end
           else
-            print("[CommunityDKP] COMMS: You started Full Broadcast for team "..CommDKP:GetTeamName(_objReceived.CurrentTeam));
+            if _objReceived.Data == "CommDKPAllTabs" then
+              print("[CommunityDKP] COMMS: You started Full Broadcast for team "..CommDKP:GetTeamName(_objReceived.CurrentTeam));
+            elseif _objReceived.Data == "CommDKPMerge" then
+              print("[CommunityDKP] COMMS: You started 2-week broadcast for team "..CommDKP:GetTeamName(_objReceived.CurrentTeam));
+            end
           end
         elseif (prefix == "CommDKPCommand") then
           local command, arg1, arg2, arg3, arg4 = strsplit("#", _objReceived.Data);
@@ -971,10 +979,18 @@ function CommDKP.Sync:SendData(prefix, data, target)
 
     if prefix == "CommDKPAllTabs" or prefix == "CommDKPMerge" then
       if target then
-        CommDKP.Sync:SendData("CommDKPPreBroad", "Full broadcast premessage", target);
+        if prefix == "CommDKPAllTabs" then
+          print("[CommunityDKP] COMMS: You started Full Broadcast for team "..CommDKP:GetTeamName(CommDKP:GetCurrentTeamIndex()).." to player "..target);
+        elseif prefix == "CommDKPMerge" then
+          print("[CommunityDKP] COMMS: You started 2-week broadcast for team "..CommDKP:GetTeamName(CommDKP:GetCurrentTeamIndex()).." to player "..target);
+        end
         CommDKP.Sync:SendCommMessage(prefix, _compressedObj, "WHISPER", target, "NORMAL", CommDKP_BroadcastFull_Callback, nil)
       else
-        CommDKP.Sync:SendData("CommDKPPreBroad", "Full broadcast premessage", nil);
+        if prefix == "CommDKPAllTabs" then
+          CommDKP.Sync:SendData("CommDKPPreBroad", "CommDKPAllTabs", nil);
+        elseif prefix == "CommDKPMerge" then
+          CommDKP.Sync:SendData("CommDKPPreBroad", "CommDKPMerge", nil);
+        end
         CommDKP.Sync:SendCommMessage(prefix, _compressedObj, "GUILD", nil, "NORMAL", CommDKP_BroadcastFull_Callback, nil)
       end
       return
