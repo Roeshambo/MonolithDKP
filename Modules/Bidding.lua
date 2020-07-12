@@ -478,17 +478,18 @@ function CommDKP:ToggleBidWindow(loot, lootIcon, itemName)
       
       if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
         core.BiddingWindow.CustomMinBid:Show();
-        core.BiddingWindow.CustomMinBid:SetChecked(true)
+        core.BiddingWindow.CustomMinBid:SetChecked(core.DB.defaults.CustomMinBid)
         core.BiddingWindow.CustomMinBid:SetScript("OnClick", function(self)
           if self:GetChecked() == true then
             core.BiddingWindow.minBid:SetText(CommDKP_round(minBid, core.DB.modes.rounding))
           else
             core.BiddingWindow.minBid:SetText(CommDKP:GetMinBid(CurrItemForBid))
           end
+          core.DB.defaults.CustomMinBid = self:GetChecked();
         end)
 
         core.BiddingWindow.CustomMaxBid:Show();
-        core.BiddingWindow.CustomMaxBid:SetChecked(true)
+        core.BiddingWindow.CustomMaxBid:SetChecked(core.DB.defaults.CustomMaxBid)
         core.BiddingWindow.CustomMaxBid:SetScript("OnClick", function(self)
           if self:GetChecked() == true then
             core.BiddingWindow.maxBid:SetText(CommDKP_round(maxBid, core.DB.modes.rounding))
@@ -499,27 +500,42 @@ function CommDKP:ToggleBidWindow(loot, lootIcon, itemName)
             if behavior == "Max DKP" then
                 dkpValue = "MAX";
             else
-              dkpValue = maxBid;
+              dkpValue = CommDKP_round(maxBid, core.DB.modes.rounding);
             end
             core.BiddingWindow.maxBid:SetText(dkpValue);
           end
+          core.DB.defaults.CustomMaxBid = self:GetChecked();
         end)
       elseif mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
         core.BiddingWindow.CustomMinBid:Show();
-        core.BiddingWindow.CustomMinBid:SetChecked(true)
+        core.BiddingWindow.CustomMinBid:SetChecked(core.DB.defaults.CustomMinBid)
         core.BiddingWindow.CustomMinBid:SetScript("OnClick", function(self)
           if self:GetChecked() == true then
             core.BiddingWindow.cost:SetText(CommDKP_round(minBid, core.DB.modes.rounding))
           else
             core.BiddingWindow.cost:SetText(CommDKP:GetMinBid(CurrItemForBid))
           end
+          core.DB.defaults.CustomMinBid = not core.DB.defaults.CustomMinBid;
         end)
       end
 
       if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
         core.BiddingWindow.minBid:SetText(CommDKP_round(minBid, core.DB.modes.rounding))
-        core.BiddingWindow.maxBid:SetText(CommDKP_round(maxBid, core.DB.modes.rounding))
-       end
+
+        local behavior = core.DB.modes.MaxBehavior
+        local dkpValue = 0;
+
+        if not core.DB.defaults.CustomMaxBid then
+          if behavior == "Max DKP" then
+              dkpValue = "MAX";
+          else
+            dkpValue = CommDKP_round(maxBid, core.DB.modes.rounding);
+          end
+          core.BiddingWindow.maxBid:SetText(dkpValue);
+        else
+          core.BiddingWindow.maxBid:SetText(CommDKP_round(maxBid, core.DB.modes.rounding))
+        end
+      end
 
        core.BiddingWindow.cost:SetText(CommDKP_round(minBid, core.DB.modes.rounding))
        core.BiddingWindow.itemName:SetText(itemName)
@@ -575,12 +591,12 @@ local function StartBidding()
     if not search_min and core.BiddingWindow.minBid:GetNumber() ~= tonumber(val_min) then
       tinsert(CommDKP:GetTable(CommDKP_MinBids, true), {item=core.BiddingWindow.itemName:GetText(), minbid=core.BiddingWindow.minBid:GetNumber()})
       core.BiddingWindow.CustomMinBid:SetShown(true);
-      core.BiddingWindow.CustomMinBid:SetChecked(true);
+      core.BiddingWindow.CustomMinBid:SetChecked(core.DB.defaults.CustomMinBid);
     elseif search_min and core.BiddingWindow.minBid:GetNumber() ~= tonumber(val_min) and core.BiddingWindow.CustomMinBid:GetChecked() == true then
       if CommDKP:GetTable(CommDKP_MinBids, true)[search_min[1][1]].minbid ~= core.BiddingWindow.minBid:GetNumber() then
         CommDKP:GetTable(CommDKP_MinBids, true)[search_min[1][1]].minbid = core.BiddingWindow.minBid:GetNumber();
         core.BiddingWindow.CustomMinBid:SetShown(true);
-        core.BiddingWindow.CustomMinBid:SetChecked(true);
+        core.BiddingWindow.CustomMinBid:SetChecked(core.DB.defaults.CustomMinBid);
       end
     end
 
@@ -593,12 +609,12 @@ local function StartBidding()
     if not search_max and core.BiddingWindow.maxBid:GetNumber() ~= tonumber(val_max) then
       tinsert(CommDKP:GetTable(CommDKP_MaxBids, true), {item=core.BiddingWindow.itemName:GetText(), maxbid=core.BiddingWindow.maxBid:GetNumber()})
       core.BiddingWindow.CustomMaxBid:SetShown(true);
-      core.BiddingWindow.CustomMaxBid:SetChecked(true);
+      core.BiddingWindow.CustomMaxBid:SetChecked(core.DB.defaults.CustomMaxBid);
     elseif search_max and core.BiddingWindow.maxBid:GetNumber() ~= tonumber(val_max) and core.BiddingWindow.CustomMaxBid:GetChecked() == true then
       if CommDKP:GetTable(CommDKP_MaxBids, true)[search_max[1][1]].maxbid ~= core.BiddingWindow.maxBid:GetNumber() then
         CommDKP:GetTable(CommDKP_MaxBids, true)[search_max[1][1]].maxbid = core.BiddingWindow.maxBid:GetNumber();
         core.BiddingWindow.CustomMaxBid:SetShown(true);
-        core.BiddingWindow.CustomMaxBid:SetChecked(true);
+        core.BiddingWindow.CustomMaxBid:SetChecked(core.DB.defaults.CustomMaxBid);
       end
     end
 
@@ -1464,7 +1480,7 @@ function CommDKP:CreateBidWindow()
       end)
 
     f.CustomMaxBid = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
-    f.CustomMaxBid:SetChecked(true)
+    f.CustomMaxBid:SetChecked(core.DB.defaults.CustomMaxBid)
     f.CustomMaxBid:SetScale(0.6);
     f.CustomMaxBid.text:SetText("  |cff5151de"..L["CUSTOM"].."|r");
     f.CustomMaxBid.text:SetScale(1.5);

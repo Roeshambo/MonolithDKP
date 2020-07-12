@@ -187,7 +187,7 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 				tinsert(CommDKP:GetTable(CommDKP_MinBids, true), {item=itemName, minbid=minBidAmount, link=itemLink, icon=itemIcon})
 				if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
 					core.BiddingWindow.CustomMinBid:SetShown(true);
-					core.BiddingWindow.CustomMinBid:SetChecked(true);
+					core.BiddingWindow.CustomMinBid:SetChecked(core.DB.defaults.CustomMinBid);
 				end
 				CommDKP.Sync:SendData("CommDKPSetPrice", {item=itemName, minbid=minBidAmount, link=itemLink, icon=itemIcon});
 			elseif search then
@@ -198,7 +198,7 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 
 					if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
 						core.BiddingWindow.CustomMinBid:SetShown(true);
-						core.BiddingWindow.CustomMinBid:SetChecked(true);
+						core.BiddingWindow.CustomMinBid:SetChecked(core.DB.defaults.CustomMinBid);
 					end
 					CommDKP.Sync:SendData("CommDKPSetPrice", {item=itemName, minbid=minBidAmount, link=itemLink, icon=itemIcon});
 				end

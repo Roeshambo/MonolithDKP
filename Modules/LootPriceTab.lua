@@ -107,7 +107,7 @@ function CommDKP:ProcessDisenchant(loot)
 		if not search then
 			tinsert(CommDKP:GetTable(CommDKP_MinBids, true), newItem)
 			core.BiddingWindow.CustomMinBid:SetShown(true);
-			core.BiddingWindow.CustomMinBid:SetChecked(true);
+			core.BiddingWindow.CustomMinBid:SetChecked(core.DB.defaults.CustomMinBid);
 		else
 
 			CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].minbid = cost;
