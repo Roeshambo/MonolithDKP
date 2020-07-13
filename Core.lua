@@ -99,7 +99,7 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 core.CommDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
 core.MonVersion = "v3.1.2";
 core.BuildNumber = 30102;
-core.ReleaseNumber = 44
+core.ReleaseNumber = 45
 core.defaultTable = "__default";
 core.SemVer = core.MonVersion.."-r"..tostring(core.ReleaseNumber);
 core.UpgradeSchema = false;
@@ -289,7 +289,7 @@ function CommDKP:CheckRaidLeader()
 		 
 		 tempName, tempRank, subgroup, level, class, fileName, zone, online, isDead, role, isML, combatRole = GetRaidRosterInfo(i);
 
-		if tempName == UnitName("player") and (tempRank == 2 or isML) then
+		if tempName == UnitName("player") and tempRank == 2 then
 			return true
 		elseif tempName == UnitName("player") and tempRank < 2 then
 			return false
