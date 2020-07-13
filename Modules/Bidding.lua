@@ -771,14 +771,19 @@ function CommDKP:BroadcastStopBidTimer()
 end
 
 function CommDKP_Register_ShiftClickLootWindowHook()      -- hook function into LootFrame window. All slots on ElvUI. But only first 4 in default UI.
-  local num = GetNumLootItems();
-
-  if getglobal("ElvLootSlot1") then       -- fixes hook for ElvUI loot frame
+  C_Timer.After(0.0001, function()
+    local num = GetNumLootItems();
+    local lootSlotNameTemplate = "LootButton"
+    if getglobal"ElvLootSlot1" then       -- fixes hook for ElvUI loot frame
+      lootSlotNameTemplate = "ElvLootSlot"
+    else
+      num = math.min(num, 4)
+    end
     for i = 1, num do
       local searchHook = CommDKP:Table_Search(hookedSlots, i)  -- blocks repeated hooking
 
       if not searchHook then
-        local lootSlot = getglobal("ElvLootSlot"..i)
+        local lootSlot = getglobal(lootSlotNameTemplate..i)
         if lootSlot then
           lootSlot:HookScript("OnClick", function()
                 if ( IsShiftKeyDown() and IsAltKeyDown() ) then
@@ -811,43 +816,7 @@ function CommDKP_Register_ShiftClickLootWindowHook()      -- hook function into 
         end
       end
     end
-  else
-    if num > 4 then num = 4 end
-
-    for i = 1, num do
-      local searchHook = CommDKP:Table_Search(hookedSlots, i)  -- blocks repeated hooking
-
-      if not searchHook then
-        getglobal("LootButton"..i):HookScript("OnClick", function()
-              if ( IsShiftKeyDown() and IsAltKeyDown() ) then
-                local pass, err = pcall(function()
-                  lootIcon, itemName, _, _, _ = GetLootSlotInfo(i)
-                  itemLink = GetLootSlotLink(i)
-                    CommDKP:ToggleBidWindow(itemLink, lootIcon, itemName)
-                end)
-
-            if not pass then
-              core.BiddingWindow:SetShown(false)
-              StaticPopupDialogs["SUGGEST_RELOAD"] = {
-                text = "|CFFFF0000"..L["WARNING"].."|r: "..L["MUSTRELOADUI"],
-                button1 = L["YES"],
-                button2 = L["NO"],
-                OnAccept = function()
-                  ReloadUI();
-                end,
-                timeout = 0,
-                whileDead = true,
-                hideOnEscape = true,
-                preferredIndex = 3,
-              }
-              StaticPopup_Show ("SUGGEST_RELOAD")
-            end
-              end
-        end)
-        table.insert(hookedSlots, i)
-      end
-    end
-  end
+  end)
 end
 
 function CommDKP:StartBidTimer(seconds, title, itemIcon)
