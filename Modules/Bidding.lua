@@ -780,13 +780,13 @@ function CommDKP_Register_ShiftClickLootWindowHook()      -- hook function into 
       if not searchHook then
         local lootSlot = getglobal("ElvLootSlot"..i)
         if lootSlot then
-          lootSlot:HookScript("OnClick", function()
-                if ( IsShiftKeyDown() and IsAltKeyDown() ) then
-                  local pass, err = pcall(function()
-                    lootIcon, itemName, _, _, _ = GetLootSlotInfo(i)
-                    itemLink = GetLootSlotLink(i)
-                      CommDKP:ToggleBidWindow(itemLink, lootIcon, itemName)
-                  end)
+--[[           lootSlot:HookScript("OnClick", function()
+            if ( IsShiftKeyDown() and IsAltKeyDown() ) then
+              local pass, err = pcall(function()
+                lootIcon, itemName, _, _, _ = GetLootSlotInfo(i)
+                itemLink = GetLootSlotLink(i)
+                CommDKP:ToggleBidWindow(itemLink, lootIcon, itemName)
+              end)
 
               if not pass then
                 CommDKP:Print(err)
@@ -807,7 +807,7 @@ function CommDKP_Register_ShiftClickLootWindowHook()      -- hook function into 
               end
             end
           end)
-          table.insert(hookedSlots, i)
+ ]]          table.insert(hookedSlots, i)
         end
       end
     end
@@ -818,7 +818,7 @@ function CommDKP_Register_ShiftClickLootWindowHook()      -- hook function into 
       local searchHook = CommDKP:Table_Search(hookedSlots, i)  -- blocks repeated hooking
 
       if not searchHook then
-        getglobal("LootButton"..i):HookScript("OnClick", function()
+--[[         getglobal("LootButton"..i):HookScript("OnClick", function()
               if ( IsShiftKeyDown() and IsAltKeyDown() ) then
                 local pass, err = pcall(function()
                   lootIcon, itemName, _, _, _ = GetLootSlotInfo(i)
@@ -844,7 +844,7 @@ function CommDKP_Register_ShiftClickLootWindowHook()      -- hook function into 
             end
               end
         end)
-        table.insert(hookedSlots, i)
+ ]]        table.insert(hookedSlots, i)
       end
     end
   end

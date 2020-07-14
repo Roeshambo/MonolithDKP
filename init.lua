@@ -654,7 +654,11 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 			core.KeyEventUI = CreateFrame("Frame","KeyEventFrame", UIParent);
 			core.KeyEventUI:SetScript("OnKeyDown", function(self, key)
 				if core.Initialized then
-					if GameTooltip:GetItem() and ((key == "LALT" and IsShiftKeyDown()) or (key == "LSHIFT" and IsAltKeyDown())) then
+					if MouseIsOver(MultiBarLeft) or MouseIsOver(MultiBarRight) or MouseIsOver(MultiBarBottomLeft) or MouseIsOver(MultiBarBottomRight) or MouseIsOver(MainMenuBar) then
+						return;
+					end
+						-- TODO: Make this a configurable keybind.
+					if GameTooltip:GetItem() and IsShiftKeyDown() and IsAltKeyDown() then
 						local item, link = GameTooltip:GetItem();
 						local _, _, Color, Ltype, itemID, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Name = string.find(link,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
 						local itemIcon = GetItemIcon(itemID);
