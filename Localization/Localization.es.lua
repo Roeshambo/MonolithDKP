@@ -361,6 +361,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     INZONEONLY = "En la misma zona",
     INZONEONLYTTDESC = "Esto solo otorgará DKP de banda a los jugadores que estén en la misma zona que tú. (Para usar con adjudicación automática, temporizador de incursión y distribución de suma cero)",
     ITEM = "Articulo",
+    ITEMS = "Items",
     ITEMCOST = "Coste del artículo",
     ITEMCOSTTTDESC = "DKP cobrará al jugador por el artículo.",
     ITEMCOSTTYPES = "Tipos de costos de artículos",

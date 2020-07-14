@@ -369,6 +369,7 @@ if GetLocale() == "deDE" then
     INZONEONLY = "In derselben Zone",
     INZONEONLYTTDESC = "Dies wird nur Raid DKP an Spieler vergeben, die sich in derselben Zone wie Sie befinden. (Zur Verwendung mit Auto Award, Raid Timer und Zero Sum Distribution)",
     ITEM = "Gegenstand",
+    ITEMS = "Items",
     ITEMCOST = "Gegenstandskosten",
     ITEMCOSTTTDESC = "DKP, die der Spieler für diesen Gegenstand zahlen soll.",
     ITEMCOSTTYPES = "Artikelkostentypen",

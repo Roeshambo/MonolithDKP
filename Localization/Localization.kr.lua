@@ -361,6 +361,7 @@ if GetLocale() == "koKR" then
     INZONEONLY = "같은 구역에서",
     INZONEONLYTTDESC = "이것은 당신과 같은 지역에있는 플레이어에게만 공격적인 DKP를 부여합니다. (자동 보너스, 레이드 타이머 및 제로섬 분배와 함께 사용)",
     ITEM = "안건",
+    ITEMS = "Items",
     ITEMCOST = "아이템 비용",
     ITEMCOSTTTDESC = "항목에 대한 플레이어를 청구하는 DKP.",
     ITEMCOSTTYPES = "품목 비용 유형",

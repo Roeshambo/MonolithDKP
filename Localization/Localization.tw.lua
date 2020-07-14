@@ -361,6 +361,7 @@ if GetLocale() == "zhTW" then
     INZONEONLY = "在同一區域",
     INZONEONLYTTDESC = "這只會將突襲DKP獎勵給與您位於同一區域的玩家。 （用於自動獎勵，突襲計時器和零和分配）",
     ITEM = "項目",
+    ITEMS = "Items",
     ITEMCOST = "物品成本",
     ITEMCOSTTTDESC = "DKP向玩家收取物品費用。",
     ITEMCOSTTYPES = "物料成本類型",

@@ -361,6 +361,7 @@ if GetLocale() == "frFR" then
     INZONEONLY = "Dans la même zone",
     INZONEONLYTTDESC = "Cela n'accordera le raid DKP qu'aux joueurs qui se trouvent dans la même zone que vous. (À utiliser avec attribution automatique, minuterie de raid et distribution à somme nulle)",
     ITEM = "Article",
+    ITEMS = "Items",
     ITEMCOST = "Coût de l'article",
     ITEMCOSTTTDESC = "DKP pour charger le joueur pour un objet.",
     ITEMCOSTTYPES = "Types de coûts d'élément",
