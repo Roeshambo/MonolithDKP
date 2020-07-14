@@ -774,7 +774,7 @@ function CommDKP_Register_ShiftClickLootWindowHook()      -- hook function into 
   C_Timer.After(0.0001, function()
     local num = GetNumLootItems();
     local lootSlotNameTemplate = "LootButton"
-    if getglobal"ElvLootSlot1" then       -- fixes hook for ElvUI loot frame
+    if getglobal("ElvLootSlot1") then       -- fixes hook for ElvUI loot frame
       lootSlotNameTemplate = "ElvLootSlot"
     else
       num = math.min(num, 4)
