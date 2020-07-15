@@ -584,11 +584,6 @@ function CommDKP_OnEvent(self, event, arg1, ...)
 	elseif event == "LOOT_OPENED" then
 		CommDKP:CheckOfficer();
 		if core.IsOfficer then
-			if not IsInRaid() and arg1 == false then  -- only fires hook when autoloot is not active if not in a raid to prevent nil value error
-				CommDKP_Register_ShiftClickLootWindowHook()
-			elseif IsInRaid() then
-				CommDKP_Register_ShiftClickLootWindowHook()
-			end
 			local lootTable = {}
 			local lootList = {};
 
