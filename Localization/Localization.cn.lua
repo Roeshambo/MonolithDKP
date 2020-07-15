@@ -533,6 +533,7 @@ if GetLocale() == "zhCN" then
     PLAYERSFORREASON = "玩家原因",
     PLAYERVALIDATE = "未选择玩",
     PLEASEUSENUMS = "请使用数字。",
+    PRICETAB = "Pricing", --TODO
     PLEASEVALIDATE = "无效的条目已被删除。 请验证您的表格。 （在DKP表的右键单击上下文菜单中）",
     POINTS = "点数",
     POINTSTTDESC = "在DKP表上输入要分配给选定播放器的DKP数量。可以在下面的“选项”标签中更改默认值。",
