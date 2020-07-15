@@ -651,6 +651,24 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 	if(event == "ADDON_LOADED") then
 		C_Timer.After(5, function ()
 			core.CommDKPUI = CommDKP.UIConfig or CommDKP:CreateMenu();		-- creates main menu after 5 seconds (trying to initialize after raid frames are loaded)
+			core.KeyEventUI = CreateFrame("Frame","KeyEventFrame", UIParent);
+			core.KeyEventUI:SetScript("OnKeyDown", function(self, key)
+				if core.Initialized then
+					if MouseIsOver(MultiBarLeft) or MouseIsOver(MultiBarRight) or MouseIsOver(MultiBarBottomLeft) or MouseIsOver(MultiBarBottomRight) or MouseIsOver(MainMenuBar) then
+						return;
+					end
+						-- TODO: Make this a configurable keybind.
+					if GameTooltip:GetItem()  and (key == "LALT" or key == "LSHIFT") and IsShiftKeyDown() and IsAltKeyDown() then
+						local item, link = GameTooltip:GetItem();
+						local _, _, Color, Ltype, itemID, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Name = string.find(link,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
+						local itemIcon = GetItemIcon(itemID);
+						local itemName, itemLink = GetItemInfo(link);
+
+						CommDKP:ToggleBidWindow(itemLink, itemIcon, itemName);
+					end
+				end
+			end);
+			core.KeyEventUI:SetPropagateKeyboardInput(true);
 		end)
 		------------------------------------------------
 		-- Verify DB Schemas
