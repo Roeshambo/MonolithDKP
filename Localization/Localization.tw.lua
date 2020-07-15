@@ -533,6 +533,7 @@ if GetLocale() == "zhTW" then
     PLAYERSFORREASON = "玩家原因",
     PLAYERVALIDATE = "未選擇玩家",
     PLEASEUSENUMS = "請使用數字。",
+    PRICETAB = "Pricing", --TODO
     PLEASEVALIDATE = "無效的條目已被刪除。 請驗證您的表格。 （在DKP表的右鍵單擊上下文菜單中）",
     POINTS = "點數",
     POINTSTTDESC = "在DKP錶中輸入分配給選定玩家的DKP數量。預設值可以在下麵的“選項”選項卡中更改。",

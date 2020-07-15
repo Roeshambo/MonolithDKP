@@ -533,6 +533,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     PLAYERSFORREASON = "jugadores por razones",
     PLAYERVALIDATE = "Ningún jugador seleccionado",
     PLEASEUSENUMS = "Por favor use números.",
+    PRICETAB = "Pricing", --TODO
     PLEASEVALIDATE = "Las entradas inválidas fueron eliminadas. Por favor valide sus tablas. (En el menú contextual del botón derecho en la tabla DKP)",
     POINTS = "Puntos",
     POINTSTTDESC = "Ingrese la cantidad de DKP que se distribuirá a los jugadores seleccionados en la mesa DKP. Los valores predeterminados se pueden cambiar en la pestaña \"Opciones \" a continuación.",
