@@ -653,13 +653,24 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 						return;
 					end
 						-- TODO: Make this a configurable keybind.
-					if GameTooltip:GetItem()  and (key == "LALT" or key == "LSHIFT") and IsShiftKeyDown() and IsAltKeyDown() then
+					if GameTooltip:GetItem() then
 						local item, link = GameTooltip:GetItem();
-						local _, _, Color, Ltype, itemID, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Name = string.find(link,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
-						local itemIcon = GetItemIcon(itemID);
-						local itemName, itemLink = GetItemInfo(link);
 
-						CommDKP:ToggleBidWindow(itemLink, itemIcon, itemName);
+						if (key == "LALT" or key == "LSHIFT") and IsShiftKeyDown() and IsAltKeyDown() then
+							
+							local _, _, Color, Ltype, itemID, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Name = string.find(link,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
+							local itemIcon = GetItemIcon(itemID);
+							local itemName, itemLink = GetItemInfo(link);
+
+							CommDKP:ToggleBidWindow(itemLink, itemIcon, itemName);
+						end
+
+						if (key == "LCTRL" or key == "LSHIFT") and IsShiftKeyDown() and IsControlKeyDown() then
+							-- TODO: Automate the Price a Bit More
+							CommDKP:AwardConfirm(nil, 0, core.DB.bossargs.LastKilledBoss, core.DB.bossargs.CurrentRaidZone, link);
+						end
+
+
 					end
 				end
 			end);
