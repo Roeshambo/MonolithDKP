@@ -361,6 +361,7 @@ if GetLocale() == "frFR" then
     INZONEONLY = "Dans la même zone",
     INZONEONLYTTDESC = "Cela n'accordera le raid DKP qu'aux joueurs qui se trouvent dans la même zone que vous. (À utiliser avec attribution automatique, minuterie de raid et distribution à somme nulle)",
     ITEM = "Article",
+    ITEMS = "Items",
     ITEMCOST = "Coût de l'article",
     ITEMCOSTTTDESC = "DKP pour charger le joueur pour un objet.",
     ITEMCOSTTYPES = "Types de coûts d'élément",
@@ -532,6 +533,7 @@ if GetLocale() == "frFR" then
     PLAYERSFORREASON = "joueurs pour la raison",
     PLAYERVALIDATE = "Aucun joueur sélectionné",
     PLEASEUSENUMS = "S'il vous plaît utiliser des chiffres.",
+    PRICETAB = "Pricing", --TODO
     PLEASEVALIDATE = "Les entrées non valides ont été supprimées. Merci de valider vos tables. (Dans le menu contextuel clic droit sur la table DKP)",
     POINTS = "Points",
     POINTSTTDESC = "Entrez le montant de DKP à distribuer aux joueurs sélectionnés sur la table DKP. Les valeurs par défaut peuvent être modifiées dans l'onglet \"Options\" ci-dessous.",

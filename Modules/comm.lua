@@ -180,7 +180,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
       elseif prefix == "CommDKPBidder" then
         if core.BidInProgress and core.IsOfficer then
           if _objReceived.Data == "pass" then
-            CommDKP:Print(sender.." has passed.")
+              -- CommDKP:Print(sender.." has passed.")  --TODO: Let's do something different here at some point.
             return
           else
             CommDKP_CHAT_MSG_WHISPER(_objReceived.Data, sender)

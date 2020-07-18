@@ -361,6 +361,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     INZONEONLY = "En la misma zona",
     INZONEONLYTTDESC = "Esto solo otorgará DKP de banda a los jugadores que estén en la misma zona que tú. (Para usar con adjudicación automática, temporizador de incursión y distribución de suma cero)",
     ITEM = "Articulo",
+    ITEMS = "Items",
     ITEMCOST = "Coste del artículo",
     ITEMCOSTTTDESC = "DKP cobrará al jugador por el artículo.",
     ITEMCOSTTYPES = "Tipos de costos de artículos",
@@ -532,6 +533,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     PLAYERSFORREASON = "jugadores por razones",
     PLAYERVALIDATE = "Ningún jugador seleccionado",
     PLEASEUSENUMS = "Por favor use números.",
+    PRICETAB = "Pricing", --TODO
     PLEASEVALIDATE = "Las entradas inválidas fueron eliminadas. Por favor valide sus tablas. (En el menú contextual del botón derecho en la tabla DKP)",
     POINTS = "Puntos",
     POINTSTTDESC = "Ingrese la cantidad de DKP que se distribuirá a los jugadores seleccionados en la mesa DKP. Los valores predeterminados se pueden cambiar en la pestaña \"Opciones \" a continuación.",

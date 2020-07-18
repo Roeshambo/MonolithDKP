@@ -361,6 +361,7 @@ if GetLocale() == "koKR" then
     INZONEONLY = "같은 구역에서",
     INZONEONLYTTDESC = "이것은 당신과 같은 지역에있는 플레이어에게만 공격적인 DKP를 부여합니다. (자동 보너스, 레이드 타이머 및 제로섬 분배와 함께 사용)",
     ITEM = "안건",
+    ITEMS = "Items",
     ITEMCOST = "아이템 비용",
     ITEMCOSTTTDESC = "항목에 대한 플레이어를 청구하는 DKP.",
     ITEMCOSTTYPES = "품목 비용 유형",
@@ -532,6 +533,7 @@ if GetLocale() == "koKR" then
     PLAYERSFORREASON = "이유가있는 플레이어",
     PLAYERVALIDATE = "선택된 플레이어가 없습니다",
     PLEASEUSENUMS = "숫자를 사용하십시오.",
+    PRICETAB = "Pricing", --TODO
     PLEASEVALIDATE = "유효하지 않은 항목이 제거되었습니다. 테이블을 확인하십시오. (DKP 테이블의 오른쪽 클릭 컨텍스트 메뉴)",
     POINTS = "포인트들",
     POINTSTTDESC = "DKP 테이블에서 선택한 플레이어에게 배포 할 DKP의 양을 입력하십시오. 아래의 \"옵션\"탭에서 기본값을 변경할 수 있습니다.",

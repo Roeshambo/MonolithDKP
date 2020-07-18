@@ -361,6 +361,7 @@ if GetLocale() == "zhTW" then
     INZONEONLY = "在同一區域",
     INZONEONLYTTDESC = "這只會將突襲DKP獎勵給與您位於同一區域的玩家。 （用於自動獎勵，突襲計時器和零和分配）",
     ITEM = "項目",
+    ITEMS = "Items",
     ITEMCOST = "物品成本",
     ITEMCOSTTTDESC = "DKP向玩家收取物品費用。",
     ITEMCOSTTYPES = "物料成本類型",
@@ -532,6 +533,7 @@ if GetLocale() == "zhTW" then
     PLAYERSFORREASON = "玩家原因",
     PLAYERVALIDATE = "未選擇玩家",
     PLEASEUSENUMS = "請使用數字。",
+    PRICETAB = "Pricing", --TODO
     PLEASEVALIDATE = "無效的條目已被刪除。 請驗證您的表格。 （在DKP表的右鍵單擊上下文菜單中）",
     POINTS = "點數",
     POINTSTTDESC = "在DKP錶中輸入分配給選定玩家的DKP數量。預設值可以在下麵的“選項”選項卡中更改。",
