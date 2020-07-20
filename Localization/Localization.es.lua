@@ -54,7 +54,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     ADDNEGVALUES = "Agregar a valores negativos",
     ADDRAIDMEMBERS = "Agregar miembros de incursión",
     ADDRAIDMEMBERSCONFIRM = "¿Está seguro de que desea agregar miembros de incursión que faltan a la tabla DKP?",
-    ADDRAIDMEMBERSTTDESC = "Agrega todos los miembros de la banda / grupo que estén en el gremio a la tabla DKP.",
+    ADDRAIDMEMBERSTTDESC = "Agrega todos los miembros de la banda / grupo que estén en el gremio a la tabla DKP.", --TODO remove the "in guild" qualifier
     ADDREMDKPTABLEENTRIES = "Agregar / quitar entradas de tabla DKP",
     ADDTARGET = "Añadir objetivo",
     ADDTARGETTODKPTABLE = "Agregar destino a la tabla DKP",

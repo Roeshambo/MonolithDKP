@@ -54,7 +54,7 @@ if GetLocale() == "frFR" then
     ADDNEGVALUES = "Ajouter aux valeurs négatives",
     ADDRAIDMEMBERS = "Ajouter des membres du raid",
     ADDRAIDMEMBERSCONFIRM = "Êtes-vous sûr de vouloir ajouter des membres de raid manquants au tableau DKP ?",
-    ADDRAIDMEMBERSTTDESC = "Ajoutez tous les membres du groupe / raid qui sont dans la guilde au tableau DKP.",
+    ADDRAIDMEMBERSTTDESC = "Ajoutez tous les membres du groupe / raid qui sont dans la guilde au tableau DKP.", --TODO remove the "in guild" qualifier
     ADDREMDKPTABLEENTRIES = "Ajouter / Supprimer des entrées du tableau DKP",
     ADDTARGET = "Ajouter une cible",
     ADDTARGETTODKPTABLE = "Ajouter une cible au tableau DKP",
