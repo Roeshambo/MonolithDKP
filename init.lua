@@ -841,13 +841,6 @@ function CommDKP:UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
 		end
 	end
 
-	-- Build 30103 (3.1.3) Changes
-	if newDbTable.dbinfo.build < 30103 and newDbTable.dbinfo.priorbuild ~= core.BuildNumber then
-		-- No longer need the installed and installed210 variables.
-		newDbTable.defaults.installed210 = nil;
-		newDbTable.defaults.installed = nil;
-	end
-
 	-- Set Current Build Number
 	newDbTable.dbinfo.build = core.BuildNumber;
 	return newDbTable;
@@ -910,6 +903,15 @@ function CommDKP:InitializeCommDKPDB(dbTable)
 	if not dbTable.modes.AnnounceRaidWarning then dbTable.modes.AnnounceRaidWarning = false end;
 	if dbTable.defaults.CustomMaxBid == nil then dbTable.defaults.CustomMaxBid = true end;
 	if dbTable.defaults.CustomMinBid == nil then dbTable.defaults.CustomMinBid = true end;
+
+	-- 3.1.3 Version Change - Removing installed Variables
+	if dbTable.defaults.installed210 then
+		dbTable.defaults.installed210 = nil;
+	end
+
+	if dbTable.defaults.installed then
+		dbTable.defaults.installed = nil;
+	end
 
 	if IsInGuild() then
 		if not dbTable.teams["0"] then 
