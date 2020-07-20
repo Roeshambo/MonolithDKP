@@ -840,6 +840,14 @@ function CommDKP:UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
 			newDbTable[core.defaultTable] = defaultTable;
 		end
 	end
+
+	-- Build 30103 (3.1.3) Changes
+	if newDbTable.dbinfo.build < 30103 and newDbTable.dbinfo.priorbuild ~= core.BuildNumber then
+		-- No longer need the installed and installed210 variables.
+		newDbTable.defaults.installed210 = nil;
+		newDbTable.defaults.installed = nil;
+	end
+
 	-- Set Current Build Number
 	newDbTable.dbinfo.build = core.BuildNumber;
 	return newDbTable;
