@@ -400,7 +400,7 @@ function CommDKP_OnEvent(self, event, arg1, ...)
 			if CommDKP:Table_Search(core.EncounterList, arg1) then
 				CommDKP.ConfigTab2.BossKilledDropdown:SetValue(arg1)
 
-				if core.DB.modes.StandbyOptIn then
+				if core.DB.modes.StandbyOptIn and core.RaidInProgress then
 					CommDKP_Standby_Announce(boss_name)
 				end
 
