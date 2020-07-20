@@ -393,7 +393,11 @@ function CommDKP:LootHistory_Reset()
 	curZone = nil;
 	curBoss = nil;
 
-	CommDKP:ClearLootHistoryFrames() 
+	CommDKP:ClearLootHistoryFrames();
+
+	if CommDKP.ConfigTab5.LoadHistory then
+		CommDKP.ConfigTab5.LoadHistory:Show();
+	end
 
 	if CommDKP.DKPTable then
 		for i=1, #CommDKP:GetTable(CommDKP_Loot, true)+1 do
