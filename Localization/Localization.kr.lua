@@ -54,7 +54,7 @@ if GetLocale() == "koKR" then
     ADDNEGVALUES = "음수 값에 추가",
     ADDRAIDMEMBERS = "레이드 멤버 추가",
     ADDRAIDMEMBERSCONFIRM = "누락 된 공격 대원을 DKP 테이블에 추가 하시겠습니까?",
-    ADDRAIDMEMBERSTTDESC = "길드에있는 모든 공격대 / 파티원을 DKP 테이블에 추가합니다.",
+    ADDRAIDMEMBERSTTDESC = "길드에있는 모든 공격대 / 파티원을 DKP 테이블에 추가합니다.", --TODO remove the "in guild" qualifier
     ADDREMDKPTABLEENTRIES = "DKP 테이블 항목 추가 / 제거",
     ADDTARGET = "대상 추가",
     ADDTARGETTODKPTABLE = "DKP 테이블에 대상 추가",

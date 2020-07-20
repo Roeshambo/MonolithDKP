@@ -54,7 +54,7 @@ if GetLocale() == "zhCN" then
     ADDNEGVALUES = "添加到负值",
     ADDRAIDMEMBERS = "添加团队成员",
     ADDRAIDMEMBERSCONFIRM = "您确定要向DKP表添加缺少的RAID成员吗？",
-    ADDRAIDMEMBERSTTDESC = "将公会中的所有团队成员添加到DKP表中。",
+    ADDRAIDMEMBERSTTDESC = "将公会中的所有团队成员添加到DKP表中。", --TODO remove the "in guild" qualifier
     ADDREMDKPTABLEENTRIES = "添加/删除DKP表条目",
     ADDTARGET = "添加目标",
     ADDTARGETTODKPTABLE = "将目标添加到DKP表",

@@ -54,7 +54,7 @@ if GetLocale() == "ruRU" then
     ADDNEGVALUES = "Применять к негативных значениям",
     ADDRAIDMEMBERS = "Добавить участников рейда",
     ADDRAIDMEMBERSCONFIRM = "Вы уверены, что хотите добавить нехватающих участников рейда в таблицу DKP?",
-    ADDRAIDMEMBERSTTDESC = "Добавляет всех участников рейда/группы, которые находятся в гильдии в таблицу DKP.",
+    ADDRAIDMEMBERSTTDESC = "Добавляет всех участников рейда/группы, которые находятся в гильдии в таблицу DKP.", --TODO remove the "in guild" qualifier
     ADDREMDKPTABLEENTRIES = "Добавить/Удалить записи таблицы DKP",
     ADDTARGET = "Добавить цель",
     ADDTARGETTODKPTABLE = "Добавить цель в таблицу DKP",
