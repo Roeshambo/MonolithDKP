@@ -87,6 +87,8 @@ if GetLocale() == "zhTW" then
     ANTISNIPETTWARN = "設置為0以關閉反竊聽。",
     APPDECAYTTDESC = "您希望以每週衰减的管道减少DKP條目的DKP量。這應該是一個正數。如果未在下麵選擇“僅選定玩家”，則它將應用於所有條目。",
     APPDECAYTTWARN = "警告：無法撤銷。",
+    ANNOUNCEINRAIDWARNING = "Announce in Raid Warning", -- NEEDS TRANSLATIONS
+    ANNOUNCEINRAIDWARNINGDESC = "If checked, announcements for higgest bid/bidder will be broadcasted via Raid Warning, not Raid chat.", -- NEEDS TRANSLATIONS
     APPLYDECAY = "應用衰退",
     AREYOUSURE = "你確定你願意",
     AREYOUSUREBROADCAST = "您確定要廣播DKP模式設置嗎？",

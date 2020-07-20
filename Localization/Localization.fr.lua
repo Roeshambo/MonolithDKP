@@ -85,6 +85,8 @@ if GetLocale() == "frFR" then
     ANTISNIPE = "Anti Snipe",
     ANTISNIPETTDESC = "Nombre de secondes pendant lequel vous souhaitez prolonger le délai du compteur d'enchères si une offre est reçue alors qu'il est inférieur à 10 secondes. (Pour éviter les coupures de la dernière seconde offre)",
     ANTISNIPETTWARN = "Réglez sur 0 pour désactiver l'anti-snipe.",
+    ANNOUNCEINRAIDWARNING = "Announce in Raid Warning", -- NEEDS TRANSLATIONS
+    ANNOUNCEINRAIDWARNINGDESC = "If checked, announcements for higgest bid/bidder will be broadcasted via Raid Warning, not Raid chat.", -- NEEDS TRANSLATIONS
     APPDECAYTTDESC = "Quantité de DKP pour laquelle vous souhaitez réduire les entrées DKP sous forme de décomposition hebdomadaire. Cela devrait être un nombre positif. Si \"Lecteurs sélectionnés uniquement\" n'est pas sélectionné ci-dessous, il s'appliquera à toutes les entrées.",
     APPDECAYTTWARN = "Attention: Ne peut pas être annulé.",
     APPLYDECAY = "Appliquer la décomposition",

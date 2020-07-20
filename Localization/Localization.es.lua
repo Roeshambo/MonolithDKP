@@ -85,6 +85,8 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     ANTISNIPE = "Anti Snipe",
     ANTISNIPETTDESC = "Número de segundos que desea que se extienda el temporizador de ofertas si se recibe una oferta cuando el temporizador de ofertas es inferior a 10 segundos. (Para evitar el último intento de francotirador)",
     ANTISNIPETTWARN = "Establecer en 0 para desactivar anti snipe.",
+    ANNOUNCEINRAIDWARNING = "Announce in Raid Warning", -- NEEDS TRANSLATIONS
+    ANNOUNCEINRAIDWARNINGDESC = "If checked, announcements for higgest bid/bidder will be broadcasted via Raid Warning, not Raid chat.", -- NEEDS TRANSLATIONS
     APPDECAYTTDESC = "Cantidad de DKP por la que desea reducir las entradas de DKP como una disminución semanal. Este debería ser un número positivo. Si \"Solo jugadores seleccionados\" no se selecciona a continuación, se aplicará a todas las entradas.",
     APPDECAYTTWARN = "Advertencia: no se puede deshacer.",
     APPLYDECAY = "Aplicar decadencia",

@@ -76,10 +76,15 @@ local function Roll_OnEvent(self, event, arg1, ...)
 
       if not CommDKP:Table_Search(Bids_Submitted, name) and search then
         if core.DB.modes.AnnounceBid and ((Bids_Submitted[1] and Bids_Submitted[1].roll < roll) or not Bids_Submitted[1]) then
+          local msgTarget = "RAID";
+          if core.DB.modes.AnnounceRaidWarning then
+            msgTarget = "RAID_WARNING";
+          end
+
           if not core.DB.modes.AnnounceBidName then
-            SendChatMessage(L["NEWHIGHROLL"].." "..roll.." ("..low.."-"..high..")", "RAID")
+            SendChatMessage(L["NEWHIGHROLL"].." "..roll.." ("..low.."-"..high..")", msgTarget)
           else
-            SendChatMessage(L["NEWHIGHROLLER"].." "..name..": "..roll.." ("..low.."-"..high..")", "RAID")
+            SendChatMessage(L["NEWHIGHROLLER"].." "..name..": "..roll.." ("..low.."-"..high..")", msgTarget)
           end
         end
         table.insert(Bids_Submitted, {player=name, roll=roll, range=" ("..low.."-"..high..")"})
@@ -171,10 +176,15 @@ function CommDKP_CHAT_MSG_WHISPER(text, ...)
               end
               if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
                 if core.DB.modes.AnnounceBid and ((Bids_Submitted[1] and Bids_Submitted[1].bid < cmd) or not Bids_Submitted[1]) then
+                  local msgTarget = "RAID";
+                  if core.DB.modes.AnnounceRaidWarning then
+                    msgTarget = "RAID_WARNING";
+                  end
+
                   if not core.DB.modes.AnnounceBidName then
-                    SendChatMessage(L["NEWHIGHBID"].." "..cmd.." DKP", "RAID")
+                    SendChatMessage(L["NEWHIGHBID"].." "..cmd.." DKP", msgTarget)
                   else
-                    SendChatMessage(L["NEWHIGHBIDDER"].." "..name.." ("..cmd.." DKP)", "RAID")
+                    SendChatMessage(L["NEWHIGHBIDDER"].." "..name.." ("..cmd.." DKP)", msgTarget)
                   end
                 end
                 if core.DB.modes.DeclineLowerBids and Bids_Submitted[1] and cmd <= Bids_Submitted[1].bid then   -- declines bids lower than highest bid
@@ -196,10 +206,15 @@ function CommDKP_CHAT_MSG_WHISPER(text, ...)
                 end
               elseif mode == "Static Item Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
                 if core.DB.modes.AnnounceBid and ((Bids_Submitted[1] and Bids_Submitted[1].dkp < dkp) or not Bids_Submitted[1]) then
+                  local msgTarget = "RAID";
+                  if core.DB.modes.AnnounceRaidWarning then
+                    msgTarget = "RAID_WARNING";
+                  end
+
                   if not core.DB.modes.AnnounceBidName then
-                    SendChatMessage(L["NEWHIGHBID"].." "..dkp.." DKP", "RAID")
+                    SendChatMessage(L["NEWHIGHBID"].." "..dkp.." DKP", msgTarget)
                   else
-                    SendChatMessage(L["NEWHIGHBIDDER"].." "..name.." ("..dkp.." DKP)", "RAID")
+                    SendChatMessage(L["NEWHIGHBIDDER"].." "..name.." ("..dkp.." DKP)", msgTarget)
                   end
                 end
                 table.insert(Bids_Submitted, {player=name, dkp=dkp})

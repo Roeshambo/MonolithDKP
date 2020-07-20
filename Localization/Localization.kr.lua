@@ -85,6 +85,8 @@ if GetLocale() == "koKR" then
     ANTISNIPE = "안티 스 나이프",
     ANTISNIPETTDESC = "입찰 타이머가 10 초 미만일 때 입찰이 수신되면 입찰 타이머를 연장하려는 시간 (초)입니다. (마지막 두 번째 입찰 스니핑을 방지하려면)",
     ANTISNIPETTWARN = "도난 방지를 끄려면 0으로 설정하십시오.",
+    ANNOUNCEINRAIDWARNING = "Announce in Raid Warning", -- NEEDS TRANSLATIONS
+    ANNOUNCEINRAIDWARNINGDESC = "If checked, announcements for higgest bid/bidder will be broadcasted via Raid Warning, not Raid chat.", -- NEEDS TRANSLATIONS
     APPDECAYTTDESC = "DKP의 양 매주 감소로 DKP 항목을 줄이려고합니다. 양수 여야합니다. 아래에서 \"선택한 플레이어 만\"을 선택하지 않으면 모든 항목에 적용됩니다.",
     APPDECAYTTWARN = "경고 : 취소 할 수 없습니다.",
     APPLYDECAY = "부패 적용",

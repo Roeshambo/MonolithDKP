@@ -85,6 +85,8 @@ if GetLocale() == "zhCN" then
     ANTISNIPE = "反狙击",
     ANTISNIPETTDESC = "当出价计时器低于10秒时，如果收到出价，您希望延长出价计时器的秒数。 （以防止最后一秒的狙击）",
     ANTISNIPETTWARN = "设置为0以关闭反窃听。",
+    ANNOUNCEINRAIDWARNING = "Announce in Raid Warning", -- NEEDS TRANSLATIONS
+    ANNOUNCEINRAIDWARNINGDESC = "If checked, announcements for higgest bid/bidder will be broadcasted via Raid Warning, not Raid chat.", -- NEEDS TRANSLATIONS
     APPDECAYTTDESC = "您希望每周减少的DKP条目数量减少了DKP数量。这应该是一个正数。如果未在下面选择“仅选定的玩家”，它将应用于所有条目。",
     APPDECAYTTWARN = "警告：无法撤消。",
     APPLYDECAY = "套用衰减",

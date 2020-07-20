@@ -906,6 +906,7 @@ function CommDKP:InitializeCommDKPDB(dbTable)
 	if not dbTable.defaults.CurrentGuild then dbTable.defaults.CurrentGuild = {} end
 	if not dbTable.defaults.CurrentTeam then dbTable.defaults.CurrentTeam = "0" end;
 	if not dbTable.teams then dbTable.teams = {} end;
+	if not dbTable.modes.AnnounceRaidWarning then dbTable.modes.AnnounceRaidWarning = false end;
 	if dbTable.defaults.CustomMaxBid == nil then dbTable.defaults.CustomMaxBid = true end;
 	if dbTable.defaults.CustomMinBid == nil then dbTable.defaults.CustomMinBid = true end;
 

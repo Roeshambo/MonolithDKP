@@ -85,6 +85,8 @@ if GetLocale() == "ruRU" then
     ANTISNIPE = "Анти-снайп",
     ANTISNIPETTDESC = "Количество секунд, на которое будет продлен таймер аукциона, если была сделана ставка. (Чтобы исключить снайперов последней секунды)",
     ANTISNIPETTWARN = "Установите на 0 если хотите отключить функцию \"анти-снайп\".",
+    ANNOUNCEINRAIDWARNING = "Announce in Raid Warning", -- NEEDS TRANSLATIONS
+    ANNOUNCEINRAIDWARNINGDESC = "If checked, announcements for higgest bid/bidder will be broadcasted via Raid Warning, not Raid chat.", -- NEEDS TRANSLATIONS
     APPDECAYTTDESC = "Сумма DKP, на которое вы хотите уменьшить количество DKP у игроков в виде еженедельного снижения. Это должно быть положительное число. Если \"Только выбранные игроки\" не установлено внизу, это будет применено ко всем игрокам в таблице.",
     APPDECAYTTWARN = "Внимание: Не может быть отменено.",
     APPLYDECAY = "Применить",

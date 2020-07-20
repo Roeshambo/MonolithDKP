@@ -67,7 +67,7 @@ function CommDKP:DKPModes_Misc()
 	-- Announce Highest Bidder Container
 	f.AnnounceBidContainer = CommDKP:CreateContainer(f, "AnnounceBidContainer", L["HIGHESTBID"])
     f.AnnounceBidContainer:SetPoint("TOPRIGHT", f, "TOPRIGHT", -50, -40)
-    f.AnnounceBidContainer:SetSize(175, 70)
+    f.AnnounceBidContainer:SetSize(175, 90)
 
 		-- Announce Highest Bid
 		f.AnnounceBidContainer.AnnounceBid = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
@@ -121,6 +121,28 @@ function CommDKP:DKPModes_Misc()
 			GameTooltip:Hide()
 		end)
 
+		-- Use Raid Warning for Announcements
+		f.AnnounceBidContainer.AnnounceRaidWarning = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
+		f.AnnounceBidContainer.AnnounceRaidWarning:SetChecked(core.DB.modes.AnnounceRaidWarning)
+		f.AnnounceBidContainer.AnnounceRaidWarning:SetScale(0.6);
+		f.AnnounceBidContainer.AnnounceRaidWarning.text:SetText("  |cff5151de"..L["ANNOUNCEINRAIDWARNING"].."|r");  -- Translate/Localize
+		f.AnnounceBidContainer.AnnounceRaidWarning.text:SetScale(1.5);
+		f.AnnounceBidContainer.AnnounceRaidWarning.text:SetFontObject("CommDKPSmallLeft")
+		f.AnnounceBidContainer.AnnounceRaidWarning:SetPoint("TOP", f.AnnounceBidContainer.AnnounceBidName, "BOTTOM", 0, 0);
+		f.AnnounceBidContainer.AnnounceRaidWarning:SetScript("OnClick", function(self)
+			core.DB.modes.AnnounceRaidWarning = self:GetChecked();
+			PlaySound(808);
+		end)
+		f.AnnounceBidContainer.AnnounceRaidWarning:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText(L["ANNOUNCEINRAIDWARNING"], 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine(L["ANNOUNCEINRAIDWARNINGDESC"], 1.0, 1.0, 1.0, true);
+			GameTooltip:Show();
+		end)
+		f.AnnounceBidContainer.AnnounceRaidWarning:SetScript("OnLeave", function(self)
+			GameTooltip:Hide()
+		end)
+
 		-- Decline lower bids
 		f.AnnounceBidContainer.DeclineLowerBids = CreateFrame("CheckButton", nil, f, "UICheckButtonTemplate");
 		f.AnnounceBidContainer.DeclineLowerBids:SetChecked(core.DB.modes.DeclineLowerBids)
@@ -128,7 +150,7 @@ function CommDKP:DKPModes_Misc()
 		f.AnnounceBidContainer.DeclineLowerBids.text:SetText("  |cff5151de"..L["DECLINELOWBIDS"].."|r");
 		f.AnnounceBidContainer.DeclineLowerBids.text:SetScale(1.5);
 		f.AnnounceBidContainer.DeclineLowerBids.text:SetFontObject("CommDKPSmallLeft")
-		f.AnnounceBidContainer.DeclineLowerBids:SetPoint("TOP", f.AnnounceBidContainer.AnnounceBidName, "BOTTOM", 0, 0);
+		f.AnnounceBidContainer.DeclineLowerBids:SetPoint("TOP", f.AnnounceBidContainer.AnnounceRaidWarning, "BOTTOM", 0, 0);
 		f.AnnounceBidContainer.DeclineLowerBids:SetScript("OnClick", function(self)
 			core.DB.modes.DeclineLowerBids = self:GetChecked();
 		end)

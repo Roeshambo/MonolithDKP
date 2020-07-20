@@ -85,6 +85,8 @@ if GetLocale() == "deDE" then
     ANTISNIPE = "Anti-Snipe",
     ANTISNIPETTDESC = "Anzahl der Sekunden, um die der Gebots-Timer verlängert werden soll, wenn ein Gebot eingeht, wenn der Gebots-Timer unter 10 Sekunden liegt. (Um das Snipen des letzten zweiten Gebots zu verhindern)",
     ANTISNIPETTWARN = "Auf 0 setzen, um Anti-Snipe auszuschalten.",
+    ANNOUNCEINRAIDWARNING = "Announce in Raid Warning", -- NEEDS TRANSLATIONS
+    ANNOUNCEINRAIDWARNINGDESC = "If checked, announcements for higgest bid/bidder will be broadcasted via Raid Warning, not Raid chat.", -- NEEDS TRANSLATIONS
     APPDECAYTTDESC = "Menge an DKP, um die Sie DKP-Einträge als wöchentlichen Zerfall reduzieren möchten. Dies sollte eine positive Zahl sein. Wenn \"Nur ausgewählte Spieler\" unten nicht ausgewählt ist, gilt dies für alle Einträge.",
     APPDECAYTTWARN = "Warnung: Kann nicht rückgängig gemacht werden.",
     APPLYDECAY = "Zerfall anwenden",
