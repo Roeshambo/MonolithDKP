@@ -285,13 +285,6 @@ local function DoGuildUpdate()
 			CommDKP.Sync:SendData("CommDKPBuild", tostring(core.BuildNumber)) -- broadcasts build number to guild to check if a newer version is available
 			CommDKP:SendTalentsAndRole()
 
-			if not core.DB.defaults.installed210 then
-				core.DB.defaults.installed210 = time(); -- identifies when 2.1.0 was installed to block earlier posts from broadcasting in sync (for now)
-				CommDKP_ReindexTables() 					-- reindexes all entries created prior to 2.1 installation in "GuildMaster-EntryDate" format for consistency.
-				core.DB.defaults.installed = nil
-			end
-
-
 			-- send seed for every team in guild
 			-- this basically sends index of latest entry in loot and DKP tables to everyone online in guild,
 			-- if they have this entry it does nothing since they are up to date, if they dont it changes seed in those tables to the index being sent
@@ -312,7 +305,7 @@ function CommDKP:SendSeedData()
 
 		if 	#CommDKP:GetTable(CommDKP_DKPHistory, true, tostring(_teams[i][1])) > 0 and strfind(CommDKP:GetTable(CommDKP_DKPHistory, true, tostring(_teams[i][1]))[1].index, "-") then
 			local off1,date1 = strsplit("-", CommDKP:GetTable(CommDKP_DKPHistory, true, tostring(_teams[i][1]))[1].index)
-			if CommDKP:ValidateSender(off1) and tonumber(date1) > core.DB.defaults.installed210 then
+			if CommDKP:ValidateSender(off1) then
 				latestIndexForTeam[tostring(_teams[i][1])]["DKPHistory"] = CommDKP:GetTable(CommDKP_DKPHistory, true, tostring(_teams[i][1]))[1].index
 			else
 				latestIndexForTeam[tostring(_teams[i][1])]["DKPHistory"] = "start"
@@ -323,7 +316,7 @@ function CommDKP:SendSeedData()
 		
 		if #CommDKP:GetTable(CommDKP_Loot, true, tostring(_teams[i][1])) > 0 and strfind(CommDKP:GetTable(CommDKP_Loot, true, tostring(_teams[i][1]))[1].index, "-") then
 			local off2,date2 = strsplit("-", CommDKP:GetTable(CommDKP_Loot, true, tostring(_teams[i][1]))[1].index)
-			if CommDKP:ValidateSender(off2) and tonumber(date2) > core.DB.defaults.installed210 then
+			if CommDKP:ValidateSender(off2) then
 				latestIndexForTeam[tostring(_teams[i][1])]["Loot"] = CommDKP:GetTable(CommDKP_Loot, true, tostring(_teams[i][1]))[1].index
 			else
 				latestIndexForTeam[tostring(_teams[i][1])]["Loot"] = "start"
