@@ -113,7 +113,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
       return;
     end
 
-    -- decompresed is not null meaning data is coming from 2.3.0, lets go
+    -- decompresed is not null meaning data is coming from 2.3.0 or CommunityDKP
     success, _objReceived = LibAceSerializer:Deserialize(decompressed);
     
     --[[ 
@@ -155,7 +155,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 
                   local off1,date1 = strsplit("-", value);
 
-                  if CommDKP:ValidateSender(off1) and tonumber(date1) > core.DB.defaults.installed210 then
+                  if CommDKP:ValidateSender(off1) then
                     if property == "Loot" then
 
                       local searchLoot = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Loot, true, tostring(tableIndex)), value, "index")
@@ -474,12 +474,14 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 CommDKP:SetTable(CommDKP_Archive, true, _objReceived.Data.Archive, _objReceived.CurrentTeam);
                 CommDKP:SetTable(CommDKP_MinBids, true, _objReceived.Data.MinBids, _objReceived.CurrentTeam);
                 core.DB["teams"] = _objReceived.Teams;
-                
                 CommDKP:SetCurrentTeam(_objReceived.CurrentTeam)
-
+                -- reset seeds since this is a fullbroadcast   
+                CommDKP:GetTable(CommDKP_DKPHistory, true, _objReceived.CurrentTeam).seed = 0 
+                CommDKP:GetTable(CommDKP_Loot, true, _objReceived.CurrentTeam).seed = 0
                 CommDKP:FilterDKPTable(core.currentSort, "reset")
                 CommDKP:StatusVerify_Update()
               end
+              
               print("[CommunityDKP] COMMS: Full Broadcast Receive Finished for team "..CommDKP:GetTeamName(_objReceived.CurrentTeam));
               return
             elseif prefix == "CommDKPMerge" then

@@ -486,7 +486,7 @@ function CommDKP_MergeTable_Create()
 	local teams = CommDKP:GetTable(CommDKP_DB, false)["teams"]
 
 	for i=1, #CommDKP:GetTable(CommDKP_DKPHistory, true) do
-		if CommDKP:GetTable(CommDKP_DKPHistory, true)[i].date > (time() - 1209600) and CommDKP:GetTable(CommDKP_DKPHistory, true)[i].date > core.DB.defaults.installed210 then
+		if CommDKP:GetTable(CommDKP_DKPHistory, true)[i].date > (time() - 1209600) then
 			table.insert(tempDKP, CommDKP:GetTable(CommDKP_DKPHistory, true)[i])
 		else
 			break
@@ -494,7 +494,7 @@ function CommDKP_MergeTable_Create()
 	end
 
 	for i=1, #CommDKP:GetTable(CommDKP_Loot, true) do
-		if CommDKP:GetTable(CommDKP_Loot, true)[i].date > (time() - 1209600) and CommDKP:GetTable(CommDKP_Loot, true)[i].date > core.DB.defaults.installed210 then
+		if CommDKP:GetTable(CommDKP_Loot, true)[i].date > (time() - 1209600) then
 			table.insert(tempLoot, CommDKP:GetTable(CommDKP_Loot, true)[i])
 		else
 			break
