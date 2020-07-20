@@ -287,6 +287,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
             end
   
             CommDKP:GetTable(CommDKP_Profiles, true, teamIndex)[sender].role = curSelection.role;
+            CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex)[search[1][1]].role = curSelection.role;
           end
         end
         return;
