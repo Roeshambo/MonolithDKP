@@ -819,7 +819,7 @@ if GetLocale() == "ruRU" then
     CHANGELOG3 = " - Дополнительные улучшения для внутриигровой миграции с MonolithDKP (Спасибо matthi!)",
     CHANGELOG4 = " - Еще несколько исправлений алгоритмов;",
     CHANGELOG5 = " - Отлично выглядящие текстуры (Спасибо @Vergil и Essential@MirageRaceway!)",
-    CHANGELOG6 = "",
+    CHANGELOG6 = " - Fixed a Sync Indexing Issue that didn't affect Data - Perform a Full Sync to reset indexes (everyone needs to be on 3.1.3-r47 or higher)",
     CHANGELOG7 = "",
     CHANGELOG8 = "CommunityDKP Discord: https://discord.gg/dXXK4vH",
     CHANGELOG9 = "",
