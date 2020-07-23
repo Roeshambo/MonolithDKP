@@ -179,7 +179,7 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 					minBidAmount = nil;
 				end
 			else
-				minBidAmount = cost * -1;
+				minBidAmount = CommDKP:GetMinBid(loot);
 			end
 
 			--set table here
