@@ -32,11 +32,13 @@ local function Remove_Entries()
 			
 			if flag then 		-- above 2 loops flags character if they have any loot/dkp history. Only inserts to archive and broadcasts if found. Other players will not have the entry if no history exists
 				if not CommDKP:GetTable(CommDKP_Archive, true)[core.SelectedData[i].player] then
-					CommDKP:GetTable(CommDKP_Archive, true)[core.SelectedData[i].player] = { dkp=0, lifetime_spent=0, lifetime_gained=0, deleted=true, edited=curTime }
-				else
-					CommDKP:GetTable(CommDKP_Archive, true)[core.SelectedData[i].player].deleted = true
-					CommDKP:GetTable(CommDKP_Archive, true)[core.SelectedData[i].player].edited = curTime
+					CommDKP:GetTable(CommDKP_Archive, true)[core.SelectedData[i].player] = { deleted=true, edited=curTime }
 				end
+				CommDKP:GetTable(CommDKP_Archive, true)[core.SelectedData[i].player].dkp = path.dkp
+				CommDKP:GetTable(CommDKP_Archive, true)[core.SelectedData[i].player].lifetime_spent = path.lifetime_spent
+				CommDKP:GetTable(CommDKP_Archive, true)[core.SelectedData[i].player].lifetime_gained = path.lifetime_gained
+				CommDKP:GetTable(CommDKP_Archive, true)[core.SelectedData[i].player].deleted = true
+				CommDKP:GetTable(CommDKP_Archive, true)[core.SelectedData[i].player].edited = curTime
 			end
 
 			c = CommDKP:GetCColors(core.SelectedData[i]["class"])
@@ -128,6 +130,9 @@ local function AddRaidToDKPTable()
 						addedUsers = addedUsers..", |c"..c.hex..tempName.."|r"
 					end
 					if CommDKP:GetTable(CommDKP_Archive, true)[tempName] and CommDKP:GetTable(CommDKP_Archive, true)[tempName].deleted then
+						profile.dkp = CommDKP:GetTable(CommDKP_Archive, true)[tempName].dkp
+						profile.lifetime_gained = CommDKP:GetTable(CommDKP_Archive, true)[tempName].lifetime_gained
+						profile.lifetime_spent = CommDKP:GetTable(CommDKP_Archive, true)[tempName].lifetime_spent
 						CommDKP:GetTable(CommDKP_Archive, true)[tempName].deleted = "Recovered"
 						CommDKP:GetTable(CommDKP_Archive, true)[tempName].edited = curTime
 						FlagRecovery = true
@@ -188,6 +193,9 @@ local function AddGuildToDKPTable(rank, level)
 				addedUsers = addedUsers..", |c"..c.hex..name.."|r"
 			end
 			if CommDKP:GetTable(CommDKP_Archive, true)[name] and CommDKP:GetTable(CommDKP_Archive, true)[name].deleted then
+				profile.dkp = CommDKP:GetTable(CommDKP_Archive, true)[name].dkp
+				profile.lifetime_gained = CommDKP:GetTable(CommDKP_Archive, true)[name].lifetime_gained
+				profile.lifetime_spent = CommDKP:GetTable(CommDKP_Archive, true)[name].lifetime_spent
 				CommDKP:GetTable(CommDKP_Archive, true)[name].deleted = "Recovered"
 				CommDKP:GetTable(CommDKP_Archive, true)[name].edited = curTime
 				FlagRecovery = true
@@ -246,6 +254,9 @@ local function AddTargetToDKPTable()
 			CommDKP:ClassGraph()
 		end
 		if CommDKP:GetTable(CommDKP_Archive, true)[name] and CommDKP:GetTable(CommDKP_Archive, true)[name].deleted then
+			profile.dkp = CommDKP:GetTable(CommDKP_Archive, true)[name].dkp
+			profile.lifetime_gained = CommDKP:GetTable(CommDKP_Archive, true)[name].lifetime_gained
+			profile.lifetime_spent = CommDKP:GetTable(CommDKP_Archive, true)[name].lifetime_spent
 			CommDKP:GetTable(CommDKP_Archive, true)[name].deleted = "Recovered"
 			CommDKP:GetTable(CommDKP_Archive, true)[name].edited = curTime
 			CommDKP:Print(L["YOUHAVERECOVERED"])
@@ -281,6 +292,9 @@ function CommDKP:AddEntitiesToDKPTable(entities)
 				addedUsers = addedUsers..", |c"..c.hex..name.."|r"
 			end
 			if CommDKP:GetTable(CommDKP_Archive, true)[name] and CommDKP:GetTable(CommDKP_Archive, true)[name].deleted then
+				profile.dkp = CommDKP:GetTable(CommDKP_Archive, true)[name].dkp
+				profile.lifetime_gained = CommDKP:GetTable(CommDKP_Archive, true)[name].lifetime_gained
+				profile.lifetime_spent = CommDKP:GetTable(CommDKP_Archive, true)[name].lifetime_spent
 				CommDKP:GetTable(CommDKP_Archive, true)[name].deleted = "Recovered"
 				CommDKP:GetTable(CommDKP_Archive, true)[name].edited = curTime
 				FlagRecovery = true
