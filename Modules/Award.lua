@@ -6,29 +6,25 @@ local L = core.L;
 local function SetItemPrice(cost, loot)
 	local itemName,itemLink,_,_,_,_,_,_,_,itemIcon = GetItemInfo(loot)
 	local cost = cost;
-	local mode = core.DB.modes.mode;
+	local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true), itemName)
+	local newItem = {item=itemName, minbid=cost, link=itemLink, icon=itemIcon, disenchants=0, lastbid=cost}
 
-	if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
-		local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true), itemName)
-		local newItem = {item=itemName, minbid=cost, link=itemLink, icon=itemIcon, disenchants=0}
-
-		if not search then
-			tinsert(CommDKP:GetTable(CommDKP_MinBids, true), newItem)
-		elseif search then
-			if CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].minbid ~= itemName then
-				CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].minbid = CommDKP_round(cost, core.DB.modes.rounding);
-				CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].link = itemLink;
-				CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].icon = itemIcon;
-				if cost == 0 then
-					CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].disenchants = 0;
-				end
-				newItem = CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]];
-			end
+	if not search then
+		tinsert(CommDKP:GetTable(CommDKP_MinBids, true), newItem)
+	elseif search then
+		CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].minbid = CommDKP_round(cost, core.DB.modes.rounding);
+		CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].lastbid = CommDKP_round(cost, core.DB.modes.rounding);
+		CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].link = itemLink;
+		CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].icon = itemIcon;
+		if cost == 0 then
+			CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].disenchants = 0;
 		end
-		core.PriceTable = CommDKP:GetTable(CommDKP_MinBids, true);
-		CommDKP:PriceTable_Update(0);
-		CommDKP.Sync:SendData("CommDKPSetPrice", newItem);
+		newItem = CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]];
 	end
+	core.PriceTable = CommDKP:GetTable(CommDKP_MinBids, true);
+	CommDKP:PriceTable_Update(0);
+	CommDKP.Sync:SendData("CommDKPSetPrice", newItem);
+
 end
 
 local function AwardItem(player, cost, boss, zone, loot, reassign)
@@ -163,46 +159,51 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
         	end
 			
 			local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true), itemName)
-			local minBidAmount = nil;
+			local minBidAmount = CommDKP_round(CommDKP:GetMinBid(loot), core.DB.modes.rounding);
+			local lastBidAmount = CommDKP_round(core.BiddingWindow.cost:GetNumber(), core.DB.modes.rounding);
 
 			if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
-				
-				local val = CommDKP:GetMinBid(loot);
-
-				if core.BiddingWindow.cost:GetNumber() ~= tonumber(val) then
-					minBidAmount = CommDKP_round(core.BiddingWindow.cost:GetNumber(), core.DB.modes.rounding);
+				if core.BiddingWindow.CustomMinBid:GetChecked() == false then
+					minBidAmount = CommDKP_round(minBidAmount, core.DB.modes.rounding);
 				else
-					minBidAmount = CommDKP_round(val, core.DB.modes.rounding);
-				end
-				
-				if search and core.BiddingWindow.CustomMinBid:GetChecked() == false then
-					minBidAmount = nil;
+					if core.BiddingWindow.cost:GetNumber() ~= tonumber(minBidAmount) then
+						minBidAmount = CommDKP_round(core.BiddingWindow.cost:GetNumber(), core.DB.modes.rounding);
+					end
 				end
 			else
-				minBidAmount = CommDKP:GetMinBid(loot);
+				if core.BiddingWindow.CustomMinBid:GetChecked() == true then
+					minBidAmount = CommDKP_round(core.BiddingWindow.minBid:GetNumber(), core.DB.modes.rounding);
+				end
 			end
 
 			--set table here
+			local minBidEntry = {item=itemName, minbid=minBidAmount, link=itemLink, icon=itemIcon, lastbid=lastBidAmount};
+
 			if not search then
-				tinsert(CommDKP:GetTable(CommDKP_MinBids, true), {item=itemName, minbid=minBidAmount, link=itemLink, icon=itemIcon})
+				--not found
+				tinsert(CommDKP:GetTable(CommDKP_MinBids, true), minBidEntry)
 				if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
 					core.BiddingWindow.CustomMinBid:SetShown(true);
 					core.BiddingWindow.CustomMinBid:SetChecked(core.DB.defaults.CustomMinBid);
 				end
-				CommDKP.Sync:SendData("CommDKPSetPrice", {item=itemName, minbid=minBidAmount, link=itemLink, icon=itemIcon});
-			elseif search then
+				CommDKP.Sync:SendData("CommDKPSetPrice", minBidEntry);
+			else
+				--found
 				if CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].minbid ~= minBidAmount then
-					CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].minbid = CommDKP_round(minBidAmount, core.DB.modes.rounding);
-					CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].link = itemLink;
-					CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].icon = itemIcon;
-
 					if mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
 						core.BiddingWindow.CustomMinBid:SetShown(true);
 						core.BiddingWindow.CustomMinBid:SetChecked(core.DB.defaults.CustomMinBid);
 					end
-					CommDKP.Sync:SendData("CommDKPSetPrice", {item=itemName, minbid=minBidAmount, link=itemLink, icon=itemIcon});
 				end
+
+				CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].minbid = minBidEntry.minbid;
+				CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].lastbid = minBidEntry.lastbid;
+				CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].link = minBidEntry.link;
+				CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].icon = minBidEntry.icon;
+
+				CommDKP.Sync:SendData("CommDKPSetPrice", CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]]);
 			end
+
 			CommDKP:PriceTable_Update(0);
 
 			if mode == "Zero Sum" and not reassign then
@@ -587,7 +588,6 @@ function CommDKP:AwardConfirm(player, cost, boss, zone, loot, reassign)
 			else
 				AwardItem(player, cost, curBoss, curZone, loot)
 			end
-			SetItemPrice(cost, loot)
 			core.AwardConfirm:SetShown(false)
 		end
 

@@ -825,12 +825,13 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
             elseif prefix == "CommDKPMaxBid" then
               if core.IsOfficer then
 
-                core.DB.MaxBidBySlot = _objReceived.Data[1]
+                core.DB.MaxBidBySlot = _objReceived.Data[1];
+                _objMaxBidValues = _objReceived.Data[1];
 
                 for i=1, #_objReceived.Data[2] do
                   local bidInfo = _objReceived.Data[2][i]
                   local bidTeam = bidInfo[1]
-                  local bidItems = bidInfo[2]
+                  local bidItems = bidInfo[2] or {}
 
                   for j=1, #bidItems do
                     local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MaxBids, true, bidTeam), bidItems[j].item)

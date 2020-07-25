@@ -456,8 +456,10 @@ function CommDKP:ToggleBidWindow(loot, lootIcon, itemName)
        CurrItemIcon = lootIcon
        CurZone = GetRealZoneText()
 
-      -- Max bid values
+      
       if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
+        
+        -- Max bid values
         local search_max = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MaxBids, true), itemName)
         if search_max then
           maxBid = CommDKP:GetTable(CommDKP_MaxBids, true)[search_max[1][1]].maxbid
@@ -470,25 +472,20 @@ function CommDKP:ToggleBidWindow(loot, lootIcon, itemName)
         if search_min then
           minBid = CommDKP:GetTable(CommDKP_MinBids, true)[search_min[1][1]].minbid
         else
-          minBid = CommDKP:GetMinBid(CurrItemForBid)
+          minBid = CommDKP:GetMinBid(CurrItemForBid);
         end
       elseif mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
-        local search_max = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MaxBids, true), itemName)
-        if search_max then
-          maxBid = CommDKP:GetTable(CommDKP_MaxBids, true)[search_max[1][1]].maxbid
-        else
-          maxBid = CommDKP:GetMaxBid(CurrItemForBid)
-        end
         
         -- search min bid value(item cost)
         local search_min = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true), itemName)
         if search_min then
           minBid = CommDKP:GetTable(CommDKP_MinBids, true)[search_min[1][1]].minbid
         else
-          minBid = CommDKP:GetMinBid(CurrItemForBid)
+          minBid = CommDKP:GetMinBid(CurrItemForBid);
         end
       else
-        minBid = CommDKP:GetMinBid(CurrItemForBid)
+        minBid = CommDKP:GetMinBid(CurrItemForBid);
+        maxBid = CommDKP:GetMaxBid(CurrItemForBid);
       end
       
       if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
@@ -515,7 +512,7 @@ function CommDKP:ToggleBidWindow(loot, lootIcon, itemName)
             if behavior == "Max DKP" then
                 dkpValue = "MAX";
             else
-              dkpValue = CommDKP_round(maxBid, core.DB.modes.rounding);
+              dkpValue = CommDKP_round(CommDKP:GetMaxBid(CurrItemForBid), core.DB.modes.rounding);
             end
             core.BiddingWindow.maxBid:SetText(dkpValue);
           end
