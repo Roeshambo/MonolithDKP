@@ -142,6 +142,8 @@ function CommDKP:GetCColors(class)
 end
 
 function CommDKP_round(number, decimals)
+		number = number or 0;
+		decimals = decimals or 0;
 		return tonumber((("%%.%df"):format(decimals)):format(number))
 end
 
