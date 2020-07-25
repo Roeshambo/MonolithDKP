@@ -310,6 +310,7 @@ function CommDKP:GetGuildRankList()
 	local tempTable = {}
 	for i=1, numRanks do
 		table.insert(tempTable, {index = i-1, name = GuildControlGetRankName(i)})
+		tempTable[GuildControlGetRankName(i)] = i-1
 	end
 	
 	return tempTable;

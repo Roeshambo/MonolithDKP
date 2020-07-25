@@ -273,18 +273,25 @@ function CommDKP:ViewLimited(raid, standby, raiders)
 			local guildSize = GetNumGuildMembers();
 			local name, rankIndex;
 
+			local nameIndices = {}
+			for i, entry in pairs(CommDKP:GetTable(CommDKP_DKPTable, true)) do
+				nameIndices[entry.player] = i
+			end
+			local rankList = CommDKP:GetGuildRankList()
+			local raiderRanks = {}
+			for i, rank in ipairs(core.DB.raiders) do
+				raiderRanks[rank] = true
+			end
+			
 			for i=1, guildSize do
 				name,_,rankIndex = GetGuildRosterInfo(i)
 				name = strsub(name, 1, string.find(name, "-")-1)      -- required to remove server name from player (can remove in classic if this is not an issue)
-				local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
+				local search = nameIndices[name]
 
 				if search then
-					local rankList = CommDKP:GetGuildRankList()
 
-					local match_rank = CommDKP:Table_Search(core.DB.raiders, rankList[rankIndex+1].name)
-
-					if match_rank then
-						table.insert(tempTable, CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]])
+					if raiderRanks[rankList[rankIndex+1].name] then
+						table.insert(tempTable, CommDKP:GetTable(CommDKP_DKPTable, true)[search])
 					end
 				end
 			end
@@ -359,7 +366,7 @@ local function RightClickMenu(self)
 					end },
 					{ text = L["VIEWCORERAID"], notCheckable = true, func = function()
 						CommDKP:ViewLimited(false, false, true)
-						CommDKP:SortDKPTable("class", "Reset")
+						CommDKP:SortDKPTable(core.currentSort, "reset")
 						core.CurSubView = "core"
 						ToggleDropDownMenu(nil, nil, menuFrame)
 					end },
@@ -554,11 +561,15 @@ local function RightClickMenu(self)
 	local guildSize = GetNumGuildMembers();
 	local name, rankIndex;
 	local tempTable = {}
+	local nameIndices = {}
+	for i, entry in pairs(CommDKP:GetTable(CommDKP_DKPTable, true)) do
+		nameIndices[entry.player] = i
+	end
 
 	for i=1, guildSize do
 		name,_,rankIndex = GetGuildRosterInfo(i)
 		name = strsub(name, 1, string.find(name, "-")-1)      -- required to remove server name from player (can remove in classic if this is not an issue)
-		local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
+		local search = nameIndices[name]
 
 		if search then
 			local rankList = CommDKP:GetGuildRankList()
@@ -566,7 +577,7 @@ local function RightClickMenu(self)
 			local match_rank = CommDKP:Table_Search(core.DB.raiders, rankList[rankIndex+1].name)
 
 			if match_rank then
-				table.insert(tempTable, CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]])
+				table.insert(tempTable, CommDKP:GetTable(CommDKP_DKPTable, true)[search])
 			end
 		end
 	end
