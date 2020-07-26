@@ -289,7 +289,6 @@ function CommDKP:ViewLimited(raid, standby, raiders)
 				local search = nameIndices[name]
 
 				if search then
-
 					if raiderRanks[rankList[rankIndex+1].name] then
 						table.insert(tempTable, CommDKP:GetTable(CommDKP_DKPTable, true)[search])
 					end
@@ -326,6 +325,40 @@ local function RightClickMenu(self)
 
 	if #CommDKP:GetTable(CommDKP_Standby, true) < 1 then disabled = true else disabled = false end
 
+	--Build Team Table for Manage Tables
+	local manageTeamTables = {}
+	local teams = CommDKP:GetTable(CommDKP_DB, false)["teams"]
+	local teamMenuText = "";
+
+	for teamIndex,team in pairs(teams) do
+		local teamDisabled = false;
+
+		local nameIndices = {}
+		for i, entry in pairs(CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex)) do
+			nameIndices[entry.player] = i
+		end
+
+		if teamIndex == CommDKP:GetCurrentTeamIndex() then
+			teamDisabled = true;
+		end
+
+		if #core.SelectedData < 2 then
+			teamMenuText = string.format("Copy %s to %s",core.WorkingTable[self.index].player,team.name);
+			if nameIndices[core.WorkingTable[self.index].player] then
+				teamDisabled = true;
+			end
+		else
+			teamMenuText = string.format("Copy %s to %s","Selected Players",team.name);
+		end
+	
+		local teamMenu = { text = teamMenuText, notCheckable = true, disabled = teamDisabled, func = function()
+			CommDKP:CopyProfileToTeam(self.index, teamIndex)
+			ToggleDropDownMenu(nil, nil, menuFrame)
+		end }
+		tinsert(manageTeamTables, teamMenu);
+	end
+	
+	-- Build Full Menu
 	menu = {
 		{ text = L["MULTIPLESELECT"], isTitle = true, notCheckable = true}, --1
 		{ text = L["INVITESELECTED"], notCheckable = true, func = function()
@@ -403,7 +436,11 @@ local function RightClickMenu(self)
 		{ text = L["MANAGECORELIST"], notCheckable = true, hasArrow = true,
 				menuList = {}
 		}, --11
-		{ text = " ", notCheckable = true, disabled = true}, --12
+		{ text = " ", notCheckable = true, disabled = true}, --8
+		{ text = "Manage Tables", isTitle = true, notCheckable = true}, --9
+		{ text = "Copy Profile", notCheckable = true, hasArrow = true,
+				menuList = manageTeamTables
+		},
 		{ text = L["RESETPREVIOUS"], notCheckable = true, func = function()
 			for i=1, #core.SelectedData do
 				CommDKP:reset_prev_dkp(core.SelectedData[i].player)
@@ -589,7 +626,7 @@ local function RightClickMenu(self)
 	table.wipe(tempTable);
 
 	if core.IsOfficer == false then
-		for i=8, #menu-2 do
+		for i=8, #menu do
 			menu[i].disabled = true
 		end
 

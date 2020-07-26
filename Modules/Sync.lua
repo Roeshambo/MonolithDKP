@@ -502,7 +502,7 @@ function CommDKP_MergeTable_Create()
 	end
 
 	for i=1, #CommDKP:GetTable(CommDKP_DKPTable, true) do
-		table.insert(profiles, { player=CommDKP:GetTable(CommDKP_DKPTable, true)[i].player, class=CommDKP:GetTable(CommDKP_DKPTable, true)[i].class })
+		table.insert(profiles, CommDKP:GetTable(CommDKP_DKPTable, true)[i])
 	end
 
 	local tempTable = { DKP=tempDKP, Loot=tempLoot, Profiles=profiles, Teams=teams }

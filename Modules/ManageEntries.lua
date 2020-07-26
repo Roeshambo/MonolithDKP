@@ -63,7 +63,7 @@ local function Remove_Entries()
 	table.wipe(core.SelectedData)
 	CommDKPSelectionCount_Update()
 	CommDKP:FilterDKPTable(core.currentSort, "reset")
-	CommDKP:Print("Removed "..numPlayers.." player(s): "..removedUsers)
+	CommDKP:Print("["..CommDKP:GetTeamName(CommDKP:GetCurrentTeamIndex()).."] ".."Removed "..numPlayers.." player(s): "..removedUsers)
 	CommDKP:ClassGraph_Update()
 
 	if #deleted >0 then
@@ -141,7 +141,7 @@ local function AddRaidToDKPTable()
 			end
 		end
 		if addedUsers then
-			CommDKP:Print(L["ADDED"].." "..numPlayers.." "..L["PLAYERS"]..": "..addedUsers)
+			CommDKP:Print("["..CommDKP:GetTeamName(CommDKP:GetCurrentTeamIndex()).."] "..L["ADDED"].." "..numPlayers.." "..L["PLAYERS"]..": "..addedUsers)
 		end
 		if core.ClassGraph then
 			CommDKP:ClassGraph_Update()
@@ -153,7 +153,7 @@ local function AddRaidToDKPTable()
 		end
 		CommDKP:FilterDKPTable(core.currentSort, "reset")
 		if numPlayers > 0 then
-			CommDKP.Sync:SendData("CommDKPAddUsers", entities)
+			CommDKP.Sync:SendData("CommDKPAddUsers", CopyTable(entities))
 		end
 	else
 		CommDKP:Print(L["NOPARTYORRAID"])
@@ -204,7 +204,7 @@ local function AddGuildToDKPTable(rank, level)
 	end
 	CommDKP:FilterDKPTable(core.currentSort, "reset")
 	if addedUsers then
-		CommDKP:Print(L["ADDED"].." "..numPlayers.." "..L["PLAYERS"]..": "..addedUsers)
+		CommDKP:Print("["..CommDKP:GetTeamName(CommDKP:GetCurrentTeamIndex()).."] "..L["ADDED"].." "..numPlayers.." "..L["PLAYERS"]..": "..addedUsers)
 	end
 	if FlagRecovery then 
 		CommDKP:Print(L["YOUHAVERECOVERED"])
@@ -215,7 +215,7 @@ local function AddGuildToDKPTable(rank, level)
 		CommDKP:ClassGraph()
 	end
 	if numPlayers > 0 then
-		CommDKP.Sync:SendData("CommDKPAddUsers", entities)
+		CommDKP.Sync:SendData("CommDKPAddUsers", CopyTable(entities))
 	end
 end
 
@@ -239,7 +239,7 @@ local function AddTargetToDKPTable()
 
 		CommDKP:FilterDKPTable(core.currentSort, "reset")
 		c = CommDKP:GetCColors(class)
-		CommDKP:Print(L["ADDED"].." |c"..c.hex..name.."|r")
+		CommDKP:Print("["..CommDKP:GetTeamName(CommDKP:GetCurrentTeamIndex()).."] "..L["ADDED"].." |c"..c.hex..name.."|r")
 
 		if addedUsers == nil then
 			addedUsers = "|c"..c.hex..name.."|r"; 
@@ -261,12 +261,41 @@ local function AddTargetToDKPTable()
 			CommDKP:GetTable(CommDKP_Archive, true)[name].edited = curTime
 			CommDKP:Print(L["YOUHAVERECOVERED"])
 		end
-		CommDKP.Sync:SendData("CommDKPAddUsers", entities)
+		CommDKP.Sync:SendData("CommDKPAddUsers", CopyTable(entities))
 	end
 end
 
-function CommDKP:AddEntitiesToDKPTable(entities)
-	
+function CommDKP:CopyProfileToTeam(row, team)
+	local entities = {};
+	local copy = {};
+	if #core.SelectedData > 1 then
+		--Multiple Selections
+		copy = CopyTable(core.SelectedData)
+	else
+		--Only Profile Selected
+		tinsert(copy,core.WorkingTable[row])
+	end
+
+	for i=1, #copy do
+		local profile = copy[i];
+		local name = profile.player;
+
+		local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, team), name);
+
+		if not search then
+			profile.norecover = true;
+			tinsert(entities, profile);
+		end
+	end
+
+	if #entities > 0 then
+		CommDKP:AddEntitiesToDKPTable(CopyTable(entities), team);
+		CommDKP.Sync:SendData("CommDKPAddUsers", CopyTable(entities), nil, team);
+	end
+end
+
+function CommDKP:AddEntitiesToDKPTable(entities, team)
+	team = team or CommDKP:GetCurrentTeamIndex();
 	local addedUsers;
 	local numPlayers = 0;
 	local curTime = time()
@@ -277,12 +306,11 @@ function CommDKP:AddEntitiesToDKPTable(entities)
 		local profile = entities[i];
 		local c;
 	
-		local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
+		local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, team), name)
 	
-		CommDKP:GetTable(CommDKP_Profiles, true)[name] = profile;
+		CommDKP:GetTable(CommDKP_Profiles, true, team)[name] = profile;
 
 		if not search then
-			tinsert(CommDKP:GetTable(CommDKP_DKPTable, true), profile);
 	
 			numPlayers = numPlayers + 1;
 			c = CommDKP:GetCColors(class)
@@ -291,21 +319,26 @@ function CommDKP:AddEntitiesToDKPTable(entities)
 			else
 				addedUsers = addedUsers..", |c"..c.hex..name.."|r"
 			end
-			if CommDKP:GetTable(CommDKP_Archive, true)[name] and CommDKP:GetTable(CommDKP_Archive, true)[name].deleted then
-				profile.dkp = CommDKP:GetTable(CommDKP_Archive, true)[name].dkp
-				profile.lifetime_gained = CommDKP:GetTable(CommDKP_Archive, true)[name].lifetime_gained
-				profile.lifetime_spent = CommDKP:GetTable(CommDKP_Archive, true)[name].lifetime_spent
-				CommDKP:GetTable(CommDKP_Archive, true)[name].deleted = "Recovered"
-				CommDKP:GetTable(CommDKP_Archive, true)[name].edited = curTime
-				FlagRecovery = true
+			if profile.norecover then
+				profile.norecover = nil;
+			else
+				if CommDKP:GetTable(CommDKP_Archive, true, team)[name] and CommDKP:GetTable(CommDKP_Archive, true, team)[name].deleted then
+					profile.dkp = CommDKP:GetTable(CommDKP_Archive, true, team)[name].dkp
+					profile.lifetime_gained = CommDKP:GetTable(CommDKP_Archive, true, team)[name].lifetime_gained
+					profile.lifetime_spent = CommDKP:GetTable(CommDKP_Archive, true, team)[name].lifetime_spent
+					CommDKP:GetTable(CommDKP_Archive, true, team)[name].deleted = "Recovered"
+					CommDKP:GetTable(CommDKP_Archive, true, team)[name].edited = curTime
+					FlagRecovery = true
+				end
 			end
+			tinsert(CommDKP:GetTable(CommDKP_DKPTable, true, team), CopyTable(profile));
 		end
 	end
 
 	if numPlayers > 0  then
 		CommDKP:FilterDKPTable(core.currentSort, "reset")
 		if addedUsers then
-			CommDKP:Print(L["ADDED"].." "..numPlayers.." "..L["PLAYERS"]..": "..addedUsers)
+			CommDKP:Print("["..CommDKP:GetTeamName(team).."] "..L["ADDED"].." "..numPlayers.." "..L["PLAYERS"]..": "..addedUsers)
 		end
 		if FlagRecovery then 
 			CommDKP:Print(L["YOUHAVERECOVERED"])

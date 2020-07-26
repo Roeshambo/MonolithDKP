@@ -588,13 +588,16 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 end
               end
 
-              for i=1, #CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam) do
-                if CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam)[i].class == "NONE" then
-                  local search = CommDKP:Table_Search(_objReceived.Data.Profiles, CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam)[i].player, "player")
+              for i=1, #_objReceived.Data.Profiles do
 
-                  if search then
-                    CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam)[i].class = _objReceived.Data.Profiles[search[1][1]].class
+                local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam), _objReceived.Data.Profiles[i].player, "player")
+
+                if search then
+                  if CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam)[search[1][1]].class == "NONE" then
+                    CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam)[search[1][1]].class = _objReceived.Data.Profiles[i].class
                   end
+                else
+                  tinsert(CommDKP:GetTable(CommDKP_DKPTable, true, _objReceived.CurrentTeam),_objReceived.Data.Profiles[i])
                 end
               end
 
@@ -667,7 +670,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
               end
               CommDKP:FilterDKPTable(core.currentSort, "reset")
             elseif prefix == "CommDKPAddUsers" and UnitName("player") ~= sender then
-              CommDKP:AddEntitiesToDKPTable(_objReceived.Data);
+              CommDKP:AddEntitiesToDKPTable(_objReceived.Data, _objReceived.TargetTeam);
             elseif prefix == "CommDKPDelUsers" and UnitName("player") ~= sender then
               local numPlayers = 0
               local removedUsers = ""
@@ -716,7 +719,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
               end
               if numPlayers > 0 then
                 CommDKP:FilterDKPTable(core.currentSort, "reset")
-                CommDKP:Print("Removed "..numPlayers.." player(s): "..removedUsers)
+                CommDKP:Print("["..CommDKP:GetTeamName(_objReceived.CurrentTeam).."] ".."Removed "..numPlayers.." player(s): "..removedUsers)
               end
               return
             elseif prefix == "CommDKPDelLoot" then
@@ -906,7 +909,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
   end
 end
 
-function CommDKP.Sync:SendData(prefix, data, target)
+function CommDKP.Sync:SendData(prefix, data, target, targetTeam)
 
   -- 2.3.0 object being sent with almost everything?
   -- the idea is to envelope the old message into another object and then decode it on receiving end
@@ -914,11 +917,15 @@ function CommDKP.Sync:SendData(prefix, data, target)
   -- expect to send everything through SendData
   -- the only edge case is CommDKPBuild which for now stays the same as it was in 2.1.2
 
+  targetTeam = targetTeam or CommDKP:GetCurrentTeamIndex();
+
   local _objToSend = {
     Teams = CommDKP:GetTable(CommDKP_DB, false)["teams"],
     CurrentTeam = CommDKP:GetCurrentTeamIndex(),
-    Data = nil
-  }; 
+    TargetTeam = targetTeam,
+    Data = nil,
+    Prefix=prefix
+  };
 
   if prefix == "CommDKPBuild" then
     CommDKP.Sync:SendCommMessage(prefix, data, "GUILD");
@@ -927,6 +934,10 @@ function CommDKP.Sync:SendData(prefix, data, target)
 
   -- everything else but CommDKPBuild is getting compressed
   _objToSend.Data = data; -- if we send table everytime we have to serialize / deserialize anyway
+  
+  --print("Last Sent "..prefix);
+  --_objLastSend = CopyTable(_objToSend);
+
   local _compressedObj = CommDKP.Sync:SerializeTableToString(_objToSend);
 
   if _compressedObj == nil then
