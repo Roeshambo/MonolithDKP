@@ -641,7 +641,7 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 			core.CommDKPUI = CommDKP.UIConfig or CommDKP:CreateMenu();		-- creates main menu after 5 seconds (trying to initialize after raid frames are loaded)
 			core.KeyEventUI = CreateFrame("Frame","KeyEventFrame", UIParent);
 			core.KeyEventUI:SetScript("OnKeyDown", function(self, key)
-				if core.Initialized then
+				if core.Initialized and core.IsOfficer then
 					if MouseIsOver(MultiBarLeft) or MouseIsOver(MultiBarRight) or MouseIsOver(MultiBarBottomLeft) or MouseIsOver(MultiBarBottomRight) or MouseIsOver(MainMenuBar) then
 						return;
 					end
