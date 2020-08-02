@@ -191,6 +191,18 @@ function CommDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable
 		end
 	end
 	table.sort(core.WorkingTable, function(a, b)
+		-- Validate Data and Fix Discrepencies
+		if a[button.Id] == nil then
+			print("[CommunityDKP] Bad DKP Player Record Found: "..a.player)
+			core.RepairWorking = true;
+			return false;
+		end
+		if b[button.Id] == nil then
+			print("[CommunityDKP] Bad DKP Player Record Found: "..b.player)
+			core.RepairWorking = true;
+			return false;
+		end
+
 		if button.Ascend then
 			if id == "dkp" then
 				return a[button.Id] > b[button.Id]

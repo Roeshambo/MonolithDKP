@@ -695,6 +695,25 @@ function CommDKP:DKPTable_Update()
 		return;
 	end
 
+	if core.RepairWorking then
+		print("[CommunityDKP] DKP Table Repair Started");
+		for i=1, #CommDKP:GetTable(CommDKP_DKPTable, true) do
+			local record = CommDKP:GetTable(CommDKP_DKPTable, true)[i];
+			local bad = false;
+			if record["dkp"] == nil then bad = true	end
+			if record["previous_dkp"] == nil then bad = true end
+			if record["lifetime_spent"] == nil then bad = true end
+			if record["lifetime_gained"] == nil then bad = true end
+			if bad then
+				print("Removing DKP Table Record "..tostring(i));
+				tremove(CommDKP:GetTable(CommDKP_DKPTable, true), i)
+				tremove(core.WorkingTable, i)
+			end
+		end
+		print("[CommunityDKP] DKP Table Repair Complete");
+		core.RepairWorking = false;
+	end
+
 	if core.CurView == "limited" then  -- recreates WorkingTable if in limited view (view raid, core raiders etc)
 		local tempTable = {}
 

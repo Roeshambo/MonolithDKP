@@ -99,7 +99,7 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 core.CommDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
 core.MonVersion = "v3.1.3";
 core.BuildNumber = 30103;
-core.ReleaseNumber = 50
+core.ReleaseNumber = 51
 core.defaultTable = "__default";
 core.SemVer = core.MonVersion.."-r"..tostring(core.ReleaseNumber);
 core.UpgradeSchema = false;
@@ -126,6 +126,7 @@ core.CenterSort = "class";
 core.OOD = false
 core.RealmName = nil;
 core.FactionName = nil;
+core.RepairWorking = false;
 
 function CommDKP:GetCColors(class)
 	if core.CColors then 
@@ -180,10 +181,10 @@ end
 function CommDKP:GetDefaultEntity()
 	local entityProfile = {}
 	entityProfile = {
-		player="",
-		class="None",
-		dkp=0,
-		previous_dkp=0,
+		player = "",
+		class = "None",
+		dkp = 0,
+		previous_dkp = 0,
 		lifetime_gained = 0,
 		lifetime_spent = 0,
 		rank = 20,
