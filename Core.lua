@@ -149,6 +149,8 @@ function CommDKP_round(number, decimals)
 end
 
 function CommDKP:ResetPosition()
+	core.DB.bidpos = nil;
+	core.DB.timerpos = nil;
 	CommDKP.UIConfig:ClearAllPoints();
 	CommDKP.UIConfig:SetPoint("CENTER", UIParent, "CENTER", -250, 100);
 	CommDKP.UIConfig:SetSize(550, 590);
