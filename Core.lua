@@ -392,19 +392,23 @@ function CommDKP:FormatTime(time)
 	return str;
 end
 
+function CommDKP:ForcePrint(...)        --bypasses print suppression option. used as an alternative to whispers
+	local defaults = CommDKP:GetThemeColor();
+	local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "CommunityDKP:", defaults[2].hex:upper());
+	local suffix = "|r";
+	
+	for i = 1, NUM_CHAT_WINDOWS do
+		local name = GetChatWindowInfo(i)
+		
+		if core.DB == nil or core.DB.defaults.ChatFrames[name] then
+			_G["ChatFrame"..i]:AddMessage(string.join(" ", prefix, ..., suffix));
+		end
+	end
+end
+
 function CommDKP:Print(...)        --print function to add "CommunityDKP:" to the beginning of print() outputs.
 	if core.DB == nil or not core.DB.defaults.SuppressNotifications then
-		local defaults = CommDKP:GetThemeColor();
-		local prefix = string.format("|cff%s%s|r|cff%s", defaults[1].hex:upper(), "CommunityDKP:", defaults[2].hex:upper());
-		local suffix = "|r";
-
-		for i = 1, NUM_CHAT_WINDOWS do
-			local name = GetChatWindowInfo(i)
-
-			if core.DB == nil or core.DB.defaults.ChatFrames[name] then
-				_G["ChatFrame"..i]:AddMessage(string.join(" ", prefix, ..., suffix));
-			end
-		end
+		return CommDKP:ForcePrint(...)
 	end
 end
 
