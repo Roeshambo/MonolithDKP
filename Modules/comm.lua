@@ -453,7 +453,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                     CommDKP:SetTable(CommDKP_DKPHistory, true, _objReceived.Data.DKP, _objReceived.CurrentTeam);
                     CommDKP:SetTable(CommDKP_Loot, true, _objReceived.Data.Loot, _objReceived.CurrentTeam);
                     CommDKP:SetTable(CommDKP_Archive, true, _objReceived.Data.Archive, _objReceived.CurrentTeam);
-                    CommDKP:SetTable(CommDKP_MinBids, true, _objReceived.Data.MinBids, _objReceived.CurrentTeam);
+                    CommDKP:SetTable(CommDKP_MinBids, true, CommDKP:FormatPriceTable(_objReceived.Data.MinBids, true), _objReceived.CurrentTeam);
                     core.DB["teams"] = _objReceived.Teams;
 
                     CommDKP:SetCurrentTeam(_objReceived.CurrentTeam)
@@ -472,7 +472,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 CommDKP:SetTable(CommDKP_DKPHistory, true, _objReceived.Data.DKP, _objReceived.CurrentTeam);
                 CommDKP:SetTable(CommDKP_Loot, true, _objReceived.Data.Loot, _objReceived.CurrentTeam);
                 CommDKP:SetTable(CommDKP_Archive, true, _objReceived.Data.Archive, _objReceived.CurrentTeam);
-                CommDKP:SetTable(CommDKP_MinBids, true, _objReceived.Data.MinBids, _objReceived.CurrentTeam);
+                CommDKP:SetTable(CommDKP_MinBids, true, CommDKP:FormatPriceTable(_objReceived.Data.MinBids, true), _objReceived.CurrentTeam);
                 core.DB["teams"] = _objReceived.Teams;
                 CommDKP:SetCurrentTeam(_objReceived.CurrentTeam)
                 -- reset seeds since this is a fullbroadcast   
@@ -809,17 +809,17 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                   local bidItems = bidInfo[2]
                   if bidItems ~= nil then
                     for j=1, #bidItems do
-                      local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true, bidTeam), bidItems[j].item)
+                      local search = CommDKP:GetTable(CommDKP_MinBids, true, bidTeam)[bidItems[j].itemID];
                       if search then
-                        CommDKP:GetTable(CommDKP_MinBids, true, bidTeam)[search[1][1]].minbid = bidItems[j].minbid
+                        CommDKP:GetTable(CommDKP_MinBids, true, bidTeam)[bidItems[j].itemID].minbid = bidItems[j].minbid
                         if bidItems[j]["link"] ~= nil then
-                          CommDKP:GetTable(CommDKP_MinBids, true, bidTeam)[search[1][1]].link = bidItems[j].link
+                          CommDKP:GetTable(CommDKP_MinBids, true, bidTeam)[bidItems[j].itemID].link = bidItems[j].link
                         end
                         if bidItems[j]["icon"] ~= nil then
-                          CommDKP:GetTable(CommDKP_MinBids, true, bidTeam)[search[1][1]].icon = bidItems[j].icon
+                          CommDKP:GetTable(CommDKP_MinBids, true, bidTeam)[bidItems[j].itemID].icon = bidItems[j].icon
                         end
                       else
-                        table.insert(CommDKP:GetTable(CommDKP_MinBids, true, bidTeam), bidItems[j])
+                        CommDKP:GetTable(CommDKP_MinBids, true, bidTeam)[bidItems[j].itemID] = bidItems[j];
                       end
                     end 
                   end
@@ -852,15 +852,17 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
               CommDKP:GetTable(CommDKP_Standby, true, _objReceived.Data, _objReceived.CurrentTeam);
             elseif prefix == "CommDKPSetPrice" then
               _objSetPrice = _objReceived.Data;
+              local _, _, Color, Ltype, itemID, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Name = string.find(_objSetPrice.link,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
 
-              local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true, _objReceived.CurrentTeam), _objSetPrice.item);
+              local search = CommDKP:GetTable(CommDKP_MinBids, true, _objReceived.CurrentTeam)[itemID];
 
               if not search then
-                tinsert(CommDKP:GetTable(CommDKP_MinBids, true, _objReceived.CurrentTeam), _objSetPrice)
+                CommDKP:GetTable(CommDKP_MinBids, true, _objReceived.CurrentTeam)[itemID] = _objSetPrice;
               elseif search then
-                CommDKP:GetTable(CommDKP_MinBids, true, _objReceived.CurrentTeam)[search[1][1]] = _objSetPrice;
+                CommDKP:GetTable(CommDKP_MinBids, true, _objReceived.CurrentTeam)[itemID] = _objSetPrice;
               end
-
+              
+              core.PriceTable = CommDKP:FormatPriceTable();
               CommDKP:PriceTable_Update(0);
             
             elseif prefix == "CommDKPZSumBank" then

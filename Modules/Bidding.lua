@@ -421,6 +421,8 @@ end
 
 function CommDKP:ToggleBidWindow(loot, lootIcon, itemName)
   local minBid, maxBid;
+  local _, _, Color, Ltype, itemID, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Name = string.find(loot,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
+
   mode = core.DB.modes.mode;
 
   if core.IsOfficer then
@@ -468,18 +470,18 @@ function CommDKP:ToggleBidWindow(loot, lootIcon, itemName)
         end
         
         -- search min bid value(item cost)
-        local search_min = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true), itemName)
+        local search_min = CommDKP:GetTable(CommDKP_MinBids, true)[itemID];
         if search_min then
-          minBid = CommDKP:GetTable(CommDKP_MinBids, true)[search_min[1][1]].minbid
+          minBid = CommDKP:GetTable(CommDKP_MinBids, true)[itemID].minbid
         else
           minBid = CommDKP:GetMinBid(CurrItemForBid);
         end
       elseif mode == "Static Item Values" or mode == "Roll Based Bidding" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static") then
         
         -- search min bid value(item cost)
-        local search_min = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true), itemName)
+        local search_min = CommDKP:GetTable(CommDKP_MinBids, true)[itemID];
         if search_min then
-          minBid = CommDKP:GetTable(CommDKP_MinBids, true)[search_min[1][1]].minbid
+          minBid = CommDKP:GetTable(CommDKP_MinBids, true)[itemID].minbid
         else
           minBid = CommDKP:GetMinBid(CurrItemForBid);
         end
@@ -593,27 +595,28 @@ local function StartBidding()
     if core.DB.defaults.AutoOpenBid then  -- toggles bid window if option is set to
       CommDKP:BidInterface_Toggle()
     end
+    local _, _, Color, Ltype, itemID, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Name = string.find(CurrItemForBid,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
 
-    local search_min = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true), core.BiddingWindow.itemName:GetText(), "item")
+    local search_min = CommDKP:GetTable(CommDKP_MinBids, true)[itemID];
     local val_min = CommDKP:GetMinBid(CurrItemForBid);
     local search_max = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MaxBids, true), core.BiddingWindow.itemName:GetText(), "item")
     local val_max = CommDKP:GetMaxBid(CurrItemForBid);
 
     -- Min
     if not search_min and core.BiddingWindow.minBid:GetNumber() ~= tonumber(val_min) then
-      tinsert(CommDKP:GetTable(CommDKP_MinBids, true), {item=core.BiddingWindow.itemName:GetText(), minbid=core.BiddingWindow.minBid:GetNumber()})
+      CommDKP:GetTable(CommDKP_MinBids, true)[itemID] = {item=core.BiddingWindow.itemName:GetText(), minbid=core.BiddingWindow.minBid:GetNumber(), link=CurrItemForBid};
       core.BiddingWindow.CustomMinBid:SetShown(true);
       core.BiddingWindow.CustomMinBid:SetChecked(core.DB.defaults.CustomMinBid);
     elseif search_min and core.BiddingWindow.minBid:GetNumber() ~= tonumber(val_min) and core.BiddingWindow.CustomMinBid:GetChecked() == true then
-      if CommDKP:GetTable(CommDKP_MinBids, true)[search_min[1][1]].minbid ~= core.BiddingWindow.minBid:GetNumber() then
-        CommDKP:GetTable(CommDKP_MinBids, true)[search_min[1][1]].minbid = core.BiddingWindow.minBid:GetNumber();
+      if CommDKP:GetTable(CommDKP_MinBids, true)[itemID].minbid ~= core.BiddingWindow.minBid:GetNumber() then
+        CommDKP:GetTable(CommDKP_MinBids, true)[itemID].minbid = core.BiddingWindow.minBid:GetNumber();
         core.BiddingWindow.CustomMinBid:SetShown(true);
         core.BiddingWindow.CustomMinBid:SetChecked(core.DB.defaults.CustomMinBid);
       end
     end
 
     if search_min and core.BiddingWindow.CustomMinBid:GetChecked() == false then
-      table.remove(CommDKP:GetTable(CommDKP_MinBids, true), search_min[1][1])
+      CommDKP:GetTable(CommDKP_MinBids, true)[itemID] = {}
       core.BiddingWindow.CustomMinBid:SetShown(false);
     end
 

@@ -1020,7 +1020,7 @@ elseif core.DB.modes.mode == "Static Item Values" then
         CommDKP:Print(L["DKPMODESENTCONF"])
         local temptable2 = {}
               table.insert(temptable2, core.DB.MinBidBySlot)
-              table.insert(temptable2, CommDKP:GetTable(CommDKP_MinBids, true))
+              table.insert(temptable2, CommDKP:FormatPriceTable())
               CommDKP.Sync:SendData("CommDKPMinBid", temptable2)
         local temptable3 = {}
               table.insert(temptable3, core.DB.MaxBidBySlot)
