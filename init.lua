@@ -724,6 +724,12 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 		end)
 		
 		table.sort(core.PriceTable, function(a, b)
+			if a["item"] ~= nil and b["item"] == nil then
+				return true;
+			elseif a["item"] == nil and b["item"] ~= nil then
+				return false;
+			end
+
 			return a["item"] < b["item"]
 		end)
 		
