@@ -81,21 +81,23 @@ function CommDKP:RefactorMinBidItemTable(dbTable)
                                 -- Item Exists
 
                                 --Update For Disenchants
-                                if oldItem["disenchants"] > newTeamItems[itemID]["disenchants"] then
-                                    if oldItem["disenchants"] ~= nil then
-                                        newTeamItems[itemID]["disenchants"] = oldItem["disenchants"];
-                                    end
-                                    
-                                    if oldItem["minbid"] ~= nil and oldItem["minbid"] ~= 0 then
-                                        newTeamItems[itemID]["minbid"] = oldItem["minbid"];
-                                    end
-                                    
-                                    if oldItem["cost"] ~= nil then
-                                        newTeamItems[itemID]["cost"] = oldItem["cost"];
-                                    end
-                                    
-                                    if oldItem["lastbid"] ~= nil then
-                                        newTeamItems[itemID]["lastbid"] = oldItem["lastbid"];
+                                if oldItem["disenchants"] ~= nil and newTeamItems[itemID]["disenchants"] ~= nil then
+                                    if oldItem["disenchants"] > newTeamItems[itemID]["disenchants"] then
+                                        if oldItem["disenchants"] ~= nil then
+                                            newTeamItems[itemID]["disenchants"] = oldItem["disenchants"];
+                                        end
+                                        
+                                        if oldItem["minbid"] ~= nil and oldItem["minbid"] ~= 0 then
+                                            newTeamItems[itemID]["minbid"] = oldItem["minbid"];
+                                        end
+                                        
+                                        if oldItem["cost"] ~= nil then
+                                            newTeamItems[itemID]["cost"] = oldItem["cost"];
+                                        end
+                                        
+                                        if oldItem["lastbid"] ~= nil then
+                                            newTeamItems[itemID]["lastbid"] = oldItem["lastbid"];
+                                        end
                                     end
                                 end
 
