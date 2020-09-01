@@ -1,6 +1,7 @@
 local _, core = ...;
 local _G = _G;
 local CommDKP = core.CommDKP;
+local CommDKPApi = core.CommDKPApi;
 local L = core.L;
 
 local Bids_Submitted = {};
@@ -16,6 +17,14 @@ local mode;
 local events = CreateFrame("Frame", "BiddingEventsFrame");
 local menuFrame = CreateFrame("Frame", "CommDKPBidWindowMenuFrame", UIParent, "UIDropDownMenuTemplate")
 local hookedSlots = {}
+
+function CommDKPApi:SetPriceListApi(api)
+  if api.GetItemPrice ~= nil then
+    CommDKPApi.pricelist = api
+    return true
+  end
+  return false
+end
 
 local function UpdateBidWindow()
   core.BiddingWindow.item:SetText(CurrItemForBid)
@@ -339,84 +348,70 @@ function CommDKP:WhisperAvailableDKP(name, cmd)
   return;
 end
 
-function CommDKP:GetMinBid(itemLink)
+function CommDKP:GetItemPrice(itemLink)
+  if CommDKPApi.pricelist == nil then
+    return nil
+  end
+
+  return CommDKPApi.pricelist:GetItemPrice(itemLink)
+end
+
+function CommDKP:GetItemLocBid(from, itemLink)
   local _,_,_,_,_,_,_,_,loc = GetItemInfo(itemLink);
 
   if loc == "INVTYPE_HEAD" then
-    return core.DB.MinBidBySlot.Head
+    return from.Head
   elseif loc == "INVTYPE_NECK" then
-    return core.DB.MinBidBySlot.Neck
+    return from.Neck
   elseif loc == "INVTYPE_SHOULDER" then
-    return core.DB.MinBidBySlot.Shoulders
+    return from.Shoulders
   elseif loc == "INVTYPE_CLOAK" then
-    return core.DB.MinBidBySlot.Cloak
+    return from.Cloak
   elseif loc == "INVTYPE_CHEST" or loc == "INVTYPE_ROBE" then
-    return core.DB.MinBidBySlot.Chest
+    return from.Chest
   elseif loc == "INVTYPE_WRIST" then
-    return core.DB.MinBidBySlot.Bracers
+    return from.Bracers
   elseif loc == "INVTYPE_HAND" then
-    return core.DB.MinBidBySlot.Hands
+    return from.Hands
   elseif loc == "INVTYPE_WAIST" then
-    return core.DB.MinBidBySlot.Belt
+    return from.Belt
   elseif loc == "INVTYPE_LEGS" then
-    return core.DB.MinBidBySlot.Legs
+    return from.Legs
   elseif loc == "INVTYPE_FEET" then
-    return core.DB.MinBidBySlot.Boots
+    return from.Boots
   elseif loc == "INVTYPE_FINGER" then
-    return core.DB.MinBidBySlot.Ring
+    return from.Ring
   elseif loc == "INVTYPE_TRINKET" then
-    return core.DB.MinBidBySlot.Trinket
+    return from.Trinket
   elseif loc == "INVTYPE_WEAPON" or loc == "INVTYPE_WEAPONMAINHAND" or loc == "INVTYPE_WEAPONOFFHAND" then
-    return core.DB.MinBidBySlot.OneHanded
+    return from.OneHanded
   elseif loc == "INVTYPE_2HWEAPON" then
-    return core.DB.MinBidBySlot.TwoHanded
+    return from.TwoHanded
   elseif loc == "INVTYPE_HOLDABLE" or loc == "INVTYPE_SHIELD" then
-    return core.DB.MinBidBySlot.OffHand
+    return from.OffHand
   elseif loc == "INVTYPE_RANGED" or loc == "INVTYPE_THROWN" or loc == "INVTYPE_RANGEDRIGHT" or loc == "INVTYPE_RELIC" then
-    return core.DB.MinBidBySlot.Range
+    return from.Range
   else
-    return core.DB.MinBidBySlot.Other
+    return from.Other
   end
 end
 
-function CommDKP:GetMaxBid(itemLink)
-  local _,_,_,_,_,_,_,_,loc = GetItemInfo(itemLink);
-
-  if loc == "INVTYPE_HEAD" then
-    return core.DB.MaxBidBySlot.Head
-  elseif loc == "INVTYPE_NECK" then
-    return core.DB.MaxBidBySlot.Neck
-  elseif loc == "INVTYPE_SHOULDER" then
-    return core.DB.MaxBidBySlot.Shoulders
-  elseif loc == "INVTYPE_CLOAK" then
-    return core.DB.MaxBidBySlot.Cloak
-  elseif loc == "INVTYPE_CHEST" or loc == "INVTYPE_ROBE" then
-    return core.DB.MaxBidBySlot.Chest
-  elseif loc == "INVTYPE_WRIST" then
-    return core.DB.MaxBidBySlot.Bracers
-  elseif loc == "INVTYPE_HAND" then
-    return core.DB.MaxBidBySlot.Hands
-  elseif loc == "INVTYPE_WAIST" then
-    return core.DB.MaxBidBySlot.Belt
-  elseif loc == "INVTYPE_LEGS" then
-    return core.DB.MaxBidBySlot.Legs
-  elseif loc == "INVTYPE_FEET" then
-    return core.DB.MaxBidBySlot.Boots
-  elseif loc == "INVTYPE_FINGER" then
-    return core.DB.MaxBidBySlot.Ring
-  elseif loc == "INVTYPE_TRINKET" then
-    return core.DB.MaxBidBySlot.Trinket
-  elseif loc == "INVTYPE_WEAPON" or loc == "INVTYPE_WEAPONMAINHAND" or loc == "INVTYPE_WEAPONOFFHAND" then
-    return core.DB.MaxBidBySlot.OneHanded
-  elseif loc == "INVTYPE_2HWEAPON" then
-    return core.DB.MaxBidBySlot.TwoHanded
-  elseif loc == "INVTYPE_HOLDABLE" or loc == "INVTYPE_SHIELD" then
-    return core.DB.MaxBidBySlot.OffHand
-  elseif loc == "INVTYPE_RANGED" or loc == "INVTYPE_THROWN" or loc == "INVTYPE_RANGEDRIGHT" or loc == "INVTYPE_RELIC" then
-    return core.DB.MaxBidBySlot.Range
-  else
-    return core.DB.MaxBidBySlot.Other
+function CommDKP:GetMinBid(itemLink)
+  local itemPrice = CommDKP:GetItemPrice(itemLink);
+  if itemPrice then
+    return itemPrice.minBid
   end
+
+  return CommDKP:GetItemLocBid(core.DB.MinBidBySlot, itemLink)
+end
+
+function CommDKP:GetMaxBid(itemLink)
+  local itemPrice = CommDKP:GetItemPrice(itemLink);
+  if itemPrice then
+    return itemPrice.maxBid
+  end
+
+  return CommDKP:GetItemLocBid(core.DB.MaxBidBySlot, itemLink)
 end
 
 function CommDKP:ToggleBidWindow(loot, lootIcon, itemName)
