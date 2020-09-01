@@ -445,9 +445,10 @@ function CommDKP_OnEvent(self, event, arg1, ...)
 		if core.IsOfficer then
 
 			arg1 = strlower(arg1)
-			if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "！dkp") == 1) then
-				CommDKP_CHAT_MSG_WHISPER(arg1, ...)
-			elseif string.find(arg1, "!standby") == 1 and core.StandbyActive then
+			if (core.BidInProgress or string.find(arg1, "^[!！]dkp")) then
+        local name = ...
+				CommDKP_OnBidderCommandReceived(arg1, name, true)
+			elseif string.find(arg1, "^!standby") == 1 and core.StandbyActive then
 				CommDKP_Standby_Handler(arg1, ...)
 			end
 		end
@@ -463,8 +464,9 @@ function CommDKP_OnEvent(self, event, arg1, ...)
 	elseif event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" then
 		CommDKP:CheckOfficer()
 		arg1 = strlower(arg1)
-		if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "!standby") == 1 or string.find(arg1, "！dkp") == 1) and core.IsOfficer == true then
-			CommDKP_CHAT_MSG_WHISPER(arg1, ...)
+		if (core.BidInProgress or string.find(arg1, "^[!！]dkp") or string.find(arg1, "^[!！]standby")) and core.IsOfficer == true then
+      local name = ...
+			CommDKP_OnBidderCommandReceived(arg1, name, true)
 		end
 	elseif event == "UPDATE_INSTANCE_INFO" then
 		local num = GetNumSavedInstances()
@@ -519,8 +521,9 @@ function CommDKP_OnEvent(self, event, arg1, ...)
 		CommDKP:CheckOfficer()
 		if core.IsOfficer then
 			arg1 = strlower(arg1)
-			if (core.BidInProgress or string.find(arg1, "!dkp") == 1 or string.find(arg1, "！dkp") == 1) and core.DB.modes.channels.guild then
-				CommDKP_CHAT_MSG_WHISPER(arg1, ...)
+			if (core.BidInProgress or string.find(arg1, "^[!！]dkp")) and core.DB.modes.channels.guild then
+        local name = ...
+				CommDKP_OnBidderCommandReceived(arg1, name, true)
 			elseif string.find(arg1, "!standby") == 1 and core.StandbyActive then
 				CommDKP_Standby_Handler(arg1, ...)
 			end
