@@ -8,8 +8,11 @@ local _G = _G;
 local L = core.L;
 
 core.CommDKP = {};       -- UI Frames global
+core.CommDKPApi = { __version = 1, pricelist = nil }
 local CommDKP = core.CommDKP;
+local CommDKPApi = core.CommDKPApi;
 
+_G.CommDKPApi = CommDKPApi;
 
 core.faction = UnitFactionGroup("player")
 
