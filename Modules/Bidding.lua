@@ -112,8 +112,8 @@ local function Roll_OnEvent(self, event, arg1, ...)
   end
 end
 
-local function BidCmd(text)
-  local _, cmd = string.split(" ", text, 2)
+local function BidCmd(...)
+  local _, cmd = string.split(" ", ..., 2)
 
   if tonumber(cmd) then
     cmd = tonumber(cmd) -- converts it to a number if it's a valid numeric string
@@ -124,29 +124,21 @@ local function BidCmd(text)
   return cmd;
 end
 
-local function Respond(response, name, doWhisper)
-  if doWhisper then
-    SendChatMessage(response, "WHISPER", nil, name)
-  else
-    CommDKP.Sync:SendData("CommDKPWhisper", response, name)
-  end
-end
-
-function CommDKP_OnBidderCommandReceived(text, name, doWhisperResponse)
-  doWhisperResponse = true -- temporary override for compatibility
+function CommDKP_CHAT_MSG_WHISPER(text, ...)
+  local name = ...;
   local cmd;
   local dkp;
   local seconds;
   local response = L["ERRORPROCESSING"];
   
   mode = core.DB.modes.mode;
-  
-  local dashPos = string.find(name, "-")
-  if dashPos then -- finds and removes server name from name if exists
+
+  if string.find(name, "-") then          -- finds and removes server name from name if exists
+    local dashPos = string.find(name, "-")
     name = strsub(name, 1, dashPos-1)
   end
 
-  if string.find(text, "^[!！]bid%s+") == 1 and core.IsOfficer == true then
+  if string.find(text, "!bid") == 1 and core.IsOfficer == true then
     if core.BidInProgress then
       cmd = BidCmd(text)
       if (mode == "Static Item Values" and cmd ~= "cancel") or (mode == "Zero Sum" and cmd ~= "cancel" and core.DB.modes.ZeroSumBidType == "Static") then
@@ -175,7 +167,7 @@ function CommDKP_OnBidderCommandReceived(text, name, doWhisperResponse)
       end
       dkp = tonumber(CommDKP:GetPlayerDKP(name))
       if not dkp then    -- exits function if player is not on the DKP list
-        Respond(L["INVALIDPLAYER"], name, doWhisperResponse)
+        SendChatMessage(L["INVALIDPLAYER"], "WHISPER", nil, name)
         return
       end
 
@@ -187,7 +179,7 @@ function CommDKP_OnBidderCommandReceived(text, name, doWhisperResponse)
                 if (not (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static")) and Bids_Submitted[i] and Bids_Submitted[i].player == name and Bids_Submitted[i].bid < cmd then
                   table.remove(Bids_Submitted, i)
                 elseif (not (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Static")) and Bids_Submitted[i] and Bids_Submitted[i].player == name and Bids_Submitted[i].bid >= cmd then
-                  Respond(L["BIDEQUALORLESS"], name, doWhisperResponse)
+                  SendChatMessage(L["BIDEQUALORLESS"], "WHISPER", nil, name)
                   return
                 end
               end
@@ -264,15 +256,15 @@ function CommDKP_OnBidderCommandReceived(text, name, doWhisperResponse)
           response = L["BIDDENIEDINVALID"]
         end
       end
-      Respond(response, name, doWhisperResponse)
+      SendChatMessage(response, "WHISPER", nil, name)
     else
-      Respond(L["NOBIDINPROGRESS"], name, doWhisperResponse)
+      SendChatMessage(L["NOBIDINPROGRESS"], "WHISPER", nil, name)
     end
-  elseif string.find(text, "^[!！]dkp") == 1 and core.IsOfficer == true then
+  elseif string.find(text, "!dkp") == 1 and core.IsOfficer == true then
     cmd = tostring(BidCmd(text))
 
     if cmd and cmd:gsub("%d+", "") == "" then
-      return CommDKP_OnBidderCommandReceived("!bid "..cmd, name, doWhisperResponse)
+      return CommDKP_CHAT_MSG_WHISPER("!bid "..cmd, name)
     elseif cmd and cmd:gsub("%s+", "") ~= "nil" and cmd:gsub("%s+", "") ~= "" then    -- allows command if it has content (removes empty spaces)
       cmd = cmd:gsub("%s+", "") -- removes unintended spaces from string
       CommDKP:WhisperAvailableDKP(name, cmd);
@@ -281,7 +273,8 @@ function CommDKP_OnBidderCommandReceived(text, name, doWhisperResponse)
       CommDKP:WhisperAvailableDKP(name);
       return;
     end
-    Respond(response, name, doWhisperResponse)
+
+    SendChatMessage(response, "WHISPER", nil, name)
   end
 
 

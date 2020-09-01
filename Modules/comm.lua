@@ -41,43 +41,42 @@ end
 -------------------------------------------------
 
 function CommDKP.Sync:OnEnable()
-  CommDKP.Sync:RegisterComm("CommDKPDelUsers",   CommDKP.Sync:OnCommReceived()) -- Broadcasts deleted users (archived users not on the DKP table)
-  CommDKP.Sync:RegisterComm("CommDKPAddUsers",   CommDKP.Sync:OnCommReceived()) -- Broadcasts newly added users (or recovers)
-  CommDKP.Sync:RegisterComm("CommDKPMerge",      CommDKP.Sync:OnCommReceived()) -- Broadcasts 2 weeks of data from officers (for merging)
+  CommDKP.Sync:RegisterComm("CommDKPDelUsers", CommDKP.Sync:OnCommReceived())      -- Broadcasts deleted users (archived users not on the DKP table)
+  CommDKP.Sync:RegisterComm("CommDKPAddUsers", CommDKP.Sync:OnCommReceived())   -- Broadcasts newly added users (or recovers)
+  CommDKP.Sync:RegisterComm("CommDKPMerge", CommDKP.Sync:OnCommReceived())      -- Broadcasts 2 weeks of data from officers (for merging)
   -- Normal broadcast Prefixs
-  CommDKP.Sync:RegisterComm("CommDKPDecay",      CommDKP.Sync:OnCommReceived()) -- Broadcasts a weekly decay adjustment
-  CommDKP.Sync:RegisterComm("CommDKPBCastMsg",   CommDKP.Sync:OnCommReceived()) -- broadcasts a message that is printed as is
-  CommDKP.Sync:RegisterComm("CommDKPCommand",    CommDKP.Sync:OnCommReceived()) -- broadcasts a command (ex. timers, bid timers, stop all timers etc.)
-  CommDKP.Sync:RegisterComm("CommDKPLootDist",   CommDKP.Sync:OnCommReceived()) -- broadcasts individual loot award to loot table
-  CommDKP.Sync:RegisterComm("CommDKPDelLoot",    CommDKP.Sync:OnCommReceived()) -- broadcasts deleted loot award entries
-  CommDKP.Sync:RegisterComm("CommDKPDelSync",    CommDKP.Sync:OnCommReceived()) -- broadcasts deleated DKP history entries
-  CommDKP.Sync:RegisterComm("CommDKPDKPDist",    CommDKP.Sync:OnCommReceived()) -- broadcasts individual DKP award to DKP history table
-  CommDKP.Sync:RegisterComm("CommDKPMinBid",     CommDKP.Sync:OnCommReceived()) -- broadcasts minimum dkp values (set in Options tab or custom values in bid window)
-  CommDKP.Sync:RegisterComm("CommDKPMaxBid",     CommDKP.Sync:OnCommReceived()) -- broadcasts maximum dkp values (set in Options tab or custom values in bid window)
-  CommDKP.Sync:RegisterComm("CDKPWhitelist",     CommDKP.Sync:OnCommReceived()) -- broadcasts whitelist
-  CommDKP.Sync:RegisterComm("CommDKPDKPModes",   CommDKP.Sync:OnCommReceived()) -- broadcasts DKP Mode settings
-  CommDKP.Sync:RegisterComm("CommDKPStand",      CommDKP.Sync:OnCommReceived()) -- broadcasts standby list
-  CommDKP.Sync:RegisterComm("CommDKPRaidTime",   CommDKP.Sync:OnCommReceived()) -- broadcasts Raid Timer Commands
-  CommDKP.Sync:RegisterComm("CommDKPZSumBank",   CommDKP.Sync:OnCommReceived()) -- broadcasts ZeroSum Bank
-  CommDKP.Sync:RegisterComm("CommDKPQuery",      CommDKP.Sync:OnCommReceived()) -- Querys guild for spec/role data
-  CommDKP.Sync:RegisterComm("CommDKPSeed",       CommDKP.Sync:OnCommReceived())
-  CommDKP.Sync:RegisterComm("CommDKPBuild",      CommDKP.Sync:OnCommReceived()) -- broadcasts Addon build number to inform others an update is available.
-  CommDKP.Sync:RegisterComm("CommDKPTalents",    CommDKP.Sync:OnCommReceived()) -- broadcasts current spec
-  CommDKP.Sync:RegisterComm("CommDKPRoles",      CommDKP.Sync:OnCommReceived()) -- broadcasts current role info
-  CommDKP.Sync:RegisterComm("CommDKPBossLoot",   CommDKP.Sync:OnCommReceived()) -- broadcast current loot table
-  CommDKP.Sync:RegisterComm("CommDKPBidShare",   CommDKP.Sync:OnCommReceived()) -- broadcast accepted bids
-  CommDKP.Sync:RegisterComm("CommDKPBidder",     CommDKP.Sync:OnCommReceived()) -- Submit bid
-  CommDKP.Sync:RegisterComm("CommDKPWhisper",    CommDKP.Sync:OnCommReceived()) -- Used for responses sometimes to cut down on whispers
-  CommDKP.Sync:RegisterComm("CommDKPAllTabs",    CommDKP.Sync:OnCommReceived()) -- Full table broadcast
-  CommDKP.Sync:RegisterComm("CommDKPSetPrice",   CommDKP.Sync:OnCommReceived()) -- Set Single Item Price
-  CommDKP.Sync:RegisterComm("CommDKPCurTeam",    CommDKP.Sync:OnCommReceived()) -- Sets Current Raid Team
-  CommDKP.Sync:RegisterComm("CommDKPTeams",      CommDKP.Sync:OnCommReceived())
-  CommDKP.Sync:RegisterComm("CommDKPPreBroad",   CommDKP.Sync:OnCommReceived()) -- send info that full broadcast is starting
-  -- CommDKP.Sync:RegisterComm("CommDKPEditLoot",   CommDKP.Sync:OnCommReceived()) -- not in use
-  -- CommDKP.Sync:RegisterComm("CommDKPDataSync",   CommDKP.Sync:OnCommReceived()) -- not in use
-  -- CommDKP.Sync:RegisterComm("CommDKPDKPLogSync", CommDKP.Sync:OnCommReceived()) -- not in use
-  -- CommDKP.Sync:RegisterComm("CommDKPLogSync",    CommDKP.Sync:OnCommReceived()) -- not in use
-  CommDKP.Sync:RegisterComm("CDKProfileSend",    CommDKP.Sync:OnCommReceived()) -- Broadcast Player Profile for Update or Create
+  CommDKP.Sync:RegisterComm("CommDKPDecay", CommDKP.Sync:OnCommReceived())        -- Broadcasts a weekly decay adjustment
+  CommDKP.Sync:RegisterComm("CommDKPBCastMsg", CommDKP.Sync:OnCommReceived())      -- broadcasts a message that is printed as is
+  CommDKP.Sync:RegisterComm("CommDKPCommand", CommDKP.Sync:OnCommReceived())      -- broadcasts a command (ex. timers, bid timers, stop all timers etc.)
+  CommDKP.Sync:RegisterComm("CommDKPLootDist", CommDKP.Sync:OnCommReceived())      -- broadcasts individual loot award to loot table
+  CommDKP.Sync:RegisterComm("CommDKPDelLoot", CommDKP.Sync:OnCommReceived())      -- broadcasts deleted loot award entries
+  CommDKP.Sync:RegisterComm("CommDKPDelSync", CommDKP.Sync:OnCommReceived())      -- broadcasts deleated DKP history entries
+  CommDKP.Sync:RegisterComm("CommDKPDKPDist", CommDKP.Sync:OnCommReceived())      -- broadcasts individual DKP award to DKP history table
+  CommDKP.Sync:RegisterComm("CommDKPMinBid", CommDKP.Sync:OnCommReceived())      -- broadcasts minimum dkp values (set in Options tab or custom values in bid window)
+  CommDKP.Sync:RegisterComm("CommDKPMaxBid", CommDKP.Sync:OnCommReceived())      -- broadcasts maximum dkp values (set in Options tab or custom values in bid window)
+  CommDKP.Sync:RegisterComm("CDKPWhitelist", CommDKP.Sync:OnCommReceived())      -- broadcasts whitelist
+  CommDKP.Sync:RegisterComm("CommDKPDKPModes", CommDKP.Sync:OnCommReceived())      -- broadcasts DKP Mode settings
+  CommDKP.Sync:RegisterComm("CommDKPStand", CommDKP.Sync:OnCommReceived())        -- broadcasts standby list
+  CommDKP.Sync:RegisterComm("CommDKPRaidTime", CommDKP.Sync:OnCommReceived())      -- broadcasts Raid Timer Commands
+  CommDKP.Sync:RegisterComm("CommDKPZSumBank", CommDKP.Sync:OnCommReceived())    -- broadcasts ZeroSum Bank
+  CommDKP.Sync:RegisterComm("CommDKPQuery", CommDKP.Sync:OnCommReceived())        -- Querys guild for spec/role data
+  CommDKP.Sync:RegisterComm("CommDKPSeed", CommDKP.Sync:OnCommReceived())
+  CommDKP.Sync:RegisterComm("CommDKPBuild", CommDKP.Sync:OnCommReceived())        -- broadcasts Addon build number to inform others an update is available.
+  CommDKP.Sync:RegisterComm("CommDKPTalents", CommDKP.Sync:OnCommReceived())      -- broadcasts current spec
+  CommDKP.Sync:RegisterComm("CommDKPRoles", CommDKP.Sync:OnCommReceived())        -- broadcasts current role info
+  CommDKP.Sync:RegisterComm("CommDKPBossLoot", CommDKP.Sync:OnCommReceived())      -- broadcast current loot table
+  CommDKP.Sync:RegisterComm("CommDKPBidShare", CommDKP.Sync:OnCommReceived())      -- broadcast accepted bids
+  CommDKP.Sync:RegisterComm("CommDKPBidder", CommDKP.Sync:OnCommReceived())      -- Submit bids
+  CommDKP.Sync:RegisterComm("CommDKPAllTabs", CommDKP.Sync:OnCommReceived())      -- Full table broadcast
+  CommDKP.Sync:RegisterComm("CommDKPSetPrice", CommDKP.Sync:OnCommReceived())      -- Set Single Item Price
+  CommDKP.Sync:RegisterComm("CommDKPCurTeam", CommDKP.Sync:OnCommReceived())      -- Sets Current Raid Team
+  CommDKP.Sync:RegisterComm("CommDKPTeams", CommDKP.Sync:OnCommReceived())
+  CommDKP.Sync:RegisterComm("CommDKPPreBroad", CommDKP.Sync:OnCommReceived()) -- send info that full broadcast is starting
+  --CommDKP.Sync:RegisterComm("CommDKPEditLoot", CommDKP.Sync:OnCommReceived())    -- not in use
+  --CommDKP.Sync:RegisterComm("CommDKPDataSync", CommDKP.Sync:OnCommReceived())    -- not in use
+  --CommDKP.Sync:RegisterComm("CommDKPDKPLogSync", CommDKP.Sync:OnCommReceived())  -- not in use
+  --CommDKP.Sync:RegisterComm("CommDKPLogSync", CommDKP.Sync:OnCommReceived())    -- not in use
+  CommDKP.Sync:RegisterComm("CDKProfileSend", CommDKP.Sync:OnCommReceived()) -- Broadcast Player Profile for Update or Create
 end
 
 function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
@@ -184,14 +183,12 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
               -- CommDKP:Print(sender.." has passed.")  --TODO: Let's do something different here at some point.
             return
           else
-            CommDKP_OnBidderCommandReceived(_objReceived.Data, sender, false)
+            CommDKP_CHAT_MSG_WHISPER(_objReceived.Data, sender)
             return
           end
         else
           return
         end
-      elseif prefix == "CommDKPWhisper" then
-        CommDKP:ForcePrint(_objReceived.Data)
       elseif prefix == "CommDKPTeams" then
         CommDKP:GetTable(CommDKP_DB, false)["teams"] = _objReceived.Teams
         return;
