@@ -100,9 +100,9 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 }
 
 core.CommDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v3.1.3";
-core.BuildNumber = 30103;
-core.ReleaseNumber = 52
+core.MonVersion = "v3.2.0";
+core.BuildNumber = 30200;
+core.ReleaseNumber = 53
 core.defaultTable = "__default";
 core.SemVer = core.MonVersion.."-r"..tostring(core.ReleaseNumber);
 core.UpgradeSchema = false;
@@ -713,6 +713,23 @@ function CommDKP:GetGuildTeamList(asObject)
 	return _list
 end
 
+function CommDKP:FormatPriceTable(minBids, convertToTable)
+	minBids = minBids or CommDKP:GetTable(CommDKP_MinBids, true);
+	convertToTable = convertToTable or false; --false means it will convert to an array
+	local priceTable = {}
+
+	if withIds then
+		for i=1, #minBids do
+			priceTable[minBids[i].itemID] = minBids[i];
+		end
+	else
+		for key, value in pairs(minBids) do
+			tinsert(priceTable, value);
+		end
+	end
+	return priceTable;
+end
+
 -- moved to core from ManageEntries as this is called from comm.lua aswell
 function CommDKP:SetCurrentTeam(index)
 	CommDKP:GetTable(CommDKP_DB, false)["defaults"]["CurrentTeam"] = tostring(index);
@@ -721,7 +738,8 @@ function CommDKP:SetCurrentTeam(index)
 
 	-- reset dkp table and update it
 	core.WorkingTable = CommDKP:GetTable(CommDKP_DKPTable, true);
-	core.PriceTable	= CommDKP:GetTable(CommDKP_MinBids, true);
+	core.PriceTable	= CommDKP:FormatPriceTable();
+
 	CommDKP:DKPTable_Update();
 
 	-- reset dkp history table and update it

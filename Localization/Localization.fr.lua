@@ -873,12 +873,13 @@ if GetLocale() == "frFR" then
     MIGRATIONCOMPLETED    = "Migration réussie.|n|nVeuillez désactiver MonolithDKP et recharger votre interface (/reload).", --TODO TRANSLATE:
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - WoW Classic Phase 5",
-    CHANGELOG2 = " - Interface mise à jour",
-    CHANGELOG3 = " - Améliorations supplémentaires à la migration depuis MonolithDKP (Merci matthi !)",
-    CHANGELOG4 = " - Quelques autres corrections de bugs pour de rares cas particuliers.",
-    CHANGELOG5 = " - Superbe amélioration du pack de textures (Merci à @Vergil et Essential@MirageRaceway)",
-    CHANGELOG6 = " - Résolu un bug de synchronisation qui n'affectait pas les données - Effectuer une synchronisation complète pour réinitialiser les index (tout le monde doit avoir la version 3.1.3-r47 ou plus)",
+    --TODO TRANSLATE:
+    CHANGELOG1 = "CommunityDKP - v3.2.0",
+    CHANGELOG2 = " - Upgraded and Refactored the MinBids Table",
+    CHANGELOG3 = " - Fixed a Minbid Save Issue on Disenchant that was removing the Minbid price",
+    CHANGELOG4 = " - Implemented PriceList API Support (contribution by styxhope)",
+    CHANGELOG5 = "",
+    CHANGELOG6 = "",
     CHANGELOG7 = "",
     CHANGELOG8 = "Discord de CommunityDKP: https://discord.gg/dXXK4vH",
     CHANGELOG9 = "",

@@ -78,14 +78,15 @@ CommDKP.Commands = {
       local item = strjoin(" ", ...)
       if not item then return end
       item = name.." "..item;
-	  local itemName,_,_,_,_,_,_,_,_,_ = GetItemInfo(item)
+	  local itemName,itemLink,_,_,_,_,_,_,_,_ = GetItemInfo(item)
 	  local cost = 0;
-	  local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_MinBids, true), itemName)
+	  local _, _, Color, Ltype, itemID, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Name = string.find(itemLink,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
+	  local search = CommDKP:GetTable(CommDKP_MinBids, true)[itemID];
 
 	  if not search then
 		cost = CommDKP:GetMinBid(item)
 	  else
-		cost = CommDKP:GetTable(CommDKP_MinBids, true)[search[1][1]].minbid;
+		cost = search.minbid;
 	  end
 
 	  CommDKP:AwardConfirm(nil, cost, core.DB.bossargs.LastKilledBoss, core.DB.bossargs.CurrentRaidZone, item)
@@ -694,7 +695,7 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 	    --	Import SavedVariables
 	    ------------------------------------
 		core.WorkingTable 		= CommDKP:GetTable(CommDKP_DKPTable, true); -- imports full DKP table to WorkingTable for list manipulation
-		core.PriceTable			= CommDKP:GetTable(CommDKP_MinBids, true);
+		core.PriceTable			= CommDKP:FormatPriceTable();
 
 		for i=1, #core.WorkingTable do
 			local CurPlayer = core.WorkingTable[i].player;
@@ -840,6 +841,14 @@ function CommDKP:UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
 			newDbTable[core.defaultTable] = defaultTable;
 		end
 	end
+
+	if newDbTable.dbinfo.build < 30200 and newDbTable.dbinfo.priorbuild ~= core.BuildNumber then
+		if newDbTable.dbinfo.name == "CommDKP_MinBids" then
+			newDbTable = CommDKP:RefactorMinBidItemTable(newDbTable);
+		end
+	end
+
+	
 
 	-- Set Current Build Number
 	newDbTable.dbinfo.build = core.BuildNumber;

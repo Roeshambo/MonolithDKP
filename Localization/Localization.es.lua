@@ -818,12 +818,12 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - WoW Classic Phase 5",
-    CHANGELOG2 = " - Updated Interface",
-    CHANGELOG3 = " - Additional enchancements to in-game migration from MonolithDKP (Thanks matthi!)",
-    CHANGELOG4 = " - A few more edge case bugfixes.",
-    CHANGELOG5 = " - Awesome texture pack upgrade (Thanks to @Vergil and Essential@MirageRaceway)",
-    CHANGELOG6 = " - Fixed a Sync Indexing Issue that didn't affect Data - Perform a Full Sync to reset indexes (everyone needs to be on 3.1.3-r47 or higher)",
+    CHANGELOG1 = "CommunityDKP - v3.2.0",
+    CHANGELOG2 = " - Upgraded and Refactored the MinBids Table",
+    CHANGELOG3 = " - Fixed a Minbid Save Issue on Disenchant that was removing the Minbid price",
+    CHANGELOG4 = " - Implemented PriceList API Support (contribution by styxhope)",
+    CHANGELOG5 = "",
+    CHANGELOG6 = "",
     CHANGELOG7 = "",
     CHANGELOG8 = "CommunityDKP Discord: https://discord.gg/dXXK4vH",
     CHANGELOG9 = "",
