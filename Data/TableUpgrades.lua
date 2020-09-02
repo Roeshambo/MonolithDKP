@@ -4,6 +4,11 @@ local CommDKP = core.CommDKP;
 local L = core.L;
 
 function IsItemLink(link)
+
+    if link == nil then
+        return false;
+    end
+
     local id = link:match("|Hitem:(%d+):")
     if id then
         local _, link = GetItemInfo(id)
