@@ -854,7 +854,11 @@ function CommDKP:UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
 		end
 	end
 
-	
+	if newDbTable.dbinfo.build < 30201 and newDbTable.dbinfo.priorbuild ~= core.BuildNumber then
+		if newDbTable.dbinfo.name == "CommDKP_MinBids" then
+			newDbTable = CommDKP:VerifyMinBidItemTable(newDbTable);
+		end
+	end
 
 	-- Set Current Build Number
 	newDbTable.dbinfo.build = core.BuildNumber;

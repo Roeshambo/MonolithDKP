@@ -68,7 +68,7 @@ function CommDKP:ProcessDisenchant(loot)
 		local search = CommDKP:GetTable(CommDKP_MinBids, true)[itemID];
 		local cost = CommDKP_round(core.BiddingWindow.cost:GetNumber(), core.DB.modes.rounding);
 		local minBid = cost;
-		local newItem = {item=itemName, minbid=minBid, link=itemLink, icon=itemIcon, disenchants=0, lastbid=0};
+		local newItem = {item=itemName, minbid=minBid, link=itemLink, icon=itemIcon, disenchants=0, lastbid=0, itemID=itemID};
 		if search then
 			newItem = CommDKP:GetTable(CommDKP_MinBids, true)[itemID];
 		end
@@ -119,6 +119,8 @@ function CommDKP:ProcessDisenchant(loot)
 
 			CommDKP:GetTable(CommDKP_MinBids, true)[itemID].link = newItem.link;
 			CommDKP:GetTable(CommDKP_MinBids, true)[itemID].icon = newItem.icon;
+			CommDKP:GetTable(CommDKP_MinBids, true)[itemID].item = newItem.itemName;
+			CommDKP:GetTable(CommDKP_MinBids, true)[itemID].itemID = newItem.itemID;
 			CommDKP:GetTable(CommDKP_MinBids, true)[itemID].disenchants = newItem.disenchants;
 			newItem = CommDKP:GetTable(CommDKP_MinBids, true)[itemID];
 		end

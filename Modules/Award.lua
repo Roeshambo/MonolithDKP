@@ -8,7 +8,7 @@ local function SetItemPrice(cost, loot)
 	local _, _, Color, Ltype, itemID, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Name = string.find(itemLink,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
 	local cost = cost;
 	local search = CommDKP:GetTable(CommDKP_MinBids, true)[itemID];
-	local newItem = {item=itemName, minbid=cost, link=itemLink, icon=itemIcon, disenchants=0, lastbid=cost}
+	local newItem = {item=itemName, minbid=cost, link=itemLink, icon=itemIcon, disenchants=0, lastbid=cost, itemID = itemID}
 
 	if not search then
 		CommDKP:GetTable(CommDKP_MinBids, true)[itemID] = newItem;
@@ -17,6 +17,8 @@ local function SetItemPrice(cost, loot)
 		CommDKP:GetTable(CommDKP_MinBids, true)[itemID].lastbid = CommDKP_round(cost, core.DB.modes.rounding);
 		CommDKP:GetTable(CommDKP_MinBids, true)[itemID].link = itemLink;
 		CommDKP:GetTable(CommDKP_MinBids, true)[itemID].icon = itemIcon;
+		CommDKP:GetTable(CommDKP_MinBids, true)[itemID].item = itemName;
+		CommDKP:GetTable(CommDKP_MinBids, true)[itemID].itemID = itemID;
 		if cost == 0 then
 			CommDKP:GetTable(CommDKP_MinBids, true)[itemID].disenchants = 0;
 		end
@@ -180,7 +182,7 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 			end
 
 			--set table here
-			local minBidEntry = {item=itemName, minbid=minBidAmount, link=itemLink, icon=itemIcon, lastbid=lastBidAmount};
+			local minBidEntry = {item=itemName, minbid=minBidAmount, link=itemLink, icon=itemIcon, lastbid=lastBidAmount, itemID=itemID};
 
 			if not search then
 				--not found
@@ -203,6 +205,8 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 				CommDKP:GetTable(CommDKP_MinBids, true)[itemID].lastbid = minBidEntry.lastbid;
 				CommDKP:GetTable(CommDKP_MinBids, true)[itemID].link = minBidEntry.link;
 				CommDKP:GetTable(CommDKP_MinBids, true)[itemID].icon = minBidEntry.icon;
+				CommDKP:GetTable(CommDKP_MinBids, true)[itemID].item = minBidEntry.itemName;
+				CommDKP:GetTable(CommDKP_MinBids, true)[itemID].itemID = minBidEntry.itemID;
 
 				CommDKP.Sync:SendData("CommDKPSetPrice", CommDKP:GetTable(CommDKP_MinBids, true)[itemID]);
 			end

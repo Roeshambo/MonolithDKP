@@ -3,6 +3,82 @@ local _G = _G;
 local CommDKP = core.CommDKP;
 local L = core.L;
 
+function IsItemLink(link)
+    local id = link:match("|Hitem:(%d+):")
+    if id then
+        local _, link = GetItemInfo(id)
+        if link then
+            return true;
+        end
+    end
+    return false;
+end
+
+function CommDKP:VerifyMinBidItemTable(dbTable)
+    local newTable = {};
+
+    if dbTable.dbinfo.name ~= "CommDKP_MinBids" then
+        return dbTable;
+    end
+    CommDKP:Print("Beginning MinBid Table Verification...");
+    for realmName, realm in pairs(dbTable) do
+        if realmName == "__default" or realmName == "dbinfo" then
+            -- System Objects
+            newTable[realmName] = realm;
+        else
+            -- Realm Level
+            newTable[realmName] = {};
+            for guildName, guild in pairs(realm) do
+                --Guild Level
+                newTable[realmName][guildName] = {}
+                
+                for teamId, oldTeamItems in pairs(guild) do
+                    -- Team Level
+                    newTable[realmName][guildName][teamId] = {}
+                    local newTeamItems = newTable[realmName][guildName][teamId];
+                    
+                    CommDKP:Print("Updating "..guildName.." Team "..teamId.." on "..realmName);
+                    
+                    for oldKey, oldItem in pairs(oldTeamItems) do
+                        -- Item Level -- Work Happens Here
+                        local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(oldKey);
+
+                        -- Is item Blank?
+                        if oldItem.icon == nil and oldItem.item == nil and oldItem.minbid == nil and oldItem.link == nil and oldKey ~= nil and IsItemLink(itemLink) then
+                            -- If Blank, create new
+                            oldItem.item = itemName;
+                            oldItem.link = itemLink;
+                            oldItem.icon = itemTexture;
+                            oldItem.disenchants = 0;
+                            oldItem.lastbid = 0;
+                            oldItem.minbid = 0;
+                            oldItem.itemID = oldKey;
+                        end
+
+                        -- Verify that Link is a Link
+                        if oldItem.link ~= nil and IsItemLink(oldItem.link) then
+                            -- Verify itemName is present
+                            if oldItem.item == nil then
+                                oldItem.item = itemName;
+                            end
+
+                            --Verify itemId is present
+                            if oldItem.itemID == nil then
+                                oldItem.itemID = oldKey;
+                            end
+
+                            --Save Item to New Table
+                            newTeamItems[oldKey] = oldItem;
+                        end
+                    end
+                end
+            end
+        end
+    end
+    CommDKP:Print("Finished MinBid Table Verification!");
+    return newTable
+end
+
 function CommDKP:RefactorMinBidItemTable(dbTable)
     local newTable = {};
 
