@@ -814,7 +814,7 @@ if GetLocale() == "deDE" then
     MIGRATIONCOMPLETED    = "Migration abgeschlossen.|n|nBitte deaktivieren Sie MonolithDKP und laden Sie das UI neu. (/reload)",
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.0",
+    CHANGELOG1 = "CommunityDKP - v3.2.2",
     CHANGELOG2 = " - Upgraded and Refactored the MinBids Table",
     CHANGELOG3 = " - Fixed a Minbid Save Issue on Disenchant that was removing the Minbid price",
     CHANGELOG4 = " - Implemented PriceList API Support (contribution by styxhope)",

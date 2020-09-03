@@ -11,10 +11,7 @@ function IsItemLink(link)
 
     local id = link:match("|Hitem:(%d+):")
     if id then
-        local _, link = GetItemInfo(id)
-        if link then
-            return true;
-        end
+        return true;
     end
     return false;
 end
@@ -25,6 +22,7 @@ function CommDKP:VerifyMinBidItemTable(dbTable)
     if dbTable.dbinfo.name ~= "CommDKP_MinBids" then
         return dbTable;
     end
+
     CommDKP:Print("Beginning MinBid Table Verification...");
     for realmName, realm in pairs(dbTable) do
         if realmName == "__default" or realmName == "dbinfo" then
@@ -43,7 +41,11 @@ function CommDKP:VerifyMinBidItemTable(dbTable)
                     local newTeamItems = newTable[realmName][guildName][teamId];
                     
                     CommDKP:Print("Updating "..guildName.." Team "..teamId.." on "..realmName);
-                    
+                    local numItems = 0;
+                    for k, v in pairs(oldTeamItems) do
+                        numItems = numItems + 1;
+                    end
+                
                     for oldKey, oldItem in pairs(oldTeamItems) do
                         -- Item Level -- Work Happens Here
                         local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType, itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice = GetItemInfo(oldKey);
@@ -69,13 +71,21 @@ function CommDKP:VerifyMinBidItemTable(dbTable)
 
                             --Verify itemId is present
                             if oldItem.itemID == nil then
-                                oldItem.itemID = oldKey;
+                                local id = oldItem.link:match("|Hitem:(%d+):")
+                                if id then
+                                    oldItem.itemID = id;
+                                end
                             end
 
                             --Save Item to New Table
-                            newTeamItems[oldKey] = oldItem;
+                            newTeamItems[oldItem.itemID] = oldItem;
                         end
                     end
+                    numItems = 0;
+                    for k, v in pairs(newTeamItems) do
+                        numItems = numItems + 1;
+                    end
+
                 end
             end
         end
@@ -108,7 +118,6 @@ function CommDKP:RefactorMinBidItemTable(dbTable)
                     local newTeamItems = newTable[realmName][guildName][teamId];
                     
                     CommDKP:Print("Updating "..guildName.." Team "..teamId.." on "..realmName);
-                    
                     for i=1, #oldTeamItems do
                         -- Item Level -- Work Happens Here
                         local oldItem = oldTeamItems[i];
@@ -157,7 +166,7 @@ function CommDKP:RefactorMinBidItemTable(dbTable)
                                 if oldItem["minbid"] ~= nil then
                                     newTeamItems[itemID]["minbid"] = oldItem.minbid;
                                 end
-
+                                
                             else
                                 -- Item Exists
 
@@ -232,6 +241,10 @@ function CommDKP:RefactorMinBidItemTable(dbTable)
                                 end
                             end
                         end
+                    end
+                    local numItems = 0;
+                    for k, v in pairs(newTeamItems) do
+                        numItems = numItems + 1;
                     end
                 end
             end

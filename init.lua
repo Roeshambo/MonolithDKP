@@ -728,6 +728,8 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 				return true;
 			elseif a["item"] == nil and b["item"] ~= nil then
 				return false;
+			elseif a["item"] == nil and b["item"] == nil then
+				return false;
 			end
 
 			return a["item"] < b["item"]
@@ -848,13 +850,13 @@ function CommDKP:UpgradeDBSchema(newDbTable, oldDbTable, hasTeams, tableName)
 		end
 	end
 
-	if newDbTable.dbinfo.build < 30200 and newDbTable.dbinfo.priorbuild ~= core.BuildNumber then
+	if newDbTable.dbinfo.build < 30200 and newDbTable.dbinfo.priorbuild ~= core.BuildNumber and newDbTable.dbinfo.priorbuild ~= 0 then
 		if newDbTable.dbinfo.name == "CommDKP_MinBids" then
 			newDbTable = CommDKP:RefactorMinBidItemTable(newDbTable);
 		end
 	end
 
-	if newDbTable.dbinfo.build < 30201 and newDbTable.dbinfo.priorbuild ~= core.BuildNumber then
+	if newDbTable.dbinfo.build < 30202 and newDbTable.dbinfo.priorbuild ~= core.BuildNumber and newDbTable.dbinfo.priorbuild ~= 0 then
 		if newDbTable.dbinfo.name == "CommDKP_MinBids" then
 			newDbTable = CommDKP:VerifyMinBidItemTable(newDbTable);
 		end

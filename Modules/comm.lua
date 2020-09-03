@@ -453,7 +453,21 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                     CommDKP:SetTable(CommDKP_DKPHistory, true, _objReceived.Data.DKP, _objReceived.CurrentTeam);
                     CommDKP:SetTable(CommDKP_Loot, true, _objReceived.Data.Loot, _objReceived.CurrentTeam);
                     CommDKP:SetTable(CommDKP_Archive, true, _objReceived.Data.Archive, _objReceived.CurrentTeam);
-                    CommDKP:SetTable(CommDKP_MinBids, true, CommDKP:FormatPriceTable(_objReceived.Data.MinBids, true), _objReceived.CurrentTeam);
+                    
+                    local minBidTable = CommDKP:FormatPriceTable(_objReceived.Data.MinBids, true);
+                    local newMinBidTable = {}
+                    for i=1, #minBidTable do
+                      local id = minBidTable[i].itemID;
+                      if id == nil and minBidTable[i].link ~= nil then
+                        id = minBidTable[i].link:match("|Hitem:(%d+):")
+                      end
+                      if id ~= nil then
+                        newMinBidTable[id] = minBidTable[i];
+                      end
+
+                    end
+
+                    CommDKP:SetTable(CommDKP_MinBids, true, newMinBidTable, _objReceived.CurrentTeam);
                     core.DB["teams"] = _objReceived.Teams;
 
                     CommDKP:SetCurrentTeam(_objReceived.CurrentTeam)
@@ -472,7 +486,22 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 CommDKP:SetTable(CommDKP_DKPHistory, true, _objReceived.Data.DKP, _objReceived.CurrentTeam);
                 CommDKP:SetTable(CommDKP_Loot, true, _objReceived.Data.Loot, _objReceived.CurrentTeam);
                 CommDKP:SetTable(CommDKP_Archive, true, _objReceived.Data.Archive, _objReceived.CurrentTeam);
-                CommDKP:SetTable(CommDKP_MinBids, true, CommDKP:FormatPriceTable(_objReceived.Data.MinBids, true), _objReceived.CurrentTeam);
+
+                local minBidTable = CommDKP:FormatPriceTable(_objReceived.Data.MinBids, true);
+                local newMinBidTable = {}
+                for i=1, #minBidTable do
+                  local id = minBidTable[i].itemID;
+                  if id == nil and minBidTable[i].link ~= nil then
+                    id = minBidTable[i].link:match("|Hitem:(%d+):")
+                  end
+                  if id ~= nil then
+                    newMinBidTable[id] = minBidTable[i];
+                  end
+                  
+                end
+
+                CommDKP:SetTable(CommDKP_MinBids, true, newMinBidTable, _objReceived.CurrentTeam);
+                
                 core.DB["teams"] = _objReceived.Teams;
                 CommDKP:SetCurrentTeam(_objReceived.CurrentTeam)
                 -- reset seeds since this is a fullbroadcast   
