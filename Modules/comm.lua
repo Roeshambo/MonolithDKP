@@ -79,6 +79,15 @@ function CommDKP.Sync:OnEnable()
   CommDKP.Sync:RegisterComm("CDKProfileSend", CommDKP.Sync:OnCommReceived()) -- Broadcast Player Profile for Update or Create
 end
 
+function GetNameFromLink(link)
+  if link == nil then
+    return "Item Name Not Found - Bad Link";
+  end
+
+  local _, _, Color, Ltype, itemID, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Name = string.find(link,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?");
+  return Name;
+end
+
 function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 
   --local msgType = prefix or "nil";
@@ -431,7 +440,11 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 
               if _objReceived.Data.MinBids ~= nil then
                 table.sort(_objReceived.Data.MinBids, function(a, b)
-                  return a["item"] < b["item"]
+                  --Ensure that if there is a data issue, we detect and move on during syncs.
+                  local aItem = a["item"] or GetNameFromLink(a["link"]);
+                  local bItem = b["item"] or GetNameFromLink(b["link"]);
+
+                  return aItem < bItem
                 end)
               end
 
@@ -501,7 +514,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
                 end
 
                 CommDKP:SetTable(CommDKP_MinBids, true, newMinBidTable, _objReceived.CurrentTeam);
-                
+
                 core.DB["teams"] = _objReceived.Teams;
                 CommDKP:SetCurrentTeam(_objReceived.CurrentTeam)
                 -- reset seeds since this is a fullbroadcast   

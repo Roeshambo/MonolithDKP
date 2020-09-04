@@ -81,6 +81,11 @@ CommDKP.Commands = {
 	  local itemName,itemLink,_,_,_,_,_,_,_,_ = GetItemInfo(item)
 	  local cost = 0;
 	  local _, _, Color, Ltype, itemID, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Name = string.find(itemLink,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
+	  
+	  if itemName == nil and Name ~= nil then
+		itemName = Name;
+      end
+
 	  local search = CommDKP:GetTable(CommDKP_MinBids, true)[itemID];
 
 	  if not search then
