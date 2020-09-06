@@ -874,7 +874,7 @@ if GetLocale() == "frFR" then
 
     --TODO TRANSLATE:
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.2",
+    CHANGELOG1 = "CommunityDKP - v3.2.3",
     CHANGELOG2 = " - Upgraded and Refactored the MinBids Table",
     CHANGELOG3 = " - Fixed a Minbid Save Issue on Disenchant that was removing the Minbid price",
     CHANGELOG4 = " - Implemented PriceList API Support (contribution by styxhope)",

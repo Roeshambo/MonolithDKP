@@ -415,43 +415,47 @@ function CommDKP:GetMaxBid(itemLink)
 end
 
 function CommDKP:ToggleBidWindow(loot, lootIcon, itemName)
-  local minBid, maxBid;
-  local _, _, Color, Ltype, itemID, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Name = string.find(loot,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
+  local minBid, maxBid, itemID;
 
   mode = core.DB.modes.mode;
 
   if core.IsOfficer then
+    if core.BiddingWindow == nil then
+      print("Bidding Window is Nil")
+    end
+
     core.BiddingWindow = core.BiddingWindow or CommDKP:CreateBidWindow();
 
-     if core.DB.bidpos then
+    if core.DB.bidpos then
        core.BiddingWindow:ClearAllPoints()
       local a = core.DB.bidpos
       core.BiddingWindow:SetPoint(a.point, a.relativeTo, a.relativePoint, a.x, a.y)
     end
 
     core.BiddingWindow:SetShown(true)
-     core.BiddingWindow:SetFrameLevel(10)
+    core.BiddingWindow:SetFrameLevel(10)
 
-     if core.DB.modes.mode == "Zero Sum" then
-       core.ZeroSumBank = core.ZeroSumBank or CommDKP:ZeroSumBank_Create()
-       core.ZeroSumBank:SetShown(true)
-       core.ZeroSumBank:SetFrameLevel(10)
+    if core.DB.modes.mode == "Zero Sum" then
+      core.ZeroSumBank = core.ZeroSumBank or CommDKP:ZeroSumBank_Create()
+      core.ZeroSumBank:SetShown(true)
+      core.ZeroSumBank:SetFrameLevel(10)
 
-       CommDKP:ZeroSumBank_Update();
+      CommDKP:ZeroSumBank_Update();
     end
 
     if core.ModesWindow then core.ModesWindow:SetFrameLevel(6) end
     if CommDKP.UIConfig then CommDKP.UIConfig:SetFrameLevel(2) end
 
-     if loot then
+    if loot then
+      _, _, _, _, itemID, _, _, _, _, _, _, _, _, _ = string.find(loot,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
        Bids_Submitted = {}
-       if core.DB.modes.BroadcastBids then
+      if core.DB.modes.BroadcastBids then
         CommDKP.Sync:SendData("CommDKPBidShare", Bids_Submitted)
       end
 
       CurrItemForBid = loot;
-       CurrItemIcon = lootIcon
-       CurZone = GetRealZoneText()
+      CurrItemIcon = lootIcon
+      CurZone = GetRealZoneText()
 
       
       if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
@@ -546,14 +550,14 @@ function CommDKP:ToggleBidWindow(loot, lootIcon, itemName)
         end
       end
 
-       core.BiddingWindow.cost:SetText(CommDKP_round(minBid, core.DB.modes.rounding))
-       core.BiddingWindow.itemName:SetText(itemName)
-       core.BiddingWindow.bidTimer:SetText(core.DB.DKPBonus.BidTimer)
-       core.BiddingWindow.boss:SetText(core.LastKilledBoss)
-       UpdateBidWindow()
-       core.BiddingWindow.ItemTooltipButton:SetSize(core.BiddingWindow.itemIcon:GetWidth() + core.BiddingWindow.item:GetStringWidth() + 10, core.BiddingWindow.item:GetHeight());
-       core.BiddingWindow.ItemTooltipButton:SetScript("OnEnter", function(self)
-         ActionButton_ShowOverlayGlow(core.BiddingWindow.ItemIconButton)
+      core.BiddingWindow.cost:SetText(CommDKP_round(minBid, core.DB.modes.rounding))
+      core.BiddingWindow.itemName:SetText(itemName)
+      core.BiddingWindow.bidTimer:SetText(core.DB.DKPBonus.BidTimer)
+      core.BiddingWindow.boss:SetText(core.LastKilledBoss)
+      UpdateBidWindow()
+      core.BiddingWindow.ItemTooltipButton:SetSize(core.BiddingWindow.itemIcon:GetWidth() + core.BiddingWindow.item:GetStringWidth() + 10, core.BiddingWindow.item:GetHeight());
+      core.BiddingWindow.ItemTooltipButton:SetScript("OnEnter", function(self)
+        ActionButton_ShowOverlayGlow(core.BiddingWindow.ItemIconButton)
         GameTooltip:SetOwner(self:GetParent(), "ANCHOR_BOTTOMRIGHT", 0, 500);
         GameTooltip:SetHyperlink(CurrItemForBid)
       end)
@@ -561,11 +565,11 @@ function CommDKP:ToggleBidWindow(loot, lootIcon, itemName)
         ActionButton_HideOverlayGlow(core.BiddingWindow.ItemIconButton)
         GameTooltip:Hide()
       end)
-     else
-       UpdateBidWindow()
-     end
+    else
+      UpdateBidWindow()
+    end
 
-     CommDKP:BidScrollFrame_Update()
+    CommDKP:BidScrollFrame_Update()
   else
     CommDKP:Print(L["NOPERMISSION"])
   end
@@ -698,9 +702,11 @@ local function ToggleTimerBtn(self)
     timerToggle = 1;
     self:SetText(L["ENDBIDDING"])
     StartBidding()
+    core.BidAuctioneer = true;
   else
     timerToggle = 0;
     core.BidInProgress = false;
+    core.BidAuctioneer = false;
     self:SetText(L["STARTBIDDING"])
     SendChatMessage(L["BIDDINGCLOSED"], "RAID_WARNING")
     events:UnregisterEvent("CHAT_MSG_SYSTEM")
@@ -1106,6 +1112,7 @@ local function SortBidTable()             -- sorts the Loot History Table by dat
 end
 
 function CommDKP:BidScrollFrame_Update()
+  print("Updating bidscroll");
   local numOptions = #Bids_Submitted;
   local index, row
     local offset = FauxScrollFrame_GetOffset(core.BiddingWindow.bidTable) or 0

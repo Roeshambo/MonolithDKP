@@ -100,9 +100,9 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 }
 
 core.CommDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v3.2.2";
-core.BuildNumber = 30202;
-core.ReleaseNumber = 59
+core.MonVersion = "v3.2.3";
+core.BuildNumber = 30203;
+core.ReleaseNumber = 60
 core.defaultTable = "__default";
 core.SemVer = core.MonVersion.."-r"..tostring(core.ReleaseNumber);
 core.UpgradeSchema = false;
@@ -114,6 +114,7 @@ core.ShowState = false;
 core.StandbyActive = false;
 core.currentSort = "dkp"		-- stores current sort selection
 core.BidInProgress = false;   -- flagged true if bidding in progress. else; false.
+core.BidAuctioneer = false;
 core.RaidInProgress = false;
 core.RaidInPause = false;
 core.NumLootItems = 0;        -- updates on LOOT_OPENED event

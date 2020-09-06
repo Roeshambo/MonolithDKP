@@ -44,8 +44,12 @@ CommDKP.Commands = {
       CommDKP:StatusVerify_Update()
 
       if core.IsOfficer then  
-        if ... == nil then
-          CommDKP.ToggleBidWindow()
+		if ... == nil then
+			if core.BidAuctioneer then
+				CommDKP:ToggleBidWindow()
+			else
+				CommDKP:BidInterface_Toggle()
+			end
         else
           local itemName,_,_,_,_,_,_,_,_,itemIcon = GetItemInfo(item)
           CommDKP:Print("Opening Bid Window for: ".. item)
