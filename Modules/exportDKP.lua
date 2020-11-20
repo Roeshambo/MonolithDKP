@@ -5,7 +5,7 @@ local L = core.L;
 
 
 
-local function GenerateDKPTables(table, format)
+local function GenerateDKPTables(table, format, limit)
 	local ExportString;
 	local ExportDefinition;
 
@@ -29,8 +29,8 @@ local function GenerateDKPTables(table, format)
 		elseif table == MonDKP_DKPHistory then
 			local numrows;
 
-			if #MonDKP_DKPHistory > 200 then
-				numrows = 200;
+			if #MonDKP_DKPHistory > limit then
+				numrows = limit;
 			else
 				numrows = #MonDKP_DKPHistory
 			end
@@ -45,8 +45,8 @@ local function GenerateDKPTables(table, format)
 		elseif table == MonDKP_Loot then
 			local numrows;
 
-			if #MonDKP_Loot > 200 then
-				numrows = 200;
+			if #MonDKP_Loot > limit then
+				numrows = limit;
 			else
 				numrows = #MonDKP_Loot
 			end
@@ -72,8 +72,8 @@ local function GenerateDKPTables(table, format)
 		elseif table == MonDKP_DKPHistory then
 			local numrows;
 
-			if #MonDKP_DKPHistory > 200 then
-				numrows = 200;
+			if #MonDKP_DKPHistory > limit then
+				numrows = limit;
 			else
 				numrows = #MonDKP_DKPHistory
 			end
@@ -92,8 +92,8 @@ local function GenerateDKPTables(table, format)
 		elseif table == MonDKP_Loot then
 			local numrows;
 
-			if #MonDKP_Loot > 200 then
-				numrows = 200;
+			if #MonDKP_Loot > limit then
+				numrows = limit;
 			else
 				numrows = #MonDKP_Loot
 			end
@@ -122,8 +122,8 @@ local function GenerateDKPTables(table, format)
 		elseif table == MonDKP_DKPHistory then
 			local numrows;
 
-			if #MonDKP_DKPHistory > 200 then
-				numrows = 200;
+			if #MonDKP_DKPHistory > limit then
+				numrows = limit;
 			else
 				numrows = #MonDKP_DKPHistory
 			end
@@ -150,8 +150,8 @@ local function GenerateDKPTables(table, format)
 		elseif table == MonDKP_Loot then
 			local numrows;
 
-			if #MonDKP_Loot > 200 then
-				numrows = 200;
+			if #MonDKP_Loot > limit then
+				numrows = limit;
 			else
 				numrows = #MonDKP_Loot
 			end
@@ -329,11 +329,51 @@ function MonDKPExportBox_Show(text)
 			preferredIndex = 3,
 		}
 
+        -- Limit Box
+        -- Format DROPDOWN box 
+        local CurLimit = 200;
+
+		f.LimitDropDown = CreateFrame("FRAME", "MonDKPLimitSelectDropDown", f, "MonolithDKPUIDropDownMenuTemplate")
+		f.LimitDropDown:SetPoint("BOTTOMLEFT", f, "BOTTOMLEFT", 150, 55)
+		UIDropDownMenu_SetWidth(f.LimitDropDown, 100)
+		UIDropDownMenu_SetText(f.LimitDropDown, "Select Limit")
+
+		-- Create and bind the initialization function to the dropdown menu
+		UIDropDownMenu_Initialize(f.LimitDropDown, function(self, level, menuList)
+		local Format = UIDropDownMenu_CreateInfo()
+			Format.func = self.SetValue
+			Format.fontObject = "MonDKPSmallCenter"
+			Format.text, Format.arg1, Format.checked, Format.isNotRadio = "200", 200, 200 == CurLimit, false
+			UIDropDownMenu_AddButton(Format)
+			Format.text, Format.arg1, Format.checked, Format.isNotRadio = "500", 500, 500 == CurLimit, false
+			UIDropDownMenu_AddButton(Format)
+			Format.text, Format.arg1, Format.checked, Format.isNotRadio = "unlimited (basically)", 2147483646, 2147483646 == CurLimit, false
+			UIDropDownMenu_AddButton(Format)
+		end)
+
+		-- Dropdown Menu Function
+		function f.LimitDropDown:SetValue(arg1)
+			CurLimit = arg1;
+			UIDropDownMenu_SetText(f.LimitDropDown, CurLimit)
+			CloseDropDownMenus()
+		end
+
+		f.LimitDropDown:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+			GameTooltip:SetText("Export Limit", 0.25, 0.75, 0.90, 1, true);
+			GameTooltip:AddLine("Select the amount of data you wish to export.", 1.0, 1.0, 1.0, true);
+			GameTooltip:Show();
+		end)
+		f.LimitDropDown:SetScript("OnLeave", function(self)
+			GameTooltip:Hide()
+		end)
+		-- /limit Box
+		
         f.GenerateDKPButton = MonDKP:CreateButton("BOTTOMRIGHT", f, "BOTTOMRIGHT", -355, 20, "1) "..L["GENDKPTABLE"]);
 		f.GenerateDKPButton:SetSize(150, 24)
 		f.GenerateDKPButton:SetScript("OnClick", function()
 			if CurFormat then
-				GenerateDKPTables(MonDKP_DKPTable, CurFormat)
+				GenerateDKPTables(MonDKP_DKPTable, CurFormat, CurLimit)
 			else
 				StaticPopup_Show ("NO_FORMAT")
 			end
@@ -343,7 +383,7 @@ function MonDKPExportBox_Show(text)
 		f.GenerateDKPHistoryButton:SetSize(150, 24)
 		f.GenerateDKPHistoryButton:SetScript("OnClick", function()
 			if CurFormat then
-				GenerateDKPTables(MonDKP_DKPHistory, CurFormat)
+				GenerateDKPTables(MonDKP_DKPHistory, CurFormat, CurLimit)
 			else
 				StaticPopup_Show ("NO_FORMAT")
 			end
@@ -353,7 +393,7 @@ function MonDKPExportBox_Show(text)
 		f.GenerateDKPLootButton:SetSize(150, 24)
 		f.GenerateDKPLootButton:SetScript("OnClick", function()
 			if CurFormat then
-				GenerateDKPTables(MonDKP_Loot, CurFormat)
+				GenerateDKPTables(MonDKP_Loot, CurFormat, CurLimit)
 			else
 				StaticPopup_Show ("NO_FORMAT")
 			end
