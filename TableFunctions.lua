@@ -108,9 +108,9 @@ local function DisplayUserHistory(self, player)
 	local PlayerTable = {}
 	local c, PlayerSearch, PlayerSearch2, LifetimeSearch, RowCount, curDate;
 
-	PlayerSearch = CommDKP:TableStrFind(CommDKP:GetTable(CommDKP_DKPHistory, true), player, "players")
-	PlayerSearch2 = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Loot, true), player, "player")
-	LifetimeSearch = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), player, "player")
+	PlayerSearch = CommDKP:TableStrFind(CommDKP:GetTable(CommDKP_DKPHistory, true), player, "players", 20)
+	PlayerSearch2 = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Loot, true), player, "player", 20)
+	LifetimeSearch = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), player, "player", 20)
 
 	c = CommDKP:GetCColors(CommDKP:GetTable(CommDKP_DKPTable, true)[LifetimeSearch[1][1]].class)
 
@@ -120,7 +120,14 @@ local function DisplayUserHistory(self, player)
 	if PlayerSearch then
 		for i=1, #PlayerSearch do
 			if not CommDKP:GetTable(CommDKP_DKPHistory, true)[PlayerSearch[i][1]].deletes and not CommDKP:GetTable(CommDKP_DKPHistory, true)[PlayerSearch[i][1]].deletedby and not CommDKP:GetTable(CommDKP_DKPHistory, true)[PlayerSearch[i][1]].hidden then
-				tinsert(PlayerTable, {reason = CommDKP:GetTable(CommDKP_DKPHistory, true)[PlayerSearch[i][1]].reason, date = CommDKP:GetTable(CommDKP_DKPHistory, true)[PlayerSearch[i][1]].date, dkp = CommDKP:GetTable(CommDKP_DKPHistory, true)[PlayerSearch[i][1]].dkp})
+				tinsert(
+					PlayerTable, {
+						reason = CommDKP:GetTable(CommDKP_DKPHistory, true)[PlayerSearch[i][1]].reason, 
+						date = CommDKP:GetTable(CommDKP_DKPHistory, true)[PlayerSearch[i][1]].date, 
+						dkp = CommDKP:GetTable(CommDKP_DKPHistory, true)[PlayerSearch[i][1]].dkp, 
+						players = CommDKP:GetTable(CommDKP_DKPHistory, true)[PlayerSearch[i][1]].players
+					}
+				)
 			end
 		end
 	end
@@ -128,7 +135,13 @@ local function DisplayUserHistory(self, player)
 	if PlayerSearch2 then
 		for i=1, #PlayerSearch2 do
 			if not CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].deletes and not CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].deletedby and not CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].hidden then
-				tinsert(PlayerTable, {loot = CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].loot, date = CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].date, zone = CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].zone, boss = CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].boss, cost = CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].cost})
+				tinsert(PlayerTable, {
+					loot = CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].loot, 
+					date = CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].date, 
+					zone = CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].zone, 
+					boss = CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].boss, 
+					cost = CommDKP:GetTable(CommDKP_Loot, true)[PlayerSearch2[i][1]].cost
+				})
 			end
 		end
 	end
@@ -152,7 +165,9 @@ local function DisplayUserHistory(self, player)
 			if PlayerTable[i].dkp then
 				if strfind(PlayerTable[i].dkp, "%%") then
 					local decay = {strsplit(",", PlayerTable[i].dkp)}
-					GameTooltip:AddDoubleLine("  "..PlayerTable[i].reason, "|cffff0000"..decay[#decay].." DKP|r", 1.0, 0, 0);
+					-- get substring till player name and split to get correct player index for decay list
+					local playerIndex = {strsplit(",", string.sub(PlayerTable[i].players, 1, (strfind(PlayerTable[i].players, player..","))))};
+					GameTooltip:AddDoubleLine("  "..PlayerTable[i].reason, "|cffff0000"..decay[#playerIndex].." DKP|r", 1.0, 0, 0);
 				elseif tonumber(PlayerTable[i].dkp) < 0 then
 					GameTooltip:AddDoubleLine("  "..PlayerTable[i].reason, "|cffff0000"..CommDKP_round(PlayerTable[i].dkp, core.DB.modes.rounding).." DKP|r", 1.0, 0, 0);
 				else
