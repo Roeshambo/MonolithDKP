@@ -891,7 +891,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
             elseif prefix == "CDKPWhitelist" and CommDKP:GetGuildRankIndex(UnitName("player")) > 1 then -- only applies if not GM
               CommDKP:SetTable(CommDKP_Whitelist, false, _objReceived.Data, _objReceived.CurrentTeam);
             elseif prefix == "CommDKPStand" then
-              CommDKP:GetTable(CommDKP_Standby, true, _objReceived.Data, _objReceived.CurrentTeam);
+              CommDKP:SetTable(CommDKP_Standby, true, _objReceived.Data, _objReceived.CurrentTeam); -- issues/153
             elseif prefix == "CommDKPSetPrice" then
               _objSetPrice = _objReceived.Data;
               local _, _, Color, Ltype, itemID, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Name = string.find(_objSetPrice.link,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
