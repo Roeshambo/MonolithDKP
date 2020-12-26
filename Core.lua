@@ -804,9 +804,10 @@ end
 -- if the result is 1 level deeper, it would be CommDKP:GetTable(CommDKP_DKPTable, true)[search[1][1]][search[1][2]][search[1][3]].  CommDKP:GetTable(CommDKP_DKPTable, true)[search[2][1]][search[2][2]][search[2][3]] would locate the second return, if there is one.
 -- use to search for players in SavedVariables. Only two possible returns is the table or false.
 -------------------------------------
-function CommDKP:Table_Search(tar, val, field)
+function CommDKP:Table_Search(tar, val, field, limit)
 	local value = string.upper(tostring(val));
 	local location = {}
+	local tableLimit = limit or -1;
 	for k,v in pairs(tar) do
 		if(type(v) == "table") then
 			local temp1 = k
@@ -821,9 +822,15 @@ function CommDKP:Table_Search(tar, val, field)
 									if field then
 										if k == field then
 											tinsert(location, {temp1, temp2, temp3, k} )
+											if tableLimit ~= -1 and #location >= tableLimit then
+												return location;
+											end;
 										end
 									else
 										tinsert(location, {temp1, temp2, temp3, k} )
+										if tableLimit ~= -1 and #location >= tableLimit then
+											return location;
+										end;
 									end
 								end;
 							end
@@ -832,9 +839,15 @@ function CommDKP:Table_Search(tar, val, field)
 							if field then
 								if k == field then
 									tinsert(location, {temp1, temp2, k} )
+									if tableLimit ~= -1 and #location >= tableLimit then
+										return location;
+									end;
 								end
 							else
 								tinsert(location, {temp1, temp2, k} )
+								if tableLimit ~= -1 and #location >= tableLimit then
+									return location;
+								end;
 							end
 						end;
 					end
@@ -843,9 +856,15 @@ function CommDKP:Table_Search(tar, val, field)
 					if field then
 						if k == field then
 							tinsert(location, {temp1, k} )
+							if tableLimit ~= -1 and #location >= tableLimit then
+								return location;
+							end;
 						end
 					else
 						tinsert(location, {temp1, k} )
+						if tableLimit ~= -1 and #location >= tableLimit then
+							return location;
+						end;
 					end
 				end;
 			end
@@ -854,9 +873,15 @@ function CommDKP:Table_Search(tar, val, field)
 			if field then
 				if k == field then
 					tinsert(location, k)
+					if tableLimit ~= -1 and #location >= tableLimit then
+						return location;
+					end;
 				end
 			else
 				tinsert(location, k)
+				if tableLimit ~= -1 and #location >= tableLimit then
+					return location;
+				end;
 			end
 		end;
 	end
@@ -867,9 +892,10 @@ function CommDKP:Table_Search(tar, val, field)
 	end
 end
 
-function CommDKP:TableStrFind(tar, val, field)              -- same function as above, but searches values that contain the searched string rather than exact string matches
+function CommDKP:TableStrFind(tar, val, field, limit)              -- same function as above, but searches values that contain the searched string rather than exact string matches
 	local value = string.upper(tostring(val));        -- ex. CommDKP:TableStrFind(CommDKP:GetTable(CommDKP_DKPHistory, true), "Vapok") will return the path to any table element that contains "Vapok"
 	local location = {}
+	local tableLimit = limit or -1 -- so some functions dont operate on huge tables when they need like last 20 records...
 	for k,v in pairs(tar) do
 		if(type(v) == "table") then
 			local temp1 = k
@@ -884,9 +910,15 @@ function CommDKP:TableStrFind(tar, val, field)              -- same function as 
 									if field then
 										if k == field then
 											tinsert(location, {temp1, temp2, temp3, k} )
+											if tableLimit ~= -1 and #location >= tableLimit then
+												return location;
+											end;
 										end
 									else
 										tinsert(location, {temp1, temp2, temp3, k} )
+										if tableLimit ~= -1 and #location >= tableLimit then
+											return location;
+										end;
 									end
 								end;
 							end
@@ -895,9 +927,15 @@ function CommDKP:TableStrFind(tar, val, field)              -- same function as 
 							if field then
 								if k == field then
 									tinsert(location, {temp1, temp2, k} )
+									if tableLimit ~= -1 and #location >= tableLimit then
+										return location;
+									end;
 								end
 							else
 								tinsert(location, {temp1, temp2, k} )
+								if tableLimit ~= -1 and #location >= tableLimit then
+									return location;
+								end;
 							end
 						end;
 					end
@@ -906,9 +944,15 @@ function CommDKP:TableStrFind(tar, val, field)              -- same function as 
 					if field then
 						if k == field then
 							tinsert(location, {temp1, k} )
+							if tableLimit ~= -1 and #location >= tableLimit then
+								return location;
+							end;
 						end
 					else
 						tinsert(location, {temp1, k} )
+						if tableLimit ~= -1 and #location >= tableLimit then
+							return location;
+						end;
 					end
 				end;
 			end
@@ -917,9 +961,15 @@ function CommDKP:TableStrFind(tar, val, field)              -- same function as 
 			if field then
 				if k == field then
 					tinsert(location, k)
+					if tableLimit ~= -1 and #location >= tableLimit then
+						return location;
+					end;
 				end
 			else
 				tinsert(location, k)
+				if tableLimit ~= -1 and #location >= tableLimit then
+					return location;
+				end;
 			end
 		end;
 	end

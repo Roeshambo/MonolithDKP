@@ -446,7 +446,7 @@ function CommDKP:DKPHistory_Update(reset)
 					CommDKP.ConfigTab6.history[i].d:SetText("|cffff0000"..decay[#playerIndex].." "..L["DKP"].."|r - |cff616ccf"..reason.."|r |cff555555("..timeofday..")|r by |c"..c.hex..curOfficer.."|r");
 				elseif strfind(reason, L["WEEKLYDECAY"]) or strfind(reason, "Migration Correction") then
 					local decay = {strsplit(",", dkp)}
-					CommDKP.ConfigTab6.history[i].d:SetText("|cffff0000"..decay[#decay].." "..L["DKP"].."|r - |cff616ccf"..reason.."|r |cff555555("..timeofday..")|r by |c"..c.hex..curOfficer.."|r");..decay[#decay].." "..L["DKP"].."|r - |cff616ccf"..reason.."|r |cff555555("..timeofday..")|r by |c"..c.hex..curOfficer.."|r");
+					CommDKP.ConfigTab6.history[i].d:SetText("|cffff0000"..decay[#decay].." "..L["DKP"].."|r - |cff616ccf"..reason.."|r |cff555555("..timeofday..")|r by |c"..c.hex..curOfficer.."|r"..decay[#decay].." "..L["DKP"].."|r - |cff616ccf"..reason.."|r |cff555555("..timeofday..")|r by |c"..c.hex..curOfficer.."|r");
 				else
 					CommDKP.ConfigTab6.history[i].d:SetText("|cffff0000"..dkp.." "..L["DKP"].."|r - |cff616ccf"..reason.."|r |cff555555("..timeofday..")|r by |c"..c.hex..curOfficer.."|r");
 				end
