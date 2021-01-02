@@ -101,6 +101,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
 
     if decompressed == nil then  -- this checks if message was previously encoded and compressed, only case we allow this is CommDKPBuild
       CommDKP:Print("Unknown comm Received with prefix "..prefix.." from "..sender);
+      return;
     end
 
     -- decompresed is not null meaning data is coming from 2.3.0 or CommunityDKP
@@ -246,11 +247,6 @@ function CommDKP.Sync:SendData(prefix, data, target, targetTeam)
     Prefix = prefix
   };
 
-  if prefix == "CommDKPBuild" then
-    CommDKP.Sync:SendCommMessage(prefix, data, "GUILD");
-    return;
-  end
-
   -- everything else but CommDKPBuild is getting compressed
   _objToSend.Data = data; -- if we send table everytime we have to serialize / deserialize anyway
   
@@ -286,6 +282,9 @@ function CommDKP.Sync:SendData(prefix, data, target, targetTeam)
       return;
     elseif prefix == "CommDKPBidder" then -- bid submissions. Keep to raid.
       CommDKPBidderSend(prefix, _compressedObj, "RAID");
+      return;
+    elseif prefix == "CommDKPBuild" then
+      CommDKP.Sync:SendCommMessage(prefix, _compressedObj, "GUILD");
       return;
     end
 
@@ -669,6 +668,11 @@ end
 ----------
 -- CommDKPBuild message HANDLERS
 ----------
+
+function CommDKPBuildReceived(commObject, sender)
+  CommDKP.Sync:SendCommMessage(prefix, commObject, "GUILD");
+  return;
+end
 
 function CommDKPBuildReceived(commObject, sender)
   if sender ~= UnitName("player") then

@@ -815,15 +815,15 @@ if GetLocale() == "ruRU" then
     MIGRATIONCOMPLETED    = "Миграция завершена.|n|nПожалуйста отключите MonolithDKP и перезагрузите интерфейс.",
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.3",
-    CHANGELOG2 = " - Upgraded and Refactored the MinBids Table",
-    CHANGELOG3 = " - Fixed a Minbid Save Issue on Disenchant that was removing the Minbid price",
-    CHANGELOG4 = " - Implemented PriceList API Support (contribution by styxhope)",
-    CHANGELOG5 = "",
+    CHANGELOG1 = "CommunityDKP - v3.2.4-r61",
+    CHANGELOG2 = " - Fixed standby list sharing comm (issue 153 on github)",
+    CHANGELOG3 = " - Decay value in main table 'quick history view' is now a number rather than percentage (contribution by Peleccotur)",
+    CHANGELOG4 = " - Optimized the generation of the 'quick history view' in the main table on mouseover",
+    CHANGELOG5 = " - did some clean up of comm.lua, should be more readable now (I hope)",
     CHANGELOG6 = "",
-    CHANGELOG7 = "",
+    CHANGELOG7 = "Taidtuskecyh @ Gehennas",
     CHANGELOG8 = "CommunityDKP Discord: https://discord.gg/dXXK4vH",
     CHANGELOG9 = "",
-    CHANGELOG10 = "",
+    CHANGELOG10 = ""
           }
 end
