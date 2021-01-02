@@ -222,7 +222,14 @@ function CommDKP_BroadcastFull_Init()
 			return
 		end
 		if core.Broadcast.fullCheckbox:GetChecked() == true then
-			tempTable = { DKPTable=CommDKP:GetTable(CommDKP_DKPTable, true), DKP=CommDKP:GetTable(CommDKP_DKPHistory, true), Loot=CommDKP:GetTable(CommDKP_Loot, true), Archive=CommDKP:GetTable(CommDKP_Archive, true), MinBids=CommDKP:FormatPriceTable(), Teams=teams }
+			tempTable = { 
+				DKPTable = CommDKP:GetTable(CommDKP_DKPTable, true),
+				DKP=CommDKP:GetTable(CommDKP_DKPHistory, true), 
+				Loot=CommDKP:GetTable(CommDKP_Loot, true), 
+				Archive=CommDKP:GetTable(CommDKP_Archive, true), 
+				MinBids=CommDKP:FormatPriceTable(), 
+				Teams=teams 
+			}
 		elseif core.Broadcast.mergeCheckbox:GetChecked() == true then
 			tempTable = CommDKP_MergeTable_Create()
 		end
