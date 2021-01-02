@@ -99,8 +99,28 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
     local decoded = LibDeflate:DecodeForWoWAddonChannel(message);
     local decompressed = LibDeflate:DecompressDeflate(decoded);
 
-    if decompressed == nil then  -- this checks if message was previously encoded and compressed, only case we allow this is CommDKPBuild
-      CommDKP:Print("Unknown comm Received with prefix "..prefix.." from "..sender);
+    
+    if decompressed == nil then  -- this checks if message was previously encoded and compressed
+      -- < 3.2.4-r61 CommDKPBuild msg handler
+      if prefix == "CommDKPBuild" and sender ~= UnitName("player") then
+        local LastVerCheck = time() - core.LastVerCheck;
+
+        if LastVerCheck > 900 then             -- limits the Out of Date message from firing more than every 15 minutes 
+          if tonumber(message) > core.BuildNumber then
+            core.LastVerCheck = time();
+            CommDKP:Print(L["OUTOFDATEANNOUNCE"])
+          end
+        end
+
+        if tonumber(message) < core.BuildNumber then   -- returns build number if receiving party has a newer version
+          CommDKP.Sync:SendData("CommDKPBuild", tostring(core.BuildNumber))
+        end
+        return;
+      elseif prefix == "CommDKPBuild" and sender == UnitName("player") then
+        return;
+      else
+        CommDKP:Print("Unknown comm Received with prefix "..prefix.." from "..sender);
+      end      
       return;
     end
 
