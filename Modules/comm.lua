@@ -142,28 +142,28 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
         ------------------------------
         return;
       elseif prefix == "CommDKPSeed" then
-        CommDKPSeedReceived(_objReceived, sender);
+        CommDKP:SeedReceived(_objReceived, sender);
         return;
       elseif prefix == "CommDKPBidder" then
-        CommDKPBidderReceived(_objReceived, sender);
+        CommDKP:BidderReceived(_objReceived, sender);
         return;
       elseif prefix == "CommDKPTeams" then
-        CommDKPTeamsReceived(_objReceived, sender);
+        CommDKP:TeamsReceived(_objReceived, sender);
         return;
       elseif prefix == "CDKProfileSend" then
-        CDKProfileSendReceived(_objReceived, sender);
+        CommDKP:ProfileReceived(_objReceived, sender);
         return;
       elseif prefix == "CommDKPCurTeam" then
-        CommDKPCurTeamReceived(_objReceived, sender);
+        CommDKP:CurTeamReceived(_objReceived, sender);
         return;
       elseif prefix == "CommDKPTalents" then
-        CommDKPTalentsReceived(_objReceived, sender);
+        CommDKP:TalentsReceived(_objReceived, sender);
         return;
       elseif prefix == "CommDKPRoles" then
-        CommDKPRolesReceived(_objReceived, sender);
+        CommDKP:RolesReceived(_objReceived, sender);
         return;
       elseif prefix == "CommDKPBuild" then
-        CommDKPBuildReceived(_objReceived, sender);
+        CommDKP:BuildReceived(_objReceived, sender);
         return;
       end
 
@@ -176,70 +176,70 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
           CommDKP:Print(_objReceived.Data);
           return;
         elseif prefix == "CommDKPPreBroad" then
-          CommDKPPreBroadReceived(_objReceived, sender);
+          CommDKP:PreBroadReceived(_objReceived, sender);
           return;
         elseif prefix == "CommDKPCommand" then
-          CommDKPCommandReceived(_objReceived, sender);
+          CommDKP:CommandReceived(_objReceived, sender);
           return;
         elseif prefix == "CommDKPRaidTime" then
-          CommDKPRaidTimeReceived(_objReceived, sender);
+          CommDKP:RaidTimeReceived(_objReceived, sender);
           return;
         end
 
         if (sender ~= UnitName("player")) then
           if prefix == "CommDKPAllTabs" then   -- receives full table broadcast
-            FullBroadcastReceived(_objReceived);
+            CommDKP:AllTabsReceived(_objReceived);
             return;
           elseif prefix == "CommDKPMerge" then
-            TableMergeReceived(_objReceived);
+            CommDKP:MergeReceived(_objReceived);
             return;
           elseif prefix == "CommDKPLootDist" then
-            CommDKPLootDistReceived(_objReceived);
+            CommDKP:LootDistReceived(_objReceived);
             return;
           elseif prefix == "CommDKPDKPDist" then
-            CommDKPDKPDistReceived(_objReceived);
+            CommDKP:DKPDistReceived(_objReceived);
             return;
           elseif prefix == "CommDKPDecay" then
-            CommDKPDKPDecayReceived(_objReceived);
+            CommDKP:DKPDecayReceived(_objReceived);
             return;
           elseif prefix == "CommDKPAddUsers" then
-            CommDKPAddUsersReceived(_objReceived);
+            CommDKP:AddUsersReceived(_objReceived);
             return;
           elseif prefix == "CommDKPDelUsers" then
-            CommDKPDelUsersReceived(_objReceived);
+            CommDKP:DelUsersReceived(_objReceived);
             return;
           elseif prefix == "CommDKPDelLoot" then
-            CommDKPDelLootReceived(_objReceived);
+            CommDKP:DelLootReceived(_objReceived);
             return;
           elseif prefix == "CommDKPDelSync" then
-            CommDKPDelSyncReceived(_objReceived);
+            CommDKP:DelSyncReceived(_objReceived);
             return;
           elseif prefix == "CommDKPMinBid" then
-            CommDKPMinBidReceived(_objReceived);
+            CommDKP:MinBidReceived(_objReceived);
             return;
           elseif prefix == "CommDKPMaxBid" then
-            CommDKPMaxbidReceived(_objReceived);
+            CommDKP:MaxbidReceived(_objReceived);
             return;
           elseif prefix == "CDKPWhitelist" then 
-            CommDKPWhiteListReceived(_objReceived);
+            CommDKP:WhiteListReceived(_objReceived);
             return;
           elseif prefix == "CommDKPStand" then
-            CommDKPStandByReceived(_objReceived);
+            CommDKP:StandByReceived(_objReceived);
             return;
           elseif prefix == "CommDKPSetPrice" then
-            CommDKPSetPriceReceived(_objReceived);
+            CommDKP:SetPriceReceived(_objReceived);
             return;
           elseif prefix == "CommDKPZSumBank" then
-            CommDKPZSumBankReceived(_objReceived);
+            CommDKP:ZSumBankReceived(_objReceived);
             return;
           elseif prefix == "CommDKPDKPModes" then
-            CommDKPDKPModesReceived(_objReceived);
+            CommDKP:DKPModesReceived(_objReceived);
             return;
           elseif prefix == "CommDKPBidShare" then
-            CommDKPBidShareReceived(_objReceived);
+            CommDKP:BidShareReceived(_objReceived);
             return;
           elseif prefix == "CommDKPBossLoot" then
-            CommDKPBossLootReceived(_objReceived);
+            CommDKP:BossLootReceived(_objReceived);
           end 
         end
       end
@@ -289,68 +289,68 @@ function CommDKP.Sync:SendData(prefix, data, target, targetTeam)
 
   if IsInGuild() then
     if prefix == "CommDKPQuery" then
-      CommDKPQuerySend(prefix, _compressedObj, "GUILD");
+      CommDKP:QuerySend(prefix, _compressedObj, "GUILD");
       return;
     elseif prefix == "CommDKPTalents" then
-      CommDKPTalentsSend(prefix, _compressedObj, "GUILD");
+      CommDKP:TalentsSend(prefix, _compressedObj, "GUILD");
       return;
     elseif prefix == "CommDKPRoles" then
-      CommDKPRolesSend(prefix, _compressedObj, "GUILD");
+      CommDKP:RolesSend(prefix, _compressedObj, "GUILD");
       return;
     elseif prefix == "CDKProfileSend" then
-      CommDKPProfileSend(prefix, _compressedObj, "GUILD");
+      CommDKP:ProfileSend(prefix, _compressedObj, "GUILD");
       return;
     elseif prefix == "CommDKPBidder" then -- bid submissions. Keep to raid.
-      CommDKPBidderSend(prefix, _compressedObj, "RAID");
+      CommDKP:BidderSend(prefix, _compressedObj, "RAID");
       return;
     elseif prefix == "CommDKPBuild" then
-      CommDKP.Sync:SendCommMessage(prefix, _compressedObj, "GUILD");
+      CommDKP:BuildSend(prefix, _compressedObj, "GUILD");
       return;
     end
 
     if core.IsOfficer then
       if prefix == "CommDKPCommand" then
-        CommDKPCommandSend(prefix, _compressedObj, "RAID");
+        CommDKP:CommandSend(prefix, _compressedObj, "RAID");
         return;
       end
   
       if prefix == "CommDKPRaidTime" then
-        CommDKPRaidTimeSend(prefix, _compressedObj, "RAID");
+        CommDKP:RaidTimeSend(prefix, _compressedObj, "RAID");
         return;
       end
   
       if prefix == "CommDKPBCastMsg" then
-        CommDKPCastMsgSend(prefix, _compressedObj, "RAID");
+        CommDKP:CastMsgSend(prefix, _compressedObj, "RAID");
         return;
       end  
   
       if prefix == "CommDKPZSumBank" then
-        CommDKPZSumBankSend(prefix, _compressedObj, "RAID");
+        CommDKP:ZSumBankSend(prefix, _compressedObj, "RAID");
         return;
       end  
   
       if prefix == "CommDKPBossLoot" then
-        CommDKPBossLootSend(prefix, _compressedObj, "RAID");
+        CommDKP:BossLootSend(prefix, _compressedObj, "RAID");
         return;
       end  
   
       if prefix == "CommDKPBidShare" then
-        CommDKPBidShareSend(prefix, _compressedObj, "RAID");
+        CommDKP:BidShareSend(prefix, _compressedObj, "RAID");
         return;
       end  
   
       if prefix == "CommDKPPreBroad" then
-        CommDKPPreBroadSend(prefix, _compressedObj, target);
+        CommDKP:PreBroadSend(prefix, _compressedObj, target);
         return;
       end
   
       if prefix == "CommDKPAllTabs" then
-        FullBroadcastSend(prefix, _compressedObj, target);
+        CommDKP:AllTabsSend(prefix, _compressedObj, target);
         return;
       end
   
       if prefix == "CommDKPMerge" then
-        TableMergeSend(prefix, _compressedObj, target);
+        CommDKP:MergeSend(prefix, _compressedObj, target);
         return;
       end
       
@@ -406,7 +406,7 @@ end
 -- FULL BROADCAST HANDLERS
 ----------
 
-function FullBroadcastSend(prefix, commObject, channel)
+function CommDKP:AllTabsSend(prefix, commObject, channel)
   local _channel = channel or "GUILD";
   local _prefix = prefix or "CommDKPAllTabs";
 
@@ -420,7 +420,7 @@ function FullBroadcastSend(prefix, commObject, channel)
 end
 
 
-function FullBroadcastReceived(commObject)
+function CommDKP:AllTabsReceived(commObject)
   --[[ 
       commObject = {
         Teams = {},
@@ -536,7 +536,7 @@ end
 -- 2-WEEK MERGE HANDLERS
 ----------
 
-function TableMergeSend(prefix, commObject, channel)
+function CommDKP:MergeSend(prefix, commObject, channel)
   local _channel = channel or "GUILD";
   local _prefix = prefix or "CommDKPMerge";
 
@@ -550,7 +550,7 @@ function TableMergeSend(prefix, commObject, channel)
 end
 
 
-function TableMergeReceived(commObject, channel, sender)
+function CommDKP:MergeReceived(commObject, channel, sender)
   for i=1, #commObject.Data.DKP do
     local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPHistory, true, commObject.CurrentTeam), commObject.Data.DKP[i].index, "index")
 
@@ -679,7 +679,7 @@ end
 -- CommDKPQuery message HANDLERS
 ----------
 
-function CommDKPQuerySend(prefix, commObject, channel)
+function CommDKP:QuerySend(prefix, commObject, channel)
   local _channel = channel or "GUILD";
   local _prefix = prefix or "CommDKPQuery";
   CommDKP.Sync:SendCommMessage(_prefix, commObject, _channel);
@@ -689,12 +689,14 @@ end
 -- CommDKPBuild message HANDLERS
 ----------
 
-function CommDKPBuildReceived(commObject, sender)
-  CommDKP.Sync:SendCommMessage(prefix, commObject, "GUILD");
+function CommDKP:BuildSend(prefix, commObject, channel)
+  local _channel = channel or "GUILD";
+  local _prefix = prefix or "CommDKPQuery";
+  CommDKP.Sync:SendCommMessage(_prefix, commObject, _channel);
   return;
 end
 
-function CommDKPBuildReceived(commObject, sender)
+function CommDKP:BuildReceived(commObject, sender)
   if sender ~= UnitName("player") then
     local LastVerCheck = time() - core.LastVerCheck;
 
@@ -716,14 +718,14 @@ end
 -- CommDKPTalents message HANDLERS
 ----------
 
-function CommDKPTalentsSend(prefix, commObject, channel)
+function CommDKP:TalentsSend(prefix, commObject, channel)
   local _channel = channel or "GUILD";
   local _prefix = prefix or "CommDKPTalents";
   CommDKP.Sync:SendCommMessage(_prefix, commObject, _channel);
 end
 
 
-function CommDKPTalentsReceived(commObject, sender)
+function CommDKP:TalentsReceived(commObject, sender)
   for teamIndex,team in pairs(commObject.Teams) do
     local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex), sender, "player")
 
@@ -747,14 +749,14 @@ end
 -- CommDKPRoles message HANDLERS
 ----------
 
-function CommDKPRolesSend(prefix, commObject, channel)
+function CommDKP:RolesSend(prefix, commObject, channel)
   local _channel = channel or "GUILD";
   local _prefix = prefix or "CommDKPRoles";
   CommDKP.Sync:SendCommMessage(_prefix, commObject, _channel);
 end
 
 
-function CommDKPRolesReceived(commObject, sender)
+function CommDKP:RolesReceived(commObject, sender)
   for teamIndex,team in pairs(commObject.Teams) do
     local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, teamIndex), sender, "player")
     local curClass = "None";
@@ -827,14 +829,14 @@ end
 -- CDKProfileSend message HANDLERS
 ----------
 
-function CommDKPProfileSend(prefix, commObject, channel)
+function CommDKP:ProfileSend(prefix, commObject, channel)
   local _channel = channel or "GUILD";
   local _prefix = prefix or "CDKProfileSend";
   CommDKP.Sync:SendCommMessage(_prefix, commObject, _channel);
 end
 
 
-function CDKProfileSendReceived(commObject, sender)
+function CommDKP:ProfileReceived(commObject, sender)
   local profile = commObject.Data;
   CommDKP:GetTable(CommDKP_Profiles, true, commObject.CurrentTeam)[profile.player] = profile;
   
@@ -849,14 +851,14 @@ end
 -- CommDKPBidder message HANDLERS
 ----------
 
-function CommDKPBidderSend(prefix, commObject, channel)
+function CommDKP:BidderSend(prefix, commObject, channel)
   local _channel = channel or "RAID";
   local _prefix = prefix or "CommDKPBidder";
   CommDKP.Sync:SendCommMessage(_prefix, commObject, _channel);
 end
 
 
-function CommDKPBidderReceived(commObject, sender)
+function CommDKP:BidderReceived(commObject, sender)
   if core.BidInProgress and core.IsOfficer then
     if commObject.Data == "pass" then
         -- CommDKP:Print(sender.." has passed.")  --TODO: Let's do something different here at some point.
@@ -874,14 +876,14 @@ end
 -- CommDKPCommand message HANDLERS
 ----------
 
-function CommDKPCommandSend(prefix, commObject, channel)
+function CommDKP:CommandSend(prefix, commObject, channel)
   local _channel = channel or "RAID";
   local _prefix = prefix or "CommDKPCommand";
   CommDKP.Sync:SendCommMessage(_prefix, commObject, _channel);
 end
 
 
-function CommDKPCommandReceived(commObject, sender)
+function CommDKP:CommandReceived(commObject, sender)
   local command, arg1, arg2, arg3, arg4 = strsplit("#", commObject.Data);
   if sender ~= UnitName("player") then
     if command == "StartTimer" then
@@ -926,14 +928,14 @@ end
 -- CommDKPRaidTime message HANDLERS
 ----------
 
-function CommDKPRaidTimeSend(prefix, commObject, channel)
+function CommDKP:RaidTimeSend(prefix, commObject, channel)
   local _channel = channel or "RAID";
   local _prefix = prefix or "CommDKPRaidTime";
   CommDKP.Sync:SendCommMessage(_prefix, commObject, _channel);
 end
 
 
-function CommDKPRaidTimeReceived(commObject, sender)
+function CommDKP:RaidTimeReceived(commObject, sender)
   local command, args = strsplit(",", commObject.Data);
 
   if sender ~= UnitName("player") and core.IsOfficer and CommDKP.ConfigTab2 then
@@ -986,7 +988,7 @@ end
 -- CommDKPBCastMsg message HANDLERS
 ----------
 
-function CommDKPCastMsgSend(prefix, commObject, channel)
+function CommDKP:CastMsgSend(prefix, commObject, channel)
   local _channel = channel or "RAID";
   local _prefix = prefix or "CommDKPBCastMsg";
   CommDKP.Sync:SendCommMessage(_prefix, commObject, _channel);
@@ -997,14 +999,14 @@ end
 -- CommDKPZSumBank message HANDLERS
 ----------
 
-function CommDKPZSumBankSend(prefix, commObject, channel)
+function CommDKP:ZSumBankSend(prefix, commObject, channel)
   local _channel = channel or "RAID";
   local _prefix = prefix or "CommDKPZSumBank";
   CommDKP.Sync:SendCommMessage(_prefix, commObject, _channel);
 end
 
 
-function CommDKPZSumBankReceived(commObject)
+function CommDKP:ZSumBankReceived(commObject)
   if core.IsOfficer then
     core.DB.modes.ZeroSumBank = commObject.Data;
     if core.ZeroSumBank then
@@ -1020,14 +1022,14 @@ end
 -- CommDKPBossLoot message HANDLERS
 ----------
 
-function CommDKPBossLootSend(prefix, commObject, channel)
+function CommDKP:BossLootSend(prefix, commObject, channel)
   local _channel = channel or "RAID";
   local _prefix = prefix or "CommDKPBossLoot";
   CommDKP.Sync:SendCommMessage(_prefix, commObject, _channel);
 end
 
 
-function CommDKPBossLootReceived(commObject)
+function CommDKP:BossLootReceived(commObject)
 
   local lootList = {};
   core.DB.bossargs.LastKilledBoss = commObject.Data.boss;
@@ -1046,13 +1048,13 @@ end
 -- CommDKPBidShare message HANDLERS
 ----------
 
-function CommDKPBidShareSend(prefix, commObject, channel)
+function CommDKP:BidShareSend(prefix, commObject, channel)
   local _channel = channel or "RAID";
   local _prefix = prefix or "CommDKPBidShare";
   CommDKP.Sync:SendCommMessage(_prefix, commObject, _channel);
 end
 
-function CommDKPBidShareReceived(commObject)
+function CommDKP:BidShareReceived(commObject)
   if core.BidInterface then
     CommDKP:Bids_Set(commObject.Data)
   end
@@ -1063,14 +1065,14 @@ end
 -- CommDKPPreBroad message HANDLERS
 ----------
 
-function CommDKPPreBroadSend(prefix, commObject, channel)
+function CommDKP:PreBroadSend(prefix, commObject, channel)
   local _channel = channel or "GUILD";
   local _prefix = prefix or "CommDKPPreBroad";
   CommDKP.Sync:SendCommMessage(_prefix, commObject, _channel);
 end
 
 
-function CommDKPPreBroadReceived(commObject, sender)
+function CommDKP:PreBroadReceived(commObject, sender)
   
   if sender ~= UnitName("player") then
     if commObject.Data == "CommDKPAllTabs" then
@@ -1091,7 +1093,7 @@ end
 -- CommDKPLootDist message HANDLERS
 ----------
 
-function CommDKPLootDistReceived(commObject)
+function CommDKP:LootDistReceived(commObject)
 
   local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true, commObject.CurrentTeam), commObject.Data.player, "player")
   if search then
@@ -1120,7 +1122,7 @@ end
 -- CommDKPDKPDist message HANDLERS
 ----------
 
-function CommDKPDKPDistReceived(commObject)
+function CommDKP:DKPDistReceived(commObject)
 
   local players = {strsplit(",", strsub(commObject.Data.players, 1, -2))}
   local dkp = commObject.Data.dkp
@@ -1156,7 +1158,7 @@ end
 -- CommDKPDecay message HANDLERS
 ----------
 
-function CommDKPDKPDecayReceived(commObject)
+function CommDKP:DKPDecayReceived(commObject)
 
   local players = {strsplit(",", strsub(commObject.Data.players, 1, -2))}
   local dkp = {strsplit(",", commObject.Data.dkp)}
@@ -1185,7 +1187,7 @@ end
 -- CommDKPAddUsers message HANDLERS
 ----------
 
-function CommDKPAddUsersReceived(commObject)
+function CommDKP:AddUsersReceived(commObject)
   if UnitName("player") ~= sender then
     CommDKP:AddEntitiesToDKPTable(commObject.Data, commObject.TargetTeam);
   end
@@ -1196,7 +1198,7 @@ end
 -- CommDKPDelUsers message HANDLERS
 ----------
 
-function CommDKPDelUsersReceived(commObject)
+function CommDKP:DelUsersReceived(commObject)
   local numPlayers = 0
   local removedUsers = ""
 
@@ -1255,7 +1257,7 @@ end
 -- CommDKPDelLoot message HANDLERS
 ----------
 
-function CommDKPDelLootReceived(commObject)
+function CommDKP:DelLootReceived(commObject)
   local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_Loot, true, commObject.CurrentTeam), commObject.Data.deletes, "index")
 
   if search then
@@ -1284,7 +1286,7 @@ end
 -- CommDKPDelSync message HANDLERS
 ----------
 
-function CommDKPDelSyncReceived(commObject)
+function CommDKP:DelSyncReceived(commObject)
   local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPHistory, true, commObject.CurrentTeam), commObject.Data.deletes, "index")
   local players = {strsplit(",", strsub(commObject.Data.players, 1, -2))}   -- cuts off last "," from string to avoid creating an empty value
   local dkp, mod;
@@ -1344,7 +1346,7 @@ end
 -- CommDKPMinBid message HANDLERS
 ----------
 
-function CommDKPMinBidReceived(commObject)
+function CommDKP:MinBidReceived(commObject)
   if core.IsOfficer then
     core.DB.MinBidBySlot = commObject.Data[1]
 
@@ -1376,7 +1378,7 @@ end
 -- CommDKPMaxBid message HANDLERS
 ----------
 
-function CommDKPMaxbidReceived(commObject)
+function CommDKP:MaxbidReceived(commObject)
   if core.IsOfficer then
 
     core.DB.MaxBidBySlot = commObject.Data[1];
@@ -1403,7 +1405,7 @@ end
 -- CDKPWhitelist message HANDLERS
 ----------
 
-function CommDKPWhiteListReceived(commObject)
+function CommDKP:WhiteListReceived(commObject)
   if CommDKP:GetGuildRankIndex(UnitName("player")) > 1 then -- only applies if not GM
     CommDKP:SetTable(CommDKP_Whitelist, false, commObject.Data, commObject.CurrentTeam);
   end
@@ -1413,7 +1415,7 @@ end
 -- CommDKPStand message HANDLERS
 ----------
 
-function CommDKPStandByReceived(commObject)
+function CommDKP:StandByReceived(commObject)
   CommDKP:SetTable(CommDKP_Standby, true, commObject.Data, commObject.CurrentTeam); -- issues/153
 end
 
@@ -1421,7 +1423,7 @@ end
 -- CommDKPSetPrice message HANDLERS
 ----------
 
-function CommDKPSetPriceReceived(commObject)
+function CommDKP:SetPriceReceived(commObject)
 
   local _objSetPrice = _objReceived.Data;
   local _, _, Color, Ltype, itemID, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Name = string.find(_objSetPrice.link,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
@@ -1443,7 +1445,7 @@ end
 -- CommDKPDKPModes message HANDLERS
 ----------
 
-function CommDKPDKPModesReceived(commObject)
+function CommDKP:DKPModesReceived(commObject)
   if (core.DB.modes.mode ~= commObject.Data[1].mode) or (core.DB.modes.MaxBehavior ~= commObject.Data[1].MaxBehavior) then
     CommDKP:Print(L["RECOMMENDRELOAD"])
   end
@@ -1456,7 +1458,7 @@ end
 -- CommDKPSeed message HANDLERS
 ----------
 
-function CommDKPSeedReceived(commObject, sender)
+function CommDKP:SeedReceived(commObject, sender)
 
   --[[ 
       Data = {
@@ -1507,7 +1509,7 @@ end
 -- CommDKPTeams message HANDLERS
 ----------
 
-function CommDKPTeamsReceived(commObject, sender)
+function CommDKP:TeamsReceived(commObject, sender)
   CommDKP:GetTable(CommDKP_DB, false)["teams"] = commObject.Teams
 end
 
@@ -1515,7 +1517,7 @@ end
 -- CommDKPCurTeam message HANDLERS
 ----------
 
-function CommDKPCurTeamReceived(commObject, sender)
+function CommDKP:CurTeamReceived(commObject, sender)
   CommDKP:SetCurrentTeam(commObject.CurrentTeam) -- this also refreshes all the tables/views/graphs
 end
 
