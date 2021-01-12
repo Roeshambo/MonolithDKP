@@ -161,11 +161,6 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 			core.BidInProgress = false;
 			CommDKP:BroadcastStopBidTimer()
 			
-			SendChatMessage(L["CONGRATS"].." "..winner.." "..L["ON"].." "..loot.." @ "..-cost.." "..L["DKP"], "RAID_WARNING")
-			if core.DB.modes.AnnounceAward then
-				SendChatMessage(L["CONGRATS"].." "..winner.." "..L["ON"].." "..loot.." @ "..-cost.." "..L["DKP"], "GUILD")
-        	end
-
 			local _, _, Color, Ltype, itemID, Enchant, Gem1, Gem2, Gem3, Gem4, Suffix, Unique, LinkLvl, Name = string.find(loot,"|?c?f?f?(%x*)|?H?([^:]*):?(%d+):?(%d*):?(%d*):?(%d*):?(%d*):?(%d*):?(%-?%d*):?(%-?%d*):?(%d*):?(%d*):?(%-?%d*)|?h?%[?([^%[%]]*)%]?|?h?|?r?")
 
 			if itemName == nil and Name ~= nil then
@@ -232,6 +227,13 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 			core.BiddingWindow:Hide()
 			CommDKP:ClearBidWindow()
 		end
+
+		-- moved this outside of above if to always display even if manual award
+		SendChatMessage(L["CONGRATS"].." "..winner.." "..L["ON"].." "..loot.." @ "..-cost.." "..L["DKP"], "RAID_WARNING")
+		if core.DB.modes.AnnounceAward then
+			SendChatMessage(L["CONGRATS"].." "..winner.." "..L["ON"].." "..loot.." @ "..-cost.." "..L["DKP"], "GUILD")
+		end
+
 	end
 end
 
