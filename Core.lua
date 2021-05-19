@@ -31,18 +31,19 @@ for class,friendlyClass in pairs(API_CLASSES) do
 	-- There appears to be no WoW API that lists out specific classes to a single faction
 	-- Nor is there an API that identifies a specific class to a specific faction.
 	-- I'd love to not hard code this though, but I seem to be out of luck.
+	
+	-- if core.faction == "Horde" then
+	-- 	if class ~= "PALADIN" then
+	-- 		addColor = true;
+	-- 	end
+	-- end
 
-	if core.faction == "Horde" then
-		if class ~= "PALADIN" then
-			addColor = true;
-		end
-	end
-
-	if core.faction == "Alliance" then
-		if class ~= "SHAMAN" then
-			addColor = true;
-		end
-	end
+	-- if core.faction == "Alliance" then
+	-- 	if class ~= "SHAMAN" then
+	-- 		addColor = true;
+	-- 	end
+	-- end
+	addColor = true;
 
 	if addColor then
 		colorTable.class = friendlyClass;
