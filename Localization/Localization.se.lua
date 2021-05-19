@@ -793,8 +793,8 @@ core.L = {
   MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.5-r62",
-    CHANGELOG2 = " - Hopefully made this work in pre-patch",
+    CHANGELOG1 = "CommunityDKP - v3.2.5-r64",
+    CHANGELOG2 = " - fixed broadcast window",
     CHANGELOG3 = "",
     CHANGELOG4 = "",
     CHANGELOG5 = "",

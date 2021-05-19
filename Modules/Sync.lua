@@ -301,12 +301,12 @@ function CommDKP_BroadcastFull_Callback(arg1, arg2, arg3)
 end
 
 function CommDKP_BroadcastFull_Create()
-	local f = CreateFrame("Frame", "CommDKP_FullBroadcastWindow", UIParent, "ShadowOverlaySmallTemplate");
+	local f = CreateFrame("Frame", "CommDKP_FullBroadcastWindow", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
 
 	f:SetPoint("TOP", UIParent, "TOP", 0, -200);
 	f:SetSize(300, 260);
 	f:SetClampedToScreen(true)
-	f:SetBackdrop( {
+	f:SetBackdrop({
 		bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
 		edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3,  
 		insets = { left = 0, right = 0, top = 0, bottom = 0 }
@@ -323,7 +323,7 @@ function CommDKP_BroadcastFull_Create()
 	f:Hide()
 
 	-- Close Button
-	f.closeContainer = CreateFrame("Frame", "CommDKPTitle", f)
+	f.closeContainer = CreateFrame("Frame", "CommDKPTitle", f, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	f.closeContainer:SetPoint("CENTER", f, "TOPRIGHT", -4, 0)
 	f.closeContainer:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
