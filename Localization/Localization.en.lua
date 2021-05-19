@@ -795,8 +795,8 @@ core.L = {
   MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
   MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
 
-  CHANGELOG1 = "CommunityDKP - v3.2.5-r62",
-    CHANGELOG2 = " - Hopefully made this work in pre-patch",
+  CHANGELOG1 = "CommunityDKP - v3.2.5-r64",
+    CHANGELOG2 = " - fixed broadcast window",
     CHANGELOG3 = "",
     CHANGELOG4 = "",
     CHANGELOG5 = "",
