@@ -63,7 +63,7 @@ function CommDKP_Profile_Create(player, dkp, gained, spent, teamIndex)
 end
 
 local function CommDKP_BroadcastFull_Status_Create()
-	local f = CreateFrame("Frame", "CommDKP_FullBroadcastStatus", UIParent, "ShadowOverlaySmallTemplate");
+	local f = CreateFrame("Frame", "CommDKP_FullBroadcastStatus", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
 
 	f:SetPoint("TOP", UIParent, "TOP", 0, -10);
 	f:SetSize(300, 85);
@@ -89,7 +89,7 @@ local function CommDKP_BroadcastFull_Status_Create()
 	f.bcastHeader:SetPoint("TOPLEFT", f, "TOPLEFT", 15, -15);
 	f.bcastHeader:SetScale(0.8)
 
-	f.status = CreateFrame("StatusBar", nil, f)
+	f.status = CreateFrame("StatusBar", nil, f, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	f.status:SetSize(200, 15)
 	f.status:SetBackdrop({
 	    bgFile   = "Interface\\ChatFrame\\ChatFrameBackground", tile = true,
@@ -103,7 +103,7 @@ local function CommDKP_BroadcastFull_Status_Create()
 	f.status.percentage:SetPoint("TOP", f.status, "BOTTOM", 0, -9);
 	f.status.percentage:SetScale(0.6)
 
-	f.status.border = CreateFrame("Frame", nil, f.status);
+	f.status.border = CreateFrame("Frame", nil, f.status, BackdropTemplateMixin and "BackdropTemplate" or nil);
 	f.status.border:SetPoint("CENTER", f.status, "CENTER");
 	f.status.border:SetFrameStrata("DIALOG")
 	f.status.border:SetFrameLevel(19)
