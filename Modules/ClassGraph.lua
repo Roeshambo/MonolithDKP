@@ -5,7 +5,7 @@ local L = core.L;
 
 
 function CommDKP:ClassGraph()
-	local graph = CreateFrame("Frame", "CommDKPClassIcons", CommDKP.ConfigTab1)
+	local graph = CreateFrame("Frame", "CommDKPClassIcons", CommDKP.ConfigTab1, BackdropTemplateMixin and "BackdropTemplate" or nil)
 
 	graph:SetPoint("TOPLEFT", CommDKP.ConfigTab1, "TOPLEFT", 0, 0)
 	graph:SetBackdropColor(0,0,0,0)
@@ -45,7 +45,7 @@ function CommDKP:ClassGraph()
 		end
   		graph.icons[i]:SetColorTexture(0, 0, 0, 1)
   		graph.icons[i]:SetSize(28, 28);
-  		graph.icons[i].bar = CreateFrame("Frame", "CommDKP"..i.."Graph", graph)
+  		graph.icons[i].bar = CreateFrame("Frame", "CommDKP"..i.."Graph", graph, BackdropTemplateMixin and "BackdropTemplate" or nil)
 		graph.icons[i].bar:SetPoint("BOTTOM", icons[i], "TOP", 0, 5)
 		graph.icons[i].bar:SetBackdropBorderColor(1,1,1,0)
   		graph.icons[i].bar:SetSize(BarWidth, perc_height[i])

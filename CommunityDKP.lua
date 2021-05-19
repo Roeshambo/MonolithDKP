@@ -22,7 +22,7 @@ function CommDKP_RestoreFilterOptions()  		-- restores default filter selections
 end
 
 function CommDKP:Toggle()        -- toggles IsShown() state of CommDKP.UIConfig, the entire addon window
-	core.CommDKPUI = CommDKP.UIConfig or CommDKP:CreateMenu();
+	core.CommDKPUI =  core.CommDKPUI or CommDKP:CreateMenu();
 	core.CommDKPUI:SetShown(not core.CommDKPUI:IsShown())
 	CommDKP.UIConfig:SetFrameLevel(10)
 	CommDKP.UIConfig:SetClampedToScreen(true)
@@ -238,8 +238,8 @@ function CommDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable
 end
 
 function CommDKP:CreateMenu()
-
-	CommDKP.UIConfig = CreateFrame("Frame", "CommDKPConfig", UIParent, "ShadowOverlaySmallTemplate")  --UIPanelDialogueTemplate, ShadowOverlaySmallTemplate
+	CommDKP:Print("CreateMenu Start")
+	CommDKP.UIConfig = CreateFrame("Frame", "CommDKPConfig", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil)  --UIPanelDialogueTemplate, ShadowOverlaySmallTemplate
 	CommDKP.UIConfig:SetPoint("CENTER", UIParent, "CENTER", -250, 100);
 	CommDKP.UIConfig:SetSize(550, 590);
 	CommDKP.UIConfig:SetBackdrop({
@@ -263,8 +263,9 @@ function CommDKP:CreateMenu()
 		if core.BiddingWindow then core.BiddingWindow:SetFrameLevel(2) end
 	end)
 	-- Close Button
-	CommDKP.UIConfig.closeContainer = CreateFrame("Frame", "CommDKPTitle", CommDKP.UIConfig)
+	CommDKP.UIConfig.closeContainer = CreateFrame("Frame", "CommDKPTitle", CommDKP.UIConfig, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	CommDKP.UIConfig.closeContainer:SetPoint("CENTER", CommDKP.UIConfig, "TOPRIGHT", -4, 0)
+	Mixin(CommDKP.UIConfig.closeContainer, BackdropTemplateMixin)
 	CommDKP.UIConfig.closeContainer:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
 		edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 3, 
@@ -273,7 +274,7 @@ function CommDKP:CreateMenu()
 	CommDKP.UIConfig.closeContainer:SetBackdropBorderColor(1,1,1,0.2)
 	CommDKP.UIConfig.closeContainer:SetSize(28, 28)
 
-	CommDKP.UIConfig.closeBtn = CreateFrame("Button", nil, CommDKP.UIConfig, "UIPanelCloseButton")
+	CommDKP.UIConfig.closeBtn = CreateFrame("Button", nil, CommDKP.UIConfig, "UIPanelCloseButton", BackdropTemplateMixin and "BackdropTemplate" or nil)
 	CommDKP.UIConfig.closeBtn:SetPoint("CENTER", CommDKP.UIConfig.closeContainer, "TOPRIGHT", -14, -14)
 	tinsert(UISpecialFrames, CommDKP.UIConfig:GetName()); -- Sets frame to close on "Escape"
 	---------------------------------------
@@ -285,9 +286,10 @@ function CommDKP:CreateMenu()
 	---------------------------------------
 	-- DKP Table Header and Sort Buttons
 	---------------------------------------
-	CommDKP.DKPTable_Headers = CreateFrame("Frame", "CommDKPDKPTableHeaders", CommDKP.UIConfig)
+	CommDKP.DKPTable_Headers = CreateFrame("Frame", "CommDKPDKPTableHeaders", CommDKP.UIConfig, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	CommDKP.DKPTable_Headers:SetSize(500, 22)
 	CommDKP.DKPTable_Headers:SetPoint("BOTTOMLEFT", CommDKP.DKPTable, "TOPLEFT", 0, 1)
+	Mixin(CommDKP.DKPTable_Headers, BackdropTemplateMixin)
 	CommDKP.DKPTable_Headers:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
 		edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
@@ -298,9 +300,9 @@ function CommDKP:CreateMenu()
 	---------------------------------------
 	-- Sort Buttons
 	--------------------------------------- 
-	SortButtons.player = CreateFrame("Button", "$ParentSortButtonPlayer", CommDKP.DKPTable_Headers)
-	SortButtons.class = CreateFrame("Button", "$ParentSortButtonClass", CommDKP.DKPTable_Headers)
-	SortButtons.dkp = CreateFrame("Button", "$ParentSortButtonDkp", CommDKP.DKPTable_Headers)
+	SortButtons.player = CreateFrame("Button", "$ParentSortButtonPlayer", CommDKP.DKPTable_Headers, BackdropTemplateMixin and "BackdropTemplate" or nil)
+	SortButtons.class = CreateFrame("Button", "$ParentSortButtonClass", CommDKP.DKPTable_Headers, BackdropTemplateMixin and "BackdropTemplate" or nil)
+	SortButtons.dkp = CreateFrame("Button", "$ParentSortButtonDkp", CommDKP.DKPTable_Headers, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	SortButtons.class:SetPoint("BOTTOM", CommDKP.DKPTable_Headers, "BOTTOM", 0, 2)
 	SortButtons.player:SetPoint("RIGHT", SortButtons.class, "LEFT")
 	SortButtons.dkp:SetPoint("LEFT", SortButtons.class, "RIGHT")
@@ -395,7 +397,7 @@ function CommDKP:CreateMenu()
 	------------------------------
 	-- Search Box
 	------------------------------
-	CommDKP.UIConfig.search = CreateFrame("EditBox", nil, CommDKP.UIConfig)
+	CommDKP.UIConfig.search = CreateFrame("EditBox", nil, CommDKP.UIConfig, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	CommDKP.UIConfig.search:SetPoint("BOTTOMLEFT", CommDKP.UIConfig, "BOTTOMLEFT", 50, 18)
 	CommDKP.UIConfig.search:SetAutoFocus(false)
 	CommDKP.UIConfig.search:SetMultiLine(false)
@@ -535,7 +537,7 @@ function CommDKP:CreateMenu()
 	---------------------------------------
 	-- Expand / Collapse Arrow
 	---------------------------------------
-	CommDKP.UIConfig.expand = CreateFrame("Frame", "CommDKPTitle", CommDKP.UIConfig)
+	CommDKP.UIConfig.expand = CreateFrame("Frame", "CommDKPTitle", CommDKP.UIConfig, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	CommDKP.UIConfig.expand:SetPoint("LEFT", CommDKP.UIConfig, "RIGHT", 0, 0)
 	CommDKP.UIConfig.expand:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
@@ -567,7 +569,7 @@ function CommDKP:CreateMenu()
 	end)
 
 	-- Title Frame (top/center)
-	CommDKP.UIConfig.TitleBar = CreateFrame("Frame", "CommDKPTitle", CommDKP.UIConfig, "ShadowOverlaySmallTemplate")
+	CommDKP.UIConfig.TitleBar = CreateFrame("Frame", "CommDKPTitle", CommDKP.UIConfig, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	CommDKP.UIConfig.TitleBar:SetPoint("BOTTOM", SortButtons.class, "TOP", 0, 10)
 	CommDKP.UIConfig.TitleBar:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
@@ -586,7 +588,7 @@ function CommDKP:CreateMenu()
 	-- CHANGE LOG WINDOW
 	---------------------------------------
 	if core.DB.defaults.HideChangeLogs < core.BuildNumber then
-		CommDKP.ChangeLogDisplay = CreateFrame("Frame", "CommDKP_ChangeLogDisplay", UIParent, "ShadowOverlaySmallTemplate");
+		CommDKP.ChangeLogDisplay = CreateFrame("Frame", "CommDKP_ChangeLogDisplay", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
 
 		CommDKP.ChangeLogDisplay:SetPoint("TOP", UIParent, "TOP", 0, -200);
 		CommDKP.ChangeLogDisplay:SetSize(600, 100);
@@ -631,7 +633,7 @@ function CommDKP:CreateMenu()
 		CommDKP.ChangeLogDisplay.ChangeLogText:SetPoint("TOPLEFT", CommDKP.ChangeLogDisplay.VerNumber, "BOTTOMLEFT", 5, -0);
 
 		-- Change Log Close Button
-		CommDKP.ChangeLogDisplay.closeContainer = CreateFrame("Frame", "CommDKPChangeLogClose", CommDKP.ChangeLogDisplay)
+		CommDKP.ChangeLogDisplay.closeContainer = CreateFrame("Frame", "CommDKPChangeLogClose", CommDKP.ChangeLogDisplay, BackdropTemplateMixin and "BackdropTemplate" or nil)
 		CommDKP.ChangeLogDisplay.closeContainer:SetPoint("CENTER", CommDKP.ChangeLogDisplay, "TOPRIGHT", -4, 0)
 		CommDKP.ChangeLogDisplay.closeContainer:SetBackdrop({
 			bgFile   = "Textures\\white.blp", tile = true,
@@ -671,6 +673,7 @@ function CommDKP:CreateMenu()
 
 		local logHeight = CommDKP.ChangeLogDisplay.ChangeLogHeader:GetHeight() + CommDKP.ChangeLogDisplay.Notes:GetHeight() + CommDKP.ChangeLogDisplay.VerNumber:GetHeight() + CommDKP.ChangeLogDisplay.ChangeLogText:GetHeight();
 		CommDKP.ChangeLogDisplay:SetSize(800, logHeight);  -- resize container
+
 	end
 	---------------------------------------
 	-- VERSION IDENTIFIER

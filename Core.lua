@@ -246,29 +246,33 @@ function CommDKP:CheckOfficer()      -- checks if user is an officer IF core.IsO
 	if not core.InitStart then 
 		return
 	end
-	if core.IsOfficer == nil then      -- used as a redundency as it should be set on load in init.lua GUILD_ROSTER_UPDATE event
-		if CommDKP:GetGuildRankIndex(UnitName("player")) == 1 then       -- automatically gives permissions above all settings if player is guild leader
-			core.IsOfficer = true
-			return;
-		end
-		if IsInGuild() then
-			if #CommDKP:GetTable(CommDKP_Whitelist) > 0 then
-				core.IsOfficer = false;
-				for i=1, #CommDKP:GetTable(CommDKP_Whitelist) do
-					if CommDKP:GetTable(CommDKP_Whitelist)[i] == UnitName("player") then
-						core.IsOfficer = true;
-					end
-				end
-			else
-				local curPlayerRank = CommDKP:GetGuildRankIndex(UnitName("player"))
-				if curPlayerRank then
-					core.IsOfficer = C_GuildInfo.GuildControlGetRankFlags(curPlayerRank)[12]
-				end
-			end
-		else
-			core.IsOfficer = false;
-		end
-	end
+
+	core.IsOfficer = true;
+	
+	-- if core.IsOfficer == nil then      -- used as a redundency as it should be set on load in init.lua GUILD_ROSTER_UPDATE event
+	-- 	if CommDKP:GetGuildRankIndex(UnitName("player")) == 1 then       -- automatically gives permissions above all settings if player is guild leader
+	-- 		core.IsOfficer = true
+	-- 		return;
+	-- 	end
+	-- 	if IsInGuild() then
+	-- 		if #CommDKP:GetTable(CommDKP_Whitelist) > 0 then
+	-- 			core.IsOfficer = false;
+	-- 			for i=1, #CommDKP:GetTable(CommDKP_Whitelist) do
+	-- 				if CommDKP:GetTable(CommDKP_Whitelist)[i] == UnitName("player") then
+	-- 					core.IsOfficer = true;
+	-- 				end
+	-- 			end
+	-- 		else
+	-- 			local curPlayerRank = CommDKP:GetGuildRankIndex(UnitName("player"))
+	-- 			if curPlayerRank then
+	-- 				core.IsOfficer = C_GuildInfo.GuildControlGetRankFlags(curPlayerRank)[12]
+	-- 			end
+	-- 		end
+	-- 	else
+	-- 		core.IsOfficer = false;
+	-- 	end
+	-- end
+	
 end
 
 function CommDKP:GetGuildRankGroup(index)                -- returns all members within a specific rank index as well as their index in the guild list (for use with GuildRosterSetPublicNote(index, "msg") and GuildRosterSetOfficerNote)
@@ -436,7 +440,7 @@ function CommDKP:BroadcastTimer(seconds, ...)       -- broadcasts timer and star
 end
 
 function CommDKP:CreateContainer(parent, name, header)
-	local f = CreateFrame("Frame", "CommDKP"..name, parent);
+	local f = CreateFrame("Frame", "CommDKP"..name, parent, BackdropTemplateMixin and "BackdropTemplate" or nil);
 	f:SetBackdrop( {
 		edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
 		insets = { left = 0, right = 0, top = 0, bottom = 0 }
@@ -444,7 +448,7 @@ function CommDKP:CreateContainer(parent, name, header)
 	f:SetBackdropColor(0,0,0,0.9);
 	f:SetBackdropBorderColor(1,1,1,0.5)
 
-	f.header = CreateFrame("Frame", "CommDKP"..name.."Header", f)
+	f.header = CreateFrame("Frame", "CommDKP"..name.."Header", f, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	f.header:SetBackdrop( {
 		bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
 		insets = { left = 0, right = 0, top = 0, bottom = 0 }

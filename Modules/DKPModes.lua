@@ -22,7 +22,7 @@ function CommDKP:ToggleDKPModesWindow()
 end
 
 function CommDKP:DKPModesFrame_Create()
-	local f = CreateFrame("Frame", "CommDKP_DKPModesFrame", UIParent);
+	local f = CreateFrame("Frame", "CommDKP_DKPModesFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
 	local ActiveMode = core.DB.modes.mode;
 	local ActiveCostType = core.DB.modes.costvalue;
 
@@ -61,7 +61,7 @@ function CommDKP:DKPModesFrame_Create()
 	f.BG:SetTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\menu-bg");
 
 	-- TabMenu ScrollFrame and ScrollBar
-	f.ScrollFrame = CreateFrame("ScrollFrame", nil, f);
+	f.ScrollFrame = CreateFrame("ScrollFrame", nil, f, BackdropTemplateMixin and "BackdropTemplate" or nil);
 	f.ScrollFrame:ClearAllPoints();
 	f.ScrollFrame:SetPoint("TOPLEFT",  f, "TOPLEFT", 4, -8);
 	f.ScrollFrame:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -3, 4);
@@ -77,7 +77,7 @@ function CommDKP:DKPModesFrame_Create()
 	tinsert(UISpecialFrames, f:GetName()); -- Sets frame to close on "Escape"
 
 	-- Close Button
-	f.closeContainer = CreateFrame("Frame", "MonDKModesWindowCloseButtonContainer", f)
+	f.closeContainer = CreateFrame("Frame", "MonDKModesWindowCloseButtonContainer", f, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	f.closeContainer:SetPoint("CENTER", f, "TOPRIGHT", -4, 0)
 	f.closeContainer:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,

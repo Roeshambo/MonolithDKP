@@ -319,7 +319,7 @@ function CommDKP:DKPModes_Main()
   f.DKPModesMain.MaxBidBehaviorHeader:SetText(L["MAXBIDBEHAVIOR"])
 
   -- AntiSnipe Option
-  f.DKPModesMain.AntiSnipe = CreateFrame("EditBox", nil, f.DKPModesMain)
+  f.DKPModesMain.AntiSnipe = CreateFrame("EditBox", nil, f.DKPModesMain, BackdropTemplateMixin and "BackdropTemplate" or nil)
     f.DKPModesMain.AntiSnipe:SetAutoFocus(false)
     f.DKPModesMain.AntiSnipe:SetMultiLine(false)
     f.DKPModesMain.AntiSnipe:SetPoint("TOPLEFT", f.DKPModesMain.RoundDropDown, "BOTTOMLEFT", 18, -15)
@@ -495,7 +495,7 @@ function CommDKP:DKPModes_Main()
 
   -- Artificial Inflation Editbox
   if not core.DB.modes.Inflation then core.DB.modes.Inflation = 0 end
-  f.DKPModesMain.Inflation = CreateFrame("EditBox", nil, f.DKPModesMain)
+  f.DKPModesMain.Inflation = CreateFrame("EditBox", nil, f.DKPModesMain, BackdropTemplateMixin and "BackdropTemplate" or nil)
     f.DKPModesMain.Inflation:SetAutoFocus(false)
     f.DKPModesMain.Inflation:SetMultiLine(false)
     f.DKPModesMain.Inflation:SetPoint("TOPLEFT", f.DKPModesMain.CostSelection, "BOTTOMLEFT", 20, -15)
@@ -676,7 +676,7 @@ function CommDKP:DKPModes_Main()
     f.DKPModesMain.MaxBidBehaviorDropDown:Hide();
     f.DKPModesMain.MaxBidBehaviorHeader:Hide();
     core.DB.modes.MaxBehavior = "Max DKP";
-elseif core.DB.modes.mode == "Static Item Values" then
+  elseif core.DB.modes.mode == "Static Item Values" then
     f.DKPModesMain.MaxBidBehaviorDropDown:Hide();
     f.DKPModesMain.MaxBidBehaviorHeader:Hide();
     core.DB.modes.MaxBehavior = "Max DKP";
@@ -761,34 +761,129 @@ elseif core.DB.modes.mode == "Static Item Values" then
   end
 
 
+  ---
   -- Roll Container
-  f.DKPModesMain.RollContainer = CreateFrame("Frame", nil, f.DKPModesMain);
-  f.DKPModesMain.RollContainer:SetSize(210, 150);
-  f.DKPModesMain.RollContainer:SetPoint("TOPLEFT", f.DKPModesMain.ChannelsDropDown, "BOTTOMLEFT", -10, -20)
-  f.DKPModesMain.RollContainer:SetBackdrop({
-      bgFile   = "Textures\\white.blp", tile = true,
-      edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 1, edgeSize = 2, 
-    });
-  f.DKPModesMain.RollContainer:SetBackdropColor(0,0,0,0.9)
-  f.DKPModesMain.RollContainer:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
-  f.DKPModesMain.RollContainer:Hide();
+  ---
+    f.DKPModesMain.RollContainer = CreateFrame("Frame", nil, f.DKPModesMain, BackdropTemplateMixin and "BackdropTemplate" or nil);
+    f.DKPModesMain.RollContainer:SetSize(210, 180);
+    f.DKPModesMain.RollContainer:SetPoint("TOPLEFT", f.DKPModesMain.ChannelsDropDown, "BOTTOMLEFT", -10, -20)
+    f.DKPModesMain.RollContainer:SetBackdrop({
+        bgFile   = "Textures\\white.blp", tile = true,
+        edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 1, edgeSize = 2, 
+      });
+    f.DKPModesMain.RollContainer:SetBackdropColor(0,0,0,0.9)
+    f.DKPModesMain.RollContainer:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
+    f.DKPModesMain.RollContainer:Hide();
     if core.DB.modes.mode == "Roll Based Bidding" then
       f.DKPModesMain.RollContainer:Show()
     end
 
-  -- Roll Container Header
-    f.DKPModesMain.RollContainer.Header = f.DKPModesMain.RollContainer:CreateFontString(nil, "OVERLAY")
-    f.DKPModesMain.RollContainer.Header:SetFontObject("CommDKPLargeLeft");
-    f.DKPModesMain.RollContainer.Header:SetScale(0.6)
-    f.DKPModesMain.RollContainer.Header:SetPoint("TOPLEFT", f.DKPModesMain.RollContainer, "TOPLEFT", 15, -15);
-    f.DKPModesMain.RollContainer.Header:SetText(L["ROLLSETTINGS"])
+    ---
+    -- Roll Container Header
+    ---
+      f.DKPModesMain.RollContainer.Header = f.DKPModesMain.RollContainer:CreateFontString(nil, "OVERLAY")
+      f.DKPModesMain.RollContainer.Header:SetFontObject("CommDKPLargeLeft");
+      f.DKPModesMain.RollContainer.Header:SetScale(0.6)
+      f.DKPModesMain.RollContainer.Header:SetPoint("TOPLEFT", f.DKPModesMain.RollContainer, "TOPLEFT", 15, -15);
+      f.DKPModesMain.RollContainer.Header:SetText(L["ROLLSETTINGS"])
 
+    ---
+    -- Roll bidding mode dropdown
+    ---
 
+      if core.DB.modes.RollMode == nil then
+        core.DB.modes.RollMode = "Default"
+      end
+
+      f.DKPModesMain.RollContainer.RollBiddingModeDropdown = CreateFrame("FRAME", "CommDKPModeSelectDropDown", f.DKPModesMain.RollContainer, "CommunityDKPUIDropDownMenuTemplate")
+
+      UIDropDownMenu_Initialize(
+        f.DKPModesMain.RollContainer.RollBiddingModeDropdown,
+          function(self, level, menuList)
+            local _rollMode = UIDropDownMenu_CreateInfo()
+            _rollMode.func = self.SetValue
+            _rollMode.fontObject = "CommDKPSmallCenter"
+            _rollMode.text = "Default"
+            _rollMode.arg1 = "Default"
+            _rollMode.checked = ("Default" == core.DB.modes.RollMode)
+            _rollMode.isNotRadio = false
+            UIDropDownMenu_AddButton(_rollMode)
+            _rollMode.text = "Ni Karma"
+            _rollMode.arg1 = "Ni Karma"
+            _rollMode.checked = ("Ni Karma" == core.DB.modes.RollMode)
+            _rollMode.isNotRadio = false
+            UIDropDownMenu_AddButton(_rollMode)
+          end
+      )
+    
+      f.DKPModesMain.RollContainer.RollBiddingModeDropdown:SetPoint(
+        "TOPLEFT", 
+        f.DKPModesMain.RollContainer.Header, 
+        "BOTTOMLEFT",
+        -10, 
+        -10
+      )
+      UIDropDownMenu_SetWidth(f.DKPModesMain.RollContainer.RollBiddingModeDropdown, 150)
+      UIDropDownMenu_SetText(f.DKPModesMain.RollContainer.RollBiddingModeDropdown, core.DB.modes.RollMode)
+
+      -- Dropdown Menu Function
+      function f.DKPModesMain.RollContainer.RollBiddingModeDropdown:SetValue(arg1)
+        if arg1 == "Default" then
+          core.DB.modes.RollMode = "Default"
+          f.DKPModesMain.RollContainer.UsePerc:Show()
+          f.DKPModesMain.RollContainer.UsePerc.text:Show()
+          f.DKPModesMain.RollContainer.AddMax:Show()
+          f.DKPModesMain.RollContainer.AddMax.Header:Show()
+          f.DKPModesMain.RollContainer.maxKarma:Hide()
+          f.DKPModesMain.RollContainer.maxKarma.Header:Hide()
+        elseif arg1 == "Ni Karma" then
+          core.DB.modes.RollMode = "Ni Karma"
+          f.DKPModesMain.RollContainer.UsePerc:Hide()
+          f.DKPModesMain.RollContainer.UsePerc.text:Hide()
+          f.DKPModesMain.RollContainer.AddMax:Hide()
+          f.DKPModesMain.RollContainer.AddMax.Header:Hide()
+          f.DKPModesMain.RollContainer.maxKarma:Show()
+          f.DKPModesMain.RollContainer.maxKarma.Header:Show()
+        end
+        UIDropDownMenu_SetText(f.DKPModesMain.RollContainer.RollBiddingModeDropdown, core.DB.modes.RollMode);
+        CloseDropDownMenus()
+      end
+
+      f.DKPModesMain.RollContainer.RollBiddingModeDropdown:SetScript(
+        "OnEnter", 
+          function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+            GameTooltip:SetText(L["ITEMCOSTTYPES"], 0.25, 0.75, 0.90, 1, true);
+            GameTooltip:AddLine(L["ITEMCOSTTYPESTTDESC"], 1.0, 1.0, 1.0, true);
+            GameTooltip:Show();
+          end
+        )
+      f.DKPModesMain.RollContainer.RollBiddingModeDropdown:SetScript(
+        "OnLeave",
+          function(self)
+            GameTooltip:Hide()
+          end)
+
+    ---
+    -- Roll settings sub mode header
+    ---
+
+      f.DKPModesMain.RollContainer.SubModeHeader = f.DKPModesMain.RollContainer:CreateFontString(nil, "OVERLAY")
+      f.DKPModesMain.RollContainer.SubModeHeader:SetPoint("BOTTOMLEFT", f.DKPModesMain.RollContainer.RollBiddingModeDropdown, "TOPLEFT", 90, 2);
+      f.DKPModesMain.RollContainer.SubModeHeader:SetFontObject("CommDKPSmallLeft")
+      f.DKPModesMain.RollContainer.SubModeHeader:SetText("Roll sub mode")
+
+    ---
+    -- Default roll sub section
+    ---    
+
+    ---
     -- Min Roll Editbox
-    f.DKPModesMain.RollContainer.rollMin = CreateFrame("EditBox", nil, f.DKPModesMain.RollContainer)
+    ---
+      f.DKPModesMain.RollContainer.rollMin = CreateFrame("EditBox", nil, f.DKPModesMain.RollContainer, BackdropTemplateMixin and "BackdropTemplate" or nil)
       f.DKPModesMain.RollContainer.rollMin:SetAutoFocus(false)
       f.DKPModesMain.RollContainer.rollMin:SetMultiLine(false)
-      f.DKPModesMain.RollContainer.rollMin:SetPoint("TOPLEFT", f.DKPModesMain.RollContainer, "TOPLEFT", 20, -50)
+      f.DKPModesMain.RollContainer.rollMin:SetPoint("TOPLEFT", f.DKPModesMain.RollContainer, "TOPLEFT", 20, -80)
       f.DKPModesMain.RollContainer.rollMin:SetSize(70, 24)
       f.DKPModesMain.RollContainer.rollMin:SetBackdrop({
         bgFile   = "Textures\\white.blp", tile = true,
@@ -801,190 +896,297 @@ elseif core.DB.modes.mode == "Static Item Values" then
       f.DKPModesMain.RollContainer.rollMin:SetFontObject("CommDKPSmallRight")
       f.DKPModesMain.RollContainer.rollMin:SetTextInsets(10, 15, 5, 5)
       f.DKPModesMain.RollContainer.rollMin:SetText(core.DB.modes.rolls.min)
-      f.DKPModesMain.RollContainer.rollMin:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
-        core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
-        self:ClearFocus()
-      end)
-      f.DKPModesMain.RollContainer.rollMin:SetScript("OnTabPressed", function(self)    -- clears focus on esc
-        core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
-          f.DKPModesMain.RollContainer.rollMax:SetFocus()
-      end)
-      f.DKPModesMain.RollContainer.rollMin:SetScript("OnEnterPressed", function(self)    -- clears focus on esc
-        core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
-        self:ClearFocus()
-      end)
-      f.DKPModesMain.RollContainer.rollMin:SetScript("OnEnter", function(self)
-      GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-      GameTooltip:SetText(L["MINIMUMROLL"], 0.25, 0.75, 0.90, 1, true);
-      GameTooltip:AddLine(L["MINIMUMROLLTTDESC"], 1.0, 1.0, 1.0, true);
-      --GameTooltip:AddLine("The state of this option will persist indefinitely until manually disabled/enabled.", 1.0, 0, 0, true);
-      GameTooltip:Show();
-    end)
-      f.DKPModesMain.RollContainer.rollMin:SetScript("OnLeave", function(self)
-        GameTooltip:Hide()
-      end)
+      f.DKPModesMain.RollContainer.rollMin:SetScript(
+        "OnEscapePressed", 
+          function(self)    -- clears focus on esc
+            core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+            core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+            core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
+            self:ClearFocus()
+          end
+        )
+      f.DKPModesMain.RollContainer.rollMin:SetScript(
+        "OnTabPressed", 
+          function(self)    -- clears focus on esc
+            core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+            core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+            core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
+            f.DKPModesMain.RollContainer.rollMax:SetFocus()
+          end
+        )
+      f.DKPModesMain.RollContainer.rollMin:SetScript(
+        "OnEnterPressed", 
+          function(self)    -- clears focus on esc
+            core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+            core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+            core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
+            self:ClearFocus()
+          end
+        )
+      f.DKPModesMain.RollContainer.rollMin:SetScript(
+        "OnEnter", 
+          function(self)
+            GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+            GameTooltip:SetText(L["MINIMUMROLL"], 0.25, 0.75, 0.90, 1, true);
+            GameTooltip:AddLine(L["MINIMUMROLLTTDESC"], 1.0, 1.0, 1.0, true);
+            GameTooltip:Show();
+          end
+        )
+      f.DKPModesMain.RollContainer.rollMin:SetScript(
+        "OnLeave", 
+          function(self)
+            GameTooltip:Hide()
+          end
+        )
 
-      -- Min Roll Header
+    ---
+    -- Min Roll Header
+    ---
       f.DKPModesMain.RollContainer.rollMin.Header = f.DKPModesMain.RollContainer.rollMin:CreateFontString(nil, "OVERLAY")
       f.DKPModesMain.RollContainer.rollMin.Header:SetFontObject("CommDKPNormalLeft");
       f.DKPModesMain.RollContainer.rollMin.Header:SetPoint("BOTTOM", f.DKPModesMain.RollContainer.rollMin, "TOP", -20, 2);
       f.DKPModesMain.RollContainer.rollMin.Header:SetText(L["MIN"])
 
-      -- Dash Between Rolls
-      f.DKPModesMain.RollContainer.dash = f.DKPModesMain.RollContainer:CreateFontString(nil, "OVERLAY")
-      f.DKPModesMain.RollContainer.dash:SetFontObject("CommDKPLargeLeft");
-      f.DKPModesMain.RollContainer.dash:SetPoint("LEFT", f.DKPModesMain.RollContainer.rollMin, "RIGHT", 9, 0);
-      f.DKPModesMain.RollContainer.dash:SetText("-")
+        -- Dash Between Rolls
+        f.DKPModesMain.RollContainer.dash = f.DKPModesMain.RollContainer:CreateFontString(nil, "OVERLAY")
+        f.DKPModesMain.RollContainer.dash:SetFontObject("CommDKPLargeLeft");
+        f.DKPModesMain.RollContainer.dash:SetPoint("LEFT", f.DKPModesMain.RollContainer.rollMin, "RIGHT", 9, 0);
+        f.DKPModesMain.RollContainer.dash:SetText("-")
 
-      -- Max Roll Editbox
-    f.DKPModesMain.RollContainer.rollMax = CreateFrame("EditBox", nil, f.DKPModesMain.RollContainer)
-      f.DKPModesMain.RollContainer.rollMax:SetAutoFocus(false)
-      f.DKPModesMain.RollContainer.rollMax:SetMultiLine(false)
-      f.DKPModesMain.RollContainer.rollMax:SetPoint("LEFT", f.DKPModesMain.RollContainer.rollMin, "RIGHT", 24, 0)
-      f.DKPModesMain.RollContainer.rollMax:SetSize(70, 24)
-      f.DKPModesMain.RollContainer.rollMax:SetBackdrop({
-        bgFile   = "Textures\\white.blp", tile = true,
-        edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 1, edgeSize = 2, 
-      });
-      f.DKPModesMain.RollContainer.rollMax:SetBackdropColor(0,0,0,0.9)
-      f.DKPModesMain.RollContainer.rollMax:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
-      f.DKPModesMain.RollContainer.rollMax:SetMaxLetters(6)
-      f.DKPModesMain.RollContainer.rollMax:SetTextColor(1, 1, 1, 1)
-      f.DKPModesMain.RollContainer.rollMax:SetFontObject("CommDKPSmallRight")
-      f.DKPModesMain.RollContainer.rollMax:SetTextInsets(10, 15, 5, 5)
-      f.DKPModesMain.RollContainer.rollMax:SetText(core.DB.modes.rolls.max)
-      f.DKPModesMain.RollContainer.rollMax:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
-        core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
-        self:ClearFocus()
-      end)
-      f.DKPModesMain.RollContainer.rollMax:SetScript("OnTabPressed", function(self)    -- clears focus on esc
+        -- Max Roll Editbox
+      f.DKPModesMain.RollContainer.rollMax = CreateFrame("EditBox", nil, f.DKPModesMain.RollContainer, BackdropTemplateMixin and "BackdropTemplate" or nil)
+        f.DKPModesMain.RollContainer.rollMax:SetAutoFocus(false)
+        f.DKPModesMain.RollContainer.rollMax:SetMultiLine(false)
+        f.DKPModesMain.RollContainer.rollMax:SetPoint("LEFT", f.DKPModesMain.RollContainer.rollMin, "RIGHT", 24, 0)
+        f.DKPModesMain.RollContainer.rollMax:SetSize(70, 24)
+        f.DKPModesMain.RollContainer.rollMax:SetBackdrop({
+          bgFile   = "Textures\\white.blp", tile = true,
+          edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 1, edgeSize = 2, 
+        });
+        f.DKPModesMain.RollContainer.rollMax:SetBackdropColor(0,0,0,0.9)
+        f.DKPModesMain.RollContainer.rollMax:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
+        f.DKPModesMain.RollContainer.rollMax:SetMaxLetters(6)
+        f.DKPModesMain.RollContainer.rollMax:SetTextColor(1, 1, 1, 1)
+        f.DKPModesMain.RollContainer.rollMax:SetFontObject("CommDKPSmallRight")
+        f.DKPModesMain.RollContainer.rollMax:SetTextInsets(10, 15, 5, 5)
+        f.DKPModesMain.RollContainer.rollMax:SetText(core.DB.modes.rolls.max)
+        f.DKPModesMain.RollContainer.rollMax:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
           core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
-        f.DKPModesMain.RollContainer.AddMax:SetFocus()
+        core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+        core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
+          self:ClearFocus()
+        end)
+        f.DKPModesMain.RollContainer.rollMax:SetScript("OnTabPressed", function(self)    -- clears focus on esc
+            core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+        core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+        core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
+          f.DKPModesMain.RollContainer.AddMax:SetFocus()
+        end)
+        f.DKPModesMain.RollContainer.rollMax:SetScript("OnEnterPressed", function(self)    -- clears focus on esc
+          core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+        core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+        core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
+          self:ClearFocus()
+        end)
+        f.DKPModesMain.RollContainer.rollMax:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+        GameTooltip:SetText(L["MAXIMUMROLL"], 0.25, 0.75, 0.90, 1, true);
+        GameTooltip:AddLine(L["MAXIMUMROLLTTDESC"], 1.0, 1.0, 1.0, true);
+        GameTooltip:AddLine(L["MAXIMUMROLLTTWARN"], 1.0, 0, 0, true);
+        GameTooltip:Show();
       end)
-      f.DKPModesMain.RollContainer.rollMax:SetScript("OnEnterPressed", function(self)    -- clears focus on esc
-        core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
-        self:ClearFocus()
+        f.DKPModesMain.RollContainer.rollMax:SetScript("OnLeave", function(self)
+          GameTooltip:Hide()
+        end)
+
+        -- Max Roll Header
+        f.DKPModesMain.RollContainer.rollMax.Header = f.DKPModesMain.RollContainer.rollMax:CreateFontString(nil, "OVERLAY")
+        f.DKPModesMain.RollContainer.rollMax.Header:SetFontObject("CommDKPNormalLeft");
+        f.DKPModesMain.RollContainer.rollMax.Header:SetPoint("BOTTOM", f.DKPModesMain.RollContainer.rollMax, "TOP", -20, 2);
+        f.DKPModesMain.RollContainer.rollMax.Header:SetText(L["MAX"])
+
+        f.DKPModesMain.RollContainer.rollMin.perc = f.DKPModesMain.RollContainer.rollMin:CreateFontString(nil, "OVERLAY")
+        f.DKPModesMain.RollContainer.rollMin.perc:SetFontObject("CommDKPSmallLeft");
+        f.DKPModesMain.RollContainer.rollMin.perc:SetPoint("LEFT", f.DKPModesMain.RollContainer.rollMin, "RIGHT", -15, 0);
+        f.DKPModesMain.RollContainer.rollMin.perc:SetText("%")
+        f.DKPModesMain.RollContainer.rollMin.perc:SetShown(core.DB.modes.rolls.UsePerc);
+
+        f.DKPModesMain.RollContainer.rollMax.perc = f.DKPModesMain.RollContainer.rollMax:CreateFontString(nil, "OVERLAY")
+        f.DKPModesMain.RollContainer.rollMax.perc:SetFontObject("CommDKPSmallLeft");
+        f.DKPModesMain.RollContainer.rollMax.perc:SetPoint("LEFT", f.DKPModesMain.RollContainer.rollMax, "RIGHT", -15, 0);
+        f.DKPModesMain.RollContainer.rollMax.perc:SetText("%")
+        f.DKPModesMain.RollContainer.rollMax.perc:SetShown(core.DB.modes.rolls.UsePerc);
+
+          -- Percent Rolls Checkbox
+        f.DKPModesMain.RollContainer.UsePerc = CreateFrame("CheckButton", nil, f.DKPModesMain.RollContainer, "UICheckButtonTemplate");
+        f.DKPModesMain.RollContainer.UsePerc:SetChecked(core.DB.modes.rolls.UsePerc)
+        f.DKPModesMain.RollContainer.UsePerc:SetScale(0.6);
+        f.DKPModesMain.RollContainer.UsePerc.text:SetText("  |cff5151de"..L["USEPERCENTAGE"].."|r");
+        f.DKPModesMain.RollContainer.UsePerc.text:SetScale(1.5);
+        f.DKPModesMain.RollContainer.UsePerc.text:SetFontObject("CommDKPSmallLeft")
+        f.DKPModesMain.RollContainer.UsePerc:SetPoint("TOP", f.DKPModesMain.RollContainer.rollMin, "BOTTOMLEFT", 0, -10);
+        f.DKPModesMain.RollContainer.UsePerc:SetScript("OnClick", function(self)
+        core.DB.modes.rolls.UsePerc = self:GetChecked();
+        f.DKPModesMain.RollContainer.rollMin.perc:SetShown(self:GetChecked())
+        f.DKPModesMain.RollContainer.rollMax.perc:SetShown(self:GetChecked())
+        if f.DKPModesMain.RollContainer.rollMax:GetNumber() == 0 then
+          f.DKPModesMain.RollContainer.rollMax:SetNumber(100)
+        end
+        PlaySound(808);
       end)
-      f.DKPModesMain.RollContainer.rollMax:SetScript("OnEnter", function(self)
-      GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-      GameTooltip:SetText(L["MAXIMUMROLL"], 0.25, 0.75, 0.90, 1, true);
-      GameTooltip:AddLine(L["MAXIMUMROLLTTDESC"], 1.0, 1.0, 1.0, true);
-      GameTooltip:AddLine(L["MAXIMUMROLLTTWARN"], 1.0, 0, 0, true);
-      GameTooltip:Show();
-    end)
-      f.DKPModesMain.RollContainer.rollMax:SetScript("OnLeave", function(self)
+      f.DKPModesMain.RollContainer.UsePerc:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_LEFT");
+        GameTooltip:SetText(L["USEPERCFORROLLS"], 0.25, 0.75, 0.90, 1, true);
+        GameTooltip:AddLine(L["USEPERCROLLSTTDESC"], 1.0, 1.0, 1.0, true);
+        GameTooltip:AddLine(L["USEPERCROLLSTTWARN"], 1.0, 0, 0, true);
+        GameTooltip:Show();
+      end)
+      f.DKPModesMain.RollContainer.UsePerc:SetScript("OnLeave", function(self)
         GameTooltip:Hide()
       end)
 
-      -- Max Roll Header
-      f.DKPModesMain.RollContainer.rollMax.Header = f.DKPModesMain.RollContainer.rollMax:CreateFontString(nil, "OVERLAY")
-      f.DKPModesMain.RollContainer.rollMax.Header:SetFontObject("CommDKPNormalLeft");
-      f.DKPModesMain.RollContainer.rollMax.Header:SetPoint("BOTTOM", f.DKPModesMain.RollContainer.rollMax, "TOP", -20, 2);
-      f.DKPModesMain.RollContainer.rollMax.Header:SetText(L["MAX"])
+        -- Add to Max Editbox
+      f.DKPModesMain.RollContainer.AddMax = CreateFrame("EditBox", nil, f.DKPModesMain.RollContainer, BackdropTemplateMixin and "BackdropTemplate" or nil)
+        f.DKPModesMain.RollContainer.AddMax:SetAutoFocus(false)
+        f.DKPModesMain.RollContainer.AddMax:SetMultiLine(false)
+        f.DKPModesMain.RollContainer.AddMax:SetPoint("TOP", f.DKPModesMain.RollContainer.rollMax, "BOTTOM", 0, -30)
+        f.DKPModesMain.RollContainer.AddMax:SetSize(70, 24)
+        f.DKPModesMain.RollContainer.AddMax:SetBackdrop({
+          bgFile   = "Textures\\white.blp", tile = true,
+          edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 1, edgeSize = 2, 
+        });
+        f.DKPModesMain.RollContainer.AddMax:SetBackdropColor(0,0,0,0.9)
+        f.DKPModesMain.RollContainer.AddMax:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
+        f.DKPModesMain.RollContainer.AddMax:SetMaxLetters(6)
+        f.DKPModesMain.RollContainer.AddMax:SetTextColor(1, 1, 1, 1)
+        f.DKPModesMain.RollContainer.AddMax:SetFontObject("CommDKPSmallRight")
+        f.DKPModesMain.RollContainer.AddMax:SetTextInsets(10, 15, 5, 5)
+        f.DKPModesMain.RollContainer.AddMax:SetText(core.DB.modes.rolls.AddToMax)
+        f.DKPModesMain.RollContainer.AddMax:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
+          core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+        core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+        core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
+            self:ClearFocus()
+        end)
+        f.DKPModesMain.RollContainer.AddMax:SetScript("OnTabPressed", function(self)    -- clears focus on esc
+          core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+        core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+        core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
+            f.DKPModesMain.RollContainer.rollMin:SetFocus()
+        end)
+        f.DKPModesMain.RollContainer.AddMax:SetScript("OnEnterPressed", function(self)    -- clears focus on esc
+          core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
+        core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
+        core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
+            self:ClearFocus()
+        end)
+        f.DKPModesMain.RollContainer.AddMax:SetScript("OnEnter", function(self)
+        GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+        GameTooltip:SetText(L["ADDTOMAXROLL"], 0.25, 0.75, 0.90, 1, true);
+        GameTooltip:AddLine(L["ADDTOMAXROLLTTDESC"], 1.0, 1.0, 1.0, true);
+        GameTooltip:AddLine(L["ADDTOMAXROLLTTWARN"], 1.0, 0, 0, true);
+        GameTooltip:Show();
+      end)
+        f.DKPModesMain.RollContainer.AddMax:SetScript("OnLeave", function(self)
+          GameTooltip:Hide()
+        end)
 
-    f.DKPModesMain.RollContainer.rollMin.perc = f.DKPModesMain.RollContainer.rollMin:CreateFontString(nil, "OVERLAY")
-    f.DKPModesMain.RollContainer.rollMin.perc:SetFontObject("CommDKPSmallLeft");
-    f.DKPModesMain.RollContainer.rollMin.perc:SetPoint("LEFT", f.DKPModesMain.RollContainer.rollMin, "RIGHT", -15, 0);
-    f.DKPModesMain.RollContainer.rollMin.perc:SetText("%")
-    f.DKPModesMain.RollContainer.rollMin.perc:SetShown(core.DB.modes.rolls.UsePerc);
-
-    f.DKPModesMain.RollContainer.rollMax.perc = f.DKPModesMain.RollContainer.rollMax:CreateFontString(nil, "OVERLAY")
-    f.DKPModesMain.RollContainer.rollMax.perc:SetFontObject("CommDKPSmallLeft");
-    f.DKPModesMain.RollContainer.rollMax.perc:SetPoint("LEFT", f.DKPModesMain.RollContainer.rollMax, "RIGHT", -15, 0);
-    f.DKPModesMain.RollContainer.rollMax.perc:SetText("%")
-    f.DKPModesMain.RollContainer.rollMax.perc:SetShown(core.DB.modes.rolls.UsePerc);
-
-      -- Percent Rolls Checkbox
-    f.DKPModesMain.RollContainer.UsePerc = CreateFrame("CheckButton", nil, f.DKPModesMain.RollContainer, "UICheckButtonTemplate");
-    f.DKPModesMain.RollContainer.UsePerc:SetChecked(core.DB.modes.rolls.UsePerc)
-    f.DKPModesMain.RollContainer.UsePerc:SetScale(0.6);
-    f.DKPModesMain.RollContainer.UsePerc.text:SetText("  |cff5151de"..L["USEPERCENTAGE"].."|r");
-    f.DKPModesMain.RollContainer.UsePerc.text:SetScale(1.5);
-    f.DKPModesMain.RollContainer.UsePerc.text:SetFontObject("CommDKPSmallLeft")
-    f.DKPModesMain.RollContainer.UsePerc:SetPoint("TOP", f.DKPModesMain.RollContainer.rollMin, "BOTTOMLEFT", 0, -10);
-    f.DKPModesMain.RollContainer.UsePerc:SetScript("OnClick", function(self)
-      core.DB.modes.rolls.UsePerc = self:GetChecked();
-      f.DKPModesMain.RollContainer.rollMin.perc:SetShown(self:GetChecked())
-      f.DKPModesMain.RollContainer.rollMax.perc:SetShown(self:GetChecked())
-      if f.DKPModesMain.RollContainer.rollMax:GetNumber() == 0 then
-        f.DKPModesMain.RollContainer.rollMax:SetNumber(100)
+        -- Add to Max Header
+        f.DKPModesMain.RollContainer.AddMax.Header = f.DKPModesMain.RollContainer.rollMax:CreateFontString(nil, "OVERLAY")
+        f.DKPModesMain.RollContainer.AddMax.Header:SetFontObject("CommDKPSmallRight");
+        f.DKPModesMain.RollContainer.AddMax.Header:SetPoint("RIGHT", f.DKPModesMain.RollContainer.AddMax, "LEFT", -5, 0);
+        f.DKPModesMain.RollContainer.AddMax.Header:SetText(L["ADDTOMAXROLL"]..": ")
+        
+      -- hide default roll extra options if Ni Karma is selected
+      if core.DB.modes.RollMode == "Ni Karma" then
+        f.DKPModesMain.RollContainer.UsePerc:Hide()
+        f.DKPModesMain.RollContainer.UsePerc.text:Hide()
+        f.DKPModesMain.RollContainer.AddMax:Hide()
+        f.DKPModesMain.RollContainer.AddMax.Header:Hide()
       end
-      PlaySound(808);
-    end)
-    f.DKPModesMain.RollContainer.UsePerc:SetScript("OnEnter", function(self)
-      GameTooltip:SetOwner(self, "ANCHOR_LEFT");
-      GameTooltip:SetText(L["USEPERCFORROLLS"], 0.25, 0.75, 0.90, 1, true);
-      GameTooltip:AddLine(L["USEPERCROLLSTTDESC"], 1.0, 1.0, 1.0, true);
-      GameTooltip:AddLine(L["USEPERCROLLSTTWARN"], 1.0, 0, 0, true);
-      GameTooltip:Show();
-    end)
-    f.DKPModesMain.RollContainer.UsePerc:SetScript("OnLeave", function(self)
-      GameTooltip:Hide()
-    end)
 
-      -- Add to Max Editbox
-    f.DKPModesMain.RollContainer.AddMax = CreateFrame("EditBox", nil, f.DKPModesMain.RollContainer)
-      f.DKPModesMain.RollContainer.AddMax:SetAutoFocus(false)
-      f.DKPModesMain.RollContainer.AddMax:SetMultiLine(false)
-      f.DKPModesMain.RollContainer.AddMax:SetPoint("TOP", f.DKPModesMain.RollContainer.rollMax, "BOTTOM", 0, -30)
-      f.DKPModesMain.RollContainer.AddMax:SetSize(70, 24)
-      f.DKPModesMain.RollContainer.AddMax:SetBackdrop({
-        bgFile   = "Textures\\white.blp", tile = true,
-        edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 1, edgeSize = 2, 
-      });
-      f.DKPModesMain.RollContainer.AddMax:SetBackdropColor(0,0,0,0.9)
-      f.DKPModesMain.RollContainer.AddMax:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
-      f.DKPModesMain.RollContainer.AddMax:SetMaxLetters(6)
-      f.DKPModesMain.RollContainer.AddMax:SetTextColor(1, 1, 1, 1)
-      f.DKPModesMain.RollContainer.AddMax:SetFontObject("CommDKPSmallRight")
-      f.DKPModesMain.RollContainer.AddMax:SetTextInsets(10, 15, 5, 5)
-      f.DKPModesMain.RollContainer.AddMax:SetText(core.DB.modes.rolls.AddToMax)
-      f.DKPModesMain.RollContainer.AddMax:SetScript("OnEscapePressed", function(self)    -- clears focus on esc
-        core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
-          self:ClearFocus()
-      end)
-      f.DKPModesMain.RollContainer.AddMax:SetScript("OnTabPressed", function(self)    -- clears focus on esc
-        core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
-          f.DKPModesMain.RollContainer.rollMin:SetFocus()
-      end)
-      f.DKPModesMain.RollContainer.AddMax:SetScript("OnEnterPressed", function(self)    -- clears focus on esc
-        core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
-      core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
-      core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()
-          self:ClearFocus()
-      end)
-      f.DKPModesMain.RollContainer.AddMax:SetScript("OnEnter", function(self)
-      GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-      GameTooltip:SetText(L["ADDTOMAXROLL"], 0.25, 0.75, 0.90, 1, true);
-      GameTooltip:AddLine(L["ADDTOMAXROLLTTDESC"], 1.0, 1.0, 1.0, true);
-      GameTooltip:AddLine(L["ADDTOMAXROLLTTWARN"], 1.0, 0, 0, true);
-      GameTooltip:Show();
-    end)
-      f.DKPModesMain.RollContainer.AddMax:SetScript("OnLeave", function(self)
-        GameTooltip:Hide()
-      end)
+      --------------
 
-      -- Add to Max Header
-      f.DKPModesMain.RollContainer.AddMax.Header = f.DKPModesMain.RollContainer.rollMax:CreateFontString(nil, "OVERLAY")
-      f.DKPModesMain.RollContainer.AddMax.Header:SetFontObject("CommDKPSmallRight");
-      f.DKPModesMain.RollContainer.AddMax.Header:SetPoint("RIGHT", f.DKPModesMain.RollContainer.AddMax, "LEFT", -5, 0);
-      f.DKPModesMain.RollContainer.AddMax.Header:SetText(L["ADDTOMAXROLL"]..": ")
+    ---
+    -- Ni Karma sub section
+    ---
+
+      ---
+      -- Max Karma
+      ---
+
+
+      
+        f.DKPModesMain.RollContainer.maxKarma = CreateFrame("EditBox", nil, f.DKPModesMain.RollContainer, BackdropTemplateMixin and "BackdropTemplate" or nil)
+        f.DKPModesMain.RollContainer.maxKarma:SetAutoFocus(false)
+        f.DKPModesMain.RollContainer.maxKarma:SetMultiLine(false)
+        f.DKPModesMain.RollContainer.maxKarma:SetPoint("TOP", f.DKPModesMain.RollContainer.rollMax, "BOTTOM", 0, -30)
+        f.DKPModesMain.RollContainer.maxKarma:SetSize(70, 24)
+        f.DKPModesMain.RollContainer.maxKarma:SetBackdrop({
+          bgFile   = "Textures\\white.blp", tile = true,
+          edgeFile = "Interface\\ChatFrame\\ChatFrameBackground", tile = true, tileSize = 1, edgeSize = 2, 
+        });
+        f.DKPModesMain.RollContainer.maxKarma:SetBackdropColor(0,0,0,0.9)
+        f.DKPModesMain.RollContainer.maxKarma:SetBackdropBorderColor(0.12, 0.12, 0.34, 1)
+        f.DKPModesMain.RollContainer.maxKarma:SetMaxLetters(6)
+        f.DKPModesMain.RollContainer.maxKarma:SetTextColor(1, 1, 1, 1)
+        f.DKPModesMain.RollContainer.maxKarma:SetFontObject("CommDKPSmallRight")
+        f.DKPModesMain.RollContainer.maxKarma:SetTextInsets(10, 15, 5, 5)
+        if core.DB.modes.rolls.maxKarma == nil then
+          f.DKPModesMain.RollContainer.maxKarma:SetText("")
+        else
+          f.DKPModesMain.RollContainer.maxKarma:SetText(core.DB.modes.rolls.maxKarma)
+        end
+
+        
+        f.DKPModesMain.RollContainer.maxKarma:SetScript(
+          "OnEscapePressed", 
+            function(self)    -- clears focus on esc
+              core.DB.modes.rolls.maxKarma = f.DKPModesMain.RollContainer.maxKarma:GetNumber()
+              self:ClearFocus()
+            end
+          )
+        f.DKPModesMain.RollContainer.maxKarma:SetScript(
+          "OnTabPressed", 
+            function(self)    -- clears focus on esc
+              core.DB.modes.rolls.maxKarma = f.DKPModesMain.RollContainer.maxKarma:GetNumber()
+              self:ClearFocus()
+            end
+          )
+        f.DKPModesMain.RollContainer.maxKarma:SetScript(
+          "OnEnterPressed", 
+            function(self)    -- clears focus on esc
+              core.DB.modes.rolls.maxKarma = f.DKPModesMain.RollContainer.maxKarma:GetNumber()
+              self:ClearFocus()
+            end
+          )
+        f.DKPModesMain.RollContainer.maxKarma:SetScript(
+          "OnEnter", 
+            function(self)
+              GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+              GameTooltip:SetText(L["MINIMUMROLL"], 0.25, 0.75, 0.90, 1, true);
+              GameTooltip:AddLine(L["MINIMUMROLLTTDESC"], 1.0, 1.0, 1.0, true);
+              GameTooltip:Show();
+            end
+          )
+        f.DKPModesMain.RollContainer.maxKarma:SetScript(
+          "OnLeave", 
+            function(self)
+              GameTooltip:Hide()
+            end
+          )
+
+        -- max karma header
+        f.DKPModesMain.RollContainer.maxKarma.Header = f.DKPModesMain.RollContainer.rollMax:CreateFontString(nil, "OVERLAY")
+        f.DKPModesMain.RollContainer.maxKarma.Header:SetFontObject("CommDKPSmallRight");
+        f.DKPModesMain.RollContainer.maxKarma.Header:SetPoint("RIGHT", f.DKPModesMain.RollContainer.maxKarma, "LEFT", -5, 0);
+        f.DKPModesMain.RollContainer.maxKarma.Header:SetText("Max Karma to add"..": ")
+
+      if core.DB.modes.RollMode == "Default" then
+        f.DKPModesMain.RollContainer.maxKarma:Hide()
+        f.DKPModesMain.RollContainer.maxKarma.Header:Hide()
+      end
+
 
   -- Broadcast DKP Modes Button
   f.DKPModesMain.BroadcastSettings = self:CreateButton("BOTTOMRIGHT", f.DKPModesMain, "BOTTOMRIGHT", -30, 30, L["BROADCASTSETTINGS"]);
@@ -993,6 +1195,7 @@ elseif core.DB.modes.mode == "Static Item Values" then
     core.DB.modes.rolls.min = f.DKPModesMain.RollContainer.rollMin:GetNumber()
     core.DB.modes.rolls.max = f.DKPModesMain.RollContainer.rollMax:GetNumber()  
     core.DB.modes.rolls.AddToMax = f.DKPModesMain.RollContainer.AddMax:GetNumber()  
+    core.DB.modes.rolls.maxKarma = f.DKPModesMain.RollContainer.maxKarma:GetNumber()
 
     if (core.DB.modes.rolls.min > core.DB.modes.rolls.max and core.DB.modes.rolls.max ~= 0 and core.DB.modes.rolls.UserPerc == false) or (core.DB.modes.rolls.UsePerc and (core.DB.modes.rolls.min < 0 or core.DB.modes.rolls.max > 100 or core.DB.modes.rolls.min > core.DB.modes.rolls.max)) then
       StaticPopupDialogs["NOTIFY_ROLLS"] = {

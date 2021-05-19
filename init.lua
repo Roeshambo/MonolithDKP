@@ -12,9 +12,9 @@ local eventDelay = {};
 --------------------------------------
 CommDKP.Commands = {
   ["config"] = function()
+	CommDKP:Print("tutaj?")
     if core.Initialized then
       local pass, err = pcall(CommDKP.Toggle)
-
       if not pass then
         CommDKP:Print(err)
         core.CommDKPUI:SetShown(false)
@@ -275,7 +275,7 @@ local function DoInit(event, arg1)
 	if CommDKP:MonolithMigration() then
 		return -- Legacy MonolithDKP addon detected: don't initialise any further!
 	end
-
+	CommDKP:Print("Before Init")
 	CommDKP:OnInitialize(event, arg1);
 end
 
@@ -354,7 +354,6 @@ function CommDKP:SendSeedData()
 end
 
 function CommDKP_OnEvent(self, event, arg1, ...)
-
 	if event == "ADDON_LOADED" then
 		if (arg1 ~= "CommunityDKP") then return end
 		core.IsOfficer = nil
@@ -650,8 +649,11 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 		C_Timer.After(5, function ()
 			core.CommDKPUI = CommDKP.UIConfig or CommDKP:CreateMenu();		-- creates main menu after 5 seconds (trying to initialize after raid frames are loaded)
 			core.KeyEventUI = CreateFrame("Frame","KeyEventFrame", UIParent);
+
+			-- on every key down ? really?
 			core.KeyEventUI:SetScript("OnKeyDown", function(self, key)
 				if core.Initialized and core.IsOfficer then
+					CommDKP:Print("Is officer?")
 					if MouseIsOver(MultiBarLeft) or MouseIsOver(MultiBarRight) or MouseIsOver(MultiBarBottomLeft) or MouseIsOver(MultiBarBottomRight) or MouseIsOver(MainMenuBar) then
 						return;
 					end
@@ -677,11 +679,13 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 					end
 				end
 			end);
+
 			core.KeyEventUI:SetPropagateKeyboardInput(true);
 		end)
 		------------------------------------------------
 		-- Verify DB Schemas
-		------------------------------------------------
+		------------------------------------------------\
+		CommDKP:Print("Verify DB schemas?")
 		if not CommDKP:VerifyDBSchema(CommDKP_DB) then CommDKP_DB = CommDKP:UpgradeDBSchema(CommDKP_DB, CommDKP_DB, false, "CommDKP_DB") end;
 		
 		-- Verify that the DB table has been initialized.
@@ -703,6 +707,7 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 		------------------------------------
 	    --	Import SavedVariables
 	    ------------------------------------
+		CommDKP:Print("Import variables")
 		core.WorkingTable 		= CommDKP:GetTable(CommDKP_DKPTable, true); -- imports full DKP table to WorkingTable for list manipulation
 		core.PriceTable			= CommDKP:FormatPriceTable();
 
@@ -743,7 +748,7 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 
 			return a["item"] < b["item"]
 		end)
-		
+		CommDKP:Print("Bid Timer")
 		CommDKP:StartBidTimer("seconds", nil)						-- initiates timer frame for use
 
 		if CommDKP.BidTimer then CommDKP.BidTimer:SetScript("OnUpdate", nil) end

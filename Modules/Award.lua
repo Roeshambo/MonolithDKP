@@ -238,7 +238,7 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 end
 
 local function AwardConfirm_Create()
-	local f = CreateFrame("Frame", "CommDKP_AwardWindowConfirm", UIParent, "ShadowOverlaySmallTemplate");
+	local f = CreateFrame("Frame", "CommDKP_AwardWindowConfirm", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
 
 	f:SetPoint("TOP", UIParent, "TOP", 0, -200);
 	f:SetSize(400, 270); -- + 40
@@ -320,7 +320,7 @@ local function AwardConfirm_Create()
 		f.costHeader:SetPoint("TOPRIGHT", f.lootHeader, "BOTTOMRIGHT", 0, -10);
 		f.costHeader:SetText(L["ITEMCOST"]..":")
 
-		f.cost = CreateFrame("EditBox", nil, f)
+		f.cost = CreateFrame("EditBox", nil, f, BackdropTemplateMixin and "BackdropTemplate" or nil)
 		f.cost:SetAutoFocus(false)
 		f.cost:SetMultiLine(false)
 		f.cost:SetPoint("LEFT", f.costHeader, "RIGHT", 5, 0)

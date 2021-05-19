@@ -5,7 +5,7 @@ local L = core.L;
 
  
 local function CreateRow(parent, id) -- Create 3 buttons for each row in the list
-	local f = CreateFrame("Button", "$parentLine"..id, parent)
+	local f = CreateFrame("Button", "$parentLine"..id, parent, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	f.PriceInfo = {}
 	f:SetSize(core.TableWidth, core.TableRowHeight)
 	f:SetHighlightTexture("Interface\\AddOns\\CommunityDKP\\Media\\Textures\\ListBox-Highlight");
@@ -287,14 +287,15 @@ function CommDKP:PriceTab_Create()
 	CommDKP.ConfigTab7.PriceTable = CreateFrame("ScrollFrame", "CommDKPPriceScrollFrame", CommDKP.ConfigTab7, "FauxScrollFrameTemplate")
 		CommDKP.ConfigTab7.PriceTable:SetSize(core.TableWidth, core.TableRowHeight*numOfRows)
 	CommDKP.ConfigTab7.PriceTable:SetPoint("TOPLEFT", 0, -95)
-	CommDKP.ConfigTab7.PriceTable:SetBackdrop( {
-		bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
-		edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,
-		insets = { left = 0, right = 0, top = 0, bottom = 0 }
-	});
 
-	CommDKP.ConfigTab7.PriceTable:SetBackdropColor(0,0,0,0.4);
-	CommDKP.ConfigTab7.PriceTable:SetBackdropBorderColor(1,1,1,0.5)
+	--CommDKP.ConfigTab7.PriceTable:SetBackdrop( {
+	--	bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
+	--	edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,
+	--	insets = { left = 0, right = 0, top = 0, bottom = 0 }
+	--});
+
+	--CommDKP.ConfigTab7.PriceTable:SetBackdropColor(0,0,0,0.4);
+	--CommDKP.ConfigTab7.PriceTable:SetBackdropBorderColor(1,1,1,0.5)
 	CommDKP.ConfigTab7.PriceTable:SetClipsChildren(false);
 
 	CommDKP.ConfigTab7.PriceTable.ScrollBar = FauxScrollFrame_GetChildFrames(CommDKP.ConfigTab7.PriceTable)
@@ -313,7 +314,7 @@ function CommDKP:PriceTab_Create()
 		FauxScrollFrame_OnVerticalScroll(self, offset, core.TableRowHeight, CommDKP:PriceTable_Update(offset))
 	end)
 
-	CommDKP.ConfigTab7.PriceTable.Headers = CreateFrame("Frame", "CommDKPPriceTableHeaders", CommDKP.ConfigTab7)
+	CommDKP.ConfigTab7.PriceTable.Headers = CreateFrame("Frame", "CommDKPPriceTableHeaders", CommDKP.ConfigTab7, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	CommDKP.ConfigTab7.PriceTable.Headers:SetSize(500, 22)
 	CommDKP.ConfigTab7.PriceTable.Headers:SetPoint("BOTTOMLEFT", CommDKP.ConfigTab7.PriceTable, "TOPLEFT", 0, 1)
 	CommDKP.ConfigTab7.PriceTable.Headers:SetBackdrop({
