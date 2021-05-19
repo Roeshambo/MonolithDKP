@@ -135,7 +135,7 @@ end
 
 local function RaidTimerPopout_Create()
 	if not CommDKP.RaidTimerPopout then
-		CommDKP.RaidTimerPopout = CreateFrame("Frame", "CommDKP_RaidTimerPopout", UIParent, "ShadowOverlaySmallTemplate");
+		CommDKP.RaidTimerPopout = CreateFrame("Frame", "CommDKP_RaidTimerPopout", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
 
 	    CommDKP.RaidTimerPopout:SetPoint("RIGHT", UIParent, "RIGHT", -300, 100);
 	    CommDKP.RaidTimerPopout:SetSize(100, 50);
@@ -155,7 +155,7 @@ local function RaidTimerPopout_Create()
 	    CommDKP.RaidTimerPopout:SetScript("OnDragStop", CommDKP.RaidTimerPopout.StopMovingOrSizing);
 
 	    -- Popout Close Button
-	    CommDKP.RaidTimerPopout.closeContainer = CreateFrame("Frame", "CommDKPChangeLogClose", CommDKP.RaidTimerPopout)
+	    CommDKP.RaidTimerPopout.closeContainer = CreateFrame("Frame", "CommDKPChangeLogClose", CommDKP.RaidTimerPopout, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	    CommDKP.RaidTimerPopout.closeContainer:SetPoint("CENTER", CommDKP.RaidTimerPopout, "TOPRIGHT", -8, -4)
 	    CommDKP.RaidTimerPopout.closeContainer:SetBackdrop({
 	      bgFile   = "Textures\\white.blp", tile = true,
@@ -274,7 +274,7 @@ function CommDKP:AdjustDKPTab_Create()
 	CommDKP.ConfigTab2.reasonHeader:SetText(L["REASONFORADJUSTMENT"]..":")
 
 	-- Other Reason Editbox. Hidden unless "Other" is selected in dropdown
-	CommDKP.ConfigTab2.otherReason = CreateFrame("EditBox", nil, CommDKP.ConfigTab2)
+	CommDKP.ConfigTab2.otherReason = CreateFrame("EditBox", nil, CommDKP.ConfigTab2, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	CommDKP.ConfigTab2.otherReason:SetPoint("TOPLEFT", CommDKP.ConfigTab2.reasonDropDown, "BOTTOMLEFT", 19, 2)     
 	CommDKP.ConfigTab2.otherReason:SetAutoFocus(false)
 	CommDKP.ConfigTab2.otherReason:SetMultiLine(false)
@@ -382,7 +382,7 @@ function CommDKP:AdjustDKPTab_Create()
 	end
 
 	-- Add DKP Edit Box
-	CommDKP.ConfigTab2.addDKP = CreateFrame("EditBox", nil, CommDKP.ConfigTab2)
+	CommDKP.ConfigTab2.addDKP = CreateFrame("EditBox", nil, CommDKP.ConfigTab2, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	CommDKP.ConfigTab2.addDKP:SetPoint("TOPLEFT", CommDKP.ConfigTab2.reasonDropDown, "BOTTOMLEFT", 20, -44)     
 	CommDKP.ConfigTab2.addDKP:SetAutoFocus(false)
 	CommDKP.ConfigTab2.addDKP:SetMultiLine(false)
@@ -490,7 +490,7 @@ function CommDKP:AdjustDKPTab_Create()
 	end)
 
 	-- weekly decay Editbox
-	CommDKP.ConfigTab2.decayDKP = CreateFrame("EditBox", nil, CommDKP.ConfigTab2)
+	CommDKP.ConfigTab2.decayDKP = CreateFrame("EditBox", nil, CommDKP.ConfigTab2, BackdropTemplateMixin and "BackdropTemplate" or nil)
 	CommDKP.ConfigTab2.decayDKP:SetPoint("BOTTOMLEFT", CommDKP.ConfigTab2, "BOTTOMLEFT", 21, 70)     
 	CommDKP.ConfigTab2.decayDKP:SetAutoFocus(false)
 	CommDKP.ConfigTab2.decayDKP:SetMultiLine(false)
@@ -612,7 +612,7 @@ function CommDKP:AdjustDKPTab_Create()
 	end)
 
 	-- Raid Timer Container
-	CommDKP.ConfigTab2.RaidTimerContainer = CreateFrame("Frame", nil, CommDKP.ConfigTab2);
+	CommDKP.ConfigTab2.RaidTimerContainer = CreateFrame("Frame", nil, CommDKP.ConfigTab2, BackdropTemplateMixin and "BackdropTemplate" or nil);
 	CommDKP.ConfigTab2.RaidTimerContainer:SetSize(200, 360);
 	CommDKP.ConfigTab2.RaidTimerContainer:SetPoint("RIGHT", CommDKP.ConfigTab2, "RIGHT", -25, -60)
 	CommDKP.ConfigTab2.RaidTimerContainer:SetBackdrop({
@@ -803,7 +803,7 @@ function CommDKP:AdjustDKPTab_Create()
 
 		-- Award Interval Editbox
 		if not core.DB.modes.increment then core.DB.modes.increment = 60 end
-		CommDKP.ConfigTab2.RaidTimerContainer.interval = CreateFrame("EditBox", nil, CommDKP.ConfigTab2.RaidTimerContainer)
+		CommDKP.ConfigTab2.RaidTimerContainer.interval = CreateFrame("EditBox", nil, CommDKP.ConfigTab2.RaidTimerContainer, BackdropTemplateMixin and "BackdropTemplate" or nil)
 		CommDKP.ConfigTab2.RaidTimerContainer.interval:SetPoint("BOTTOMLEFT", CommDKP.ConfigTab2.RaidTimerContainer, "BOTTOMLEFT", 35, 225)     
 		CommDKP.ConfigTab2.RaidTimerContainer.interval:SetAutoFocus(false)
 		CommDKP.ConfigTab2.RaidTimerContainer.interval:SetMultiLine(false)
@@ -866,7 +866,7 @@ function CommDKP:AdjustDKPTab_Create()
 
 	    -- Award Value Editbox
 	    if not core.DB.DKPBonus.IntervalBonus then core.DB.DKPBonus.IntervalBonus = 15 end
-		CommDKP.ConfigTab2.RaidTimerContainer.bonusvalue = CreateFrame("EditBox", nil, CommDKP.ConfigTab2.RaidTimerContainer)
+		CommDKP.ConfigTab2.RaidTimerContainer.bonusvalue = CreateFrame("EditBox", nil, CommDKP.ConfigTab2.RaidTimerContainer, BackdropTemplateMixin and "BackdropTemplate" or nil)
 		CommDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetPoint("LEFT", CommDKP.ConfigTab2.RaidTimerContainer.interval, "RIGHT", 10, 0)     
 		CommDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetAutoFocus(false)
 		CommDKP.ConfigTab2.RaidTimerContainer.bonusvalue:SetMultiLine(false)

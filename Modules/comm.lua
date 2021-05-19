@@ -249,7 +249,7 @@ function CommDKP.Sync:OnCommReceived(prefix, message, distribution, sender)
   end
 end
 
-function CommDKP.Sync:SendData(prefix, data, target, targetTeam)
+function CommDKP.Sync:SendData(prefix, data, target, targetTeam, prio)
 
   -- 2.3.0 object being sent with almost everything?
   -- the idea is to envelope the old message into another object and then decode it on receiving end
@@ -320,7 +320,13 @@ function CommDKP.Sync:SendData(prefix, data, target, targetTeam)
       end
   
       if prefix == "CommDKPBCastMsg" then
-        CommDKP:CastMsgSend(prefix, _compressedObj, "RAID");
+
+        if target == nil then
+          CommDKP:CastMsgSend(prefix, _compressedObj, target, nil, prio);
+        else
+          CommDKP:CastMsgSend(prefix, _compressedObj, "WHISPER", target, prio);
+        end;
+      
         return;
       end  
   
@@ -412,10 +418,10 @@ function CommDKP:AllTabsSend(prefix, commObject, channel)
 
   if channel then -- check if we are targeting specific player
     print("[CommunityDKP] COMMS: You started Full Broadcast for team "..CommDKP:GetTeamName(CommDKP:GetCurrentTeamIndex()).." to player "..channel);
-    CommDKP.Sync:SendCommMessage(prefix, commObject, "WHISPER", channel, "NORMAL", CommDKP_BroadcastFull_Callback, nil);
+    CommDKP.Sync:SendCommMessage(prefix, commObject, "WHISPER", channel, "NORMAL", CommDKP_BroadcastFull_Callback, channel);
   else
     CommDKP.Sync:SendData("CommDKPPreBroad", prefix, nil);
-    CommDKP.Sync:SendCommMessage(prefix, commObject, _channel, nil, "NORMAL", CommDKP_BroadcastFull_Callback, nil);
+    CommDKP.Sync:SendCommMessage(prefix, commObject, _channel, nil, "NORMAL", CommDKP_BroadcastFull_Callback, _channel);
   end
 end
 
@@ -542,10 +548,10 @@ function CommDKP:MergeSend(prefix, commObject, channel)
 
   if channel then -- check if we are targeting specific player
     print("[CommunityDKP] COMMS: You started 2-week broadcast for team "..CommDKP:GetTeamName(CommDKP:GetCurrentTeamIndex()).." to player "..channel);
-    CommDKP.Sync:SendCommMessage(prefix, commObject, "WHISPER", channel, "NORMAL", CommDKP_BroadcastFull_Callback, nil);
+    CommDKP.Sync:SendCommMessage(prefix, commObject, "WHISPER", channel, "NORMAL", CommDKP_BroadcastFull_Callback, channel);
   else
     CommDKP.Sync:SendData("CommDKPPreBroad", prefix, nil);
-    CommDKP.Sync:SendCommMessage(prefix, commObject, _channel, nil, "NORMAL", CommDKP_BroadcastFull_Callback, nil);
+    CommDKP.Sync:SendCommMessage(prefix, commObject, _channel, nil, "NORMAL", CommDKP_BroadcastFull_Callback, _channel);
   end
 end
 
@@ -988,10 +994,16 @@ end
 -- CommDKPBCastMsg message HANDLERS
 ----------
 
-function CommDKP:CastMsgSend(prefix, commObject, channel)
+function CommDKP:CastMsgSend(prefix, commObject, channel, player, prio)
   local _channel = channel or "RAID";
   local _prefix = prefix or "CommDKPBCastMsg";
-  CommDKP.Sync:SendCommMessage(_prefix, commObject, _channel);
+  local _prio = prio or "NORMAL";
+
+  if player == nil then
+    CommDKP.Sync:SendCommMessage(_prefix, commObject, _channel, nil, _prio, nil, nil);
+  else
+    CommDKP.Sync:SendCommMessage(_prefix, commObject, "WHISPER", player, _prio, nil, nil);
+  end;
 end
 
 

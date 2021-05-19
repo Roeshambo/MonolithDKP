@@ -814,8 +814,8 @@ if GetLocale() == "deDE" then
     MIGRATIONCOMPLETED    = "Migration abgeschlossen.|n|nBitte deaktivieren Sie MonolithDKP und laden Sie das UI neu. (/reload)",
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.4-r62",
-    CHANGELOG2 = "fixed history display on mouseover",
+    CHANGELOG1 = "CommunityDKP - v3.2.5-r62",
+    CHANGELOG2 = " - Hopefully made this work in pre-patch",
     CHANGELOG3 = "",
     CHANGELOG4 = "",
     CHANGELOG5 = "",

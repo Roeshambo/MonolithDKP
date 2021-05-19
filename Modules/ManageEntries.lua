@@ -1074,7 +1074,7 @@ function CommDKP:ManageEntries()
 		----------------------------------
 		-- Team name input box
 		----------------------------------
-			CommDKP.ConfigTab3.TeamNameInput = CreateFrame("EditBox", nil, CommDKP.ConfigTab3)
+			CommDKP.ConfigTab3.TeamNameInput = CreateFrame("EditBox", nil, CommDKP.ConfigTab3, BackdropTemplateMixin and "BackdropTemplate" or nil)
 			CommDKP.ConfigTab3.TeamNameInput:SetAutoFocus(false)
 			CommDKP.ConfigTab3.TeamNameInput:SetMultiLine(false)
 			CommDKP.ConfigTab3.TeamNameInput:SetSize(160, 24)

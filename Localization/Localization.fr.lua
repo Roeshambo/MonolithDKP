@@ -873,8 +873,8 @@ if GetLocale() == "frFR" then
     MIGRATIONCOMPLETED    = "Migration réussie.|n|nVeuillez désactiver MonolithDKP et recharger votre interface (/reload).", --TODO TRANSLATE:
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.4-r62",
-    CHANGELOG2 = "fixed history display on mouseover",
+    CHANGELOG1 = "CommunityDKP - v3.2.5-r62",
+    CHANGELOG2 = " - Hopefully made this work in pre-patch",
     CHANGELOG3 = "",
     CHANGELOG4 = "",
     CHANGELOG5 = "",

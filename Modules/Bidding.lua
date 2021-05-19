@@ -420,10 +420,7 @@ function CommDKP:ToggleBidWindow(loot, lootIcon, itemName)
   mode = core.DB.modes.mode;
 
   if core.IsOfficer then
-    if core.BiddingWindow == nil then
-      print("Bidding Window is Nil")
-    end
-
+    
     core.BiddingWindow = core.BiddingWindow or CommDKP:CreateBidWindow();
 
     if core.DB.bidpos then
@@ -939,10 +936,11 @@ end
 
 function CommDKP:CreateTimer()
 
-  local f = CreateFrame("StatusBar", nil, UIParent)
+  local f = CreateFrame("StatusBar", nil, UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil)
   f:SetSize(300, 25)
   f:SetFrameStrata("DIALOG")
   f:SetFrameLevel(18)
+
   f:SetBackdrop({
       bgFile   = "Interface\\ChatFrame\\ChatFrameBackground", tile = true,
     });
@@ -965,7 +963,7 @@ function CommDKP:CreateTimer()
     core.DB.timerpos["y"] = yOff;
   end);
 
-  f.border = CreateFrame("Frame", nil, f);
+  f.border = CreateFrame("Frame", nil, f, BackdropTemplateMixin and "BackdropTemplate" or nil);
   f.border:SetPoint("CENTER", f, "CENTER");
   f.border:SetFrameStrata("DIALOG")
   f.border:SetFrameLevel(19)
@@ -1112,7 +1110,6 @@ local function SortBidTable()             -- sorts the Loot History Table by dat
 end
 
 function CommDKP:BidScrollFrame_Update()
-  print("Updating bidscroll");
   local numOptions = #Bids_Submitted;
   local index, row
     local offset = FauxScrollFrame_GetOffset(core.BiddingWindow.bidTable) or 0
@@ -1196,7 +1193,7 @@ function CommDKP:BidScrollFrame_Update()
 end
 
 function CommDKP:CreateBidWindow()
-  local f = CreateFrame("Frame", "CommDKP_BiddingWindow", UIParent, "ShadowOverlaySmallTemplate");
+  local f = CreateFrame("Frame", "CommDKP_BiddingWindow", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
   mode = core.DB.modes.mode;
 
   f:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 300, -200);
@@ -1240,7 +1237,7 @@ function CommDKP:CreateBidWindow()
   tinsert(UISpecialFrames, f:GetName()); -- Sets frame to close on "Escape"
 
     -- Close Button
-  f.closeContainer = CreateFrame("Frame", "CommDKPBiddingWindowCloseButtonContainer", f)
+  f.closeContainer = CreateFrame("Frame", "CommDKPBiddingWindowCloseButtonContainer", f, BackdropTemplateMixin and "BackdropTemplate" or nil)
   f.closeContainer:SetPoint("CENTER", f, "TOPRIGHT", -4, 0)
   f.closeContainer:SetBackdrop({
     bgFile   = "Textures\\white.blp", tile = true,
@@ -1260,7 +1257,7 @@ function CommDKP:CreateBidWindow()
     f.bossHeader:SetPoint("TOPLEFT", f, "TOPLEFT", 85, -25);
     f.bossHeader:SetText(L["BOSS"]..":")
 
-    f.boss = CreateFrame("EditBox", nil, f)
+    f.boss = CreateFrame("EditBox", nil, f, BackdropTemplateMixin and "BackdropTemplate" or nil)
     f.boss:SetFontObject("CommDKPNormalLeft");
     f.boss:SetAutoFocus(false)
     f.boss:SetMultiLine(false)
@@ -1322,7 +1319,7 @@ function CommDKP:CreateBidWindow()
       -- Min Bid
       f.minBidHeader:SetText(L["MINIMUMBID"]..": ")
 
-      f.minBid = CreateFrame("EditBox", nil, f)
+      f.minBid = CreateFrame("EditBox", nil, f, BackdropTemplateMixin and "BackdropTemplate" or nil)
       f.minBid:SetPoint("LEFT", f.minBidHeader, "RIGHT", 8, 0)
       f.minBid:SetAutoFocus(false)
       f.minBid:SetMultiLine(false)
@@ -1383,7 +1380,7 @@ function CommDKP:CreateBidWindow()
       f.maxBidHeader:SetPoint("TOP", f.minBidHeader, "BOTTOM", -2, -25);
       f.maxBidHeader:SetText(L["MAXIMUMBID"]..": ")
 
-      f.maxBid = CreateFrame("EditBox", nil, f)
+      f.maxBid = CreateFrame("EditBox", nil, f, BackdropTemplateMixin and "BackdropTemplate" or nil)
       f.maxBid:SetPoint("LEFT", f.maxBidHeader, "RIGHT", 8, 0)
       f.maxBid:SetAutoFocus(false)
       f.maxBid:SetMultiLine(false)
@@ -1446,7 +1443,7 @@ function CommDKP:CreateBidWindow()
   end
     f.bidTimerHeader:SetText(L["BIDTIMER"]..": ")
 
-    f.bidTimer = CreateFrame("EditBox", nil, f)
+    f.bidTimer = CreateFrame("EditBox", nil, f, BackdropTemplateMixin and "BackdropTemplate" or nil)
     f.bidTimer:SetPoint("LEFT", f.bidTimerHeader, "RIGHT", 8, 0)
       f.bidTimer:SetAutoFocus(false)
       f.bidTimer:SetMultiLine(false)
@@ -1554,7 +1551,7 @@ function CommDKP:CreateBidWindow()
     --------------------------------------------------
     -- Bid Table
     --------------------------------------------------
-      f.bidTable = CreateFrame("ScrollFrame", "CommDKP_BidWindowTable", f, "FauxScrollFrameTemplate")
+      f.bidTable = CreateFrame("ScrollFrame", "CommDKP_BidWindowTable", f, BackdropTemplateMixin and "BackdropTemplate" or nil)
       f.bidTable:SetSize(width, height*numrows+3)
     f.bidTable:SetBackdrop({
       bgFile   = "Textures\\white.blp", tile = true,
@@ -1563,7 +1560,7 @@ function CommDKP:CreateBidWindow()
     f.bidTable:SetBackdropColor(0,0,0,0.2)
     f.bidTable:SetBackdropBorderColor(1,1,1,0.4)
       f.bidTable.ScrollBar = FauxScrollFrame_GetChildFrames(f.bidTable)
-      f.bidTable.ScrollBar:Hide()
+      --f.bidTable.ScrollBar:Hide()
       f.bidTable.Rows = {}
       for i=1, numrows do
           f.bidTable.Rows[i] = BidWindowCreateRow(f.bidTable, i)
@@ -1583,7 +1580,7 @@ function CommDKP:CreateBidWindow()
     local headerButtons = {}
     mode = core.DB.modes.mode;
 
-    f.BidTable_Headers = CreateFrame("Frame", "CommDKPDKPTableHeaders", f)
+    f.BidTable_Headers = CreateFrame("Frame", "CommDKPDKPTableHeaders", f, BackdropTemplateMixin and "BackdropTemplate" or nil)
     f.BidTable_Headers:SetSize(370, 22)
     f.BidTable_Headers:SetPoint("BOTTOMLEFT", f.bidTable, "TOPLEFT", 0, 1)
     f.BidTable_Headers:SetBackdrop({
@@ -1661,7 +1658,7 @@ function CommDKP:CreateBidWindow()
       --  AWARD ITEM
       ------------------------------------
 
-      f.cost = CreateFrame("EditBox", nil, f)
+      f.cost = CreateFrame("EditBox", nil, f, BackdropTemplateMixin and "BackdropTemplate" or nil)
     f.cost:SetPoint("TOPLEFT", f.bidTable, "BOTTOMLEFT", 71, -15)
       f.cost:SetAutoFocus(false)
       f.cost:SetMultiLine(false)

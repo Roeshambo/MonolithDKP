@@ -483,7 +483,7 @@ function CommDKP:Bids_Set(entry)
 end
 
 function CommDKP:BidInterface_Create()
-  local f = CreateFrame("Frame", "CommDKP_BidderWindow", UIParent, "ShadowOverlaySmallTemplate");
+  local f = CreateFrame("Frame", "CommDKP_BidderWindow", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
   local mode = core.DB.modes.mode;
   f:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 700, -200);
   if mode == "Minimum Bid Values" or (mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
@@ -525,7 +525,7 @@ function CommDKP:BidInterface_Create()
   tinsert(UISpecialFrames, f:GetName()); -- Sets frame to close on "Escape"
 
     -- Close Button
-  f.closeContainer = CreateFrame("Frame", "CommDKPBidderWindowCloseButtonContainer", f)
+  f.closeContainer = CreateFrame("Frame", "CommDKPBidderWindowCloseButtonContainer", f, BackdropTemplateMixin and "BackdropTemplate" or nil)
   f.closeContainer:SetPoint("CENTER", f, "TOPRIGHT", -4, 0)
   f.closeContainer:SetBackdrop({
     bgFile   = "Textures\\white.blp", tile = true,
@@ -535,13 +535,13 @@ function CommDKP:BidInterface_Create()
   f.closeContainer:SetBackdropBorderColor(1,1,1,0.2)
   f.closeContainer:SetSize(28, 28)
 
-  f.closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton")
+  f.closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton", BackdropTemplateMixin and "BackdropTemplate" or nil)
   f.closeBtn:SetPoint("CENTER", f.closeContainer, "TOPRIGHT", -14, -14)
 
   f.LootTableIcons = {}
   f.LootTableButtons = {}
 
-  f.lootContainer = CreateFrame("Frame", "CommDKP_LootContainer", UIParent);
+  f.lootContainer = CreateFrame("Frame", "CommDKP_LootContainer", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
   f.lootContainer:SetPoint("TOP", f, "TOP", 0, -40);
   f.lootContainer:SetSize(35, 35)
 
@@ -611,7 +611,7 @@ function CommDKP:BidInterface_Create()
     f.BidHeader:SetPoint("TOPRIGHT", f.MinBidHeader, "BOTTOMRIGHT", 0, -20);
   end
 
-  f.Bid = CreateFrame("EditBox", nil, f)
+  f.Bid = CreateFrame("EditBox", nil, f, BackdropTemplateMixin and "BackdropTemplate" or nil)
   f.Bid:SetPoint("LEFT", f.BidHeader, "RIGHT", 8, 0)   
   f.Bid:SetAutoFocus(false)
   f.Bid:SetMultiLine(false)
@@ -793,12 +793,13 @@ function CommDKP:BidInterface_Create()
   --------------------------------------------------
   f.bidTable = CreateFrame("ScrollFrame", "CommDKP_BiderWindowTable", f, "FauxScrollFrameTemplate")
   f.bidTable:SetSize(width, height*numrows+3)
-  f.bidTable:SetBackdrop({
-    bgFile   = "Textures\\white.blp", tile = true,
-    edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
-  });
-  f.bidTable:SetBackdropColor(0,0,0,0.2)
-  f.bidTable:SetBackdropBorderColor(1,1,1,0.4)
+
+  -- f.bidTable:SetBackdrop({
+  --   bgFile   = "Textures\\white.blp", tile = true,
+  --   edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
+  -- });
+  -- f.bidTable:SetBackdropColor(0,0,0,0.2)
+  -- f.bidTable:SetBackdropBorderColor(1,1,1,0.4)
   f.bidTable.ScrollBar = FauxScrollFrame_GetChildFrames(f.bidTable)
   f.bidTable.ScrollBar:Hide()
   f.bidTable.Rows = {}
@@ -811,7 +812,7 @@ function CommDKP:BidInterface_Create()
       end
   end
   f.bidTable:SetScript("OnVerticalScroll", function(self, offset)
-      FauxScrollFrame_OnVerticalScroll(self, offset, height, BidderScrollFrame_Update)
+    FauxScrollFrame_OnVerticalScroll(self, offset, height, BidderScrollFrame_Update)
   end)
 
   ---------------------------------------
@@ -820,7 +821,7 @@ function CommDKP:BidInterface_Create()
   f.headerButtons = {}
   mode = core.DB.modes.mode;
 
-  f.BidTable_Headers = CreateFrame("Frame", "CommDKPBidderTableHeaders", f.bidTable)
+  f.BidTable_Headers = CreateFrame("Frame", "CommDKPBidderTableHeaders", f.bidTable, BackdropTemplateMixin and "BackdropTemplate" or nil)
   f.BidTable_Headers:SetSize(370, 22)
   f.BidTable_Headers:SetPoint("BOTTOMLEFT", f.bidTable, "TOPLEFT", 0, 1)
   f.BidTable_Headers:SetBackdrop({
@@ -832,9 +833,9 @@ function CommDKP:BidInterface_Create()
   f.bidTable:SetPoint("BOTTOM", f, "BOTTOM", 0, 15)
   f.BidTable_Headers:Show()
 
-  f.headerButtons.player = CreateFrame("Button", "$ParentButtonPlayer", f.BidTable_Headers)
-  f.headerButtons.bid = CreateFrame("Button", "$ParentButtonBid", f.BidTable_Headers)
-  f.headerButtons.dkp = CreateFrame("Button", "$ParentSuttonDkp", f.BidTable_Headers)
+  f.headerButtons.player = CreateFrame("Button", "$ParentButtonPlayer", f.BidTable_Headers, BackdropTemplateMixin and "BackdropTemplate" or nil)
+  f.headerButtons.bid = CreateFrame("Button", "$ParentButtonBid", f.BidTable_Headers, BackdropTemplateMixin and "BackdropTemplate" or nil)
+  f.headerButtons.dkp = CreateFrame("Button", "$ParentSuttonDkp", f.BidTable_Headers, BackdropTemplateMixin and "BackdropTemplate" or nil)
 
   f.headerButtons.player:SetPoint("LEFT", f.BidTable_Headers, "LEFT", 2, 0)
   f.headerButtons.bid:SetPoint("LEFT", f.headerButtons.player, "RIGHT", 0, 0)

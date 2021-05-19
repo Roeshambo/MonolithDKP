@@ -100,7 +100,7 @@ function CommDKP:Options()
     CommDKP.ConfigTab4.description:SetText("|CFFcca600"..L["DEFAULTDKPAWARDVALUES"].."|r");
   
     for i=1, 6 do
-      CommDKP.ConfigTab4.default[i] = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+      CommDKP.ConfigTab4.default[i] = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
       CommDKP.ConfigTab4.default[i]:SetAutoFocus(false)
       CommDKP.ConfigTab4.default[i]:SetMultiLine(false)
       CommDKP.ConfigTab4.default[i]:SetSize(80, 24)
@@ -264,7 +264,7 @@ function CommDKP:Options()
       CommDKP.ConfigTab4.DefaultMinBids.SlotBox = SlotBox;
 
       for i=1, 17 do
-        CommDKP.ConfigTab4.DefaultMinBids.SlotBox[i] = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+        CommDKP.ConfigTab4.DefaultMinBids.SlotBox[i] = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
         CommDKP.ConfigTab4.DefaultMinBids.SlotBox[i]:SetAutoFocus(false)
         CommDKP.ConfigTab4.DefaultMinBids.SlotBox[i]:SetMultiLine(false)
         CommDKP.ConfigTab4.DefaultMinBids.SlotBox[i]:SetSize(60, 24)
@@ -531,7 +531,7 @@ function CommDKP:Options()
       CommDKP.ConfigTab4.DefaultMaxBids.SlotBox = SlotBox;
 
       for i=1, 17 do
-        CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[i] = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+        CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[i] = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
         CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[i]:SetAutoFocus(false)
         CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[i]:SetMultiLine(false)
         CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[i]:SetSize(60, 24)
@@ -765,6 +765,13 @@ function CommDKP:Options()
     end
     -- Bid Timer Slider
     CommDKP.ConfigTab4.bidTimerSlider = CreateFrame("SLIDER", "$parentBidTimerSlider", CommDKP.ConfigTab4, "CommDKPOptionsSliderTemplate");
+    Mixin(CommDKP.ConfigTab4.bidTimerSlider, BackdropTemplateMixin)
+  CommDKP.ConfigTab4.bidTimerSlider:SetBackdrop({
+    bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
+    edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
+    tile = true, tileSize = 8, edgeSize = 8,
+    insets = { left = 3, right = 3, top = 6, bottom = 6 }
+  })
     if core.DB.modes.mode == "Minimum Bid Values" or (core.DB.modes.mode == "Zero Sum" and core.DB.modes.ZeroSumBidType == "Minimum Bid") then
       CommDKP.ConfigTab4.bidTimerSlider:SetPoint("TOPLEFT", CommDKP.ConfigTab4.DefaultMaxBids, "BOTTOMLEFT", 54, -40);
     else
@@ -787,7 +794,7 @@ function CommDKP:Options()
     CommDKP.ConfigTab4.bidTimerHeader:SetPoint("BOTTOM", CommDKP.ConfigTab4.bidTimerSlider, "TOP", 0, 3);
     CommDKP.ConfigTab4.bidTimerHeader:SetText(L["BIDTIMER"])
 
-    CommDKP.ConfigTab4.bidTimer = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+    CommDKP.ConfigTab4.bidTimer = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
     CommDKP.ConfigTab4.bidTimer:SetAutoFocus(false)
     CommDKP.ConfigTab4.bidTimer:SetMultiLine(false)
     CommDKP.ConfigTab4.bidTimer:SetSize(50, 18)
@@ -821,6 +828,15 @@ function CommDKP:Options()
   else
     CommDKP.ConfigTab4.TooltipHistorySlider:SetPoint("TOP", CommDKP.ConfigTab4, "TOP", 1, -107);
   end
+
+  Mixin(CommDKP.ConfigTab4.TooltipHistorySlider, BackdropTemplateMixin)
+  CommDKP.ConfigTab4.TooltipHistorySlider:SetBackdrop({
+    bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
+    edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
+    tile = true, tileSize = 8, edgeSize = 8,
+    insets = { left = 3, right = 3, top = 6, bottom = 6 }
+  })
+
   CommDKP.ConfigTab4.TooltipHistorySlider:SetMinMaxValues(5, 35);
   CommDKP.ConfigTab4.TooltipHistorySlider:SetValue(core.DB.defaults.TooltipHistoryCount);
   CommDKP.ConfigTab4.TooltipHistorySlider:SetValueStep(1);
@@ -838,7 +854,7 @@ function CommDKP:Options()
   CommDKP.ConfigTab4.TooltipHistoryHeader:SetPoint("BOTTOM", CommDKP.ConfigTab4.TooltipHistorySlider, "TOP", 0, 3);
   CommDKP.ConfigTab4.TooltipHistoryHeader:SetText(L["TTHISTORYCOUNT"])
 
-  CommDKP.ConfigTab4.TooltipHistory = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+  CommDKP.ConfigTab4.TooltipHistory = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
   CommDKP.ConfigTab4.TooltipHistory:SetAutoFocus(false)
   CommDKP.ConfigTab4.TooltipHistory:SetMultiLine(false)
   CommDKP.ConfigTab4.TooltipHistory:SetSize(50, 18)
@@ -867,11 +883,21 @@ function CommDKP:Options()
 
   -- Loot History Limit Slider
   CommDKP.ConfigTab4.historySlider = CreateFrame("SLIDER", "$parentHistorySlider", CommDKP.ConfigTab4, "CommDKPOptionsSliderTemplate");
+
   if CommDKP.ConfigTab4.bidTimer then
     CommDKP.ConfigTab4.historySlider:SetPoint("TOPLEFT", CommDKP.ConfigTab4.bidTimerSlider, "BOTTOMLEFT", 0, -50);
   else
     CommDKP.ConfigTab4.historySlider:SetPoint("TOPRIGHT", CommDKP.ConfigTab4.TooltipHistorySlider, "BOTTOMLEFT", 56, -49);
   end
+
+  Mixin(CommDKP.ConfigTab4.historySlider, BackdropTemplateMixin)
+  CommDKP.ConfigTab4.historySlider:SetBackdrop({
+    bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
+    edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
+    tile = true, tileSize = 8, edgeSize = 8,
+    insets = { left = 3, right = 3, top = 6, bottom = 6 }
+  })
+
   CommDKP.ConfigTab4.historySlider:SetMinMaxValues(100, 2500);
   CommDKP.ConfigTab4.historySlider:SetValue(core.DB.defaults.HistoryLimit);
   CommDKP.ConfigTab4.historySlider:SetValueStep(25);
@@ -890,7 +916,7 @@ function CommDKP:Options()
   CommDKP.ConfigTab4.HistoryHeader:SetPoint("BOTTOM", CommDKP.ConfigTab4.historySlider, "TOP", 0, 3);
   CommDKP.ConfigTab4.HistoryHeader:SetText(L["LOOTHISTORYLIMIT"])
 
-  CommDKP.ConfigTab4.history = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+  CommDKP.ConfigTab4.history = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
   CommDKP.ConfigTab4.history:SetAutoFocus(false)
   CommDKP.ConfigTab4.history:SetMultiLine(false)
   CommDKP.ConfigTab4.history:SetSize(50, 18)
@@ -918,6 +944,13 @@ function CommDKP:Options()
 
   -- DKP History Limit Slider
   CommDKP.ConfigTab4.DKPHistorySlider = CreateFrame("SLIDER", "$parentDKPHistorySlider", CommDKP.ConfigTab4, "CommDKPOptionsSliderTemplate");
+  Mixin(CommDKP.ConfigTab4.DKPHistorySlider, BackdropTemplateMixin)
+  CommDKP.ConfigTab4.DKPHistorySlider:SetBackdrop({
+    bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
+    edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
+    tile = true, tileSize = 8, edgeSize = 8,
+    insets = { left = 3, right = 3, top = 6, bottom = 6 }
+  })
   CommDKP.ConfigTab4.DKPHistorySlider:SetPoint("LEFT", CommDKP.ConfigTab4.historySlider, "RIGHT", 30, 0);
   CommDKP.ConfigTab4.DKPHistorySlider:SetMinMaxValues(100, 2500);
   CommDKP.ConfigTab4.DKPHistorySlider:SetValue(core.DB.defaults.DKPHistoryLimit);
@@ -937,7 +970,7 @@ function CommDKP:Options()
   CommDKP.ConfigTab4.DKPHistoryHeader:SetPoint("BOTTOM", CommDKP.ConfigTab4.DKPHistorySlider, "TOP", 0, 3);
   CommDKP.ConfigTab4.DKPHistoryHeader:SetText(L["DKPHISTORYLIMIT"])
 
-  CommDKP.ConfigTab4.DKPHistory = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+  CommDKP.ConfigTab4.DKPHistory = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
   CommDKP.ConfigTab4.DKPHistory:SetAutoFocus(false)
   CommDKP.ConfigTab4.DKPHistory:SetMultiLine(false)
   CommDKP.ConfigTab4.DKPHistory:SetSize(50, 18)
@@ -965,6 +998,13 @@ function CommDKP:Options()
 
   -- Bid Timer Size Slider
   CommDKP.ConfigTab4.TimerSizeSlider = CreateFrame("SLIDER", "$parentBidTimerSizeSlider", CommDKP.ConfigTab4, "CommDKPOptionsSliderTemplate");
+  Mixin(CommDKP.ConfigTab4.TimerSizeSlider, BackdropTemplateMixin)
+  CommDKP.ConfigTab4.TimerSizeSlider:SetBackdrop({
+    bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
+    edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
+    tile = true, tileSize = 8, edgeSize = 8,
+    insets = { left = 3, right = 3, top = 6, bottom = 6 }
+  })
   CommDKP.ConfigTab4.TimerSizeSlider:SetPoint("TOPLEFT", CommDKP.ConfigTab4.historySlider, "BOTTOMLEFT", 0, -50);
   CommDKP.ConfigTab4.TimerSizeSlider:SetMinMaxValues(0.5, 2.0);
   CommDKP.ConfigTab4.TimerSizeSlider:SetValue(core.DB.defaults.BidTimerSize);
@@ -986,7 +1026,7 @@ function CommDKP:Options()
   CommDKP.ConfigTab4.DKPHistoryHeader:SetPoint("BOTTOM", CommDKP.ConfigTab4.TimerSizeSlider, "TOP", 0, 3);
   CommDKP.ConfigTab4.DKPHistoryHeader:SetText(L["TIMERSIZE"])
 
-  CommDKP.ConfigTab4.TimerSize = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+  CommDKP.ConfigTab4.TimerSize = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
   CommDKP.ConfigTab4.TimerSize:SetAutoFocus(false)
   CommDKP.ConfigTab4.TimerSize:SetMultiLine(false)
   CommDKP.ConfigTab4.TimerSize:SetSize(50, 18)
@@ -1014,6 +1054,13 @@ function CommDKP:Options()
 
   -- UI Scale Size Slider
   CommDKP.ConfigTab4.CommDKPScaleSize = CreateFrame("SLIDER", "$parentCommDKPScaleSizeSlider", CommDKP.ConfigTab4, "CommDKPOptionsSliderTemplate");
+  Mixin(CommDKP.ConfigTab4.CommDKPScaleSize, BackdropTemplateMixin)
+  CommDKP.ConfigTab4.CommDKPScaleSize:SetBackdrop({
+    bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
+    edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
+    tile = true, tileSize = 8, edgeSize = 8,
+    insets = { left = 3, right = 3, top = 6, bottom = 6 }
+  })
   CommDKP.ConfigTab4.CommDKPScaleSize:SetPoint("TOPLEFT", CommDKP.ConfigTab4.DKPHistorySlider, "BOTTOMLEFT", 0, -50);
   CommDKP.ConfigTab4.CommDKPScaleSize:SetMinMaxValues(0.5, 2.0);
   CommDKP.ConfigTab4.CommDKPScaleSize:SetValue(core.DB.defaults.CommDKPScaleSize);
@@ -1034,7 +1081,7 @@ function CommDKP:Options()
   CommDKP.ConfigTab4.DKPHistoryHeader:SetPoint("BOTTOM", CommDKP.ConfigTab4.CommDKPScaleSize, "TOP", 0, 3);
   CommDKP.ConfigTab4.DKPHistoryHeader:SetText(L["MAINGUISIZE"])
 
-  CommDKP.ConfigTab4.UIScaleSize = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+  CommDKP.ConfigTab4.UIScaleSize = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
   CommDKP.ConfigTab4.UIScaleSize:SetAutoFocus(false)
   CommDKP.ConfigTab4.UIScaleSize:SetMultiLine(false)
   CommDKP.ConfigTab4.UIScaleSize:SetSize(50, 18)

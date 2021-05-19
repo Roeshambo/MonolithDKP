@@ -820,8 +820,8 @@ if GetLocale() == "zhCN" then
     MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.4-r62",
-    CHANGELOG2 = "fixed history display on mouseover",
+    CHANGELOG1 = "CommunityDKP - v3.2.5-r62",
+    CHANGELOG2 = " - Hopefully made this work in pre-patch",
     CHANGELOG3 = "",
     CHANGELOG4 = "",
     CHANGELOG5 = "",
@@ -830,5 +830,5 @@ if GetLocale() == "zhCN" then
     CHANGELOG8 = "CommunityDKP Discord: https://discord.gg/dXXK4vH",
     CHANGELOG9 = "",
     CHANGELOG10 = ""
-      }
+    }
 end
