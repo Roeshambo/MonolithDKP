@@ -793,7 +793,7 @@ function CommDKP:BidInterface_Create()
   --------------------------------------------------
   f.bidTable = CreateFrame("ScrollFrame", "CommDKP_BiderWindowTable", f, "FauxScrollFrameTemplate")
   f.bidTable:SetSize(width, height*numrows+3)
-  CommDKP:Print("eee?")
+
   -- f.bidTable:SetBackdrop({
   --   bgFile   = "Textures\\white.blp", tile = true,
   --   edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2, 
@@ -811,9 +811,7 @@ function CommDKP:BidInterface_Create()
         f.bidTable.Rows[i]:SetPoint("TOPLEFT", f.bidTable.Rows[i-1], "BOTTOMLEFT")
       end
   end
-  CommDKP:Print("tu?")
   f.bidTable:SetScript("OnVerticalScroll", function(self, offset)
-    CommDKP:Print("eee454353?")
     FauxScrollFrame_OnVerticalScroll(self, offset, height, BidderScrollFrame_Update)
   end)
 

@@ -238,7 +238,6 @@ function CommDKP:SortDKPTable(id, reset)        -- reorganizes core.WorkingTable
 end
 
 function CommDKP:CreateMenu()
-	CommDKP:Print("CreateMenu Start")
 	CommDKP.UIConfig = CreateFrame("Frame", "CommDKPConfig", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil)  --UIPanelDialogueTemplate, ShadowOverlaySmallTemplate
 	CommDKP.UIConfig:SetPoint("CENTER", UIParent, "CENTER", -250, 100);
 	CommDKP.UIConfig:SetSize(550, 590);

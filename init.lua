@@ -12,7 +12,6 @@ local eventDelay = {};
 --------------------------------------
 CommDKP.Commands = {
   ["config"] = function()
-	CommDKP:Print("tutaj?")
     if core.Initialized then
       local pass, err = pcall(CommDKP.Toggle)
       if not pass then
@@ -275,7 +274,6 @@ local function DoInit(event, arg1)
 	if CommDKP:MonolithMigration() then
 		return -- Legacy MonolithDKP addon detected: don't initialise any further!
 	end
-	CommDKP:Print("Before Init")
 	CommDKP:OnInitialize(event, arg1);
 end
 
@@ -653,7 +651,6 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 			-- on every key down ? really?
 			core.KeyEventUI:SetScript("OnKeyDown", function(self, key)
 				if core.Initialized and core.IsOfficer then
-					CommDKP:Print("Is officer?")
 					if MouseIsOver(MultiBarLeft) or MouseIsOver(MultiBarRight) or MouseIsOver(MultiBarBottomLeft) or MouseIsOver(MultiBarBottomRight) or MouseIsOver(MainMenuBar) then
 						return;
 					end
@@ -685,7 +682,6 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 		------------------------------------------------
 		-- Verify DB Schemas
 		------------------------------------------------\
-		CommDKP:Print("Verify DB schemas?")
 		if not CommDKP:VerifyDBSchema(CommDKP_DB) then CommDKP_DB = CommDKP:UpgradeDBSchema(CommDKP_DB, CommDKP_DB, false, "CommDKP_DB") end;
 		
 		-- Verify that the DB table has been initialized.
@@ -707,7 +703,6 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 		------------------------------------
 	    --	Import SavedVariables
 	    ------------------------------------
-		CommDKP:Print("Import variables")
 		core.WorkingTable 		= CommDKP:GetTable(CommDKP_DKPTable, true); -- imports full DKP table to WorkingTable for list manipulation
 		core.PriceTable			= CommDKP:FormatPriceTable();
 
@@ -748,7 +743,6 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 
 			return a["item"] < b["item"]
 		end)
-		CommDKP:Print("Bid Timer")
 		CommDKP:StartBidTimer("seconds", nil)						-- initiates timer frame for use
 
 		if CommDKP.BidTimer then CommDKP.BidTimer:SetScript("OnUpdate", nil) end
