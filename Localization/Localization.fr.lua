@@ -944,14 +944,14 @@ if GetLocale() == "frFR" then
 
     --TODO TRANSLATE:
     CHANGELOG1 = "CommunityDKP - v3.2.7-r66",
-    CHANGELOG2 = " - fixed broadcast window",
-    CHANGELOG3 = "",
-    CHANGELOG4 = "",
-    CHANGELOG5 = "",
-    CHANGELOG6 = "",
-    CHANGELOG7 = "Taidtuskecyh @ Gehennas",
-    CHANGELOG8 = "CommunityDKP Discord: https://discord.gg/dXXK4vH",
-    CHANGELOG9 = "",
-    CHANGELOG10 = ""
+    CHANGELOG2 = " - fixed class filters (shamans / paladins)",
+    CHANGELOG3 = " - fixed class graph (9th class)",
+    CHANGELOG4 = " - updated version in the header",
+    CHANGELOG5 = " - added TBC zones and encounters",
+    CHANGELOG6 = " - added localizations to TBC zones and encounters",
+    CHANGELOG7 = "",
+    CHANGELOG8 = "",
+    CHANGELOG9 = "Taidtuskecyh @ Gehennas",
+    CHANGELOG10 = "CommunityDKP Discord: https://discord.gg/dXXK4vH"
           } 
 end
