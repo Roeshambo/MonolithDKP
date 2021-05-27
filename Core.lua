@@ -62,6 +62,11 @@ local defaults = {
 	theme2 = { r = 1, g = 0.37, b = 0.37, hex = "ff6060" }
 }
 
+--------------------------------------
+-- Encounter ID's Library
+--------------------------------------
+
+
 core.PriceSortButtons = {}
 core.WorkingTable = {};       -- table of all entries from CommDKP:GetTable(CommDKP_DKPTable, true) that are currently visible in the window. From CommDKP:GetTable(CommDKP_DKPTable, true)
 core.EncounterList = {      -- Event IDs must be in the exact same order as core.BossList declared in localization files
@@ -97,12 +102,73 @@ core.EncounterList = {      -- Event IDs must be in the exact same order as core
 	ONYXIA = {1084},
 	WORLD = {     -- No encounter IDs have been identified for these world bosses yet
 		"Azuregos", "Lord Kazzak", "Emeriss", "Lethon", "Ysondre", "Taerar"
-	}
+	},
+	KARAZHAN = {
+		652, -- "Attumen the Huntsman",
+		653, -- "Moroes",
+		654, -- "Maiden of Virtue",
+		655, -- "Opera Hall",
+		656, -- "The Curator",
+		657, -- "Terestian Illhoof",
+		658, -- "Shade of Aran",
+		659, -- "Netherspite",
+		660, -- "Chess Event",
+		661, -- "Prince Malchezaar",
+		662 -- "Nightbane"
+	  },
+	  GRULLSLAIR = {
+		649, -- "High King Maulgar",
+		650 -- "Gruul the Dragonkiller"
+	  },
+	  MAGTHERIDONSLAIR = {
+		651 -- "Magtheridon"
+	  },
+	  SERPENTSHRINECAVERN = {
+		632, -- "Hydross the Unstable",
+		624, -- "The Lurker Below",
+		625, -- "Leotheras the Blind",
+		626, -- "Fathom-Lord Karathress",
+		627, -- "Morogrim Tidewalker",
+		628 -- "Lady Vashj"
+	  },
+	  TEMPESTKEEP = {
+		730, -- "Al'ar",
+		731, -- "Void Reaver",
+		732, -- "High Astromancer Solarian",
+		733 -- "Kael'thas Sunstrider"
+	  },
+	  ZULAMAN = {
+		1189, -- "Akil'zon"
+		1190, -- Nalorakk
+		1191, -- Jan'alai
+		1192, -- Halazzi,
+		1193, -- Hex Lord Malacrass
+		1194 -- Daakara
+	  },
+	  BLACKTEMPLE = {
+		601, -- High Warlord Naj'entus,
+		602, -- Supremus
+		603, -- Shade of Akama
+		604, -- Teron Gorefiend,
+		605, -- Gurtogg Bloodboil
+		606, -- Reliquary of Souls
+		607, -- Mother Shahraz
+		608, -- The Illidari Council
+		609 -- Illidan Stormrage
+	  },
+	  SUNWELLPLATEAU = {
+		724, -- "Kalecgos", 
+		725, -- "Brutallus",
+		726, -- "Felmyst",
+		727, -- "Eredar Twins",
+		728, -- "M'uru",
+		729 -- "Kil'jaeden"
+	  }
 }
 
 core.CommDKPUI = {}        -- global storing entire Configuration UI to hide/show UI
-core.MonVersion = "v3.2.4";
-core.BuildNumber = 30204;
+core.MonVersion = "v3.2.7";
+core.BuildNumber = 30207;
 core.ReleaseNumber = 62
 core.defaultTable = "__default";
 core.SemVer = core.MonVersion.."-r"..tostring(core.ReleaseNumber);

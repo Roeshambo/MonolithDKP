@@ -38,7 +38,22 @@ core.BossList = {
 }
 
 core.ZoneList = {
-  "Molten Core", "Blackwing Lair", "Temple of Ahn'Qiraj", "Naxxramas", "Zul'Gurub", "Ruins of Ahn'Qiraj", "Onyxia's Lair", "World Bosses"
+  "Molten Core", 
+  "Blackwing Lair", 
+  "Temple of Ahn'Qiraj", 
+  "Naxxramas", 
+  "Zul'Gurub", 
+  "Ruins of Ahn'Qiraj", 
+  "Onyxia's Lair", 
+  "World Bosses",
+  "Karazhan",
+  "Gruul's Lair",
+  "Magtheridon's Lair",
+  "Coilfang: Serpentshrine Cavern",
+  "Tempest Keep",
+  "Zul'Aman",
+  "Black Temple",
+  "The Sunwell"
 }
 
 core.L = {
@@ -793,7 +808,7 @@ core.L = {
   MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.5-r64",
+    CHANGELOG1 = "CommunityDKP - v3.2.7-r66",
     CHANGELOG2 = " - fixed broadcast window",
     CHANGELOG3 = "",
     CHANGELOG4 = "",

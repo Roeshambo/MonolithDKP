@@ -35,11 +35,89 @@ if GetLocale() == "deDE" then
     ONYXIA = {"Onyxia"},
     WORLD = {
       "Azuregos", "Lord Kazzak", "Smariss", "Lethon", "Ysondre", "Taerar",
+    },
+
+    -- TBC Classic 2.5.1.38757
+    KARAZHAN = { -- 532
+      "Attumen der Jäger",
+      "Moroes",
+      "Tugendhafte Maid",
+      "Opernsaal",
+      "Der Kurator",
+      "Terestian Siechhuf",
+      "Arans Schemen",
+      "Nethergroll",
+      "Das Schachspiel",
+      "Prinz Malchezaar",
+      "Schrecken der Nacht"
+    },
+    GRULLSLAIR = { -- 565
+      "Hochkönig Maulgar",
+      "Gruul der Drachenschlächter"
+    },
+    MAGTHERIDONSLAIR = { -- 544
+      "Magtheridon"
+    },
+    SERPENTSHRINECAVERN = { -- 548
+      "Hydross der Unstete",
+      "Das Grauen aus der Tiefe",
+      "Leotheras der Blinde",
+      "Tiefenlord Karathress",
+      "Morogrim Gezeitenwandler",
+      "Lady Vashj"
+    },
+    TEMPESTKEEP = { -- 550
+      "Al'ar",
+      "Leerhäscher",
+      "Hochastromantin Solarian",
+      "Kael'thas Sonnenwanderer"
+    },
+    ZULAMAN = { -- 568
+      "Akil'zon",
+      "Nalorakk",
+      "Jan'alai",
+      "Halazzi",
+      "Hexlord Malacrass",
+      "Daakara"
+    },
+    BLACKTEMPLE = { -- 564 map id
+      "Oberster Kriegsfürst Naj'entus",
+      "Supremus",
+      "Akamas Schemen",
+      "Teron Blutschatten",
+      "Gurtogg Siedeblut",
+      "Reliquiar der Seelen",
+      "Mutter Shahraz",
+      "Der Rat der Illidari",
+      "Illidan Sturmgrimm"
+    },
+    SUNWELLPLATEAU = { -- 580
+      "Kalecgos", 
+      "Brutallus",
+      "Teufelsruch",
+      "Eredarzwillinge",
+      "M'uru",
+      "Kil'jaeden"
     }
   }
 
   core.ZoneList = {
-    "Geschmolzener Kern", "Pechschwingenhort", "Tempel von Ahn'Qiraj", "Naxxramas", "Zul'Gurub", "Ruinen von Ahn'Qiraj", "Onyxias Versteck", "Weltbosse",
+    "Geschmolzener Kern", 
+    "Pechschwingenhort", 
+    "Tempel von Ahn'Qiraj", 
+    "Naxxramas", 
+    "Zul'Gurub", 
+    "Ruinen von Ahn'Qiraj", 
+    "Onyxias Versteck", 
+    "Weltbosse",
+    "Karazhan", -- 532
+    "Gruuls Unterschlupf", -- 565
+    "Magtheridons Kammer", -- 544
+    "Echsenkessel: Höhle des Schlangenschreins", -- 548
+    "Festung der Stürme", -- 550
+    "Zul'Aman", -- 568
+    "Der Schwarze Tempel", -- 564,
+    "Der Sonnenbrunnen" -- 580
   }
 
   core.L = {
@@ -814,7 +892,7 @@ if GetLocale() == "deDE" then
     MIGRATIONCOMPLETED    = "Migration abgeschlossen.|n|nBitte deaktivieren Sie MonolithDKP und laden Sie das UI neu. (/reload)",
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.5-r64",
+    CHANGELOG1 = "CommunityDKP - v3.2.7-r66",
     CHANGELOG2 = " - fixed broadcast window",
     CHANGELOG3 = "",
     CHANGELOG4 = "",

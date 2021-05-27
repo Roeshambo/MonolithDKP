@@ -35,11 +35,150 @@ if GetLocale() == "ruRU" then
     ONYXIA = {"Ониксия"},
     WORLD = {
       "Азурегос", "Лорд Каззак", "Эмерисс", "Летон", "Исондра", "Таэрар",
+    },
+    -- TBC Classic 2.5.1.38757
+    KARAZHAN = { -- 532
+      "Ловчий Аттумен",
+      "Мороуз",
+      "Благочестивая дева",
+      "Оперный зал",
+      "Смотритель",
+      "Терестиан Больное Копыто",
+      "Тень Арана",
+      "Гнев Пустоты",
+      "Шахматы",
+      "Принц Малчезар",
+      "Ночная Погибель"
+    },
+    GRULLSLAIR = { -- 565
+      "Король Молгар",
+      "Груул Драконобой"
+    },
+    MAGTHERIDONSLAIR = { -- 544
+      "Магтеридон"
+    },
+    SERPENTSHRINECAVERN = { -- 548
+      "Гидросс Нестабильный",
+      "Скрытень из глубин",
+      "Леотерас Слепец",
+      "Повелитель глубин Каратресс",
+      "Морогрим Волноступ",
+      "Леди Вайш"
+    },
+    TEMPESTKEEP = { -- 550
+      "Ал'ар",
+      "Страж Бездны",
+      "Верховный звездочет Солариан",
+      "Кель'тас Солнечный Скиталец"
+    },
+    ZULAMAN = { -- 568
+      "Акил'зон",
+      "Налоракк",
+      "Джан'алай",
+      "Халаззи",
+      "Повелитель проклятий Малакрасс",
+      "Даакара"
+    },
+    BLACKTEMPLE = { -- 564 map id
+      "Верховный полководец Надж'ентус",
+      "Супремус",
+      "Тень Акамы",
+      "Терон Кровожад",
+      "Гуртогг Кипящая Кровь",
+      "Реликварий душ",
+      "Матушка Шахраз",
+      "Совет иллидари",
+      "Иллидан Ярость Бури"
+    },
+    SUNWELLPLATEAU = { -- 580
+      "Калесгос", 
+      "Бруталл",
+      "Пророк Скверны",
+      "Эредары-близнецы",
+      "М'ууру",
+      "Кил'джеден"
+    }, 
+    -- TBC Classic 2.5.1.38757
+    KARAZHAN = { -- 532
+      "Attumen the Huntsman",
+      "Moroes",
+      "Maiden of Virtue",
+      "Opera Hall",
+      "The Curator",
+      "Terestian Illhoof",
+      "Shade of Aran",
+      "Netherspite",
+      "Chess Event",
+      "Prince Malchezaar",
+      "Nightbane"
+    },
+    GRULLSLAIR = { -- 565
+      "High King Maulgar",
+      "Gruul the Dragonkiller"
+    },
+    MAGTHERIDONSLAIR = { -- 544
+      "Magtheridon"
+    },
+    SERPENTSHRINECAVERN = { -- 548
+      "Hydross the Unstable",
+      "The Lurker Below",
+      "Leotheras the Blind",
+      "Fathom-Lord Karathress",
+      "Morogrim Tidewalker",
+      "Lady Vashj"
+    },
+    TEMPESTKEEP = { -- 550
+      "Al'ar",
+      "Void Reaver",
+      "High Astromancer Solarian",
+      "Kael'thas Sunstrider"
+    },
+    ZULAMAN = { -- 568
+      "Akil'zon",
+      "Nalorakk",
+      "Jan'alai",
+      "Halazzi",
+      "Hex Lord Malacrass",
+      "Daakara"
+    },
+    BLACKTEMPLE = { -- 564 map id
+      "High Warlord Naj'entus",
+      "Supremus",
+      "Shade of Akama",
+      "Teron Gorefiend",
+      "Gurtogg Bloodboil",
+      "Reliquary of Souls",
+      "Mother Shahraz",
+      "The Illidari Council",
+      "Illidan Stormrage"
+    },
+    SUNWELLPLATEAU = { -- 580
+      "Kalecgos", 
+      "Brutallus",
+      "Felmyst",
+      "Eredar Twins",
+      "M'uru",
+      "Kil'jaeden"
     }
   }
   
   core.ZoneList = {
-    "Огненные Недра", "Логово Крыла Тьмы", "Храм Ан'Киража", "Наксарамас", "Зул'Гуруб", "Руины Ан'Киража", "Логово Ониксии", "Мировые Боссы",
+    "Огненные Недра", 
+    "Логово Крыла Тьмы", 
+    "Храм Ан'Киража", 
+    "Наксарамас", 
+    "Зул'Гуруб", 
+    "Руины Ан'Киража", 
+    "Логово Ониксии", 
+    "Мировые Боссы",
+    "Каражан", -- 532
+    "Логово Груула", -- 565
+    "Логово Магтеридона", -- 544
+    "Кривой Клык: Змеиное святилище", -- 548
+    "Крепость Бурь", -- 550
+    "Зул'Аман", -- 568
+    "Черный храм", -- 564,
+    "Солнечный Колодец" -- 580
   }
 
   core.L = {
@@ -815,7 +954,7 @@ if GetLocale() == "ruRU" then
     MIGRATIONCOMPLETED    = "Миграция завершена.|n|nПожалуйста отключите MonolithDKP и перезагрузите интерфейс.",
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.5-r64",
+    CHANGELOG1 = "CommunityDKP - v3.2.7-r66",
     CHANGELOG2 = " - fixed broadcast window",
     CHANGELOG3 = "",
     CHANGELOG4 = "",

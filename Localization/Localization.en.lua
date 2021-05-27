@@ -34,11 +34,89 @@ core.BossList = {
   ONYXIA = {"Onyxia"},
   WORLD = {
     "Azuregos", "Lord Kazzak", "Emeriss", "Lethon", "Ysondre", "Taerar"
+  },
+
+  -- TBC Classic 2.5.1.38757
+  KARAZHAN = { -- 532
+    "Attumen the Huntsman",
+    "Moroes",
+    "Maiden of Virtue",
+    "Opera Hall",
+    "The Curator",
+    "Terestian Illhoof",
+    "Shade of Aran",
+    "Netherspite",
+    "Chess Event",
+    "Prince Malchezaar",
+    "Nightbane"
+  },
+  GRULLSLAIR = { -- 565
+    "High King Maulgar",
+    "Gruul the Dragonkiller"
+  },
+  MAGTHERIDONSLAIR = { -- 544
+    "Magtheridon"
+  },
+  SERPENTSHRINECAVERN = { -- 548
+    "Hydross the Unstable",
+    "The Lurker Below",
+    "Leotheras the Blind",
+    "Fathom-Lord Karathress",
+    "Morogrim Tidewalker",
+    "Lady Vashj"
+  },
+  TEMPESTKEEP = { -- 550
+    "Al'ar",
+    "Void Reaver",
+    "High Astromancer Solarian",
+    "Kael'thas Sunstrider"
+  },
+  ZULAMAN = { -- 568
+    "Akil'zon",
+    "Nalorakk",
+    "Jan'alai",
+    "Halazzi",
+    "Hex Lord Malacrass",
+    "Daakara"
+  },
+  BLACKTEMPLE = { -- 564 map id
+    "High Warlord Naj'entus",
+    "Supremus",
+    "Shade of Akama",
+    "Teron Gorefiend",
+    "Gurtogg Bloodboil",
+    "Reliquary of Souls",
+    "Mother Shahraz",
+    "The Illidari Council",
+    "Illidan Stormrage"
+  },
+  SUNWELLPLATEAU = { -- 580
+    "Kalecgos", 
+    "Brutallus",
+    "Felmyst",
+    "Eredar Twins",
+    "M'uru",
+    "Kil'jaeden"
   }
 }
 
 core.ZoneList = {
-  "Molten Core", "Blackwing Lair", "Temple of Ahn'Qiraj", "Naxxramas", "Zul'Gurub", "Ruins of Ahn'Qiraj", "Onyxia's Lair", "World Bosses"
+  "Molten Core", -- 1
+  "Blackwing Lair", -- 2
+  "Temple of Ahn'Qiraj", -- 3 
+  "Naxxramas",  -- 4
+  "Zul'Gurub", -- 5
+  "Ruins of Ahn'Qiraj",  -- 6
+  "Onyxia's Lair", -- 7
+  "World Bosses", -- 8
+  "Karazhan", -- 9
+  "Gruul's Lair", -- 10
+  "Magtheridon's Lair", -- 11
+  "Coilfang: Serpentshrine Cavern", -- 12
+  "Tempest Keep", -- 13
+  "Zul'Aman", -- 14
+  "Black Temple", -- 15
+  "The Sunwell" -- 16
 }
 
 core.L = {
@@ -795,7 +873,7 @@ core.L = {
   MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
   MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
 
-  CHANGELOG1 = "CommunityDKP - v3.2.5-r64",
+  CHANGELOG1 = "CommunityDKP - v3.2.7-r66",
     CHANGELOG2 = " - fixed broadcast window",
     CHANGELOG3 = "",
     CHANGELOG4 = "",

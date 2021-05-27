@@ -35,11 +35,89 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     ONYXIA = {"Onyxia"},
     WORLD = {
       "Azuregos", "Lord Kazzak", "Emeriss", "Lethon", "Ysondre", "Taerar",
+    },
+
+    -- TBC Classic 2.5.1.38757
+    KARAZHAN = { -- 532
+      "Attumen el Montero",
+      "Moroes",
+      "Doncella de Virtud",
+      "Sala de la Ópera",
+      "Curator",
+      "Terestian Pezuña Enferma",
+      "Sombra de Aran",
+      "Rencor Abisal",
+      "Evento de ajedrez",
+      "Príncipe Malchezaar",
+      "Nocturno"
+    },
+    GRULLSLAIR = { -- 565
+      "Su majestad Maulgar",
+      "Gruul el Asesino de Dragones"
+    },
+    MAGTHERIDONSLAIR = { -- 544
+      "Magtheridon"
+    },
+    SERPENTSHRINECAVERN = { -- 548
+      "Hydross el Inestable",
+      "El Rondador de abajo",
+      "Leotheras el Ciego",
+      "Señor de las profundidades Karathress",
+      "Morogrim Levantamareas",
+      "Lady Vashj"
+    },
+    TEMPESTKEEP = { -- 550
+      "Al'ar",
+      "Atracador del vacío",
+      "Gran astromántica Solarian",
+      "Kael'thas Caminante del Sol"
+    },
+    ZULAMAN = { -- 568
+      "Akil'zon",
+      "Nalorakk",
+      "Jan'alai",
+      "Halazzi",
+      "Señor aojador Malacrass",
+      "Daakara"
+    },
+    BLACKTEMPLE = { -- 564 map id
+      "Gran Señor de la Guerra Naj'entus",
+      "Supremus",
+      "Sombra de Akama",
+      "Teron Sanguino",
+      "Gurtogg Sangre Hirviente",
+      "Relicario de Almas",
+      "Madre Shahraz",
+      "El Consejo Illidari",
+      "Illidan Tempestira"
+    },
+    SUNWELLPLATEAU = { -- 580
+      "Kalecgos", 
+      "Brutallus",
+      "Brumavil",
+      "Gemelas eredar",
+      "M'uru",
+      "Kil'jaeden"
     }
   }
   
   core.ZoneList = {
-    "Nucleo fundido", "Guarida de alas negras", "Templo de Ahn'Qiraj", "Naxxramas", "Zul'Gurub", "Ruinas de Ahn'Qiraj", "Guarida de Onyxia", "Jefes del mundo",
+    "Nucleo fundido", 
+    "Guarida de alas negras", 
+    "Templo de Ahn'Qiraj", 
+    "Naxxramas", 
+    "Zul'Gurub", 
+    "Ruinas de Ahn'Qiraj", 
+    "Guarida de Onyxia", 
+    "Jefes del mundo",
+    "Karazhan", -- 532
+    "Guarida de Gruul", -- 565
+    "Guarida de Magtheridon", -- 544
+    "Reserva Colmillo Torcido: Caverna Santuario Serpiente", -- 548
+    "El Castillo de la Tempestad", -- 550
+    "Zul'Aman", -- 568
+    "Templo Oscuro", -- 564,
+    "La Fuente del Sol" -- 580
   }
 
   core.L = {
@@ -818,7 +896,7 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.5-r64",
+    CHANGELOG1 = "CommunityDKP - v3.2.7-r66",
     CHANGELOG2 = " - fixed broadcast window",
     CHANGELOG3 = "",
     CHANGELOG4 = "",
