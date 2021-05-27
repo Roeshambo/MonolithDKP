@@ -188,7 +188,7 @@ end
 
 function CommDKP:ExportBox_Show(text)
     if not CommDKPExportBox then
-        local f = CreateFrame("Frame", "CommDKPExportBox", UIParent)
+        local f = CreateFrame("Frame", "CommDKPExportBox", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil)
         f:SetPoint("CENTER")
         f:SetSize(700, 590)
         
@@ -211,7 +211,7 @@ function CommDKP:ExportBox_Show(text)
         f:SetScript("OnMouseUp", f.StopMovingOrSizing)
 
         -- Close Button
-		f.closeContainer = CreateFrame("Frame", "CommDKPTitle", f)
+		f.closeContainer = CreateFrame("Frame", "CommDKPTitle", f, BackdropTemplateMixin and "BackdropTemplate" or nil)
 		f.closeContainer:SetPoint("CENTER", f, "TOPRIGHT", -4, 0)
 		f.closeContainer:SetBackdrop({
 			bgFile   = "Textures\\white.blp", tile = true,
@@ -240,7 +240,7 @@ function CommDKP:ExportBox_Show(text)
 		f.desc:SetWidth(sf:GetWidth()-30)
         
         -- EditBox
-        local eb = CreateFrame("EditBox", "CommDKPExportBoxEditBox", CommDKPExportBoxScrollFrame)
+        local eb = CreateFrame("EditBox", "CommDKPExportBoxEditBox", CommDKPExportBoxScrollFrame, BackdropTemplateMixin and "BackdropTemplate" or nil)
         eb:SetSize(sf:GetSize())
         eb:SetMultiLine(true)
         eb:SetAutoFocus(false) -- dont automatically focus
