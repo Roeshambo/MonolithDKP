@@ -393,13 +393,9 @@ function CommDKP_OnEvent(self, event, arg1, ...)
 	end
 
 	if event == "BOSS_KILL" then
-		CommDKP:Print('Boss Kill event arg1')
-		CommDKP:Print(arg1)
 		CommDKP:CheckOfficer()
 		if core.IsOfficer and IsInRaid() then
 			local boss_name = ...;
-			CommDKP:Print('Boss Kill event arg1')
-			CommDKP:Print(arg1)
 			if CommDKP:Table_Search(core.EncounterList, arg1) then
 				CommDKP.ConfigTab2.BossKilledDropdown:SetValue(arg1)
 
