@@ -12,12 +12,12 @@ function CommDKP_RestoreFilterOptions()  		-- restores default filter selections
 	core.WorkingTable = CopyTable(CommDKP:GetTable(CommDKP_DKPTable, true))
 	core.CurView = "all"
 	core.CurSubView = "all"
-	for i=1, 9 do
+	for i=1, 10 do
 		CommDKP.ConfigTab1.checkBtn[i]:SetChecked(true)
 	end
-	CommDKP.ConfigTab1.checkBtn[10]:SetChecked(false)
 	CommDKP.ConfigTab1.checkBtn[11]:SetChecked(false)
 	CommDKP.ConfigTab1.checkBtn[12]:SetChecked(false)
+	CommDKP.ConfigTab1.checkBtn[13]:SetChecked(false)
 	CommDKPFilterChecks(CommDKP.ConfigTab1.checkBtn[1])
 end
 
@@ -116,7 +116,7 @@ function CommDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTab
 			end
 		end
 		
-		if CommDKP.ConfigTab1.checkBtn[11]:GetChecked() then
+		if CommDKP.ConfigTab1.checkBtn[12]:GetChecked() then
 			local guildSize,_,_ = GetNumGuildMembers();
 			for i=1, guildSize do
 				local name,_,_,_,_,_,_,_,online = GetGuildRosterInfo(i)
@@ -129,22 +129,22 @@ function CommDKP:FilterDKPTable(sort, reset)          -- filters core.WorkingTab
 			end
 		end
 		if(core.classFiltered[parentTable[k]["class"]] == true) and searchFilter == true then
-			if CommDKP.ConfigTab1.checkBtn[10]:GetChecked() or CommDKP.ConfigTab1.checkBtn[12]:GetChecked() then
+			if CommDKP.ConfigTab1.checkBtn[11]:GetChecked() or CommDKP.ConfigTab1.checkBtn[13]:GetChecked() then
 				for i=1, 40 do
 					tempName,_,_,_,_,tempClass = GetRaidRosterInfo(i)
-					if tempName and tempName == v.player and CommDKP.ConfigTab1.checkBtn[10]:GetChecked() then
+					if tempName and tempName == v.player and CommDKP.ConfigTab1.checkBtn[11]:GetChecked() then
 						tinsert(core.WorkingTable, v)
-					elseif tempName and tempName == v.player and CommDKP.ConfigTab1.checkBtn[12]:GetChecked() then
+					elseif tempName and tempName == v.player and CommDKP.ConfigTab1.checkBtn[13]:GetChecked() then
 						InRaid = true;
 					end
 				end
 			else
-				if ((CommDKP.ConfigTab1.checkBtn[11]:GetChecked() and IsOnline) or not CommDKP.ConfigTab1.checkBtn[11]:GetChecked()) then
+				if ((CommDKP.ConfigTab1.checkBtn[12]:GetChecked() and IsOnline) or not CommDKP.ConfigTab1.checkBtn[12]:GetChecked()) then
 					tinsert(core.WorkingTable, v)
 				end
 			end
-			if CommDKP.ConfigTab1.checkBtn[12]:GetChecked() and InRaid == false then
-				if CommDKP.ConfigTab1.checkBtn[11]:GetChecked() then
+			if CommDKP.ConfigTab1.checkBtn[13]:GetChecked() and InRaid == false then
+				if CommDKP.ConfigTab1.checkBtn[12]:GetChecked() then
 					if IsOnline then
 						tinsert(core.WorkingTable, v)
 					end

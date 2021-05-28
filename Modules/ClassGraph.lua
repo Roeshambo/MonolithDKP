@@ -36,7 +36,7 @@ function CommDKP:ClassGraph()
 		end
 	end
 
-	for i=1, 8 do
+	for i=1, 9 do
 		graph.icons[i] = graph:CreateTexture(nil, "OVERLAY", nil);   -- Title Bar Texture
 		if i==1 then
 	  		graph.icons[i]:SetPoint("BOTTOMLEFT", graph, "BOTTOMLEFT", 74, 40);

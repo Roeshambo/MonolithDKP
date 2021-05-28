@@ -319,6 +319,22 @@ function CommDKP:AdjustDKPTab_Create()
 		local boss = UIDropDownMenu_CreateInfo()
 		boss.fontObject = "CommDKPSmallCenter"
 		if (level or 1) == 1 then
+			boss.text, boss.checked, boss.menuList, boss.hasArrow = core.ZoneList[9], core.CurrentRaidZone == core.ZoneList[9], "KARAZHAN", true
+			UIDropDownMenu_AddButton(boss)
+			boss.text, boss.checked, boss.menuList, boss.hasArrow = core.ZoneList[10], core.CurrentRaidZone == core.ZoneList[10], "GRULLSLAIR", true
+			UIDropDownMenu_AddButton(boss)
+			boss.text, boss.checked, boss.menuList, boss.hasArrow = core.ZoneList[11], core.CurrentRaidZone == core.ZoneList[11], "MAGTHERIDONSLAIR", true
+			UIDropDownMenu_AddButton(boss)
+			boss.text, boss.checked, boss.menuList, boss.hasArrow = core.ZoneList[12], core.CurrentRaidZone == core.ZoneList[12], "SERPENTSHRINECAVERN", true
+			UIDropDownMenu_AddButton(boss)
+			boss.text, boss.checked, boss.menuList, boss.hasArrow = core.ZoneList[13], core.CurrentRaidZone == core.ZoneList[13], "TEMPESTKEEP", true
+			UIDropDownMenu_AddButton(boss)
+			boss.text, boss.checked, boss.menuList, boss.hasArrow = core.ZoneList[14], core.CurrentRaidZone == core.ZoneList[14], "ZULAMAN", true
+			UIDropDownMenu_AddButton(boss)
+			boss.text, boss.checked, boss.menuList, boss.hasArrow = core.ZoneList[15], core.CurrentRaidZone == core.ZoneList[15], "BLACKTEMPLE", true
+			UIDropDownMenu_AddButton(boss)
+			boss.text, boss.checked, boss.menuList, boss.hasArrow = core.ZoneList[16], core.CurrentRaidZone == core.ZoneList[16], "SUNWELLPLATEAU", true
+			UIDropDownMenu_AddButton(boss)
 			boss.text, boss.checked, boss.menuList, boss.hasArrow = core.ZoneList[1], core.CurrentRaidZone == core.ZoneList[1], "MC", true
 			UIDropDownMenu_AddButton(boss)
 			boss.text, boss.checked, boss.menuList, boss.hasArrow = core.ZoneList[2], core.CurrentRaidZone == core.ZoneList[2], "BWL", true
@@ -335,6 +351,7 @@ function CommDKP:AdjustDKPTab_Create()
 			UIDropDownMenu_AddButton(boss)
 			boss.text, boss.checked, boss.menuList, boss.hasArrow = core.ZoneList[8], core.CurrentRaidZone == core.ZoneList[8], "WORLD", true
 			UIDropDownMenu_AddButton(boss)
+			
 		else
 			boss.func = self.SetValue
 			for i=1, #core.BossList[menuList] do
@@ -346,7 +363,6 @@ function CommDKP:AdjustDKPTab_Create()
 
 	function CommDKP.ConfigTab2.BossKilledDropdown:SetValue(newValue)
 		local search = CommDKP:Table_Search(core.EncounterList, newValue);
-		
 		if CommDKP:Table_Search(core.EncounterList.MC, newValue) then
 			core.CurrentRaidZone = core.ZoneList[1]
 		elseif CommDKP:Table_Search(core.EncounterList.BWL, newValue) then
@@ -361,6 +377,22 @@ function CommDKP:AdjustDKPTab_Create()
 			core.CurrentRaidZone = core.ZoneList[6]
 		elseif CommDKP:Table_Search(core.EncounterList.ONYXIA, newValue) then
 			core.CurrentRaidZone = core.ZoneList[7]
+		elseif CommDKP:Table_Search(core.EncounterList.KARAZHAN, newValue) then
+			core.CurrentRaidZone = core.ZoneList[9]
+		elseif CommDKP:Table_Search(core.EncounterList.GRULLSLAIR, newValue) then
+			core.CurrentRaidZone = core.ZoneList[10]
+		elseif CommDKP:Table_Search(core.EncounterList.MAGTHERIDONSLAIR, newValue) then
+			core.CurrentRaidZone = core.ZoneList[11]
+		elseif CommDKP:Table_Search(core.EncounterList.SERPENTSHRINECAVERN, newValue) then
+			core.CurrentRaidZone = core.ZoneList[12]
+		elseif CommDKP:Table_Search(core.EncounterList.TEMPESTKEEP, newValue) then
+			core.CurrentRaidZone = core.ZoneList[13]
+		elseif CommDKP:Table_Search(core.EncounterList.ZULAMAN, newValue) then
+			core.CurrentRaidZone = core.ZoneList[14]
+		elseif CommDKP:Table_Search(core.EncounterList.BLACKTEMPLE, newValue) then
+			core.CurrentRaidZone = core.ZoneList[15]
+		elseif CommDKP:Table_Search(core.EncounterList.SUNWELLPLATEAU, newValue) then
+			core.CurrentRaidZone = core.ZoneList[16]
 		--elseif CommDKP:Table_Search(core.EncounterList.WORLD, newValue) then 		-- encounter IDs not known yet
 			--core.CurrentRaidZone = core.ZoneList[8]
 		end

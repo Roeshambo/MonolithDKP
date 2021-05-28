@@ -254,7 +254,7 @@ function CommDKP:ViewLimited(raid, standby, raiders)
 			core.WorkingTable = CopyTable(CommDKP:GetTable(CommDKP_DKPTable, true))
 			core.CurView = "all"
 			core.CurSubView = "all"
-			for i=1, 9 do
+			for i=1, 10 do
 				CommDKP.ConfigTab1.checkBtn[i]:SetChecked(true)
 			end
 			CommDKP:FilterDKPTable(core.currentSort, "reset");
@@ -328,7 +328,7 @@ function CommDKP:ViewLimited(raid, standby, raiders)
 		core.WorkingTable = CopyTable(CommDKP:GetTable(CommDKP_DKPTable, true))
 		core.CurView = "all"
 		core.CurSubView = "all"
-		for i=1, 9 do
+		for i=1, 10 do
 			CommDKP.ConfigTab1.checkBtn[i]:SetChecked(true)
 		end
 		CommDKPFilterChecks(CommDKP.ConfigTab1.checkBtn[1])
@@ -400,7 +400,7 @@ local function RightClickMenu(self)
 					{ text = L["VIEWRAID"], notCheckable = true, keepShownOnClick = false; func = function()
 						CommDKP:ViewLimited(true)
 						core.CurSubView = "raid"
-						CommDKP.ConfigTab1.checkBtn[10]:SetChecked(true);
+						CommDKP.ConfigTab1.checkBtn[11]:SetChecked(true);
 						ToggleDropDownMenu(nil, nil, menuFrame)
 					end },
 					{ text = L["VIEWSTANDBY"], notCheckable = true, func = function()
@@ -420,9 +420,9 @@ local function RightClickMenu(self)
 						ToggleDropDownMenu(nil, nil, menuFrame)
 					end },
 					{ text = L["VIEWALL"], notCheckable = true, func = function()
-						CommDKP.ConfigTab1.checkBtn[10]:SetChecked(false);
 						CommDKP.ConfigTab1.checkBtn[11]:SetChecked(false);
 						CommDKP.ConfigTab1.checkBtn[12]:SetChecked(false);
+						CommDKP.ConfigTab1.checkBtn[13]:SetChecked(false);
 						CommDKP:ViewLimited()
 						ToggleDropDownMenu(nil, nil, menuFrame, nil, nil, nil, nil, nil)
 					end },
@@ -518,7 +518,7 @@ local function RightClickMenu(self)
 	for i=1, #core.classes do       -- create Filter selections in context menu
 		menu[7].menuList[i] = { text = API_CLASSES[core.classes[i]], isNotRadio = true, keepShownOnClick = true, checked = CommDKP.ConfigTab1.checkBtn[i]:GetChecked(), func = function()
 			CommDKP.ConfigTab1.checkBtn[i]:SetChecked(not CommDKP.ConfigTab1.checkBtn[i]:GetChecked())
-			CommDKPFilterChecks(CommDKP.ConfigTab1.checkBtn[9])
+			CommDKPFilterChecks(CommDKP.ConfigTab1.checkBtn[10])
 			for j=1, #core.classes+1 do
 				menu[7].menuList[j].checked = CommDKP.ConfigTab1.checkBtn[j]:GetChecked()
 			end
@@ -526,23 +526,12 @@ local function RightClickMenu(self)
 	end
 
 	menu[7].menuList[#core.classes+1] = { text = L["ALLCLASSES"], isNotRadio = true, keepShownOnClick = false, notCheckable = true, func = function()
-		CommDKP.ConfigTab1.checkBtn[9]:SetChecked(true)
+		CommDKP.ConfigTab1.checkBtn[10]:SetChecked(true)
 		
 		for i=1, #core.classes do
 			CommDKP.ConfigTab1.checkBtn[i]:SetChecked(true)
 			menu[7].menuList[i].checked = true
 		end
-
-		CommDKPFilterChecks(CommDKP.ConfigTab1.checkBtn[9])
-		if UIDROPDOWNMENU_OPEN_MENU then
-			ToggleDropDownMenu(nil, nil, menuFrame)
-		end
-	end }
-
-	menu[7].menuList[#core.classes+2] = { text = L["ONLYPARTYRAID"], isNotRadio = true, keepShownOnClick = false, disabled = not IsInRaid(), checked = CommDKP.ConfigTab1.checkBtn[10]:GetChecked(), func = function()
-		CommDKP.ConfigTab1.checkBtn[10]:SetChecked(not CommDKP.ConfigTab1.checkBtn[10]:GetChecked())
-		CommDKP.ConfigTab1.checkBtn[12]:SetChecked(false)
-		menu[7].menuList[#core.classes+4].checked = false
 
 		CommDKPFilterChecks(CommDKP.ConfigTab1.checkBtn[10])
 		if UIDROPDOWNMENU_OPEN_MENU then
@@ -550,19 +539,30 @@ local function RightClickMenu(self)
 		end
 	end }
 
-	menu[7].menuList[#core.classes+3] = { text = L["ONLINE"], isNotRadio = true, keepShownOnClick = true, checked = CommDKP.ConfigTab1.checkBtn[11]:GetChecked(), func = function()
+	menu[7].menuList[#core.classes+2] = { text = L["ONLYPARTYRAID"], isNotRadio = true, keepShownOnClick = false, disabled = not IsInRaid(), checked = CommDKP.ConfigTab1.checkBtn[11]:GetChecked(), func = function()
 		CommDKP.ConfigTab1.checkBtn[11]:SetChecked(not CommDKP.ConfigTab1.checkBtn[11]:GetChecked())
-		core.CurView = "limited"
+		CommDKP.ConfigTab1.checkBtn[13]:SetChecked(false)
+		menu[7].menuList[#core.classes+4].checked = false
 
 		CommDKPFilterChecks(CommDKP.ConfigTab1.checkBtn[11])
+		if UIDROPDOWNMENU_OPEN_MENU then
+			ToggleDropDownMenu(nil, nil, menuFrame)
+		end
 	end }
 
-	menu[7].menuList[#core.classes+4] = { text = L["NOTINRAIDFILTER"], isNotRadio = true, keepShownOnClick = false, disabled = not IsInRaid(), checked = CommDKP.ConfigTab1.checkBtn[12]:GetChecked(), func = function()
+	menu[7].menuList[#core.classes+3] = { text = L["ONLINE"], isNotRadio = true, keepShownOnClick = true, checked = CommDKP.ConfigTab1.checkBtn[12]:GetChecked(), func = function()
 		CommDKP.ConfigTab1.checkBtn[12]:SetChecked(not CommDKP.ConfigTab1.checkBtn[12]:GetChecked())
-		CommDKP.ConfigTab1.checkBtn[10]:SetChecked(false)
-		menu[7].menuList[#core.classes+2].checked = false
+		core.CurView = "limited"
 
 		CommDKPFilterChecks(CommDKP.ConfigTab1.checkBtn[12])
+	end }
+
+	menu[7].menuList[#core.classes+4] = { text = L["NOTINRAIDFILTER"], isNotRadio = true, keepShownOnClick = false, disabled = not IsInRaid(), checked = CommDKP.ConfigTab1.checkBtn[13]:GetChecked(), func = function()
+		CommDKP.ConfigTab1.checkBtn[13]:SetChecked(not CommDKP.ConfigTab1.checkBtn[13]:GetChecked())
+		CommDKP.ConfigTab1.checkBtn[11]:SetChecked(false)
+		menu[7].menuList[#core.classes+2].checked = false
+
+		CommDKPFilterChecks(CommDKP.ConfigTab1.checkBtn[13])
 		if UIDROPDOWNMENU_OPEN_MENU then
 			ToggleDropDownMenu(nil, nil, menuFrame)
 		end

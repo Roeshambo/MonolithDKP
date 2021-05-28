@@ -83,6 +83,68 @@ if GetLocale() == "frFR" then
       "Léthon",
       "Ysondre",
       "Taerar",
+    },
+    -- TBC Classic 2.5.1.38757
+    KARAZHAN = { -- 532
+      "Attumen le Veneur",
+      "Moroes",
+      "Damoiselle de vertu",
+      "L’Opéra",
+      "Le conservateur",
+      "Terestian Malsabot",
+      "Ombre d'Aran",
+      "Dédain-du-Néant",
+      "Évènement de l’échiquier",
+      "Prince Malchezaar",
+      "Plaie-de-nuit"
+    },
+    GRULLSLAIR = { -- 565
+      "Haut Roi Maulgar",
+      "Gruul le Tue-dragon"
+    },
+    MAGTHERIDONSLAIR = { -- 544
+      "Magtheridon"
+    },
+    SERPENTSHRINECAVERN = { -- 548
+      "Hydross l'Instable",
+      "Le Rôdeur d'En bas",
+      "Leotheras l'Aveugle",
+      "Seigneur des fonds Karathress	",
+      "Morogrim Marcheur-des-flots	",
+      "Dame Vashj"
+    },
+    TEMPESTKEEP = { -- 550
+      "Al'ar",
+      "Saccageur du Vide",
+      "Grande astromancienne Solarian",
+      "Kael'thas Haut-soleil"
+    },
+    ZULAMAN = { -- 568
+      "Akil'zon",
+      "Nalorakk",
+      "Jan'alai",
+      "Halazzi",
+      "Seigneur des maléfices Malacrass",
+      "Daakara"
+    },
+    BLACKTEMPLE = { -- 564 map id
+      "Grand seigneur de guerre Naj'entus",
+      "Supremus",
+      "Ombre d'Akama",
+      "Teron Fielsang",
+      "Gurtogg Fièvresang",
+      "Reliquaire des âmes",
+      "Mère Shahraz",
+      "Le conseil illidari",
+      "Illidan Hurlorage"
+    },
+    SUNWELLPLATEAU = { -- 580
+      "Kalecgos", 
+      "Brutallus",
+      "Gangrebrume",
+      "Jumelles érédars",
+      "M'uru",
+      "Kil'jaeden"
     }
   }
   
@@ -95,6 +157,14 @@ if GetLocale() == "frFR" then
     "Ruines d'Ahn'Qiraj",
     "Repaire d'Onyxia",
     "Boss Mondial",
+    "Karazhan", -- 532
+    "Repaire de Gruul", -- 565
+    "Le repaire de Magtheridon", -- 544
+    "Glissecroc : caverne du sanctuaire du Serpent", -- 548
+    "Donjon de la Tempête", -- 550
+    "Zul'Aman", -- 568
+    "Temple noir", -- 564,
+    "Le Puits de soleil" -- 580
   }
 
   core.L = {
@@ -873,15 +943,15 @@ if GetLocale() == "frFR" then
     MIGRATIONCOMPLETED    = "Migration réussie.|n|nVeuillez désactiver MonolithDKP et recharger votre interface (/reload).", --TODO TRANSLATE:
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.5-r64",
-    CHANGELOG2 = " - fixed broadcast window",
-    CHANGELOG3 = "",
-    CHANGELOG4 = "",
-    CHANGELOG5 = "",
-    CHANGELOG6 = "",
-    CHANGELOG7 = "Taidtuskecyh @ Gehennas",
-    CHANGELOG8 = "CommunityDKP Discord: https://discord.gg/dXXK4vH",
-    CHANGELOG9 = "",
-    CHANGELOG10 = ""
+    CHANGELOG1 = "CommunityDKP - v3.2.7-r66",
+    CHANGELOG2 = " - fixed class filters (shamans / paladins)",
+    CHANGELOG3 = " - fixed class graph (9th class)",
+    CHANGELOG4 = " - updated version in the header",
+    CHANGELOG5 = " - added TBC zones and encounters",
+    CHANGELOG6 = " - added localizations to TBC zones and encounters",
+    CHANGELOG7 = "",
+    CHANGELOG8 = "",
+    CHANGELOG9 = "Taidtuskecyh @ Gehennas",
+    CHANGELOG10 = "CommunityDKP Discord: https://discord.gg/dXXK4vH"
           } 
 end

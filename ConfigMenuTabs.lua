@@ -23,7 +23,7 @@ end
 
 function CommDKPFilterChecks(self)         -- sets/unsets check boxes in conjunction with "All" button, then runs CommDKP:FilterDKPTable() above
 	local verifyCheck = true; -- switches to false if the below loop finds anything unchecked
-	if (self:GetChecked() == false and not CommDKP.ConfigTab1.checkBtn[10]) then
+	if (self:GetChecked() == false and not CommDKP.ConfigTab1.checkBtn[11]) then
 		core.CurView = "limited"
 		core.CurSubView = "raid"
 		CommDKP.ConfigTab1.checkBtn[9]:SetChecked(false);
@@ -36,9 +36,9 @@ function CommDKPFilterChecks(self)         -- sets/unsets check boxes in conjunc
 		end
 	end
 	if (verifyCheck == true) then
-		CommDKP.ConfigTab1.checkBtn[9]:SetChecked(true);
+		CommDKP.ConfigTab1.checkBtn[10]:SetChecked(true);
 	else
-		CommDKP.ConfigTab1.checkBtn[9]:SetChecked(false);
+		CommDKP.ConfigTab1.checkBtn[10]:SetChecked(false);
 	end
 	for k,v in pairs(core.classes) do
 		if (CommDKP.ConfigTab1.checkBtn[k]:GetChecked() == true) then
@@ -169,17 +169,17 @@ function CommDKP:ConfigMenuTabs()
 	CommDKP.ConfigTab1.checkBtn = checkBtn;
 
 	-- Create CheckBoxes
-	for i=1, 10 do
+	for i=1, 11 do
 		CommDKP.ConfigTab1.checkBtn[i] = CreateFrame("CheckButton", nil, CommDKP.ConfigTab1, "UICheckButtonTemplate");
-		if i <= 9 then CommDKP.ConfigTab1.checkBtn[i]:SetChecked(true) else CommDKP.ConfigTab1.checkBtn[i]:SetChecked(false) end;
+		if i <= 10 then CommDKP.ConfigTab1.checkBtn[i]:SetChecked(true) else CommDKP.ConfigTab1.checkBtn[i]:SetChecked(false) end;
 		CommDKP.ConfigTab1.checkBtn[i]:SetID(i)
-		if i <= 8 then
+		if i <= 9 then
 			CommDKP.ConfigTab1.checkBtn[i].text:SetText("|cff5151de"..API_CLASSES[core.classes[i]].."|r");
 		end
-		if i==9 then
+		if i==10 then
 			CommDKP.ConfigTab1.checkBtn[i]:SetScript("OnClick",
 				function()
-					for j=1, 9 do
+					for j=1, 10 do
 						if (checkAll) then
 							CommDKP.ConfigTab1.checkBtn[j]:SetChecked(false)
 						else
@@ -197,7 +197,7 @@ function CommDKP:ConfigMenuTabs()
 					core.classFiltered[v] = false;
 				end
 			end
-		elseif i==10 then
+		elseif i==11 then
 			CommDKP.ConfigTab1.checkBtn[i]:SetScript("OnClick", function(self)
 				CommDKP.ConfigTab1.checkBtn[12]:SetChecked(false);
 				CommDKPFilterChecks(self)
@@ -209,36 +209,37 @@ function CommDKP:ConfigMenuTabs()
 	end
 
 	-- Class Check Buttons:
-	CommDKP.ConfigTab1.checkBtn[1]:SetPoint("TOPLEFT", CommDKP.ConfigTab1, "TOPLEFT", 85, -70);
+	CommDKP.ConfigTab1.checkBtn[1]:SetPoint("TOPLEFT", CommDKP.ConfigTab1, "TOPLEFT", 60, -70);
 	CommDKP.ConfigTab1.checkBtn[2]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[1], "TOPRIGHT", 50, 0);
 	CommDKP.ConfigTab1.checkBtn[3]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[2], "TOPRIGHT", 50, 0);
 	CommDKP.ConfigTab1.checkBtn[4]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[3], "TOPRIGHT", 50, 0);
-	CommDKP.ConfigTab1.checkBtn[5]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[1], "BOTTOMLEFT", 0, -10);
-	CommDKP.ConfigTab1.checkBtn[6]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[2], "BOTTOMLEFT", 0, -10);
-	CommDKP.ConfigTab1.checkBtn[7]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[3], "BOTTOMLEFT", 0, -10);
-	CommDKP.ConfigTab1.checkBtn[8]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[4], "BOTTOMLEFT", 0, -10);
+	CommDKP.ConfigTab1.checkBtn[5]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[4], "TOPRIGHT", 50, 0);
+	CommDKP.ConfigTab1.checkBtn[6]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[1], "BOTTOMLEFT", 0, -10);
+	CommDKP.ConfigTab1.checkBtn[7]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[2], "BOTTOMLEFT", 0, -10);
+	CommDKP.ConfigTab1.checkBtn[8]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[3], "BOTTOMLEFT", 0, -10);
+	CommDKP.ConfigTab1.checkBtn[9]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[4], "BOTTOMLEFT", 0, -10);
 
-	CommDKP.ConfigTab1.checkBtn[9]:SetPoint("BOTTOMRIGHT", CommDKP.ConfigTab1.checkBtn[2], "TOPLEFT", 50, 0);
-	CommDKP.ConfigTab1.checkBtn[9].text:SetText("|cff5151de"..L["ALLCLASSES"].."|r");
-	CommDKP.ConfigTab1.checkBtn[10]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[5], "BOTTOMLEFT", 0, 0);
-	CommDKP.ConfigTab1.checkBtn[10].text:SetText("|cff5151de"..L["INPARTYRAID"].."|r");         -- executed in filterDKPTable (CommunityDKP.lua)
-
-	CommDKP.ConfigTab1.checkBtn[11] = CreateFrame("CheckButton", nil, CommDKP.ConfigTab1, "UICheckButtonTemplate");
-	CommDKP.ConfigTab1.checkBtn[11]:SetID(11)
-	CommDKP.ConfigTab1.checkBtn[11].text:SetText("|cff5151de"..L["ONLINE"].."|r");
-	CommDKP.ConfigTab1.checkBtn[11].text:SetFontObject("CommDKPSmall")
-	CommDKP.ConfigTab1.checkBtn[11]:SetScript("OnClick", CommDKPFilterChecks)
-	CommDKP.ConfigTab1.checkBtn[11]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[10], "TOPRIGHT", 100, 0);
+	CommDKP.ConfigTab1.checkBtn[10]:SetPoint("BOTTOMRIGHT", CommDKP.ConfigTab1.checkBtn[3], "TOPLEFT", 50, 0);
+	CommDKP.ConfigTab1.checkBtn[10].text:SetText("|cff5151de"..L["ALLCLASSES"].."|r");
+	CommDKP.ConfigTab1.checkBtn[11]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[6], "BOTTOMLEFT", 50, 0);
+	CommDKP.ConfigTab1.checkBtn[11].text:SetText("|cff5151de"..L["INPARTYRAID"].."|r");         -- executed in filterDKPTable (CommunityDKP.lua)
 
 	CommDKP.ConfigTab1.checkBtn[12] = CreateFrame("CheckButton", nil, CommDKP.ConfigTab1, "UICheckButtonTemplate");
 	CommDKP.ConfigTab1.checkBtn[12]:SetID(12)
-	CommDKP.ConfigTab1.checkBtn[12].text:SetText("|cff5151de"..L["NOTINRAIDFILTER"].."|r");
+	CommDKP.ConfigTab1.checkBtn[12].text:SetText("|cff5151de"..L["ONLINE"].."|r");
 	CommDKP.ConfigTab1.checkBtn[12].text:SetFontObject("CommDKPSmall")
-	CommDKP.ConfigTab1.checkBtn[12]:SetScript("OnClick", function(self)
-		CommDKP.ConfigTab1.checkBtn[10]:SetChecked(false);
+	CommDKP.ConfigTab1.checkBtn[12]:SetScript("OnClick", CommDKPFilterChecks)
+	CommDKP.ConfigTab1.checkBtn[12]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[11], "TOPRIGHT", 100, 0);
+
+	CommDKP.ConfigTab1.checkBtn[13] = CreateFrame("CheckButton", nil, CommDKP.ConfigTab1, "UICheckButtonTemplate");
+	CommDKP.ConfigTab1.checkBtn[13]:SetID(13)
+	CommDKP.ConfigTab1.checkBtn[13].text:SetText("|cff5151de"..L["NOTINRAIDFILTER"].."|r");
+	CommDKP.ConfigTab1.checkBtn[13].text:SetFontObject("CommDKPSmall")
+	CommDKP.ConfigTab1.checkBtn[13]:SetScript("OnClick", function(self)
+		CommDKP.ConfigTab1.checkBtn[13]:SetChecked(false);
 		CommDKPFilterChecks(self)
 	end)
-	CommDKP.ConfigTab1.checkBtn[12]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[11], "TOPRIGHT", 65, 0);
+	CommDKP.ConfigTab1.checkBtn[13]:SetPoint("TOPLEFT", CommDKP.ConfigTab1.checkBtn[12], "TOPRIGHT", 65, 0);
 
 	core.ClassGraph = CommDKP:ClassGraph()  -- draws class graph on tab1
 
