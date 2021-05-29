@@ -234,7 +234,7 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 			SendChatMessage(L["CONGRATS"].." "..winner.." "..L["ON"].." "..loot.." @ "..-cost.." "..L["DKP"], "GUILD")
 		end
 
-		if core.DB.defaults.AutoAward then
+		if core.DB.defaults.AutoAwardLoot then
 			local numLootItems = GetNumLootItems()
 			if numLootItems > 0 then
 				local lootIndex = nil
