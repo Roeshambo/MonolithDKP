@@ -817,6 +817,7 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 		if #CommDKP:GetTable(CommDKP_DKPHistory, true) > core.DB.defaults.DKPHistoryLimit then
 			CommDKP:PurgeDKPHistory()									-- purges DKP History entries that exceed the "DKPHistoryLimit" option variable (oldest entries) and populates CommDKP_Archive with deleted values
 		end
+		core.DB.pendingLoot = {}
 	end
 end
 
