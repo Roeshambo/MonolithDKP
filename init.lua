@@ -1321,4 +1321,7 @@ events:RegisterEvent("GUILD_ROSTER_UPDATE")
 events:RegisterEvent("PLAYER_ENTERING_WORLD")
 events:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 events:RegisterEvent("BOSS_KILL")
+events:RegisterEvent("TRADE_SHOW")
+events:RegisterEvent("TRADE_ACCEPT_UPDATE")
+events:RegisterEvent("TRADE_CLOSED")
 events:SetScript("OnEvent", CommDKP_OnEvent); -- calls the above CommDKP_OnEvent function to determine what to do with the event
