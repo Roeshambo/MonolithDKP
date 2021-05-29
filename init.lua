@@ -664,7 +664,6 @@ function CommDKP_OnEvent(self, event, arg1, ...)
 			end
 		end
 	elseif core.DB.defaults.AutoAwardLoot and event == "TRADE_CLOSED" then
-		print(event)
 		local traderName = UnitName("npc")
 		if traderName == nil or core.DB.pendingTrade == nil or core.DB.pendingLoot == nil or core.DB.pendingLoot[traderName] == nil then
 			return
