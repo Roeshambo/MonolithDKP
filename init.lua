@@ -656,7 +656,6 @@ function CommDKP_OnEvent(self, event, arg1, ...)
 			for tradeSlot = 1, 6 do
 				local tradeLink = GetTradePlayerItemLink(tradeSlot)
 				for i, lootLink in pairs(pendingLoot) do
-					print('LL: ' .. lootLink)
 					if tradeLink ~= nil and tradeLink == lootLink then
 						tinsert(core.DB.pendingTrade, tradeLink)
 					end
