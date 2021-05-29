@@ -1182,6 +1182,29 @@ function CommDKP:Options()
   end)
 
   if core.IsOfficer == true then
+    CommDKP.ConfigTab4.AutoAwardLootCheckbox = CreateFrame("CheckButton", nil, CommDKP.ConfigTab4, "UICheckButtonTemplate");
+    CommDKP.ConfigTab4.AutoAwardLootCheckbox:SetChecked(core.DB.defaults.AutoAwardLoot)
+    CommDKP.ConfigTab4.AutoAwardLootCheckbox:SetScale(0.8);
+    CommDKP.ConfigTab4.AutoAwardLootCheckbox.text:SetText("|cff5151de"..L["AUTOAWARDLOOT"].."|r");
+    CommDKP.ConfigTab4.AutoAwardLootCheckbox.text:SetScale(1);
+    CommDKP.ConfigTab4.AutoAwardLootCheckbox.text:SetFontObject("CommDKPSmallLeft")
+    CommDKP.ConfigTab4.AutoAwardLootCheckbox:SetPoint("TOP", CommDKP.ConfigTab4.AutoOpenCheckbox, "BOTTOM", 0, 0);
+    CommDKP.ConfigTab4.AutoAwardLootCheckbox:SetScript("OnClick", function(self)
+      core.DB.defaults.AutoAwardLoot = self:GetChecked()
+      if core.DB.defaults.AutoAwardLoot == false then
+        core.DB.pendingLoot = {}
+      end
+    end)
+    CommDKP.ConfigTab4.AutoAwardLootCheckbox:SetScript("OnEnter", function(self)
+      GameTooltip:SetOwner(self, "ANCHOR_LEFT");
+      GameTooltip:SetText(L["AUTOAWARDLOOT"], 0.25, 0.75, 0.90, 1, true);
+      GameTooltip:AddLine(L["AUTOAWARDLOOTDESC"], 1.0, 1.0, 1.0, true);
+      GameTooltip:Show();
+    end)
+    CommDKP.ConfigTab4.AutoAwardLootCheckbox:SetScript("OnLeave", function(self)
+      GameTooltip:Hide()
+    end)
+    
     -- Suppress Broadcast Notifications checkbox
     CommDKP.ConfigTab4.SuppressTells = CreateFrame("CheckButton", nil, CommDKP.ConfigTab4, "UICheckButtonTemplate");
     CommDKP.ConfigTab4.SuppressTells:SetPoint("LEFT", CommDKP.ConfigTab4.SuppressNotifications, "RIGHT", 200, 0)
