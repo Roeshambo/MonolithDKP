@@ -180,6 +180,8 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     AUTOCOMBATLOGTTWARN = "Aún debe activar manualmente el Registro avanzado de combate en Sistema> Red si aún no lo ha hecho.",
     AUTOOPEN = "Ventana de oferta de apertura automática",
     AUTOOPENTTDESC = "Cuando está marcada, la ventana de ofertas se abrirá automáticamente cuando se subaste un nuevo artículo. Si no está marcado, deberá abrirlo manualmente cuando sea necesario con \"/dkp bid\".",
+    AUTOAWARDLOOT = "Auto Award Loot",
+    AUTOAWARDLOOTDESC = "When checked loot will be automatically awarded to the winner. If looting they will be master looted to the winner. If awarding from your bags they will be inserted into the next trade window with the winner.",
     DECREASEDISENCHANT = "Disminuir el valor de desencantar",
     DECREASEDISENCHANTTTDESC = "Disminuya el valor de desencantar después de 3 desencantadores a la mitad cada desencanto después hasta un mínimo de 5 DKP",
     AWARDBONUS = "Bono de premio",

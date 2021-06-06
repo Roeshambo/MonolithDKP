@@ -174,6 +174,8 @@ if GetLocale() == "zhTW" then
     ARTINFLATTTDESC = "分配給每個玩家的DKP的TOP積分，在各個玩家之間分配。銀行價值除後，此值將添加到他們的收入DKP中。",
     AUTOAWARD = "汽車獎DKP",
     AUTOAWARDTTDESC = "Automatically awards Boss Kill Bonus DKP (set in Options tab) when a boss is killed. Only the raid leader will distribute points with this. Raid must be initialized on the Adjust DKP tab.", -- NEED TRANSLATION
+    AUTOAWARDLOOT = "Auto Award Loot",
+    AUTOAWARDLOOTDESC = "When checked loot will be automatically awarded to the winner. If looting they will be master looted to the winner. If awarding from your bags they will be inserted into the next trade window with the winner.",
     AUTOCOMBATLOG = "自動戰鬥記錄",
     AUTOCOMBATLOGTTDESC = "在突襲中進入突襲區域或在遭遇突襲時進入戰鬥時自動激活/ combatlog。",
     AUTOCOMBATLOGTTWARN = "如果尚未激活“高級戰鬥日誌”，則仍必須在系統>網絡中手動激活它。",

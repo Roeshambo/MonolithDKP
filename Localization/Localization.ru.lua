@@ -236,6 +236,8 @@ if GetLocale() == "ruRU" then
     ARTINFLATTTDESC = "Очки, которые распределяются между каждым игроком таблицы DKP, которые разделены и распределены между ними. Это значение добавляется к их заработанному DKP ПОСЛЕ того, как банковская стоимость делится.",
     AUTOAWARD = "Авто-начисление DKP",
     AUTOAWARDTTDESC = "Automatically awards Boss Kill Bonus DKP (set in Options tab) when a boss is killed. Only the raid leader will distribute points with this. Raid must be initialized on the Adjust DKP tab.", -- NEEDS TRANSLATION
+    AUTOAWARDLOOT = "Auto Award Loot",
+    AUTOAWARDLOOTDESC = "When checked loot will be automatically awarded to the winner. If looting they will be master looted to the winner. If awarding from your bags they will be inserted into the next trade window with the winner.",
     AUTOCOMBATLOG = "Автоматический журнал боя",
     AUTOCOMBATLOGTTDESC = "Автоматически активирует /combatlog когда в рейде и рейдовой зоне.",
     AUTOCOMBATLOGTTWARN = "Вам все еще необходимо активировать \"Расширенный журнал боя\" в \"Настройки > Соединение\" если Вы еще не сделали этого.",

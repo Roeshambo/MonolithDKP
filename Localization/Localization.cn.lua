@@ -180,6 +180,8 @@ if GetLocale() == "zhCN" then
     AUTOCOMBATLOGTTWARN = "如果尚未激活，请在系统>网络中手动激活高级战斗日志。",
     AUTOOPEN = "自动打开出价窗口",
     AUTOOPENTTDESC = "选中该选项后，将在拍卖新项目时自动打开投标窗口。 如果未选中，则需要使用“/dkp bid”手动将其打开。",
+    AUTOAWARDLOOT = "Auto Award Loot",
+    AUTOAWARDLOOTDESC = "When checked loot will be automatically awarded to the winner. If looting they will be master looted to the winner. If awarding from your bags they will be inserted into the next trade window with the winner.",
     DECREASEDISENCHANT = "降低分解價值",
     DECREASEDISENCHANTTTDESC = "3次分解後將分解值降低一半，之後每次分解至少減少5個DKP",
     AWARDBONUS = "奖励奖金",

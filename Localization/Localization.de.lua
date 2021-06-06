@@ -180,6 +180,8 @@ if GetLocale() == "deDE" then
     AUTOCOMBATLOGTTWARN = "Sie müssen Advanced Combat Logging immer noch manuell unter System> Netzwerk aktivieren, falls Sie dies noch nicht getan haben.",
     AUTOOPEN = "Gebotsfenster automatisch öffnen",
     AUTOOPENTTDESC = "Wenn diese Option aktiviert ist, wird das Gebotsfenster automatisch geöffnet, wenn ein neuer Artikel versteigert wird. Wenn das Kontrollkästchen deaktiviert ist, müssen Sie es bei Bedarf mit \"/dkp bid\" manuell öffnen.",
+    AUTOAWARDLOOT = "Auto Award Loot",
+    AUTOAWARDLOOTDESC = "When checked loot will be automatically awarded to the winner. If looting they will be master looted to the winner. If awarding from your bags they will be inserted into the next trade window with the winner.",
     DECREASEDISENCHANT = "Entzaubern-Wert verringern",
     DECREASEDISENCHANTTTDESC = "Verringere den Entzaubern-Wert nach drei Entzauberungen um die Hälfte bei jeder weiteren Entzauberung bis zu einem Mindestwert von 5 DKP",
     AWARDBONUS = "Bonusprämie",
