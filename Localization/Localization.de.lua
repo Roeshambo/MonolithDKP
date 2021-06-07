@@ -894,13 +894,13 @@ if GetLocale() == "deDE" then
     MIGRATIONCOMPLETED    = "Migration abgeschlossen.|n|nBitte deaktivieren Sie MonolithDKP und laden Sie das UI neu. (/reload)",
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.7-r66",
+    CHANGELOG1 = "CommunityDKP - v3.2.7-r67-bcc",
     CHANGELOG2 = " - fixed class filters (shamans / paladins)",
     CHANGELOG3 = " - fixed class graph (9th class)",
     CHANGELOG4 = " - updated version in the header",
     CHANGELOG5 = " - added TBC zones and encounters",
     CHANGELOG6 = " - added localizations to TBC zones and encounters",
-    CHANGELOG7 = "",
+    CHANGELOG7 = " - added auto award loot PR#174",
     CHANGELOG8 = "",
     CHANGELOG9 = "Taidtuskecyh @ Gehennas",
     CHANGELOG10 = "CommunityDKP Discord: https://discord.gg/dXXK4vH"
