@@ -623,14 +623,13 @@ function CommDKP_OnEvent(self, event, arg1, ...)
 		core.DB.pendingTradePlayer = traderName
 		core.DB.pendingTrade = {}
 		local pendingLoot = core.DB.pendingLoot[traderName]
-		print(pendingLoot)
+
 		for i, lootLink in pairs(pendingLoot) do
 			local awarded = false
 			for containerSlot = 0, NUM_BAG_FRAMES do
 				for bagSlot = 1, GetContainerNumSlots(containerSlot) do
 					local containerLink = GetContainerItemLink(containerSlot, bagSlot)
-					print(containerLink)
-					print(lootLink)
+
 					if not awarded and containerLink ~= nil and containerLink == lootLink then
 						ClearCursor()
 						PickupContainerItem(containerSlot, bagSlot)
@@ -820,6 +819,7 @@ function CommDKP:OnInitialize(event, name)		-- This is the FIRST function to run
 		if #CommDKP:GetTable(CommDKP_DKPHistory, true) > core.DB.defaults.DKPHistoryLimit then
 			CommDKP:PurgeDKPHistory()									-- purges DKP History entries that exceed the "DKPHistoryLimit" option variable (oldest entries) and populates CommDKP_Archive with deleted values
 		end
+		core.DB.pendingLoot = {}
 	end
 end
 
@@ -1327,5 +1327,4 @@ events:RegisterEvent("BOSS_KILL")
 events:RegisterEvent("TRADE_SHOW")
 events:RegisterEvent("TRADE_ACCEPT_UPDATE")
 events:RegisterEvent("TRADE_CLOSED")
-
 events:SetScript("OnEvent", CommDKP_OnEvent); -- calls the above CommDKP_OnEvent function to determine what to do with the event

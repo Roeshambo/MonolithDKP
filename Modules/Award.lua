@@ -234,7 +234,6 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 			SendChatMessage(L["CONGRATS"].." "..winner.." "..L["ON"].." "..loot.." @ "..-cost.." "..L["DKP"], "GUILD")
 		end
 
-
 		if core.DB.defaults.AutoAwardLoot then
 			local numLootItems = GetNumLootItems()
 			if numLootItems > 0 then
@@ -267,7 +266,6 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 					core.DB.pendingLoot[winner] = {}
 				end
 				tinsert(core.DB.pendingLoot[winner], loot)
-				
 				InitiateTrade(winner)
 			end
 		end
