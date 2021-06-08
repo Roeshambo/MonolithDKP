@@ -287,7 +287,7 @@ local function DoGuildUpdate()
 			CommDKP:CheckOfficer()
 			CommDKP:SortLootTable()
 			CommDKP:SortDKPHistoryTable()
-			CommDKP:Print(L["VERSION"].." "..core.MonVersion..", "..L["CREATEDMAINTAIN"].." Vapok@BloodsailBuccaneers-Classic");
+			CommDKP:Print(L["VERSION"].." "..core.MonVersion..", "..L["CREATEDMAINTAIN"].." Vapok@BloodsailBuccaneers-Classic & Taidtuskecyh@Gehennas");
 			CommDKP:Print(L["LOADED"].." "..#CommDKP:GetTable(CommDKP_DKPTable, true).." "..L["PLAYERRECORDS"]..", "..#CommDKP:GetTable(CommDKP_Loot, true).." "..L["LOOTHISTRECORDS"].." "..#CommDKP:GetTable(CommDKP_DKPHistory, true).." "..L["DKPHISTRECORDS"]..".");
 			CommDKP:Print(L["USE"].." /dkp ? "..L["SUBMITBUGS"].." @ https://github.com/Vapok/CommunityDKP/issues");
 			CommDKP.Sync:SendData("CommDKPBuild", tostring(core.BuildNumber)) -- broadcasts build number to guild to check if a newer version is available
@@ -623,11 +623,13 @@ function CommDKP_OnEvent(self, event, arg1, ...)
 		core.DB.pendingTradePlayer = traderName
 		core.DB.pendingTrade = {}
 		local pendingLoot = core.DB.pendingLoot[traderName]
+
 		for i, lootLink in pairs(pendingLoot) do
 			local awarded = false
 			for containerSlot = 0, NUM_BAG_FRAMES do
 				for bagSlot = 1, GetContainerNumSlots(containerSlot) do
 					local containerLink = GetContainerItemLink(containerSlot, bagSlot)
+
 					if not awarded and containerLink ~= nil and containerLink == lootLink then
 						ClearCursor()
 						PickupContainerItem(containerSlot, bagSlot)

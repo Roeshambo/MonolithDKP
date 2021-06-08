@@ -180,6 +180,8 @@ if GetLocale() == "zhCN" then
     AUTOCOMBATLOGTTWARN = "如果尚未激活，请在系统>网络中手动激活高级战斗日志。",
     AUTOOPEN = "自动打开出价窗口",
     AUTOOPENTTDESC = "选中该选项后，将在拍卖新项目时自动打开投标窗口。 如果未选中，则需要使用“/dkp bid”手动将其打开。",
+    AUTOAWARDLOOT = "Auto Award Loot",
+    AUTOAWARDLOOTDESC = "When checked loot will be automatically awarded to the winner. If looting they will be master looted to the winner. If awarding from your bags they will be inserted into the next trade window with the winner.",
     DECREASEDISENCHANT = "降低分解價值",
     DECREASEDISENCHANTTTDESC = "3次分解後將分解值降低一半，之後每次分解至少減少5個DKP",
     AWARDBONUS = "奖励奖金",
@@ -898,13 +900,13 @@ if GetLocale() == "zhCN" then
     MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.7-r66",
+    CHANGELOG1 = "CommunityDKP - v3.2.7-r67-bcc",
     CHANGELOG2 = " - fixed class filters (shamans / paladins)",
     CHANGELOG3 = " - fixed class graph (9th class)",
     CHANGELOG4 = " - updated version in the header",
     CHANGELOG5 = " - added TBC zones and encounters",
     CHANGELOG6 = " - added localizations to TBC zones and encounters",
-    CHANGELOG7 = "",
+    CHANGELOG7 = " - added auto award loot PR#174",
     CHANGELOG8 = "",
     CHANGELOG9 = "Taidtuskecyh @ Gehennas",
     CHANGELOG10 = "CommunityDKP Discord: https://discord.gg/dXXK4vH"

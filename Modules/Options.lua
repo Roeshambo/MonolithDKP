@@ -1191,9 +1191,11 @@ function CommDKP:Options()
     CommDKP.ConfigTab4.AutoAwardLootCheckbox:SetPoint("TOP", CommDKP.ConfigTab4.AutoOpenCheckbox, "BOTTOM", 0, 0);
     CommDKP.ConfigTab4.AutoAwardLootCheckbox:SetScript("OnClick", function(self)
       core.DB.defaults.AutoAwardLoot = self:GetChecked()
+
       if core.DB.defaults.AutoAwardLoot == false then
         core.DB.pendingLoot = {}
       end
+
     end)
     CommDKP.ConfigTab4.AutoAwardLootCheckbox:SetScript("OnEnter", function(self)
       GameTooltip:SetOwner(self, "ANCHOR_LEFT");

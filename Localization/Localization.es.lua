@@ -180,6 +180,8 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     AUTOCOMBATLOGTTWARN = "Aún debe activar manualmente el Registro avanzado de combate en Sistema> Red si aún no lo ha hecho.",
     AUTOOPEN = "Ventana de oferta de apertura automática",
     AUTOOPENTTDESC = "Cuando está marcada, la ventana de ofertas se abrirá automáticamente cuando se subaste un nuevo artículo. Si no está marcado, deberá abrirlo manualmente cuando sea necesario con \"/dkp bid\".",
+    AUTOAWARDLOOT = "Auto Award Loot",
+    AUTOAWARDLOOTDESC = "When checked loot will be automatically awarded to the winner. If looting they will be master looted to the winner. If awarding from your bags they will be inserted into the next trade window with the winner.",
     DECREASEDISENCHANT = "Disminuir el valor de desencantar",
     DECREASEDISENCHANTTTDESC = "Disminuya el valor de desencantar después de 3 desencantadores a la mitad cada desencanto después hasta un mínimo de 5 DKP",
     AWARDBONUS = "Bono de premio",
@@ -896,13 +898,13 @@ if GetLocale() == "esES" or GetLocale() == "esMX" then
     MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.7-r66",
+    CHANGELOG1 = "CommunityDKP - v3.2.7-r67-bcc",
     CHANGELOG2 = " - fixed class filters (shamans / paladins)",
     CHANGELOG3 = " - fixed class graph (9th class)",
     CHANGELOG4 = " - updated version in the header",
     CHANGELOG5 = " - added TBC zones and encounters",
     CHANGELOG6 = " - added localizations to TBC zones and encounters",
-    CHANGELOG7 = "",
+    CHANGELOG7 = " - added auto award loot PR#174",
     CHANGELOG8 = "",
     CHANGELOG9 = "Taidtuskecyh @ Gehennas",
     CHANGELOG10 = "CommunityDKP Discord: https://discord.gg/dXXK4vH"

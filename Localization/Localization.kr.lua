@@ -174,6 +174,8 @@ if GetLocale() == "koKR" then
     ARTINFLATTTDESC = "DKP에서 각 플레이어에게 나누어주는 포인트. 이 값은 뱅킹 된 값이 분할 된 후 획득 한 DKP에 추가됩니다.",
     AUTOAWARD = "자동 수상 DKP",
     AUTOAWARDTTDESC = "Automatically awards Boss Kill Bonus DKP (set in Options tab) when a boss is killed. Only the raid leader will distribute points with this. Raid must be initialized on the Adjust DKP tab.", -- NEED TRANSLATION
+    AUTOAWARDLOOT = "Auto Award Loot",
+    AUTOAWARDLOOTDESC = "When checked loot will be automatically awarded to the winner. If looting they will be master looted to the winner. If awarding from your bags they will be inserted into the next trade window with the winner.",
     AUTOCOMBATLOG = "자동 전투 기록",
     AUTOCOMBATLOGTTDESC = "공격대와 공격대에 들어가거나 전투 대전에서 전투에 참가할 때 / combatlog를 자동으로 활성화합니다.",
     AUTOCOMBATLOGTTWARN = "시스템> 네트워크에서 고급 전투 로깅을 아직 활성화하지 않은 경우 여전히 수동으로 활성화해야합니다.",
@@ -895,13 +897,13 @@ if GetLocale() == "koKR" then
     MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.7-r66",
+    CHANGELOG1 = "CommunityDKP - v3.2.7-r67-bcc",
     CHANGELOG2 = " - fixed class filters (shamans / paladins)",
     CHANGELOG3 = " - fixed class graph (9th class)",
     CHANGELOG4 = " - updated version in the header",
     CHANGELOG5 = " - added TBC zones and encounters",
     CHANGELOG6 = " - added localizations to TBC zones and encounters",
-    CHANGELOG7 = "",
+    CHANGELOG7 = " - added auto award loot PR#174",
     CHANGELOG8 = "",
     CHANGELOG9 = "Taidtuskecyh @ Gehennas",
     CHANGELOG10 = "CommunityDKP Discord: https://discord.gg/dXXK4vH"

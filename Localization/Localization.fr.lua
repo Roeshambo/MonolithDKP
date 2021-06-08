@@ -222,6 +222,8 @@ if GetLocale() == "frFR" then
     ARTINFLATTTDESC = "Points à donner à chaque joueur SUR LE DKP divisé et réparti entre eux. Cette valeur est ajoutée à leur DKP gagné APRÈS que la valeur mise en banque soit divisée.",
     AUTOAWARD = "Prix ​​Auto DKP",
     AUTOAWARDTTDESC = "Attribue automatiquement des DKP de Boss tué (réglés dans l'onglet Options) lorsqu'un boss est tué. Seul le Chef de Raid distribuera ces points. Le raid doit être en cours (via l'onglet Ajuster les DKP).",
+    AUTOAWARDLOOT = "Auto Award Loot",
+    AUTOAWARDLOOTDESC = "When checked loot will be automatically awarded to the winner. If looting they will be master looted to the winner. If awarding from your bags they will be inserted into the next trade window with the winner.",
     AUTOCOMBATLOG = "Journal de combat automatique",
     AUTOCOMBATLOGTTDESC = "Active automatiquement /combatlog lorsque vous êtes dans un raid et que vous entrez dans une zone de raid ou entrez dans un combat avec un boss de raid.",
     AUTOCOMBATLOGTTWARN = "Vous devez toujours activer manuellement la journalisation de combat avancée dans Système > Réseau (si vous ne l'avez pas déjà fait).",
@@ -943,13 +945,13 @@ if GetLocale() == "frFR" then
     MIGRATIONCOMPLETED    = "Migration réussie.|n|nVeuillez désactiver MonolithDKP et recharger votre interface (/reload).", --TODO TRANSLATE:
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.7-r66",
+    CHANGELOG1 = "CommunityDKP - v3.2.7-r67-bcc",
     CHANGELOG2 = " - fixed class filters (shamans / paladins)",
     CHANGELOG3 = " - fixed class graph (9th class)",
     CHANGELOG4 = " - updated version in the header",
     CHANGELOG5 = " - added TBC zones and encounters",
     CHANGELOG6 = " - added localizations to TBC zones and encounters",
-    CHANGELOG7 = "",
+    CHANGELOG7 = " - added auto award loot PR#174",
     CHANGELOG8 = "",
     CHANGELOG9 = "Taidtuskecyh @ Gehennas",
     CHANGELOG10 = "CommunityDKP Discord: https://discord.gg/dXXK4vH"
