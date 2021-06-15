@@ -900,13 +900,14 @@ if GetLocale() == "zhCN" then
     MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.7-r67-bcc",
-    CHANGELOG2 = " - fixed class filters (shamans / paladins)",
-    CHANGELOG3 = " - fixed class graph (9th class)",
-    CHANGELOG4 = " - updated version in the header",
-    CHANGELOG5 = " - added TBC zones and encounters",
-    CHANGELOG6 = " - added localizations to TBC zones and encounters",
-    CHANGELOG7 = " - added auto award loot PR#174",
+    CHANGELOG1 = "CommunityDKP - v3.2.8-r68-bcc",
+    CHANGELOG2 = " - fixed UI for classic era realms",
+    CHANGELOG3 = "",
+    CHANGELOG4 = "",
+    CHANGELOG5 = "",
+    CHANGELOG6 = "",
+    CHANGELOG7 = "",
+    CHANGELOG8 = "",
     CHANGELOG8 = "",
     CHANGELOG9 = "Taidtuskecyh @ Gehennas",
     CHANGELOG10 = "CommunityDKP Discord: https://discord.gg/dXXK4vH"

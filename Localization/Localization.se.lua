@@ -808,7 +808,7 @@ core.L = {
   MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
 
     --TODO TRANSLATE:
-  CHANGELOG1 = "CommunityDKP - v3.2.7-r67-bcc",
+  CHANGELOG1 = "CommunityDKP - v3.2.8-r68-bcc",
   CHANGELOG2 = " - fixed class filters (shamans / paladins)",
   CHANGELOG3 = " - fixed class graph (9th class)",
   CHANGELOG4 = " - updated version in the header",
