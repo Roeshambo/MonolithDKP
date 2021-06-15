@@ -100,7 +100,12 @@ function CommDKP:Options()
     CommDKP.ConfigTab4.description:SetText("|CFFcca600"..L["DEFAULTDKPAWARDVALUES"].."|r");
   
     for i=1, 6 do
-      CommDKP.ConfigTab4.default[i] = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+      if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+        CommDKP.ConfigTab4.default[i] = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+      elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+        CommDKP.ConfigTab4.default[i] = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+      end
+            
       CommDKP.ConfigTab4.default[i]:SetAutoFocus(false)
       CommDKP.ConfigTab4.default[i]:SetMultiLine(false)
       CommDKP.ConfigTab4.default[i]:SetSize(80, 24)
@@ -264,7 +269,13 @@ function CommDKP:Options()
       CommDKP.ConfigTab4.DefaultMinBids.SlotBox = SlotBox;
 
       for i=1, 17 do
-        CommDKP.ConfigTab4.DefaultMinBids.SlotBox[i] = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+
+        if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+          CommDKP.ConfigTab4.DefaultMinBids.SlotBox[i] = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+        elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+          CommDKP.ConfigTab4.DefaultMinBids.SlotBox[i] = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+        end
+        
         CommDKP.ConfigTab4.DefaultMinBids.SlotBox[i]:SetAutoFocus(false)
         CommDKP.ConfigTab4.DefaultMinBids.SlotBox[i]:SetMultiLine(false)
         CommDKP.ConfigTab4.DefaultMinBids.SlotBox[i]:SetSize(60, 24)
@@ -531,7 +542,13 @@ function CommDKP:Options()
       CommDKP.ConfigTab4.DefaultMaxBids.SlotBox = SlotBox;
 
       for i=1, 17 do
-        CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[i] = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+        if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+          CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[i] = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+        elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+          CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[i] = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+        end
+
+        
         CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[i]:SetAutoFocus(false)
         CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[i]:SetMultiLine(false)
         CommDKP.ConfigTab4.DefaultMaxBids.SlotBox[i]:SetSize(60, 24)
@@ -765,7 +782,11 @@ function CommDKP:Options()
     end
     -- Bid Timer Slider
     CommDKP.ConfigTab4.bidTimerSlider = CreateFrame("SLIDER", "$parentBidTimerSlider", CommDKP.ConfigTab4, "CommDKPOptionsSliderTemplate");
-    Mixin(CommDKP.ConfigTab4.bidTimerSlider, BackdropTemplateMixin)
+
+    if WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+      Mixin(CommDKP.ConfigTab4.bidTimerSlider, BackdropTemplateMixin)
+    end
+    
   CommDKP.ConfigTab4.bidTimerSlider:SetBackdrop({
     bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
     edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
@@ -794,7 +815,12 @@ function CommDKP:Options()
     CommDKP.ConfigTab4.bidTimerHeader:SetPoint("BOTTOM", CommDKP.ConfigTab4.bidTimerSlider, "TOP", 0, 3);
     CommDKP.ConfigTab4.bidTimerHeader:SetText(L["BIDTIMER"])
 
-    CommDKP.ConfigTab4.bidTimer = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+    if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+      CommDKP.ConfigTab4.bidTimer = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+    elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+      CommDKP.ConfigTab4.bidTimer = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+    end
+    
     CommDKP.ConfigTab4.bidTimer:SetAutoFocus(false)
     CommDKP.ConfigTab4.bidTimer:SetMultiLine(false)
     CommDKP.ConfigTab4.bidTimer:SetSize(50, 18)
@@ -822,6 +848,7 @@ function CommDKP:Options()
   end -- the end
 
   -- Tooltip History Slider
+
   CommDKP.ConfigTab4.TooltipHistorySlider = CreateFrame("SLIDER", "$parentTooltipHistorySlider", CommDKP.ConfigTab4, "CommDKPOptionsSliderTemplate");
   if CommDKP.ConfigTab4.bidTimer then
     CommDKP.ConfigTab4.TooltipHistorySlider:SetPoint("LEFT", CommDKP.ConfigTab4.bidTimerSlider, "RIGHT", 30, 0);
@@ -829,7 +856,10 @@ function CommDKP:Options()
     CommDKP.ConfigTab4.TooltipHistorySlider:SetPoint("TOP", CommDKP.ConfigTab4, "TOP", 1, -107);
   end
 
-  Mixin(CommDKP.ConfigTab4.TooltipHistorySlider, BackdropTemplateMixin)
+  if WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+    Mixin(CommDKP.ConfigTab4.TooltipHistorySlider, BackdropTemplateMixin)
+  end
+  
   CommDKP.ConfigTab4.TooltipHistorySlider:SetBackdrop({
     bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
     edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
@@ -854,7 +884,12 @@ function CommDKP:Options()
   CommDKP.ConfigTab4.TooltipHistoryHeader:SetPoint("BOTTOM", CommDKP.ConfigTab4.TooltipHistorySlider, "TOP", 0, 3);
   CommDKP.ConfigTab4.TooltipHistoryHeader:SetText(L["TTHISTORYCOUNT"])
 
-  CommDKP.ConfigTab4.TooltipHistory = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+  if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+    CommDKP.ConfigTab4.TooltipHistory = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+  elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+    CommDKP.ConfigTab4.TooltipHistory = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+  end
+  
   CommDKP.ConfigTab4.TooltipHistory:SetAutoFocus(false)
   CommDKP.ConfigTab4.TooltipHistory:SetMultiLine(false)
   CommDKP.ConfigTab4.TooltipHistory:SetSize(50, 18)
@@ -890,7 +925,12 @@ function CommDKP:Options()
     CommDKP.ConfigTab4.historySlider:SetPoint("TOPRIGHT", CommDKP.ConfigTab4.TooltipHistorySlider, "BOTTOMLEFT", 56, -49);
   end
 
-  Mixin(CommDKP.ConfigTab4.historySlider, BackdropTemplateMixin)
+  
+  if WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+    Mixin(CommDKP.ConfigTab4.historySlider, BackdropTemplateMixin)
+  end
+
+  
   CommDKP.ConfigTab4.historySlider:SetBackdrop({
     bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
     edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
@@ -916,7 +956,12 @@ function CommDKP:Options()
   CommDKP.ConfigTab4.HistoryHeader:SetPoint("BOTTOM", CommDKP.ConfigTab4.historySlider, "TOP", 0, 3);
   CommDKP.ConfigTab4.HistoryHeader:SetText(L["LOOTHISTORYLIMIT"])
 
-  CommDKP.ConfigTab4.history = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+  if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+    CommDKP.ConfigTab4.history = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+  elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+    CommDKP.ConfigTab4.history = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+  end
+ 
   CommDKP.ConfigTab4.history:SetAutoFocus(false)
   CommDKP.ConfigTab4.history:SetMultiLine(false)
   CommDKP.ConfigTab4.history:SetSize(50, 18)
@@ -944,7 +989,11 @@ function CommDKP:Options()
 
   -- DKP History Limit Slider
   CommDKP.ConfigTab4.DKPHistorySlider = CreateFrame("SLIDER", "$parentDKPHistorySlider", CommDKP.ConfigTab4, "CommDKPOptionsSliderTemplate");
-  Mixin(CommDKP.ConfigTab4.DKPHistorySlider, BackdropTemplateMixin)
+
+  if WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+    Mixin(CommDKP.ConfigTab4.DKPHistorySlider, BackdropTemplateMixin)
+  end
+
   CommDKP.ConfigTab4.DKPHistorySlider:SetBackdrop({
     bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
     edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
@@ -970,7 +1019,12 @@ function CommDKP:Options()
   CommDKP.ConfigTab4.DKPHistoryHeader:SetPoint("BOTTOM", CommDKP.ConfigTab4.DKPHistorySlider, "TOP", 0, 3);
   CommDKP.ConfigTab4.DKPHistoryHeader:SetText(L["DKPHISTORYLIMIT"])
 
-  CommDKP.ConfigTab4.DKPHistory = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+  if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+    CommDKP.ConfigTab4.DKPHistory = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+  elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+    CommDKP.ConfigTab4.DKPHistory = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+  end
+  
   CommDKP.ConfigTab4.DKPHistory:SetAutoFocus(false)
   CommDKP.ConfigTab4.DKPHistory:SetMultiLine(false)
   CommDKP.ConfigTab4.DKPHistory:SetSize(50, 18)
@@ -998,7 +1052,11 @@ function CommDKP:Options()
 
   -- Bid Timer Size Slider
   CommDKP.ConfigTab4.TimerSizeSlider = CreateFrame("SLIDER", "$parentBidTimerSizeSlider", CommDKP.ConfigTab4, "CommDKPOptionsSliderTemplate");
-  Mixin(CommDKP.ConfigTab4.TimerSizeSlider, BackdropTemplateMixin)
+
+  if WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+    Mixin(CommDKP.ConfigTab4.TimerSizeSlider, BackdropTemplateMixin)
+  end
+ 
   CommDKP.ConfigTab4.TimerSizeSlider:SetBackdrop({
     bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
     edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
@@ -1026,7 +1084,13 @@ function CommDKP:Options()
   CommDKP.ConfigTab4.DKPHistoryHeader:SetPoint("BOTTOM", CommDKP.ConfigTab4.TimerSizeSlider, "TOP", 0, 3);
   CommDKP.ConfigTab4.DKPHistoryHeader:SetText(L["TIMERSIZE"])
 
-  CommDKP.ConfigTab4.TimerSize = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+  if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+    CommDKP.ConfigTab4.TimerSize = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+  elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+    CommDKP.ConfigTab4.TimerSize = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+  end
+
+  
   CommDKP.ConfigTab4.TimerSize:SetAutoFocus(false)
   CommDKP.ConfigTab4.TimerSize:SetMultiLine(false)
   CommDKP.ConfigTab4.TimerSize:SetSize(50, 18)
@@ -1054,7 +1118,11 @@ function CommDKP:Options()
 
   -- UI Scale Size Slider
   CommDKP.ConfigTab4.CommDKPScaleSize = CreateFrame("SLIDER", "$parentCommDKPScaleSizeSlider", CommDKP.ConfigTab4, "CommDKPOptionsSliderTemplate");
-  Mixin(CommDKP.ConfigTab4.CommDKPScaleSize, BackdropTemplateMixin)
+
+  if WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+    Mixin(CommDKP.ConfigTab4.CommDKPScaleSize, BackdropTemplateMixin)
+  end
+  
   CommDKP.ConfigTab4.CommDKPScaleSize:SetBackdrop({
     bgFile = "Interface\\Buttons\\UI-SliderBar-Background",
     edgeFile = "Interface\\Buttons\\UI-SliderBar-Border",
@@ -1081,7 +1149,12 @@ function CommDKP:Options()
   CommDKP.ConfigTab4.DKPHistoryHeader:SetPoint("BOTTOM", CommDKP.ConfigTab4.CommDKPScaleSize, "TOP", 0, 3);
   CommDKP.ConfigTab4.DKPHistoryHeader:SetText(L["MAINGUISIZE"])
 
-  CommDKP.ConfigTab4.UIScaleSize = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+  if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+    CommDKP.ConfigTab4.UIScaleSize = CreateFrame("EditBox", nil, CommDKP.ConfigTab4)
+  elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+    CommDKP.ConfigTab4.UIScaleSize = CreateFrame("EditBox", nil, CommDKP.ConfigTab4, BackdropTemplateMixin and "BackdropTemplate" or nil)
+  end
+  
   CommDKP.ConfigTab4.UIScaleSize:SetAutoFocus(false)
   CommDKP.ConfigTab4.UIScaleSize:SetMultiLine(false)
   CommDKP.ConfigTab4.UIScaleSize:SetSize(50, 18)

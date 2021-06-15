@@ -505,7 +505,14 @@ function CommDKP:BroadcastTimer(seconds, ...)       -- broadcasts timer and star
 end
 
 function CommDKP:CreateContainer(parent, name, header)
-	local f = CreateFrame("Frame", "CommDKP"..name, parent, BackdropTemplateMixin and "BackdropTemplate" or nil);
+
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		local f = CreateFrame("Frame", "CommDKP"..name, parent);
+	elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+		local f = CreateFrame("Frame", "CommDKP"..name, parent, BackdropTemplateMixin and "BackdropTemplate" or nil);
+	end
+
+	
 	f:SetBackdrop( {
 		edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,  
 		insets = { left = 0, right = 0, top = 0, bottom = 0 }
@@ -513,7 +520,12 @@ function CommDKP:CreateContainer(parent, name, header)
 	f:SetBackdropColor(0,0,0,0.9);
 	f:SetBackdropBorderColor(1,1,1,0.5)
 
-	f.header = CreateFrame("Frame", "CommDKP"..name.."Header", f, BackdropTemplateMixin and "BackdropTemplate" or nil)
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		f.header = CreateFrame("Frame", "CommDKP"..name.."Header", f)
+	elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+		f.header = CreateFrame("Frame", "CommDKP"..name.."Header", f, BackdropTemplateMixin and "BackdropTemplate" or nil)
+	end
+	
 	f.header:SetBackdrop( {
 		bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
 		insets = { left = 0, right = 0, top = 0, bottom = 0 }

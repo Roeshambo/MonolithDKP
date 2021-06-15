@@ -1074,7 +1074,12 @@ function CommDKP:ManageEntries()
 		----------------------------------
 		-- Team name input box
 		----------------------------------
-			CommDKP.ConfigTab3.TeamNameInput = CreateFrame("EditBox", nil, CommDKP.ConfigTab3, BackdropTemplateMixin and "BackdropTemplate" or nil)
+			if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+				CommDKP.ConfigTab3.TeamNameInput = CreateFrame("EditBox", nil, CommDKP.ConfigTab3)
+			elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+				CommDKP.ConfigTab3.TeamNameInput = CreateFrame("EditBox", nil, CommDKP.ConfigTab3, BackdropTemplateMixin and "BackdropTemplate" or nil)
+			end
+			
 			CommDKP.ConfigTab3.TeamNameInput:SetAutoFocus(false)
 			CommDKP.ConfigTab3.TeamNameInput:SetMultiLine(false)
 			CommDKP.ConfigTab3.TeamNameInput:SetSize(160, 24)

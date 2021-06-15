@@ -319,7 +319,13 @@ function CommDKP:DKPModes_Main()
   f.DKPModesMain.MaxBidBehaviorHeader:SetText(L["MAXBIDBEHAVIOR"])
 
   -- AntiSnipe Option
-  f.DKPModesMain.AntiSnipe = CreateFrame("EditBox", nil, f.DKPModesMain, BackdropTemplateMixin and "BackdropTemplate" or nil)
+
+    if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+      f.DKPModesMain.AntiSnipe = CreateFrame("EditBox", nil, f.DKPModesMain)
+    elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+      f.DKPModesMain.AntiSnipe = CreateFrame("EditBox", nil, f.DKPModesMain, BackdropTemplateMixin and "BackdropTemplate" or nil)
+    end
+  
     f.DKPModesMain.AntiSnipe:SetAutoFocus(false)
     f.DKPModesMain.AntiSnipe:SetMultiLine(false)
     f.DKPModesMain.AntiSnipe:SetPoint("TOPLEFT", f.DKPModesMain.RoundDropDown, "BOTTOMLEFT", 18, -15)
@@ -495,7 +501,13 @@ function CommDKP:DKPModes_Main()
 
   -- Artificial Inflation Editbox
   if not core.DB.modes.Inflation then core.DB.modes.Inflation = 0 end
-  f.DKPModesMain.Inflation = CreateFrame("EditBox", nil, f.DKPModesMain, BackdropTemplateMixin and "BackdropTemplate" or nil)
+
+    if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+        f.DKPModesMain.Inflation = CreateFrame("EditBox", nil, f.DKPModesMain)
+    elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+        f.DKPModesMain.Inflation = CreateFrame("EditBox", nil, f.DKPModesMain, BackdropTemplateMixin and "BackdropTemplate" or nil)
+    end
+  
     f.DKPModesMain.Inflation:SetAutoFocus(false)
     f.DKPModesMain.Inflation:SetMultiLine(false)
     f.DKPModesMain.Inflation:SetPoint("TOPLEFT", f.DKPModesMain.CostSelection, "BOTTOMLEFT", 20, -15)
@@ -764,7 +776,13 @@ function CommDKP:DKPModes_Main()
   ---
   -- Roll Container
   ---
-    f.DKPModesMain.RollContainer = CreateFrame("Frame", nil, f.DKPModesMain, BackdropTemplateMixin and "BackdropTemplate" or nil);
+
+    if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+      f.DKPModesMain.RollContainer = CreateFrame("Frame", nil, f.DKPModesMain);
+    elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+      f.DKPModesMain.RollContainer = CreateFrame("Frame", nil, f.DKPModesMain, BackdropTemplateMixin and "BackdropTemplate" or nil);
+    end
+    
     f.DKPModesMain.RollContainer:SetSize(210, 180);
     f.DKPModesMain.RollContainer:SetPoint("TOPLEFT", f.DKPModesMain.ChannelsDropDown, "BOTTOMLEFT", -10, -20)
     f.DKPModesMain.RollContainer:SetBackdrop({
@@ -880,7 +898,13 @@ function CommDKP:DKPModes_Main()
     ---
     -- Min Roll Editbox
     ---
-      f.DKPModesMain.RollContainer.rollMin = CreateFrame("EditBox", nil, f.DKPModesMain.RollContainer, BackdropTemplateMixin and "BackdropTemplate" or nil)
+      if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+        f.DKPModesMain.RollContainer.rollMin = CreateFrame("EditBox", nil, f.DKPModesMain.RollContainer)
+      elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+        f.DKPModesMain.RollContainer.rollMin = CreateFrame("EditBox", nil, f.DKPModesMain.RollContainer, BackdropTemplateMixin and "BackdropTemplate" or nil)
+      end
+
+      
       f.DKPModesMain.RollContainer.rollMin:SetAutoFocus(false)
       f.DKPModesMain.RollContainer.rollMin:SetMultiLine(false)
       f.DKPModesMain.RollContainer.rollMin:SetPoint("TOPLEFT", f.DKPModesMain.RollContainer, "TOPLEFT", 20, -80)
@@ -1018,7 +1042,13 @@ function CommDKP:DKPModes_Main()
         f.DKPModesMain.RollContainer.rollMax.perc:SetShown(core.DB.modes.rolls.UsePerc);
 
           -- Percent Rolls Checkbox
-        f.DKPModesMain.RollContainer.UsePerc = CreateFrame("CheckButton", nil, f.DKPModesMain.RollContainer, "UICheckButtonTemplate");
+
+        if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+          f.DKPModesMain.RollContainer.UsePerc = CreateFrame("CheckButton", nil, f.DKPModesMain.RollContainer, "UICheckButtonTemplate");
+        elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+          f.DKPModesMain.RollContainer.UsePerc = CreateFrame("CheckButton", nil, f.DKPModesMain.RollContainer, "UICheckButtonTemplate");
+        end
+                  
         f.DKPModesMain.RollContainer.UsePerc:SetChecked(core.DB.modes.rolls.UsePerc)
         f.DKPModesMain.RollContainer.UsePerc:SetScale(0.6);
         f.DKPModesMain.RollContainer.UsePerc.text:SetText("  |cff5151de"..L["USEPERCENTAGE"].."|r");
@@ -1046,7 +1076,12 @@ function CommDKP:DKPModes_Main()
       end)
 
         -- Add to Max Editbox
-      f.DKPModesMain.RollContainer.AddMax = CreateFrame("EditBox", nil, f.DKPModesMain.RollContainer, BackdropTemplateMixin and "BackdropTemplate" or nil)
+      if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+        f.DKPModesMain.RollContainer.AddMax = CreateFrame("EditBox", nil, f.DKPModesMain.RollContainer)
+      elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+        f.DKPModesMain.RollContainer.AddMax = CreateFrame("EditBox", nil, f.DKPModesMain.RollContainer, BackdropTemplateMixin and "BackdropTemplate" or nil)
+      end
+     
         f.DKPModesMain.RollContainer.AddMax:SetAutoFocus(false)
         f.DKPModesMain.RollContainer.AddMax:SetMultiLine(false)
         f.DKPModesMain.RollContainer.AddMax:SetPoint("TOP", f.DKPModesMain.RollContainer.rollMax, "BOTTOM", 0, -30)
@@ -1107,16 +1142,14 @@ function CommDKP:DKPModes_Main()
 
       --------------
 
-    ---
-    -- Ni Karma sub section
-    ---
+      ---
+      -- Ni Karma sub section
+      ---
 
       ---
       -- Max Karma
       ---
 
-
-      
         f.DKPModesMain.RollContainer.maxKarma = CreateFrame("EditBox", nil, f.DKPModesMain.RollContainer, BackdropTemplateMixin and "BackdropTemplate" or nil)
         f.DKPModesMain.RollContainer.maxKarma:SetAutoFocus(false)
         f.DKPModesMain.RollContainer.maxKarma:SetMultiLine(false)

@@ -5,7 +5,14 @@ local L = core.L;
 
 
 function CommDKP:ClassGraph()
-	local graph = CreateFrame("Frame", "CommDKPClassIcons", CommDKP.ConfigTab1, BackdropTemplateMixin and "BackdropTemplate" or nil)
+
+	local graph;
+
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		graph = CreateFrame("Frame", "CommDKPClassIcons", CommDKP.ConfigTab1)
+	elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+		graph = CreateFrame("Frame", "CommDKPClassIcons", CommDKP.ConfigTab1, BackdropTemplateMixin and "BackdropTemplate" or nil)
+	end
 
 	graph:SetPoint("TOPLEFT", CommDKP.ConfigTab1, "TOPLEFT", 0, 0)
 	graph:SetBackdropColor(0,0,0,0)
@@ -45,7 +52,13 @@ function CommDKP:ClassGraph()
 		end
   		graph.icons[i]:SetColorTexture(0, 0, 0, 1)
   		graph.icons[i]:SetSize(28, 28);
-  		graph.icons[i].bar = CreateFrame("Frame", "CommDKP"..i.."Graph", graph, BackdropTemplateMixin and "BackdropTemplate" or nil)
+
+		if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+			graph.icons[i].bar = CreateFrame("Frame", "CommDKP"..i.."Graph", graph)
+		elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+			graph.icons[i].bar = CreateFrame("Frame", "CommDKP"..i.."Graph", graph, BackdropTemplateMixin and "BackdropTemplate" or nil)
+		end
+  		
 		graph.icons[i].bar:SetPoint("BOTTOM", icons[i], "TOP", 0, 5)
 		graph.icons[i].bar:SetBackdropBorderColor(1,1,1,0)
   		graph.icons[i].bar:SetSize(BarWidth, perc_height[i])

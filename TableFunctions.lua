@@ -906,13 +906,17 @@ function CommDKP:DKPTable_Create()
 	CommDKP.DKPTable = CreateFrame("ScrollFrame", "CommDKPDisplayScrollFrame", CommDKP.UIConfig, "FauxScrollFrameTemplate")
 	CommDKP.DKPTable:SetSize(core.TableWidth, core.TableRowHeight*core.TableNumRows+3)
 	CommDKP.DKPTable:SetPoint("LEFT", 20, 3)
-	--CommDKP.DKPTable:SetBackdrop( {
-	--	bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
-	--	edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,
-	--	insets = { left = 0, right = 0, top = 0, bottom = 0 }
-	--});
-	--CommDKP.DKPTable:SetBackdropColor(0,0,0,0.4);
-	--CommDKP.DKPTable:SetBackdropBorderColor(1,1,1,0.5)
+
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		CommDKP.DKPTable:SetBackdrop( {
+			bgFile = "Textures\\white.blp", tile = true,                -- White backdrop allows for black background with 1.0 alpha on low alpha containers
+			edgeFile = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\edgefile.tga", tile = true, tileSize = 1, edgeSize = 2,
+			insets = { left = 0, right = 0, top = 0, bottom = 0 }
+		});
+		CommDKP.DKPTable:SetBackdropColor(0,0,0,0.4);
+		CommDKP.DKPTable:SetBackdropBorderColor(1,1,1,0.5)
+	end
+	
 	CommDKP.DKPTable:SetClipsChildren(false);
 
 	CommDKP.DKPTable.ScrollBar = FauxScrollFrame_GetChildFrames(CommDKP.DKPTable)

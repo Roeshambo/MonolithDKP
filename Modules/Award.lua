@@ -274,7 +274,12 @@ local function AwardItem(player, cost, boss, zone, loot, reassign)
 end
 
 local function AwardConfirm_Create()
-	local f = CreateFrame("Frame", "CommDKP_AwardWindowConfirm", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
+
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		local f = CreateFrame("Frame", "CommDKP_AwardWindowConfirm", UIParent, "ShadowOverlaySmallTemplate");
+	elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+		local f = CreateFrame("Frame", "CommDKP_AwardWindowConfirm", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
+	end	
 
 	f:SetPoint("TOP", UIParent, "TOP", 0, -200);
 	f:SetSize(400, 270); -- + 40
@@ -356,7 +361,12 @@ local function AwardConfirm_Create()
 		f.costHeader:SetPoint("TOPRIGHT", f.lootHeader, "BOTTOMRIGHT", 0, -10);
 		f.costHeader:SetText(L["ITEMCOST"]..":")
 
-		f.cost = CreateFrame("EditBox", nil, f, BackdropTemplateMixin and "BackdropTemplate" or nil)
+		if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+			f.cost = CreateFrame("EditBox", nil, f)
+		elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+			f.cost = CreateFrame("EditBox", nil, f, BackdropTemplateMixin and "BackdropTemplate" or nil)
+		end
+		
 		f.cost:SetAutoFocus(false)
 		f.cost:SetMultiLine(false)
 		f.cost:SetPoint("LEFT", f.costHeader, "RIGHT", 5, 0)

@@ -86,8 +86,13 @@ function CommDKP:ZeroSumBank_Update()
 end
 
 function CommDKP:ZeroSumBank_Create()
-	local f = CreateFrame("Frame", "CommDKP_DKPZeroSumBankFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
 
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		local f = CreateFrame("Frame", "CommDKP_DKPZeroSumBankFrame", UIParent, "ShadowOverlaySmallTemplate");
+	elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+		local f = CreateFrame("Frame", "CommDKP_DKPZeroSumBankFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
+	end
+	
 	if not core.DB.modes.ZeroSumBank then core.DB.modes.ZeroSumBank = 0 end
 
 	f:SetPoint("TOP", UIParent, "TOP", 400, -50);
@@ -109,7 +114,13 @@ function CommDKP:ZeroSumBank_Create()
 	f:Hide()
 
 	-- Close Button
-	f.closeContainer = CreateFrame("Frame", "CommDKPZeroSumBankWindowCloseButtonContainer", f, BackdropTemplateMixin and "BackdropTemplate" or nil)
+
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		f.closeContainer = CreateFrame("Frame", "CommDKPZeroSumBankWindowCloseButtonContainer", f)
+	elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+		f.closeContainer = CreateFrame("Frame", "CommDKPZeroSumBankWindowCloseButtonContainer", f, BackdropTemplateMixin and "BackdropTemplate" or nil)
+	end
+	
 	f.closeContainer:SetPoint("CENTER", f, "TOPRIGHT", -4, 0)
 	f.closeContainer:SetBackdrop({
 		bgFile   = "Textures\\white.blp", tile = true,
@@ -119,7 +130,12 @@ function CommDKP:ZeroSumBank_Create()
 	f.closeContainer:SetBackdropBorderColor(1,1,1,0.2)
 	f.closeContainer:SetSize(28, 28)
 
-	f.closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton", BackdropTemplateMixin and "BackdropTemplate" or nil)
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		f.closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton")
+	elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+		f.closeBtn = CreateFrame("Button", nil, f, "UIPanelCloseButton", BackdropTemplateMixin and "BackdropTemplate" or nil)
+	end
+	
 	f.closeBtn:SetPoint("CENTER", f.closeContainer, "TOPRIGHT", -14, -14)
 
 	f.BankHeader = f:CreateFontString(nil, "OVERLAY")
@@ -138,7 +154,12 @@ function CommDKP:ZeroSumBank_Create()
 	f.Boss.Header:SetPoint("RIGHT", f.Boss, "LEFT", -7, 0);
 	f.Boss.Header:SetText(L["BOSS"]..": ")
 
-	f.Balance = CreateFrame("EditBox", nil, f, BackdropTemplateMixin and "BackdropTemplate" or nil)
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		f.Balance = CreateFrame("EditBox", nil, f)
+	elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+		f.Balance = CreateFrame("EditBox", nil, f, BackdropTemplateMixin and "BackdropTemplate" or nil)
+	end
+	
 	f.Balance:SetPoint("TOPLEFT", f, "TOPLEFT", 70, -65)   
     f.Balance:SetAutoFocus(false)
     f.Balance:SetMultiLine(false)
@@ -232,7 +253,13 @@ function CommDKP:ZeroSumBank_Create()
 	end)
 
 	-- Loot List Frame
-	f.LootFrame = CreateFrame("Frame", "CommDKPZeroSumBankLootListContainer", f, BackdropTemplateMixin and "BackdropTemplate" or nil)
+
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		f.LootFrame = CreateFrame("Frame", "CommDKPZeroSumBankLootListContainer", f, "ShadowOverlaySmallTemplate")
+	elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+		f.LootFrame = CreateFrame("Frame", "CommDKPZeroSumBankLootListContainer", f, BackdropTemplateMixin and "BackdropTemplate" or nil)
+	end
+	
 	f.LootFrame:SetPoint("TOPRIGHT", f.IncludeStandby, "BOTTOM", 95, -5)
 	f.LootFrame:SetSize(305, 190)
 	f.LootFrame:SetBackdrop({

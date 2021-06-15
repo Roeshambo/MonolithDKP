@@ -122,7 +122,13 @@ function CommDKP:ConfigMenuTabs()
 	---------------------------------------
 	-- TabMenu
 	---------------------------------------
-	CommDKP.UIConfig.TabMenu = CreateFrame("Frame", "CommDKPCommDKP.ConfigTabMenu", CommDKP.UIConfig, BackdropTemplateMixin and "BackdropTemplate" or nil);
+
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		CommDKP.UIConfig.TabMenu = CreateFrame("Frame", "CommDKPCommDKP.ConfigTabMenu", CommDKP.UIConfig);
+	elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+		CommDKP.UIConfig.TabMenu = CreateFrame("Frame", "CommDKPCommDKP.ConfigTabMenu", CommDKP.UIConfig, BackdropTemplateMixin and "BackdropTemplate" or nil);
+	end
+	
 	CommDKP.UIConfig.TabMenu:SetPoint("TOPRIGHT", CommDKP.UIConfig, "TOPRIGHT", -25, -25); --Moves the entire tabframe (defaults -25, -25)
 	CommDKP.UIConfig.TabMenu:SetSize(535, 510);  --default: 477,510
 	CommDKP.UIConfig.TabMenu:SetBackdrop( {
@@ -146,12 +152,14 @@ function CommDKP:ConfigMenuTabs()
 	CommDKP.UIConfig.TabMenu.ScrollFrame:SetClipsChildren(false);
 	CommDKP.UIConfig.TabMenu.ScrollFrame:SetScript("OnMouseWheel", ScrollFrame_OnMouseWheel);
 	
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		-- CommDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar = CreateFrame("Slider", nil, CommDKP.UIConfig.TabMenu.ScrollFrame, "UIPanelScrollFrameTemplate")
+		-- CommDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:Hide();
+		-- CommDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:ClearAllPoints();
+		-- CommDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", CommDKP.UIConfig.TabMenu.ScrollFrame, "TOPRIGHT", -20, -12);
+		-- CommDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", CommDKP.UIConfig.TabMenu.ScrollFrame, "BOTTOMRIGHT", -2, 15);
+	end
 	
-	--CommDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar = CreateFrame("Slider", nil, CommDKP.UIConfig.TabMenu.ScrollFrame, "UIPanelScrollFrameTemplate")
-	--CommDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:Hide();
-	--CommDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:ClearAllPoints();
-	--CommDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:SetPoint("TOPLEFT", CommDKP.UIConfig.TabMenu.ScrollFrame, "TOPRIGHT", -20, -12);
-	--CommDKP.UIConfig.TabMenu.ScrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", CommDKP.UIConfig.TabMenu.ScrollFrame, "BOTTOMRIGHT", -2, 15);
 
 	CommDKP.ConfigTab1, CommDKP.ConfigTab2, CommDKP.ConfigTab3, CommDKP.ConfigTab4, CommDKP.ConfigTab5, CommDKP.ConfigTab6, CommDKP.ConfigTab7 = CommDKP:SetTabs(CommDKP.UIConfig.TabMenu, 7, 533, 490, L["FILTERS"], L["ADJUSTDKP"], L["MANAGE"], L["OPTIONS"], L["LOOTHISTORY"], L["DKPHISTORY"], L["PRICETAB"]);
 
