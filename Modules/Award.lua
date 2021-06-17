@@ -275,10 +275,12 @@ end
 
 local function AwardConfirm_Create()
 
+	local f;
+
 	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-		local f = CreateFrame("Frame", "CommDKP_AwardWindowConfirm", UIParent, "ShadowOverlaySmallTemplate");
+		f = CreateFrame("Frame", "CommDKP_AwardWindowConfirm", UIParent, "ShadowOverlaySmallTemplate");
 	elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
-		local f = CreateFrame("Frame", "CommDKP_AwardWindowConfirm", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
+		f = CreateFrame("Frame", "CommDKP_AwardWindowConfirm", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
 	end	
 
 	f:SetPoint("TOP", UIParent, "TOP", 0, -200);

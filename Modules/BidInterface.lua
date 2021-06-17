@@ -325,10 +325,12 @@ end
 
 local function BidWindowCreateRow(parent, id) -- Create 3 buttons for each row in the list
 
+  local f;
+
   if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-    local f = CreateFrame("Frame", "CommDKP_BidderWindow", UIParent, "ShadowOverlaySmallTemplate");
+    f = CreateFrame("Frame", "CommDKP_BidderWindow", UIParent, "ShadowOverlaySmallTemplate");
   elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
-    local f = CreateFrame("Button", "$parentLine"..id, parent)
+    f = CreateFrame("Button", "$parentLine"..id, parent)
   end
       
   f.Strings = {}

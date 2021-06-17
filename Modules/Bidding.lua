@@ -1206,10 +1206,12 @@ end
 
 function CommDKP:CreateBidWindow()
 
+  local f;
+
   if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-    local f = CreateFrame("Frame", "CommDKP_BiddingWindow", UIParent, "ShadowOverlaySmallTemplate");
+    f = CreateFrame("Frame", "CommDKP_BiddingWindow", UIParent, "ShadowOverlaySmallTemplate");
   elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
-    local f = CreateFrame("Frame", "CommDKP_BiddingWindow", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
+    f = CreateFrame("Frame", "CommDKP_BiddingWindow", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
   end
   
   mode = core.DB.modes.mode;

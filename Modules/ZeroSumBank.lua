@@ -87,10 +87,12 @@ end
 
 function CommDKP:ZeroSumBank_Create()
 
+	local f;
+
 	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-		local f = CreateFrame("Frame", "CommDKP_DKPZeroSumBankFrame", UIParent, "ShadowOverlaySmallTemplate");
+		f = CreateFrame("Frame", "CommDKP_DKPZeroSumBankFrame", UIParent, "ShadowOverlaySmallTemplate");
 	elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
-		local f = CreateFrame("Frame", "CommDKP_DKPZeroSumBankFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
+		f = CreateFrame("Frame", "CommDKP_DKPZeroSumBankFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
 	end
 	
 	if not core.DB.modes.ZeroSumBank then core.DB.modes.ZeroSumBank = 0 end

@@ -23,10 +23,12 @@ end
 
 function CommDKP:DKPModesFrame_Create()
 
+	local f;
+
 	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-		local f = CreateFrame("Frame", "CommDKP_DKPModesFrame", UIParent);
+		f = CreateFrame("Frame", "CommDKP_DKPModesFrame", UIParent);
 	elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
-		local f = CreateFrame("Frame", "CommDKP_DKPModesFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
+		f = CreateFrame("Frame", "CommDKP_DKPModesFrame", UIParent, BackdropTemplateMixin and "BackdropTemplate" or nil);
 	end
 	
 	local ActiveMode = core.DB.modes.mode;

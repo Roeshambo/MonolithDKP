@@ -506,10 +506,12 @@ end
 
 function CommDKP:CreateContainer(parent, name, header)
 
+	local f;
+
 	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-		local f = CreateFrame("Frame", "CommDKP"..name, parent);
+		f = CreateFrame("Frame", "CommDKP"..name, parent);
 	elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
-		local f = CreateFrame("Frame", "CommDKP"..name, parent, BackdropTemplateMixin and "BackdropTemplate" or nil);
+		f = CreateFrame("Frame", "CommDKP"..name, parent, BackdropTemplateMixin and "BackdropTemplate" or nil);
 	end
 
 	
