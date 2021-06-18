@@ -1,4 +1,6 @@
-## Interface: 11305
+## Interface: 11307
+## Interface-Classic: 11307
+## Interface-BCC: 20501
 ## Title: |cff9900ffCommunity|r |cff595959DKP|r
 ## Author: Vapok-BloodsailBuccaneers
 ## Notes: Feature-rich DKP Management Tool 
