@@ -945,7 +945,7 @@ if GetLocale() == "frFR" then
     MIGRATIONCOMPLETED    = "Migration réussie.|n|nVeuillez désactiver MonolithDKP et recharger votre interface (/reload).", --TODO TRANSLATE:
 
     --TODO TRANSLATE:
-    CHANGELOG1 = "CommunityDKP - v3.2.8-r68-bcc",
+    CHANGELOG1 = "CommunityDKP - v3.2.8-r69-bcc",
     CHANGELOG2 = " - fixed UI for classic era realms",
     CHANGELOG3 = "",
     CHANGELOG4 = "",
