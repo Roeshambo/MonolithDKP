@@ -199,6 +199,19 @@ core.RealmName = nil;
 core.FactionName = nil;
 core.RepairWorking = false;
 
+
+function CommDKP:GetPlayerName(playerRealm) 
+	local _playerName = playerName or nil;
+
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		_playerName = playerRealm -- we dont remove anything since its connected realms
+	elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+		_playerName = strsub(playerRealm, 1, string.find(playerRealm, "-")-1)
+	end
+
+	return _playerName
+end
+
 function CommDKP:GetCColors(class)
 	if core.CColors then 
 	local c

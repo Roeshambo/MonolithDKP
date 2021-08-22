@@ -170,7 +170,7 @@ local function AddGuildToDKPTable(rank, level)
 
 	for i=1, guildSize do
 		name,rankName,rankIndex,charLevel,_,_,_,_,_,_,class = GetGuildRosterInfo(i)
-		name = strsub(name, 1, string.find(name, "-")-1)			-- required to remove server name from player (can remove in classic if this is not an issue)
+		name = CommDKP:GetPlayerName(name)
 		local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
 
 		if not search and (level == nil or charLevel >= level) and (rank == nil or rankIndex == rank) then
@@ -220,11 +220,13 @@ local function AddGuildToDKPTable(rank, level)
 end
 
 local function AddTargetToDKPTable()
-	local name = UnitName("target");
+	local _name, _realm = UnitName("target");
 	local _,class = UnitClass("target");
 	local c;
 	local curTime = time()
 	local entities = {}
+
+	local name = CommDKP:GetPlayerName(_name..'-'.._realm);
 
 	local search = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), name)
 	local profile = CommDKP:GetDefaultEntity();
