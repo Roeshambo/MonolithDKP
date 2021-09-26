@@ -1,6 +1,6 @@
 if GetLocale() == "deDE" then
   local _, core = ...;
-  local MonDKP = core.MonDKP;
+  local CommDKP = core.CommDKP;
   
   core.BossList = {
     MC = {
@@ -35,11 +35,89 @@ if GetLocale() == "deDE" then
     ONYXIA = {"Onyxia"},
     WORLD = {
       "Azuregos", "Lord Kazzak", "Smariss", "Lethon", "Ysondre", "Taerar",
+    },
+
+    -- TBC Classic 2.5.1.38757
+    KARAZHAN = { -- 532
+      "Attumen der Jäger",
+      "Moroes",
+      "Tugendhafte Maid",
+      "Opernsaal",
+      "Der Kurator",
+      "Terestian Siechhuf",
+      "Arans Schemen",
+      "Nethergroll",
+      "Das Schachspiel",
+      "Prinz Malchezaar",
+      "Schrecken der Nacht"
+    },
+    GRULLSLAIR = { -- 565
+      "Hochkönig Maulgar",
+      "Gruul der Drachenschlächter"
+    },
+    MAGTHERIDONSLAIR = { -- 544
+      "Magtheridon"
+    },
+    SERPENTSHRINECAVERN = { -- 548
+      "Hydross der Unstete",
+      "Das Grauen aus der Tiefe",
+      "Leotheras der Blinde",
+      "Tiefenlord Karathress",
+      "Morogrim Gezeitenwandler",
+      "Lady Vashj"
+    },
+    TEMPESTKEEP = { -- 550
+      "Al'ar",
+      "Leerhäscher",
+      "Hochastromantin Solarian",
+      "Kael'thas Sonnenwanderer"
+    },
+    ZULAMAN = { -- 568
+      "Akil'zon",
+      "Nalorakk",
+      "Jan'alai",
+      "Halazzi",
+      "Hexlord Malacrass",
+      "Daakara"
+    },
+    BLACKTEMPLE = { -- 564 map id
+      "Oberster Kriegsfürst Naj'entus",
+      "Supremus",
+      "Akamas Schemen",
+      "Teron Blutschatten",
+      "Gurtogg Siedeblut",
+      "Reliquiar der Seelen",
+      "Mutter Shahraz",
+      "Der Rat der Illidari",
+      "Illidan Sturmgrimm"
+    },
+    SUNWELLPLATEAU = { -- 580
+      "Kalecgos", 
+      "Brutallus",
+      "Teufelsruch",
+      "Eredarzwillinge",
+      "M'uru",
+      "Kil'jaeden"
     }
   }
 
   core.ZoneList = {
-    "Geschmolzener Kern", "Pechschwingenhort", "Tempel von Ahn'Qiraj", "Naxxramas", "Zul'Gurub", "Ruinen von Ahn'Qiraj", "Onyxias Versteck", "Weltbosse",
+    "Geschmolzener Kern", 
+    "Pechschwingenhort", 
+    "Tempel von Ahn'Qiraj", 
+    "Naxxramas", 
+    "Zul'Gurub", 
+    "Ruinen von Ahn'Qiraj", 
+    "Onyxias Versteck", 
+    "Weltbosse",
+    "Karazhan", -- 532
+    "Gruuls Unterschlupf", -- 565
+    "Magtheridons Kammer", -- 544
+    "Echsenkessel: Höhle des Schlangenschreins", -- 548
+    "Festung der Stürme", -- 550
+    "Zul'Aman", -- 568
+    "Der Schwarze Tempel", -- 564,
+    "Der Sonnenbrunnen" -- 580
   }
 
   core.L = {
@@ -54,7 +132,7 @@ if GetLocale() == "deDE" then
     ADDNEGVALUES = "Zu negativen Werten hinzufügen",
     ADDRAIDMEMBERS = "Schlachtzugsmitglieder hinzufügen",
     ADDRAIDMEMBERSCONFIRM = "Bist du sicher, dass du fehlende Schlachtzugsmitglieder zur DKP-Tabelle hinzufügen möchtest?",
-    ADDRAIDMEMBERSTTDESC = "Füge alle Schlachtzug- und Gruppenmitglieder, die sich in der Gilde befinden, zur DKP-Tabelle hinzu.",
+    ADDRAIDMEMBERSTTDESC = "Füge alle Schlachtzug- und Gruppenmitglieder zur DKP-Tabelle hinzu.",
     ADDREMDKPTABLEENTRIES = "Hinzufügen/Entfernen von DKP-Tabelleneinträgen",
     ADDTARGET = "Ziel hinzufügen",
     ADDTARGETTODKPTABLE = "Ziel zur DKP-Tabelle hinzufügen",
@@ -80,11 +158,13 @@ if GetLocale() == "deDE" then
     ANDCHARGEITTO = "und lade es auf",
     ANNOUNCEAWARD = "Preis für Gilde ankündigen",
     ANNOUNCEAWARDTTDESC = "Wenn ausgewählt, wirst du auch bekannt geben, wer einen Gegenstand für den Gildenchat gewonnen hat.",
-    ANNOUNCEBID = "Höchstes Gebot abgeben",
-    ANNOUNCEBIDTTDESC = "Jedes Mal, wenn ein neuer Bieter das höchste Gebot abgibt, müssen Sie dieses neue Höchstgebot überbieten",
+    ANNOUNCEBID = "Höchstes Gebot ankündigen",
+    ANNOUNCEBIDTTDESC = "Das aktuelle Höchstgebot im Raid ankündigen, sobald es sich ändert",
     ANTISNIPE = "Anti-Snipe",
     ANTISNIPETTDESC = "Anzahl der Sekunden, um die der Gebots-Timer verlängert werden soll, wenn ein Gebot eingeht, wenn der Gebots-Timer unter 10 Sekunden liegt. (Um das Snipen des letzten zweiten Gebots zu verhindern)",
     ANTISNIPETTWARN = "Auf 0 setzen, um Anti-Snipe auszuschalten.",
+    ANNOUNCEINRAIDWARNING = "Announce in Raid Warning", -- NEEDS TRANSLATIONS
+    ANNOUNCEINRAIDWARNINGDESC = "If checked, announcements for higgest bid/bidder will be broadcasted via Raid Warning, not Raid chat.", -- NEEDS TRANSLATIONS
     APPDECAYTTDESC = "Menge an DKP, um die Sie DKP-Einträge als wöchentlichen Zerfall reduzieren möchten. Dies sollte eine positive Zahl sein. Wenn \"Nur ausgewählte Spieler\" unten nicht ausgewählt ist, gilt dies für alle Einträge.",
     APPDECAYTTWARN = "Warnung: Kann nicht rückgängig gemacht werden.",
     APPLYDECAY = "Zerfall anwenden",
@@ -93,24 +173,28 @@ if GetLocale() == "deDE" then
     AREYOUSUREREASSIGN = "Möchten Sie die Zuordnung wirklich ändern?",
     ARTIFICIALINFLATION = "Künstliche Inflation",
     ARTINFLATTTDESC = "Punkte, die jedem Spieler OBEN auf die DKP gegeben werden, die unter ihnen aufgeteilt und verteilt wird. Dieser Wert wird zu ihrem verdienten DKP addiert, nachdem der Bankwert geteilt wurde.",
-    AUTOAWARD = "Auto Award DKP",
-    AUTOAWARDTTDESC = "Gewährt automatisch eine DKP Prämie, wenn ein Boss getötet wird. Nur der Schlachtzugsführer wird Punkte damit verteilen.",
-    AUTOCOMBATLOG = "Auto Combat Log",
+    AUTOAWARD = "Automatische Boss Kill DKP",
+    AUTOAWARDTTDESC = "Vergibt Bonus DKP für Boss Kills (Höhe einstellbar in den Optionen) wenn ein Boss getötet wird. Nur der Schlachtzugsleiter wird damit DKP vergeben. Der Schlachtzug muss vorher im \"DKP ändern\" Reiter gestartet worden sein.",
+    AUTOCOMBATLOG = "Automatischer Kampflog",
     AUTOCOMBATLOGTTDESC = "Aktiviert / Combatlog automatisch, wenn Sie sich in einem Schlachtzug befinden und eine Schlachtzugszone betreten oder wenn Sie mit einem Schlachtzug in einen Kampf treten.",
     AUTOCOMBATLOGTTWARN = "Sie müssen Advanced Combat Logging immer noch manuell unter System> Netzwerk aktivieren, falls Sie dies noch nicht getan haben.",
     AUTOOPEN = "Gebotsfenster automatisch öffnen",
     AUTOOPENTTDESC = "Wenn diese Option aktiviert ist, wird das Gebotsfenster automatisch geöffnet, wenn ein neuer Artikel versteigert wird. Wenn das Kontrollkästchen deaktiviert ist, müssen Sie es bei Bedarf mit \"/dkp bid\" manuell öffnen.",
+    AUTOAWARDLOOT = "Auto Award Loot",
+    AUTOAWARDLOOTDESC = "When checked loot will be automatically awarded to the winner. If looting they will be master looted to the winner. If awarding from your bags they will be inserted into the next trade window with the winner.",
+    DECREASEDISENCHANT = "Entzaubern-Wert verringern",
+    DECREASEDISENCHANTTTDESC = "Verringere den Entzaubern-Wert nach drei Entzauberungen um die Hälfte bei jeder weiteren Entzauberung bis zu einem Mindestwert von 5 DKP",
     AWARDBONUS = "Bonusprämie",
     AWARDBONUSTTDESC = "Menge an DKP, die dem Schlachtzug jedes Mal gegeben werden soll, wenn das unten angegebene Intervall eingehalten wird.",
     AWARDEDBY = "Verliehen:",
     AWARDINTERVAL = "Auszeichnungsintervall",
     AWARDINTERVALTTDESC = "Zeitintervall (in Minuten), in dem DKP für den gesamten Angriff vergeben werden soll.",
     AWARDINTERVALTTWARN = "z.B. Wenn Sie 60 eingeben, wird der DKP-Betrag im Feld \"Bonus\" über jeder Stunde für den Schlachtzug (und, falls unten markiert, für den Standby-Modus) vergeben.",
-    AWARDITEM = "Auszeichnungsgegenstand",
-    AWARDITEMTO = "Auszeichnungsgegenstand an",
+    AWARDITEM = "Gegenstand zuweisen",
+    AWARDITEMTO = "Gegenstand zuweisen an",
     AWARDWARNING = "Der Award-Befehl wurde in / dkp award [Item-Link] geändert.",
     BALANCE = "Gleichgewicht",
-    BCASTCOMPLETED = "Alle Sendungen sind beendet.",
+    BCASTCOMPLETED = "Alle Übertragungen sind beendet.",
     BCASTDKPHIST = "Übertragung der DKP-Historie",
     BCASTDKPHISTBTN = "Übertragung der DKP-Historie",
     BCASTDKPHISTCONF = "Möchten Sie Ihre DKP-Historientabelle wirklich übertragen?",
@@ -126,8 +210,8 @@ if GetLocale() == "deDE" then
     BCASTVALUESTTWARN = "Aktuelle Werte werden nicht überschrieben. Beim Empfang dieser Sendung werden bereits festgelegte Werte aktualisiert oder nicht vorhandene Werte hinzugefügt. Nicht gesendete Werte bleiben unverändert.",
     BEGINSYNC = "DKP-Tabellen synchronisieren",
     BELT = "Gürtel",
-    BESTPRACTICES = "Aufgrund wiederkehrender Probleme mit dem Synchronisierungssystem wurde das alte Broadcast-System mit einigen Verbesserungen zurückgebracht. 2.1.0 ist nicht kompatibel mit früheren Versionen und alle Raider müssen 2.1.0 oder höher sein. Die neue Broadcast-Benutzeroberfläche steht den  zur Verfügung, indem Sie auf die Statusanzeige in der unteren linken Ecke der DKP-Hauptoberfläche klicken. Es gibt auch eine Reparaturoption für Offiziere, wenn Ihre Tabellen durch Migrationsprobleme mit 2.0.x beschädigt wurden. Sie können sehen, wie Sie das verwenden, indem Sie das YouTube-Video auf der Seite Curse verwenden.",
-    BID = "Bieten, Gebot, Angebot",
+    BESTPRACTICES = "",
+    BID = "Gebot",
     BIDACCEPTEDFILTER = "Ihr Gebot wurde angenommen.",
     BIDCANCELLED = "Ihr Gebot wurde storniert.",
     BIDDENIEDEXCEEDMAX = "Gebot abgelehnt! Ihr Gebot hat den Höchstgebotswert von überschritten",
@@ -180,7 +264,7 @@ if GetLocale() == "deDE" then
     CLOSE = "Schließen",
     CLOSEDBIDINPROGRESS = "Das Gebotsfenster wurde mit einem laufenden Gebot geschlossen! Geben Sie / dkp bid ein, um die aktuelle Gebotssitzung erneut zu öffnen.",
     COMMANDCHANNELS = "Befehlskanäle",
-    COMMANDCHANNELSTTDESC = "Wählen Sie die Kanäle aus, die Sie öffnen möchten, um! Bid- und! Dkp-Befehle zu erhalten. Sie können eine beliebige Kombination der drei zu öffnenden Optionen auswählen. Alle empfangenen Befehle, unabhängig vom Kanal, werden mit einem Flüstern beantwortet.",
+    COMMANDCHANNELSTTDESC = "Wählen Sie die Kanäle aus, die Sie öffnen möchten, um !bid und !dkp Befehle zu erhalten. Sie können eine beliebige Kombination der drei zu öffnenden Optionen auswählen. Alle empfangenen Befehle, unabhängig vom Kanal, werden mit einem Flüstern beantwortet.",
     CONFAWARD = "Lootvergabe bestätigen",
     CONFIRM = "Bestätigen",
     CONFIRMADDTARGET = "Sind Sie sicher, dass Sie das Ziel hinzufügen möchten",
@@ -196,13 +280,7 @@ if GetLocale() == "deDE" then
     CONTINUERAID = "Schlachtzug fortsetzen",
     CORRECTINGERROR = "Fehler beheben",
     COSTAUTOUPDATE = "Preis Auto Update",
-    COSTAUTOUPDATETTDESC = [=[Wählen Sie aus, auf welche Kosten der Artikel während einer Gebotssitzung automatisch aktualisiert werden soll. 
-
-    |CFFFF0000Erster Bieter|r: Dadurch werden die Kosten des Artikels am unteren Rand des Gebotsfensters auf den Höchstbietenden aktualisiert. 
-
-    |CFFFF0000Zweiter Bieter|r: Hiermit werden die Kosten für den Artikel am unteren Rand des Gebotsfensters entweder auf den zweithöchsten Bieter oder, falls es nur einen Bieter gibt, auf den Mindestgebotswert aktualisiert. 
-
-    Für jeden Die Kosten können jederzeit im laufenden Betrieb bearbeitet werden.]=],
+    COSTAUTOUPDATETTDESC = "Wählen Sie, wie die Item-Kosten nach einer Auktion automatisch gesetzt werden sollen.\n\n|CFFFF0000Erster Bieter|r: Die vorgeschlagenen Item-Kosten werden auf das höchste Gebot gesetzt.\n\n|CFFFF0000Zweiter Bieter|r: Die vorgschlagenen Item-Kosten werden auf das zweithöchste Gebot gesetzt, oder auf das einzige Gebot, falls nur ein Gebot getätigt wurde.\n\n|CFFFF0000Zweiter Bieter oder Mindest-DKP|r: Die vorgeschlagenen Item-Kosten werden auf das zweithöchste Gebot gesetzt, oder auf die Mindest-DKP, falls nur ein Gebot getätigt wurde.\n\nDie letztendlichen Item-Kosten können für jedes Item immer spontan gewählt werden.",
     COSTAUTOUPDATEVALUE = "Preis Auto-Update-Wert",
     CREATED = "Erstellt",
     CREATEDMAINTAIN = "erstellt und gepflegt von",
@@ -373,6 +451,7 @@ if GetLocale() == "deDE" then
     INZONEONLY = "In derselben Zone",
     INZONEONLYTTDESC = "Dies wird nur Raid DKP an Spieler vergeben, die sich in derselben Zone wie Sie befinden. (Zur Verwendung mit Auto Award, Raid Timer und Zero Sum Distribution)",
     ITEM = "Gegenstand",
+    ITEMS = "Items",
     ITEMCOST = "Gegenstandskosten",
     ITEMCOSTTTDESC = "DKP, die der Spieler für diesen Gegenstand zahlen soll.",
     ITEMCOSTTYPES = "Artikelkostentypen",
@@ -431,14 +510,14 @@ if GetLocale() == "deDE" then
     MERGE2WEEKSTTDESC = "Überträgt die Daten aus den 2 letzten Wochen, fügt jedoch nur fehlende Einträge hinzu.",
     MERGE2WEEKSTTWARN = "Nützlich, um Daten mit anderen Raidleadern zusammenzuführen.",
     MIGRATE = "Migrieren",
-    MIGRATEINST1 = [=[|cffff0000WICHTIG!!|r: Sichern Sie Ihre gespeicherte Variablendatei, bevor Sie fortfahren. Mit 2.0 kommt ein brandneues indiziertes Broadcast-System. Dazu müssen Ihre aktuellen Tabellen mit neuen Werten migriert werden. Diese Migration ist ein einmaliger Vorgang, der NUR von EINEM Mitarbeiter durchgeführt werden kann. Wählen Sie den Officer mit den genauesten Daten aus, um die Migration durchzuführen. Alle anderen Offiziere werden gesperrt und ihre Daten werden gelöscht, um eine Übertragung der neuen Daten von diesem ausgewählten Offizier zu akzeptieren. Dies dient dazu, doppelte Daten zu vermeiden. Sobald ALLE Offiziere die neuen Daten erhalten haben, können Sie das Tag {MonDKP = OFFICER_NAME} aus der öffentlichen Notiz der Gildenanführer löschen. Es ist äußerst wichtig, dass nur ein Mitarbeiter die Migration durchführt. Andernfalls werden doppelte Daten und beschädigte Tabellen angezeigt. (Um das Problem zu beheben, müssen sich nur alle Mitarbeiter abmelden, die beschädigte Tabellen haben, und ihre gespeicherten Variablendateien gleichzeitig löschen Sie erhalten die beschädigten Daten einfach wieder, sobald Sie sich anmelden. Darüber hinaus müssen alle Mitglieder 2.0 oder höher verwenden, um kompatibel zu sein. Ältere Versionen funktionieren NICHT.
+    MIGRATEINST1 = [=[|cffff0000WICHTIG!!|r: Sichern Sie Ihre gespeicherte Variablendatei, bevor Sie fortfahren. Mit 2.0 kommt ein brandneues indiziertes Broadcast-System. Dazu müssen Ihre aktuellen Tabellen mit neuen Werten migriert werden. Diese Migration ist ein einmaliger Vorgang, der NUR von EINEM Mitarbeiter durchgeführt werden kann. Wählen Sie den Officer mit den genauesten Daten aus, um die Migration durchzuführen. Alle anderen Offiziere werden gesperrt und ihre Daten werden gelöscht, um eine Übertragung der neuen Daten von diesem ausgewählten Offizier zu akzeptieren. Dies dient dazu, doppelte Daten zu vermeiden. Sobald ALLE Offiziere die neuen Daten erhalten haben, können Sie das Tag {CommDKP = OFFICER_NAME} aus der öffentlichen Notiz der Gildenanführer löschen. Es ist äußerst wichtig, dass nur ein Mitarbeiter die Migration durchführt. Andernfalls werden doppelte Daten und beschädigte Tabellen angezeigt. (Um das Problem zu beheben, müssen sich nur alle Mitarbeiter abmelden, die beschädigte Tabellen haben, und ihre gespeicherten Variablendateien gleichzeitig löschen Sie erhalten die beschädigten Daten einfach wieder, sobald Sie sich anmelden. Darüber hinaus müssen alle Mitglieder 2.0 oder höher verwenden, um kompatibel zu sein. Ältere Versionen funktionieren NICHT.
 
     Dieses Fenster kann mit "/dkp migrate" erneut geöffnet werden.]=],
-    MIGRATEINST2 = "%s hat die Migration bereits durchgeführt. Bitte sichern Sie Ihre gespeicherte Variablendatei sofort (WTF\\Account\\ACCOUNT_NAME\\SavedVariables\\MonolithDKP.lua) und klicken Sie dann auf die Schaltfläche \"Tabellen löschen\". Wenn %s online ist, wird nach dem erneuten Laden automatisch eine Synchronisierung an Sie gesendet. Andernfalls wird einer bei der Anmeldung weitergeleitet, oder Sie können die Weiterleitung einer Synchronisierung anfordern (dies erfolgt durch Klicken auf die Schaltfläche für den Tabellenstatus in der unteren linken Ecke der Haupt-GUI). Wenn während des Migrationsprozesses für Ihre Gilde Fehler auftreten, löschen Sie das Tag für migrierende Offiziere aus der öffentlichen Notiz des Gildenleiters, und lassen Sie alle beteiligten Offiziere ihre beschädigte gespeicherte Variablendatei löschen und auf die gesicherte Datei zurücksetzen. Jeder muss dies zur gleichen Zeit tun und sich nicht anmelden (mit aktiviertem Addon), bis dies abgeschlossen ist. Jeder, der mit migrierten Tabellen online ist, übermittelt diese Daten automatisch an Sie, sobald Sie sich anmelden.",
+    MIGRATEINST2 = "%s hat die Migration bereits durchgeführt. Bitte sichern Sie Ihre gespeicherte Variablendatei sofort (WTF\\Account\\ACCOUNT_NAME\\SavedVariables\\CommunityDKP.lua) und klicken Sie dann auf die Schaltfläche \"Tabellen löschen\". Wenn %s online ist, wird nach dem erneuten Laden automatisch eine Synchronisierung an Sie gesendet. Andernfalls wird einer bei der Anmeldung weitergeleitet, oder Sie können die Weiterleitung einer Synchronisierung anfordern (dies erfolgt durch Klicken auf die Schaltfläche für den Tabellenstatus in der unteren linken Ecke der Haupt-GUI). Wenn während des Migrationsprozesses für Ihre Gilde Fehler auftreten, löschen Sie das Tag für migrierende Offiziere aus der öffentlichen Notiz des Gildenleiters, und lassen Sie alle beteiligten Offiziere ihre beschädigte gespeicherte Variablendatei löschen und auf die gesicherte Datei zurücksetzen. Jeder muss dies zur gleichen Zeit tun und sich nicht anmelden (mit aktiviertem Addon), bis dies abgeschlossen ist. Jeder, der mit migrierten Tabellen online ist, übermittelt diese Daten automatisch an Sie, sobald Sie sich anmelden.",
     MIN = "Mindest",
     MINBIDDESCRIPTION = [=[Bei Mindestgebotswerten wird allen Slots (oder einzelnen Artikeln) ein Mindestwert zugewiesen. Jeder, der ein Gebot abgibt, muss mit diesem oder einem höheren Wert bieten.
 
-    Ex: |cffa335ee|Hitem:16865::::::::120:577::::::|h[Breastplate of Might]|h|r fällt und hat einen Mindestgebotswert von 50 DKP. Jeder Spieler, der möchte, sendet "! Bid 50" (oder mehr) über einen der geöffneten Kanäle (unten ausgewählt), ohne die verfügbaren DKP zu überschreiten (es sei denn, DKP unter Null ist aktiviert). Der Spieler mit dem höchsten Gebot gewinnt und erhält entweder den Mindest-DKP-Wert oder den Wert, den der zweithöchste Bieter abgegeben hat. Lesen Sie die QuickInfos, um weitere Informationen zu erhalten.]=],
+    Ex: |cffa335ee|Hitem:16865::::::::120:577::::::|h[Breastplate of Might]|h|r fällt und hat einen Mindestgebotswert von 50 DKP. Jeder Spieler, der möchte, sendet "!bid 50" (oder mehr) über einen der geöffneten Kanäle (unten ausgewählt), ohne die verfügbaren DKP zu überschreiten (es sei denn, DKP unter Null ist aktiviert). Der Spieler mit dem höchsten Gebot gewinnt und erhält entweder den Mindest-DKP-Wert oder den Wert, den der zweithöchste Bieter abgegeben hat. Lesen Sie die QuickInfos, um weitere Informationen zu erhalten.]=],
     MINBIDTTDESC = "Mindestgebotswert, der akzeptiert wird.",
     MINBIDTTEXT = "Wenn Sie einen anderen Wert als den unter Optionen festgelegten eingeben, wird dieser benutzerdefinierte Wert für das betreffende Element gespeichert.",
     MINBIDTTWARN = "Die Standardeinstellungen können auf der Registerkarte Optionen festgelegt werden.",
@@ -451,9 +530,9 @@ if GetLocale() == "deDE" then
     MINUTES = "Protokoll",
     MISCSETTINGS = "Verschiedene Einstellungen",
     MISSINGENT = "Dir fehlen ein, oder mehrere Einträge von den folgenden Offizieren",
-    MONDKPSCALESIZE = "Monolith DKP Scale Size",
-    MONDKPSCALESIZETTDESC = "Maßstab des Monolith DKP-Fensters. Klicken Sie auf \"Save Settings\" (Einstellungen speichern), um die Größe auf den eingestellten Wert zu ändern.",
-    MONDKPSCALESIZETTWARN = "Möglicherweise ist ein / reload nach dem Speichern erforderlich, wenn ein anderes Addon verwendet wird, das die Skalierung der Benutzeroberfläche ändert (z. B. TukUI, ElvUI usw.).",
+    CommDKPSCALESIZE = "CommunityDKP Scale Size",
+    CommDKPSCALESIZETTDESC = "Maßstab des CommunityDKP-Fensters. Klicken Sie auf \"Save Settings\" (Einstellungen speichern), um die Größe auf den eingestellten Wert zu ändern.",
+    CommDKPSCALESIZETTWARN = "Möglicherweise ist ein / reload nach dem Speichern erforderlich, wenn ein anderes Addon verwendet wird, das die Skalierung der Benutzeroberfläche ändert (z. B. TukUI, ElvUI usw.).",
     MORE = "Mehr",
     MORESECONDSTO = "Weitere Sekunde (n), um das zu tun.",
     MOVEBIDTIMER = "Bid Timer verschieben",
@@ -502,7 +581,7 @@ if GetLocale() == "deDE" then
     OFF = "aus",
     OFFHAND = "Offhand",
     OFFHANDITEMS = "Offhand Gegenstände",
-    OK = "okay",
+    OK = "Okay",
     ON = "auf",
     ONEHANDED = "Einhändig",
     ONEHANDEDWEAPONS = "Einhandwaffen",
@@ -533,7 +612,7 @@ if GetLocale() == "deDE" then
 
     Sind Sie sicher, dass Sie dies tun möchten?]=],
     OUTOFDATE = "veraltet",
-    OUTOFDATEANNOUNCE = "Ihre Version von Monolith DKP ist veraltet. Bitte aktualisieren Sie Curse / Twitch oder WoWInterface, um sicherzustellen, dass keine Kompatibilitätsprobleme vorliegen.",
+    OUTOFDATEANNOUNCE = "Ihre Version von CommunityDKP ist veraltet. Bitte aktualisieren Sie Curse / Twitch oder WoWInterface, um sicherzustellen, dass keine Kompatibilitätsprobleme vorliegen.",
     OVERWRITETABLES = "Ein kompletter Broadcast wird die Daten aller Empfänger mit deinen überschreiben. Hat jemand neuere Einträge als du, gehen diese verloren. Wenn du nur Daten senden willst, die anderen fehlen, benutze die \"Merge Last 2 Weeks\" option. Fortfahren?",
     PAUSERAID = "Raid anhalten",
     PAUSERAIDTTDESC = "Dies unterbricht einen Raid-Timer, wenn der Anführer entscheidet, dass der Timer für Pausen angehalten werden soll.",
@@ -551,11 +630,12 @@ if GetLocale() == "deDE" then
     PLAYERSFORREASON = "Spieler aus gutem Grund",
     PLAYERVALIDATE = "Kein Spieler ausgewählt",
     PLEASEUSENUMS = "Bitte verwenden Sie Zahlen.",
+    PRICETAB = "Preise",
     PLEASEVALIDATE = "Ungültige Einträge wurden entfernt. Bitte validieren Sie Ihre Tabellen. (Klicken Sie mit der rechten Maustaste auf das Kontextmenü der DKP-Tabelle.)",
     POINTS = "Punkte",
     POINTSTTDESC = "Geben Sie den DKP-Betrag ein, der an ausgewählte Spieler am DKP-Tisch verteilt werden soll. Die Standardwerte können auf der Registerkarte \"Optionen\" unten geändert werden.",
     POINTSTTWARN = "Verwenden Sie eine negative Zahl, um DKP von ausgewählten Spielern zu entfernen.",
-    POPOUTTIMER = "Pop Out Raid Timer",
+    POPOUTTIMER = "Separater Raid Timer",
     POPOUTTIMERDESC = "Öffnet den Schlachtzugs-Timer in einem separaten kompakten Fenster.",
     POSITIONRESET = "Fensterposition zurücksetzen",
     PROTECTION = "Schutz",
@@ -622,6 +702,7 @@ if GetLocale() == "deDE" then
     SEARCH = "Suche   ",
     SEARCHDESC = "Filtert die DKP-Liste. Sucht nach Name, Klasse, Spezifikation, Rang und Rolle.",
     SECONDBIDDER = "Zweiter Bieter",
+    SECONDBIDDERORMIN = "Zweiter Bieter oder Mindest-DKP",
     SECONDS = "Sekunden",
     SELECTALL = "Alle auswählen",
     SELECTALLVISIBLE = "Alle sichtbaren auswählen",
@@ -655,13 +736,13 @@ if GetLocale() == "deDE" then
     STANDBYWHISPERRESP4 = "Sie wurden in den Standby-Modus versetzt.",
     STANDBYWHISPERRESP5 = "Sie sind bereits in Bereitschaft.",
     STANDBYWHISPERRESP6 = "Spieler nicht gefunden.",
-    STARTBIDDING = "Beginnen Sie mit dem Bieten",
+    STARTBIDDING = "Bieten starten",
     STARTBIDDINGTTDESC = "Startet das Bieten für den aktuellen Artikel. Gebote werden nur angenommen, solange dies läuft.",
     STARTBIDDINGTTWARN = "Die Bietdauer kann im Feld \"Bid Timer\" eingestellt werden. Durch das Starten einer zweiten Gebotssitzung für einen Artikel werden vorherige Gebote nicht gelöscht (zur Verwendung, wenn jemand in der letzten Sekunde ein Gebot abschneidet).",
     STATIC = "Statisch",
-    STATICDESCRIPTION = [=[Mit Static Item Values ​​wird allen Slots (oder einzelnen Items) ein statischer Wert zugewiesen. Ein Gebot wird von jedem Spieler (mit! Gebot) abgegeben, der den Gegenstand haben möchte, und der Spieler mit dem höchsten verfügbaren DKP gewinnt. Die Kostenoptionen sind "Ganzzahl" oder "Prozent".
+    STATICDESCRIPTION = [=[Mit statischen Item-Kosten ​​wird allen Slots (oder einzelnen Items) ein konstanter Wert zugewiesen. Ein Gebot wird von jedem Spieler (mit !bid) abgegeben, der den Gegenstand haben möchte, und der Spieler mit dem höchsten verfügbaren DKP gewinnt. Die Kostenoptionen sind "Ganzzahl" oder "Prozent".
 
-    Ex: |cffa335ee|Hitem:19143::::::::120:577::::::|h[Flameguard Gauntlets]|h|r fällt ab und hat einen statischen Wert von 50 DKP. Jeder Spieler, der möchte, verwendet "! Bid" über einen der geöffneten Kanäle (unten ausgewählt). Der Spieler mit dem höchsten verfügbaren DKP gewinnt und erhält diesen statischen Wert. Lesen Sie die QuickInfos, um weitere Informationen zu erhalten.]=],
+    Ex: |cffa335ee|Hitem:19143::::::::120:577::::::|h[Flameguard Gauntlets]|h|r fällt ab und hat einen statischen Wert von 50 DKP. Jeder Spieler, der möchte, verwendet "!bid" über einen der geöffneten Kanäle (unten ausgewählt). Der Spieler mit dem höchsten verfügbaren DKP gewinnt und erhält diesen statischen Wert. Lesen Sie die QuickInfos, um weitere Informationen zu erhalten.]=],
     STATICITEMVALUESHEAD = "Statische Artikelwerte",
     SUBMITBID = "Gebot abgeben",
     SUBMITBUGS = "für Hilfe und senden Sie alle Fehler",
@@ -673,8 +754,8 @@ if GetLocale() == "deDE" then
     SUPPRESSNOTIFICATIONS = "Unterdrücken Sie die Addon-Benachrichtigungen",
     SUPPRESSNOTIFYTTDESC = "Verbirgt alle Zusatznachrichten vor der Anzeige in Ihrem Chat-Frame.",
     SUPPRESSNOTIFYTTWARN = "Broadcast-Updates werden weiterhin empfangen.",
-    SUPRESSBIDWHISPTTDESC = "Unterdrückt eingehendes und ausgehendes Flüstern im Zusammenhang mit Geboten, während ein Gebot ausgeführt wird.",
-    SUPRESSBIDWHISPTTWARN = "Alle anderen Nachrichten, die nicht mit dem Bieten zusammenhängen, werden weiterhin angezeigt.",
+    SuppressBIDWHISPTTDESC = "Unterdrückt eingehendes und ausgehendes Flüstern im Zusammenhang mit Geboten, während ein Gebot ausgeführt wird.",
+    SuppressBIDWHISPTTWARN = "Alle anderen Nachrichten, die nicht mit dem Bieten zusammenhängen, werden weiterhin angezeigt.",
     SYNCALREADY = "Derzeit wird bereits eine Synchronisierung durchgeführt.",
     SYNCCOMPLETE = "Synchronisierung abgeschlossen",
     SYNCCOMPLETE2 = "Synchronisierung abgeschlossen. Alle Spieler sind auf dem neuesten Stand.",
@@ -688,6 +769,28 @@ if GetLocale() == "deDE" then
     TABLEVIEWS = "Tabellenansichten",
     TAKINGBIDSON = "Gebote annehmen",
     TANK = "Tank",
+    NOTGUILDMASTER = "Nur für den Gildenmeister verfügbar", 
+    TEAM = "Team",
+    TEAMS = "Teams",
+    TEAMADD = "Neues Team hinzufügen",
+    TEAMADDDIALOG = "Sind Sie sicher, dass sie ein neues Team hinzufügen wollen? Dies kann nicht rückgängig gemacht werden.",
+    TEAMADDDESC = "Neues Team zur Gilde hinzufügen (nur für den Gildenmeister verfügbar). Momentan können Teams nicht gelöscht werden.",
+    TEAMRENAME = "Team umbenennen",
+    TEAMRENAMESELECTED = "Ausgewähltes Team umbenennen",
+    TEAMNAMEINPUTTOOLTIP = "Team-Name",
+    TEAMNAMEINPUTTOOLTIPDESC = "Zum Wechseln des momentan ausgewählten Team-Namens",
+    TEAMRENAMESELECTEDESC = "Erlaubt es dem Gildenmeister, das in der Liste ausgewählte Team zu ändern",
+    TEAMCURRENTLIST = "Momentan ausgewähltes Team",
+    TEAMCURRENTLISTDESC = "Zeigt eine Liste aller Teams in der Gilde.",
+    TEAMCURRENTLISTDESC2 = "Diese Auswahl bestimmt, welche Optionen und DKP Tabelle verwendet wird. Stellen Sie immer sicher, dass sie das richtige Team eingestellt haben, bevor Sie DKP vergeben oder den Schlachtzugstimer starten.",
+    TEAMCURRENTLISTDESC3 = "Sie können das momentan ausgewählte Team hier nicht ändern. Dazu gehen sie ins Hauptfenster mit /dkp main window",
+    TEAMLIST = "Liste der Teams",
+    TEAMCURRENTLISTLABEL = "Team selector",
+    TEAMLISTDESC = "Liste aller Teams, die mit dem Realm oder der Gilde des Spielers assoziiert sind. Ein Team ist eine Untergruppe einer Gilde. Gilden mit mehreren Schlachtzugs-Gruppen können für jede ein Team erstellen",
+    TEAMMANAGEMENTHEADER = "Team Managment",
+    TEAMSELECT = "Team auswählen",
+    TEAMCHANGERAIDINPROGRESS = "Sie können das ausgewählte Team nicht während eines Schlachtzugs ändern!",
+    NOTEAMCHOSEN = "Bitte wählen Sie ein Team aus der Liste um ihren Namen zu ändern", 
     TENSECONDSTOBID = "Noch 10 Sekunden zum Bieten!",
     THISWILLREFUND = "Dies wird erstattet",
     TIMEELAPSED = "Verstrichene Zeit",
@@ -709,7 +812,7 @@ if GetLocale() == "deDE" then
     TOSTANDBYLIST = "zur Standby-Liste",
     TOTALDKP = "DKP insgesamt",
     TOTALDKPAWARD = "DKP insgesamt vergeben",
-    TOTALMONDKPUSERS = "Gesamtzahl der MonDKP-Benutzer",
+    TOTALCommDKPUSERS = "Gesamtzahl der CommDKP-Benutzer",
     TOWITHDRAWBID = "Ihr Gebot zurückziehen.",
     TRINKET = "Schmuckstück",
     TTHISTORYCOUNT = "Tooltip-Verlaufsanzahl",
@@ -757,7 +860,7 @@ if GetLocale() == "deDE" then
     WHITELISTEMPTY = "Ihre Whitelist ist leer.",
     WHITELISTHEADER = [=[Whitelist-Einstellungen |CFF444444 (Nur Leader) (Alpha)|r
 
-    Es wird dringend empfohlen, diese Whitelist-Einstellung nur zu verwenden, wenn Sie einschränken möchten, für welche Officers Berechtigungen erforderlich sind. Wenn Sie möchten, dass alle Offiziere über Berechtigungen verfügen, ignorieren Sie diese Einstellungsfunktion vollständig. Mit Vorsicht verwenden. (Wenn das Anwenden dieser Einstellungen Probleme verursacht, öffnen Sie die Datei \WTF\Accounts\ACCOUNT_NAME\SavedVariables\MonolithDKP.lua mit einem Texteditor und löschen Sie die Tabelle MonDKP_Whitelist im unteren Bereich.)]=],
+    Es wird dringend empfohlen, diese Whitelist-Einstellung nur zu verwenden, wenn Sie einschränken möchten, für welche Officers Berechtigungen erforderlich sind. Wenn Sie möchten, dass alle Offiziere über Berechtigungen verfügen, ignorieren Sie diese Einstellungsfunktion vollständig. Mit Vorsicht verwenden. (Wenn das Anwenden dieser Einstellungen Probleme verursacht, öffnen Sie die Datei \WTF\Accounts\ACCOUNT_NAME\SavedVariables\CommunityDKP.lua mit einem Texteditor und löschen Sie die Tabelle CommDKP_Whitelist im unteren Bereich.)]=],
     WIPETABLES = "Tabellen löschen ",
     WIPETABLESCONF = "Möchten Sie wirklich alle Tabellen löschen? Sie können alle Informationen von einem Offizier abrufen, wenn einer online ist. ",
     WIPETABLESTTDESC = "Löscht alle Daten einschließlich DKP-Tabelle, Beuteverlauf und DKP-Verlauf. Verwenden Sie diese Option, wenn beim Synchronisieren Probleme auftreten, um neue und vollständige Informationen von einem verfügbaren Mitarbeiter zu erhalten. ",
@@ -778,20 +881,29 @@ if GetLocale() == "deDE" then
 
     Ex: |cffa335ee|Hitem:18824::::::::120:577::::::|h[Magma Tempered Boots]|h|r fällt und hat statische Kosten von 30 DKP. Spieler A gewinnt das Gebot, indem er die meisten DKP hat (oder nach Ermessen des Schlachtzugsführers verteilt wird, wenn ein Gleichstand besteht) und seine DKP um 30 reduziert wird. Dann erhält jedes Schlachtzugsmitglied 0,75 DKP.]=],
     ZEROSUMHEAD = "Nullsumme",
-    ZEROSUMITEMCOST = "Zero Sum Item Costs",
-    ZEROSUMITEMCOSTTTDESC = "Wählen Sie die Art der Artikelkosten aus, die Sie verwenden möchten. Static gibt Artikeln einen definierten Preis. Während Mindestgebot ermöglicht es den Spielern, ein Gebot abzugeben, das die Kosten definiert, während Sie einen Mindestgebotsschwellenwert festlegen.",
-    ZONE = "Zone",
+    ZEROSUMITEMCOST = "Nullsumme Item-Kosten",
+    ZEROSUMITEMCOSTTTDESC = "Wählen Sie das System für die Item-Kosten aus, das Sie verwenden möchten. \"Statisch\" gibt Artikeln einen definierten Preis. \"Mindestgebot\" ermöglicht es den Spielern, ein Gebot abzugeben, die aber alle über einem Mindestgebot sein müssen.",
+    ZONE = "Gebiet",
     PASS                  = "Passen",
 
-    CHANGELOG1            = "- Verbessertes Broadcast-System mit zugänglicher Schnittstelle durch Klicken auf das Statusanzeigesymbol in der unteren linken Ecke der DKP-Hauptschnittstelle.",
-    CHANGELOG2            = "  - Die Option \"Vollständige Übertragung\" überträgt alle Daten und überschreibt die Empfängertabellen mit identischen Kopien von Ihnen. Alle Daten, die sie hatten und die Sie nicht hatten, gehen verloren (Funktioniert genauso wie die Broadcast-Schaltfläche in 1.6 und früher).",
-    CHANGELOG3            = "  - Die Option \"Letzte 2 Wochen zusammenführen\" überträgt alle Einträge, die in den letzten zwei Wochen erstellt wurden (jedoch nicht früher als bei der Installation von 2.1, um die Möglichkeit der Datenverdoppelung zu vermeiden) und wendet nur Einträge an, die die Empfänger nicht haben. Nützlich zum Zusammenführen mehrerer Schlachtzugsdaten.",
-    CHANGELOG4            = "- Tischreparaturfunktion für Offiziere. Um es zu benutzen, schaue dir bitte das Video an, das auf der Curse-Seite verlinkt ist, oder gehe zu https://www.youtube.com/watch?v=dwnNnppFF2I. Es wird empfohlen, dass nur ein Offizier es auf Tabellen mit den genauesten Daten verwendet und dann eine vollständige Übertragung der reparierten Daten an den Rest der Gilde oder an die Offiziere durchführt, um sie weiterzugeben. Sichern Sie zuvor Ihre gespeicherten Variablendateien.",
-    CHANGELOG5            = "- Broadcasting-Einträge während des Raids werden weiterhin sofort gesendet, wie sie in 2.0 waren. Es wird nicht darauf gewartet, dass Einträge gesendet werden, weil Sie befürchten, Daten zu überschreiben.",
-    CHANGELOG6            = "- Der Samen, der feststellt, ob Ihre Tabellen veraltet sind, wird nun auf natürliche Weise innerhalb des Addons verbreitet (keine GM-Veröffentlichung mehr).",
-    CHANGELOG7            = "- Diese neue Datenstruktur ist nicht mit der aktuellen Datenverwaltung auf www.warcraftdkp.com kompatibel, bis der Entwickler dort die Logik aktualisieren kann.",
-    CHANGELOG8            = "- Option Tabellen validieren, die den Offizieren im Kontextmenü zur Verfügung steht. Dadurch werden alle DKP-Tische der Spieler (DKP, verdiente und ausgegebene Lebenszeit) basierend auf ihrer Historie neu erstellt. Es wird empfohlen, die gespeicherte Variablendatei vor der Ausführung zu sichern, da sie falsche Werte zurückgeben kann, wenn Sie keine Verlaufseinträge haben. Durch das Zurücksetzen aller vorherigen DKP-Werte für Spieler (Kontextmenü> Alles auswählen> Vorheriges DKP zurücksetzen) können Sie genau sehen, wie stark sich die DKP jedes Spielers durch die Validierung geändert hat.",
-    CHANGELOG9            = "",
-    CHANGELOG10           = "",
-  }
+    MIGRATIONDETECTED     = "CommunityDKP hat ein aktives MonolithDKP-Addon entdeckt.|n|nMöchten Sie die aktuellen Tabellen und Einstellungen zu CommunityDKP migrieren?",
+    MIGRATIONTEAM         = "CommunityDKP hat ein aktives MonolithDKP-Addon entdeckt.|n|nMöchten Sie die aktuellen Tabellen und Einstellungen|nals NEUES TEAM für deine aktuelle GILDE|nzu CommunityDKP migrieren?",
+    MIGRATIONUNAVAILABLE  = "Bitte deaktivieren Sie MonolithDKP und laden Sie das UI (/reload) neu, wenn Sie mit CommunityDKP fortfahren möchten.",
+    MIGRATIONCONFIRM      = "Dadurch werden Ihre bestehenden CommunityDKP-Tabellen und Einstellungen überschrieben.|n|n Wollen Sie fortfahren?",
+    MIGRATIONCANCELED     = "Migration abgebrochen.|n|nBitte deaktivieren Sie MonolithDKP und laden Sie die Benutzeroberfläche neu (/reload), wenn Sie mit CommunityDKP fortfahren möchten, ohne Ihre aktuellen Tabellen und Einstellungen zu verwenden.",
+    MIGRATIONCOMPLETED    = "Migration abgeschlossen.|n|nBitte deaktivieren Sie MonolithDKP und laden Sie das UI neu. (/reload)",
+
+    --TODO TRANSLATE:
+    CHANGELOG1 = "CommunityDKP - v3.2.8-r69-bcc",
+    CHANGELOG2 = " - fixed UI for classic era realms",
+    CHANGELOG3 = "",
+    CHANGELOG4 = "",
+    CHANGELOG5 = "",
+    CHANGELOG6 = "",
+    CHANGELOG7 = "",
+    CHANGELOG8 = "",
+    CHANGELOG8 = "",
+    CHANGELOG9 = "Taidtuskecyh @ Gehennas",
+    CHANGELOG10 = "CommunityDKP Discord: https://discord.gg/dXXK4vH"
+      }
 end

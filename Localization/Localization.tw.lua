@@ -1,6 +1,6 @@
 if GetLocale() == "zhTW" then
   local _, core = ...;
-  local MonDKP = core.MonDKP;
+  local CommDKP = core.CommDKP;
   
   core.BossList = {
     MC = {
@@ -35,11 +35,88 @@ if GetLocale() == "zhTW" then
     ONYXIA = {"奧妮克希亞"},
     WORLD = {
       "艾索雷苟斯", "卡札克領主", "艾莫莉絲", "雷索", "伊索德雷", "泰拉爾",
+    },
+    -- TBC Classic 2.5.1.38757
+    KARAZHAN = { -- 532
+      "獵人阿圖曼",
+      "摩洛",
+      "貞潔聖女",
+      "歌劇大廳",
+      "館長",
+      "泰瑞斯提安·疫蹄",
+      "埃蘭之影",
+      "尼德斯",
+      "西洋棋事件",
+      "莫克札王子",
+      "夜禍"
+    },
+    GRULLSLAIR = { -- 565
+      "大君王莫卡爾",
+      "弒龍者戈魯爾"
+    },
+    MAGTHERIDONSLAIR = { -- 544
+      "瑪瑟里頓"
+    },
+    SERPENTSHRINECAVERN = { -- 548
+      "不穩定者海卓司",
+      "海底潛伏者",
+      "『盲目者』李奧薩拉斯",
+      "深淵之王卡拉薩瑞斯",
+      "莫洛葛利姆·潮行者",
+      "瓦許女士"
+    },
+    TEMPESTKEEP = { -- 550
+      "歐爾",
+      "虛無搶奪者",
+      "高階星術師索拉瑞恩",
+      "凱爾薩斯·逐日者"
+    },
+    ZULAMAN = { -- 568
+      "阿奇爾森",
+      "納羅拉克",
+      "賈納雷",
+      "哈拉齊",
+      "妖術領主瑪拉克雷斯",
+      "達卡拉"
+    },
+    BLACKTEMPLE = { -- 564 map id
+      "高階督軍納珍塔斯",
+      "瑟普莫斯",
+      "阿卡瑪的黑暗面",
+      "泰朗·血魔",
+      "葛塔格·血沸",
+      "靈魂聖匣",
+      "薩拉茲女士",
+      "伊利達瑞議事",
+      "伊利丹·怒風"
+    },
+    SUNWELLPLATEAU = { -- 580
+      "卡雷苟斯", 
+      "布魯托魯斯",
+      "魔龍謎霧",
+      "埃雷達爾雙胞胎s",
+      "莫魯",
+      "基爾加丹"
     }
   }
   
   core.ZoneList = {
-    "熔火之心", "黑翼之巢", "安其拉神廟", "納克薩瑪斯", "祖爾格拉布", "安琪拉遺址", "奧妮西亞的巢穴", "世界老闆",
+    "熔火之心", 
+    "黑翼之巢", 
+    "安其拉神廟", 
+    "納克薩瑪斯", 
+    "祖爾格拉布", 
+    "安琪拉遺址", 
+    "奧妮西亞的巢穴", 
+    "世界老闆",
+    "卡拉贊", -- 532
+    "戈魯爾之巢", -- 565
+    "瑪瑟里頓的巢穴", -- 544
+    "盤牙:毒蛇神殿洞穴", -- 548
+    "風暴要塞", -- 550
+    "祖阿曼", -- 568
+    "黑暗神廟", -- 564,
+    "太陽之井" -- 580
   }
 
   core.L = {
@@ -54,7 +131,7 @@ if GetLocale() == "zhTW" then
     ADDNEGVALUES = "添加至負值",
     ADDRAIDMEMBERS = "添加團隊成員",
     ADDRAIDMEMBERSCONFIRM = "您確定要向DKP表添加缺少的RAID成員嗎？",
-    ADDRAIDMEMBERSTTDESC = "將公會中的所有團隊成員添加到DKP表中。",
+    ADDRAIDMEMBERSTTDESC = "將公會中的所有團隊成員添加到DKP表中。", --TODO remove the "in guild" qualifier
     ADDREMDKPTABLEENTRIES = "添加/刪除DKP表條目",
     ADDTARGET = "添加目標",
     ADDTARGETTODKPTABLE = "將目標添加到DKP表",
@@ -87,6 +164,8 @@ if GetLocale() == "zhTW" then
     ANTISNIPETTWARN = "設置為0以關閉反竊聽。",
     APPDECAYTTDESC = "您希望以每週衰减的管道减少DKP條目的DKP量。這應該是一個正數。如果未在下麵選擇“僅選定玩家”，則它將應用於所有條目。",
     APPDECAYTTWARN = "警告：無法撤銷。",
+    ANNOUNCEINRAIDWARNING = "Announce in Raid Warning", -- NEEDS TRANSLATIONS
+    ANNOUNCEINRAIDWARNINGDESC = "If checked, announcements for higgest bid/bidder will be broadcasted via Raid Warning, not Raid chat.", -- NEEDS TRANSLATIONS
     APPLYDECAY = "應用衰退",
     AREYOUSURE = "你確定你願意",
     AREYOUSUREBROADCAST = "您確定要廣播DKP模式設置嗎？",
@@ -94,12 +173,16 @@ if GetLocale() == "zhTW" then
     ARTIFICIALINFLATION = "人工通脹",
     ARTINFLATTTDESC = "分配給每個玩家的DKP的TOP積分，在各個玩家之間分配。銀行價值除後，此值將添加到他們的收入DKP中。",
     AUTOAWARD = "汽車獎DKP",
-    AUTOAWARDTTDESC = "殺死老闆時自動獎勵Boss Kill Bonus DKP（在“選項”選項卡中設置）。 只有突襲首領會以此分配分數。",
+    AUTOAWARDTTDESC = "Automatically awards Boss Kill Bonus DKP (set in Options tab) when a boss is killed. Only the raid leader will distribute points with this. Raid must be initialized on the Adjust DKP tab.", -- NEED TRANSLATION
+    AUTOAWARDLOOT = "Auto Award Loot",
+    AUTOAWARDLOOTDESC = "When checked loot will be automatically awarded to the winner. If looting they will be master looted to the winner. If awarding from your bags they will be inserted into the next trade window with the winner.",
     AUTOCOMBATLOG = "自動戰鬥記錄",
     AUTOCOMBATLOGTTDESC = "在突襲中進入突襲區域或在遭遇突襲時進入戰鬥時自動激活/ combatlog。",
     AUTOCOMBATLOGTTWARN = "如果尚未激活“高級戰鬥日誌”，則仍必須在系統>網絡中手動激活它。",
     AUTOOPEN = "自動打開出價窗口",
     AUTOOPENTTDESC = "選中該選項後，將在拍賣新項目時自動打開投標窗口。 如果未選中，則需要使用“/dkp bid”手動將其打開。",
+    DECREASEDISENCHANT = "降低清醒值",
+    DECREASEDISENCHANTTTDESC = "每3次清醒後降低一半清醒值，直到至少5 DKP",
     AWARDBONUS = "獎勵獎金",
     AWARDBONUSTTDESC = "每次滿足以下間隔時給予RAID的DKP量。",
     AWARDEDBY = "獲獎者：",
@@ -125,7 +208,7 @@ if GetLocale() == "zhTW" then
     BCASTVALUESTTWARN = "當前值不會被覆蓋。接收此廣播將更新已設置的值或添加不存在的值。他們可能具有的任何未發送的值將保持不變。",
     BEGINSYNC = "同步DKP表",
     BELT = "帶",
-    BESTPRACTICES = "由於同步系統反復出現問題，舊的廣播系統有了一些改進。 2.1.0與早期版本不兼容，所有入侵者必須在2.1.0或更高版本上。 通過單擊DKP主界面左下角的狀態指示器，人員可以使用新的廣播UI。 如果您的表由於2.0.x的遷移問題而損壞，則官員還可以使用修復選項。 您可以通過“詛咒”頁面上鍊接的YouTube視頻查看如何使用它。",
+    BESTPRACTICES = "",
     BID = "出價",
     BIDACCEPTEDFILTER = "您的出價已被接受。",
     BIDCANCELLED = "您的出價已被取消。",
@@ -192,11 +275,7 @@ if GetLocale() == "zhTW" then
     CONTINUERAID = "繼續RAID",
     CORRECTINGERROR = "修正誤差",
     COSTAUTOUPDATE = "費用自動更新",
-    COSTAUTOUPDATETTDESC = [=[選擇您希望在投標過程中將物料成本自動更新為的價格。
-
-    |CFFFF0000第一投標人|r：這會將投標窗口底部的物料成本更新為最高投標人。
-
-    |CFFFF0000第二投標人|r：這會將投標窗口底部的項目成本更新為第二高的投標人，或者如果只有一個投標人，則將最低投標值更新。 n  n費用總是可以隨時編輯。]=],
+    COSTAUTOUPDATETTDESC = "Select what you'd like the item cost to be automatically updated to during a bid session.\n\n|CFFFF0000First Bidder|r: This will update the cost of the item at the bottom of the bid window to the highest bidder.\n\n|CFFFF0000Second Bidder|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the bidder's value.\n\n|CFFFF0000Second Bidder or Min Value|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the minimum bid value.\n\nFor each, the cost is always editable on the fly.", --NEEDS TRANSLATION
     COSTAUTOUPDATEVALUE = "費用自動更新值",
     CREATEDMAINTAIN = "由...創建和維護",
     CREATERAIDTIMER = "創建Raid計時器（僅限官員）（例如/ dkp計時器120 Pizza Break！）",
@@ -363,6 +442,7 @@ if GetLocale() == "zhTW" then
     INZONEONLY = "在同一區域",
     INZONEONLYTTDESC = "這只會將突襲DKP獎勵給與您位於同一區域的玩家。 （用於自動獎勵，突襲計時器和零和分配）",
     ITEM = "項目",
+    ITEMS = "Items",
     ITEMCOST = "物品成本",
     ITEMCOSTTTDESC = "DKP向玩家收取物品費用。",
     ITEMCOSTTYPES = "物料成本類型",
@@ -418,10 +498,10 @@ if GetLocale() == "zhTW" then
     MAXIMUMROLLTTWARN = "如果未選中“使用百分比”，則最大DKP僅保留空白。如果選中，請使用100％。",
     MELEEDPS = "近戰DPS",
     MIGRATE = "遷移",
-    MIGRATEINST1 = [=[|cffff0000IMPORTANT!!|r：在繼續之前備份您保存的變量文件。 2.0版附帶了一個全新的索引廣播系統。這需要使用新值來遷移當前表。此遷移是一次性的過程，只能由一名人員執行。選擇具有最準確數據的人員進行遷移。所有其他人員將被阻止，並將刪除其數據，以接受來自所選人員的新數據廣播。這是為了防止重複數據。一旦所有人員都收到了新數據，您就可以從行會負責人公開說明中刪除{MonDKP=OFFICER_NAME}標籤。至關重要的是，只有一名管理人員執行遷移，否則您將有重複的數據並且您的表將被損壞（解決此問題的唯一方法是讓所有損壞了表的人員註銷並同時刪除其保存的變量文件，否則登錄後，您將再次收到損壞的數據）。此外，所有成員都必須使用2.0或更高版本才能兼容。舊版本將無法使用。
+    MIGRATEINST1 = [=[|cffff0000IMPORTANT!!|r：在繼續之前備份您保存的變量文件。 2.0版附帶了一個全新的索引廣播系統。這需要使用新值來遷移當前表。此遷移是一次性的過程，只能由一名人員執行。選擇具有最準確數據的人員進行遷移。所有其他人員將被阻止，並將刪除其數據，以接受來自所選人員的新數據廣播。這是為了防止重複數據。一旦所有人員都收到了新數據，您就可以從行會負責人公開說明中刪除{CommDKP=OFFICER_NAME}標籤。至關重要的是，只有一名管理人員執行遷移，否則您將有重複的數據並且您的表將被損壞（解決此問題的唯一方法是讓所有損壞了表的人員註銷並同時刪除其保存的變量文件，否則登錄後，您將再次收到損壞的數據）。此外，所有成員都必須使用2.0或更高版本才能兼容。舊版本將無法使用。
 
     可以使用“/dkp migration”重新打開此窗口。]=],
-    MIGRATEINST2 = "％s 已經進行了遷移。請立即備份您保存的變量文件（WTF\\Account\\ACCOUNT_NAME\\SavedVariables\\MonolithDKP.lua），然後單擊下面的刪除表按鈕。如果 ％s 在線，他們將在您重新加載後自動向您推送同步。如果不是，將在他們登錄時將其推送，或者您可以請求他們推送同步（這是通過單擊主GUI左下角的表格狀態按鈕來完成的）。如果您的公會的遷移過程中發生任何錯誤，請從公會負責人的公開說明中刪除遷移人員標籤，並讓到目前為止參與的所有人員刪除已損壞的已保存變量文件，並將其還原到已備份的文件中。每個人都必須同時執行此操作，並且在完成此操作之前，請勿登錄（啟用插件）。擁有遷移表的任何在線用戶都將在您登錄後自動將數據推送給您。",
+    MIGRATEINST2 = "％s 已經進行了遷移。請立即備份您保存的變量文件（WTF\\Account\\ACCOUNT_NAME\\SavedVariables\\CommunityDKP.lua），然後單擊下面的刪除表按鈕。如果 ％s 在線，他們將在您重新加載後自動向您推送同步。如果不是，將在他們登錄時將其推送，或者您可以請求他們推送同步（這是通過單擊主GUI左下角的表格狀態按鈕來完成的）。如果您的公會的遷移過程中發生任何錯誤，請從公會負責人的公開說明中刪除遷移人員標籤，並讓到目前為止參與的所有人員刪除已損壞的已保存變量文件，並將其還原到已備份的文件中。每個人都必須同時執行此操作，並且在完成此操作之前，請勿登錄（啟用插件）。擁有遷移表的任何在線用戶都將在您登錄後自動將數據推送給您。",
     MIN = "敏",
     MINBIDDESCRIPTION = [=[使用最低出價值，所有廣告位（或單個項目）都被分配了最小值。 
 
@@ -437,9 +517,9 @@ if GetLocale() == "zhTW" then
     MINUTE = "分鐘",
     MINUTES = "分鐘",
     MISCSETTINGS = "雜項設置",
-    MONDKPSCALESIZE = "整體式DKP秤尺寸",
-    MONDKPSCALESIZETTDESC = "Monolith DKP窗口的比例。單擊\"保存設置\"以將大小更改為設置值。",
-    MONDKPSCALESIZETTWARN = "如果使用另一個修改UI比例的插件（例如TukUI，ElvUI等），則保存後可能需要/ reload。",
+    CommDKPSCALESIZE = "整體式DKP秤尺寸",
+    CommDKPSCALESIZETTDESC = "CommunityDKP窗口的比例。單擊\"保存設置\"以將大小更改為設置值。",
+    CommDKPSCALESIZETTWARN = "如果使用另一個修改UI比例的插件（例如TukUI，ElvUI等），則保存後可能需要/ reload。",
     MORE = "更多",
     MORESECONDSTO = "還有更多秒可以做到這一點。",
     MOVEBIDTIMER = "移動出價計時器",
@@ -517,7 +597,7 @@ if GetLocale() == "zhTW" then
 
     確實要這樣做嗎？]=],
     OUTOFDATE = "過時的",
-    OUTOFDATEANNOUNCE = "您的Monolith DKP版本已過時。請更新Curse / Twitch或WoWInterface，以確保沒有兼容性問題。",
+    OUTOFDATEANNOUNCE = "您的CommunityDKP版本已過時。請更新Curse / Twitch或WoWInterface，以確保沒有兼容性問題。",
     PAUSERAID = "暫停RAID",
     PAUSERAIDTTDESC = "如果領導决定暫停計時器以進行中斷，則會暫停raid計時器。",
     PAUSERAIDTTWARN = "可通過按一下“繼續RAID”繼續。",
@@ -534,6 +614,7 @@ if GetLocale() == "zhTW" then
     PLAYERSFORREASON = "玩家原因",
     PLAYERVALIDATE = "未選擇玩家",
     PLEASEUSENUMS = "請使用數字。",
+    PRICETAB = "Pricing", --TODO
     PLEASEVALIDATE = "無效的條目已被刪除。 請驗證您的表格。 （在DKP表的右鍵單擊上下文菜單中）",
     POINTS = "點數",
     POINTSTTDESC = "在DKP錶中輸入分配給選定玩家的DKP數量。預設值可以在下麵的“選項”選項卡中更改。",
@@ -603,6 +684,7 @@ if GetLocale() == "zhTW" then
     SEARCH = "搜索   ",
     SEARCHDESC = "過濾DKP列表。搜索名稱，類別，規格，等級和角色。",
     SECONDBIDDER = "第二投標人",
+    SECONDBIDDERORMIN = "Second Bidder or Min Value", -- NEEDS TRANSLATION
     SECONDS = "秒",
     SELECTALL = "全選",
     SELECTALLVISIBLE = "選擇所有可見",
@@ -654,12 +736,12 @@ if GetLocale() == "zhTW" then
     |cffff0000其他|r：允許最高出價（設置如下）。
 
     |cffff0000其他|r：即使項目費用超出了其可用的DKP，也允許玩家提交出價。]=],
-    SUPPRESSBIDWHISP = "Supress競價耳語",
-    SUPPRESSNOTIFICATIONS = "Supress插件通知",
+    SUPPRESSBIDWHISP = "Suppress競價耳語",
+    SUPPRESSNOTIFICATIONS = "Suppress插件通知",
     SUPPRESSNOTIFYTTDESC = "隱藏所有附加消息，使其不會顯示在聊天框中。",
     SUPPRESSNOTIFYTTWARN = "廣播更新仍將被接收。",
-    SUPRESSBIDWHISPTTDESC = "在進行投標時，抑制與投標有關的傳入和傳出耳語。",
-    SUPRESSBIDWHISPTTWARN = "所有其他與非出價相關的耳語仍將顯示。",
+    SuppressBIDWHISPTTDESC = "在進行投標時，抑制與投標有關的傳入和傳出耳語。",
+    SuppressBIDWHISPTTWARN = "所有其他與非出價相關的耳語仍將顯示。",
     SYNCALREADY = "當前正在進行同步。",
     SYNCCOMPLETE = "同步完成",
     SYNCCOMPLETE2 = "同步完成。 所有玩家都是最新的。",
@@ -673,6 +755,28 @@ if GetLocale() == "zhTW" then
     TABLEVIEWS = "表格檢視",
     TAKINGBIDSON = "競標",
     TANK = "坦",
+    NOTGUILDMASTER = "Only available to Guild Master",  -- NEED TRANSLATION
+    TEAM = "Team",
+    TEAMS = "Teams",
+    TEAMADD = "Add new team",
+    TEAMADDDIALOG = "Are you sure you want to create a new team? This can't be undone",
+    TEAMADDDESC = "Add new team to your guild (only available to guild master). At this point, there is no option to delete a team.",
+    TEAMRENAME = "Rename team",
+    TEAMRENAMESELECTED = "Rename selected team",
+    TEAMNAMEINPUTTOOLTIP = "Team name",
+    TEAMNAMEINPUTTOOLTIPDESC = "For changing currently selected team name",
+    TEAMRENAMESELECTEDESC = "Allows guild master to rename selected team from the dropdown list",
+    TEAMCURRENTLIST = "Currently selected team",
+    TEAMCURRENTLISTDESC = "This shows the list of all teams withing the guild.",
+    TEAMCURRENTLISTDESC2 = "All tabs/tables base their data on value coming from this dropdown. Be sure to always check which team you have selected before awarding any DKP or starting the raid timer.",
+    TEAMCURRENTLISTDESC3 = "You cannot change the currently selected team from this drop down. To change currently selected team go to /dkp main window",
+    TEAMLIST = "List of teams",
+    TEAMCURRENTLISTLABEL = "Team selector",
+    TEAMLISTDESC = "List of all the teams defined for current player's realm/guild. Team is a smaller subsection of a guild. Usefull for guilds with more than one raiding groups",
+    TEAMMANAGEMENTHEADER = "Guild team management section",
+    TEAMSELECT = "Select Team",
+    TEAMCHANGERAIDINPROGRESS = "You can't change currently selected team while raid is in progress!",
+    NOTEAMCHOSEN = "Please pick a team from drop down to change it's name", 
     TENSECONDSTOBID = "還剩10秒競標！",
     THISWILLREFUND = "這將退還",
     TIMEELAPSED = "比賽進行時間",
@@ -692,7 +796,7 @@ if GetLocale() == "zhTW" then
     TOSTANDBYLIST = "到待機列表",
     TOTALDKP = "總DKP",
     TOTALDKPAWARD = "授予的丹麥克朗總額",
-    TOTALMONDKPUSERS = "MonDKP用戶總數",
+    TOTALCommDKPUSERS = "CommDKP用戶總數",
     TOWITHDRAWBID = "撤回出價。",
     TRINKET = "飾品",
     TTHISTORYCOUNT = "工具提示歷史記錄計數",
@@ -739,7 +843,7 @@ if GetLocale() == "zhTW" then
     WHITELISTEMPTY = "您的白名單是空的。",
     WHITELISTHEADER = [=[白名單設置|CFF444444（僅領導人）（α)|r 
 
-    強烈建議您僅在希望限制哪些警官需要權限的情況下才使用此白名單設置。如果您希望所有人員都具有權限，請完全忽略此設置功能。請謹慎使用。 （如果應用這些設置會導致問題，請使用文本編輯器打開 \WTF\Accounts\ACCOUNT_NAME\SavedVariables\MonolithDKP.lua文件，然後刪除底部附近的MonDKP_Whitelist表。）]=],
+    強烈建議您僅在希望限制哪些警官需要權限的情況下才使用此白名單設置。如果您希望所有人員都具有權限，請完全忽略此設置功能。請謹慎使用。 （如果應用這些設置會導致問題，請使用文本編輯器打開 \WTF\Accounts\ACCOUNT_NAME\SavedVariables\CommunityDKP.lua文件，然後刪除底部附近的CommDKP_Whitelist表。）]=],
     WIPETABLES = "擦桌子",
     WIPETABLESCONF = "您確定要刪除所有表格嗎？ 當某位人員在線時，您可以從其獲取所有信息。",
     WIPETABLESTTDESC = "擦除所有數據，包括DKP表，戰利品歷史記錄和DKP歷史記錄。 如果在嘗試同步以從可用人員接收新的和完整的信息時發生問題，請使用此選項。",
@@ -787,15 +891,24 @@ if GetLocale() == "zhTW" then
     VALIDATEWARN          = "這將根據其完整歷史記錄重新計算所有玩家的dkp，獲得的生命和花費的生命。 如果由於缺少歷史記錄而導致結果不正確，請確保備份已保存的變量文件。 在運行之前，您應該為所有播放器重置先前的dkp（上下文菜單>全選>重置先前的dkp），以便可以看到它們已更改了多少。 你想繼續嗎？",
     PASS                  = "通過",
 
-    CHANGELOG1            = "-改進的廣播系統，其界面可通過單擊DKP主界面左下角的狀態指示器圖標來訪問。",
-    CHANGELOG2            = "  -完全廣播選項將廣播所有數據，並用您的相同副本覆蓋收件人表。他們沒有的任何數據都將丟失（與1.6及更早版本中的廣播按鈕相同）。",
-    CHANGELOG3            = "  -合併最近2週選項將廣播最近兩週（但不早於安裝2.1以防止數據重複的可能性）中創建的所有條目，並將僅應用收件人沒有的條目。對於合併多個團隊數據有用。",
-    CHANGELOG4            = "-軍官可以使用桌子維修功能。要使用它，請觀看“詛咒”頁面上鍊接的視頻或轉到https://www.youtube.com/watch?v=dwnNnppFF2I。建議只有一名軍官在數據最準確的桌子上使用它，然後將修復後的數據完整廣播到其他行會或軍官，以便傳遞。事先備份您保存的變量文件。",
-    CHANGELOG5            = "-突襲期間的廣播條目仍將保持即時狀態，就像在2.0中一樣。由於擔心會覆蓋數據，因此無需等待廣播條目。",
-    CHANGELOG6            = "-現在，決定您的表是否過時的種子會在插件中自然傳播（不再有GM公共註釋）",
-    CHANGELOG7            = "-這種新的數據結構與www.warcraftdkp.com上的當前數據管理不兼容，除非那裡的開發人員能夠更新邏輯。",
-    CHANGELOG8            = "-上下文菜單中可供人員使用的“驗證表”選項。這將根據他們的歷史記錄重建所有球員的DKP表（dkp，獲得和使用的終生）。建議您在運行之前備份保存的變量文件，因為如果缺少任何歷史記錄條目，該文件可能會返回不正確的值。重置播放器的所有先前DKP值（上下文菜單>全選>重置先前的dkp）將使您確切地看到每個播放器DKP從驗證中更改了多少。",
-    CHANGELOG9            = "",
-    CHANGELOG10           = "",
-  }
+    MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?", --TODO TRANSLATE:
+    MIGRATIONTEAM         = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables|nas a NEW TEAM for your current GUILD|nto CommunityDKP?", --TODO TRANSLATE:
+    MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.", --TODO TRANSLATE:
+    MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?", --TODO TRANSLATE:
+    MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.", --TODO TRANSLATE:
+    MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
+
+    --TODO TRANSLATE:
+    CHANGELOG1 = "CommunityDKP - v3.2.8-r69-bcc",
+    CHANGELOG2 = " - fixed UI for classic era realms",
+    CHANGELOG3 = "",
+    CHANGELOG4 = "",
+    CHANGELOG5 = "",
+    CHANGELOG6 = "",
+    CHANGELOG7 = "",
+    CHANGELOG8 = "",
+    CHANGELOG8 = "",
+    CHANGELOG9 = "Taidtuskecyh @ Gehennas",
+    CHANGELOG10 = "CommunityDKP Discord: https://discord.gg/dXXK4vH"
+        }
 end

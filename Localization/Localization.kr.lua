@@ -1,6 +1,6 @@
 if GetLocale() == "koKR" then
   local _, core = ...;
-  local MonDKP = core.MonDKP;
+  local CommDKP = core.CommDKP;
   
   core.BossList = {
     MC = {
@@ -35,11 +35,88 @@ if GetLocale() == "koKR" then
     ONYXIA = {"오닉시아"},
     WORLD = {
       "아주어고스", "군주 카자크", "에메리스", "레손", "이손드레", "타에라",
+    },
+    -- TBC Classic 2.5.1.38757
+    KARAZHAN = { -- 532
+      "사냥꾼 어튜멘",
+      "모로스",
+      "고결의 여신",
+      "오페라 극장",
+      "전시 관리인",
+      "테레스티안 일후프",
+      "아란의 망령",
+      "황천의 원령",
+      "체스 이벤트",
+      "공작 말체자르",
+      "파멸의 어둠"
+    },
+    GRULLSLAIR = { -- 565
+      "왕중왕 마울가르",
+      "용 학살자 그룰"
+    },
+    MAGTHERIDONSLAIR = { -- 544
+      "마그테리돈"
+    },
+    SERPENTSHRINECAVERN = { -- 548
+      "불안정한 히드로스",
+      "심연의 잠복꾼",
+      "눈먼 레오테라스",
+      "심연의 군주 카라드레스",
+      "겅둥파도 모로그림",
+      "여군주 바쉬"
+    },
+    TEMPESTKEEP = { -- 550
+      "알라르",
+      "공허의 절단기",
+      "고위 점성술사 솔라리안",
+      "캘타스 선스트라이더"
+    },
+    ZULAMAN = { -- 568
+      "아킬존",
+      "날로라크",
+      "잔알라이",
+      "할라지",
+      "주술 군주 말라크라스",
+      "다카라"
+    },
+    BLACKTEMPLE = { -- 564 map id
+      "대장군 나젠투스",
+      "궁극의 심연",
+      "아카마의 망령",
+      "테론 고어핀드",
+      "구르토그 블러드보일",
+      "영혼의 성물함",
+      "대모 샤라즈",
+      "일리다리 의회",
+      "일리단 스톰레이지"
+    },
+    SUNWELLPLATEAU = { -- 580
+      "칼렉고스", 
+      "브루탈루스",
+      "지옥안개",
+      "에레다르 쌍둥이",
+      "므우루",
+      "킬제덴"
     }
   }
   
   core.ZoneList = {
-    "녹은 코어", "검은 날개 둥지", "안퀴라즈 사원", "낙스라마스", "줄구룹", "안퀴라즈 폐허", "오닉스 시아의 은신처", "월드 보스",
+    "녹은 코어", 
+    "검은 날개 둥지", 
+    "안퀴라즈 사원", 
+    "낙스라마스", 
+    "줄구룹", 
+    "안퀴라즈 폐허", 
+    "오닉스 시아의 은신처", 
+    "월드 보스",
+    "카라잔", -- 532
+    "그룰의 둥지", -- 565
+    "마그테리돈의 둥지", -- 544
+    "갈퀴송곳니 저수지: 불뱀 제단", -- 548
+    "폭풍우 요새", -- 550
+    "줄아만", -- 568
+    "검은 사원", -- 564,
+    "태양샘" -- 580
   }
 
   core.L = {
@@ -54,7 +131,7 @@ if GetLocale() == "koKR" then
     ADDNEGVALUES = "음수 값에 추가",
     ADDRAIDMEMBERS = "레이드 멤버 추가",
     ADDRAIDMEMBERSCONFIRM = "누락 된 공격 대원을 DKP 테이블에 추가 하시겠습니까?",
-    ADDRAIDMEMBERSTTDESC = "길드에있는 모든 공격대 / 파티원을 DKP 테이블에 추가합니다.",
+    ADDRAIDMEMBERSTTDESC = "길드에있는 모든 공격대 / 파티원을 DKP 테이블에 추가합니다.", --TODO remove the "in guild" qualifier
     ADDREMDKPTABLEENTRIES = "DKP 테이블 항목 추가 / 제거",
     ADDTARGET = "대상 추가",
     ADDTARGETTODKPTABLE = "DKP 테이블에 대상 추가",
@@ -85,6 +162,8 @@ if GetLocale() == "koKR" then
     ANTISNIPE = "안티 스 나이프",
     ANTISNIPETTDESC = "입찰 타이머가 10 초 미만일 때 입찰이 수신되면 입찰 타이머를 연장하려는 시간 (초)입니다. (마지막 두 번째 입찰 스니핑을 방지하려면)",
     ANTISNIPETTWARN = "도난 방지를 끄려면 0으로 설정하십시오.",
+    ANNOUNCEINRAIDWARNING = "Announce in Raid Warning", -- NEEDS TRANSLATIONS
+    ANNOUNCEINRAIDWARNINGDESC = "If checked, announcements for higgest bid/bidder will be broadcasted via Raid Warning, not Raid chat.", -- NEEDS TRANSLATIONS
     APPDECAYTTDESC = "DKP의 양 매주 감소로 DKP 항목을 줄이려고합니다. 양수 여야합니다. 아래에서 \"선택한 플레이어 만\"을 선택하지 않으면 모든 항목에 적용됩니다.",
     APPDECAYTTWARN = "경고 : 취소 할 수 없습니다.",
     APPLYDECAY = "부패 적용",
@@ -94,12 +173,16 @@ if GetLocale() == "koKR" then
     ARTIFICIALINFLATION = "인공 인플레이션",
     ARTINFLATTTDESC = "DKP에서 각 플레이어에게 나누어주는 포인트. 이 값은 뱅킹 된 값이 분할 된 후 획득 한 DKP에 추가됩니다.",
     AUTOAWARD = "자동 수상 DKP",
-    AUTOAWARDTTDESC = "보스를 처치하면 보스 처치 보너스 DKP (옵션 탭에서 설정)가 자동으로 부여됩니다. 공격대 장만이 이것으로 점수를 분배합니다.",
+    AUTOAWARDTTDESC = "Automatically awards Boss Kill Bonus DKP (set in Options tab) when a boss is killed. Only the raid leader will distribute points with this. Raid must be initialized on the Adjust DKP tab.", -- NEED TRANSLATION
+    AUTOAWARDLOOT = "Auto Award Loot",
+    AUTOAWARDLOOTDESC = "When checked loot will be automatically awarded to the winner. If looting they will be master looted to the winner. If awarding from your bags they will be inserted into the next trade window with the winner.",
     AUTOCOMBATLOG = "자동 전투 기록",
     AUTOCOMBATLOGTTDESC = "공격대와 공격대에 들어가거나 전투 대전에서 전투에 참가할 때 / combatlog를 자동으로 활성화합니다.",
     AUTOCOMBATLOGTTWARN = "시스템> 네트워크에서 고급 전투 로깅을 아직 활성화하지 않은 경우 여전히 수동으로 활성화해야합니다.",
     AUTOOPEN = "입찰 창 자동 열기",
     AUTOOPENTTDESC = "이 옵션을 선택하면 새 항목을 경매 할 때 입찰 창이 자동으로 열립니다. 이 확인란을 선택하지 않으면 \"/dkp bid\"로 필요할 때 수동으로 열어야합니다.",
+    DECREASEDISENCHANT = "마력 추출 가치 감소",
+    DECREASEDISENCHANTTTDESC = "3 회 이상 소환 한 후 최소 5 DKP가 될 때까지 매번 소환 할 때마다 소멸 량 감소",
     AWARDBONUS = "보너스 보너스",
     AWARDBONUSTTDESC = "아래 간격에 도달 할 때마다 공격대에게주는 DKP의 양.",
     AWARDEDBY = "수상 :",
@@ -125,7 +208,7 @@ if GetLocale() == "koKR" then
     BCASTVALUESTTWARN = "현재 값을 덮어 쓰지 않습니다. 이 브로드 캐스트를 수신하면 이미 설정된 값을 업데이트하거나 존재하지 않는 값을 추가합니다. 전송되지 않은 값은 변경되지 않습니다.",
     BEGINSYNC = "DKP 테이블 동기화",
     BELT = "벨트",
-    BESTPRACTICES = "동기화 시스템에서 반복되는 문제로 인해 이전 브로드 캐스트 시스템이 일부 개선되었습니다. 2.1.0은 이전 버전과 호환되지 않으며 모든 공격자는 2.1.0 이상이어야합니다. 새로운 DKP 인터페이스의 왼쪽 하단에있는 상태 표시기를 클릭하면 새 브로드 캐스트 UI를 사용할 수 있습니다. 2.0.x의 마이그레이션 문제로 인해 테이블이 손상된 경우 관리자가 사용할 수있는 복구 옵션도 있습니다. 저주 페이지에 링크 된 YouTube 비디오를 통해이를 사용하는 방법을 볼 수 있습니다.",
+    BESTPRACTICES = "",
     BID = "매기다",
     BIDACCEPTEDFILTER = "입찰이 수락되었습니다.",
     BIDCANCELLED = "입찰이 취소되었습니다.",
@@ -192,13 +275,7 @@ if GetLocale() == "koKR" then
     CONTINUERAID = "계속 습격",
     CORRECTINGERROR = "오류 수정",
     COSTAUTOUPDATE = "비용 자동 업데이트",
-    COSTAUTOUPDATETTDESC = [=[입찰 세션 중에 항목 비용이 자동으로 업데이트되도록하려는 항목을 선택하십시오. 
-
-    |CFFFF0000첫 입찰자|r: 입찰 창 하단에있는 항목의 비용이 최고 입찰자에게 업데이트됩니다. 
-
-    |CFFFF0000두 번째 입찰자|r: 입찰 창 하단에있는 항목의 비용을 두 번째로 높은 입찰자 또는 입찰자가 한 명인 경우 최소 입찰 값으로 업데이트합니다. 
-
-    각각의 비용은 항상 즉시 편집 할 수 있습니다.]=],
+    COSTAUTOUPDATETTDESC = "Select what you'd like the item cost to be automatically updated to during a bid session.\n\n|CFFFF0000First Bidder|r: This will update the cost of the item at the bottom of the bid window to the highest bidder.\n\n|CFFFF0000Second Bidder|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the bidder's value.\n\n|CFFFF0000Second Bidder or Min Value|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the minimum bid value.\n\nFor each, the cost is always editable on the fly.", --NEEDS TRANSLATION
     COSTAUTOUPDATEVALUE = "비용 자동 업데이트 값",
     CREATEDMAINTAIN = "에 의해 생성 및 유지",
     CREATERAIDTIMER = "레이드 타이머 생성 (직원 만 해당) (예 : / dkp timer 120 Pizza Break!)",
@@ -365,6 +442,7 @@ if GetLocale() == "koKR" then
     INZONEONLY = "같은 구역에서",
     INZONEONLYTTDESC = "이것은 당신과 같은 지역에있는 플레이어에게만 공격적인 DKP를 부여합니다. (자동 보너스, 레이드 타이머 및 제로섬 분배와 함께 사용)",
     ITEM = "안건",
+    ITEMS = "Items",
     ITEMCOST = "아이템 비용",
     ITEMCOSTTTDESC = "항목에 대한 플레이어를 청구하는 DKP.",
     ITEMCOSTTYPES = "품목 비용 유형",
@@ -420,10 +498,10 @@ if GetLocale() == "koKR" then
     MAXIMUMROLLTTWARN = "\"사용률\"가 체크되어 있지 않으면 max DKP를 비워 두십시오. 확인 된 경우 100 %를 사용하십시오.",
     MELEEDPS = "근접 DPS",
     MIGRATE = "이주",
-    MIGRATEINST1 = [=[| cffff0000 중요 !! | r : 계속하기 전에 저장된 변수 파일을 백업하십시오. 2.0에는 완전히 새로운 색인화 된 방송 시스템이 있습니다. 이를 위해서는 현재 테이블을 새 값으로 마이그레이션해야합니다. 이 이주는 한 명의 담당자 만 수행 할 수있는 일회성 프로세스입니다. 가장 정확한 데이터를 가진 임원을 선택하여 마이그레이션을 수행하십시오. 다른 모든 임원은 차단되며 선택한 임원의 새 데이터 방송을 수락하기 위해 데이터가 삭제됩니다. 이것은 데이터 중복을 방지하기위한 것입니다. 모든 임원이 새로운 데이터를 받으면 길드 리더 공개 메모에서 {MonDKP = OFFICER_NAME} 태그를 삭제할 수 있습니다. 한 명의 담당자 만 마이그레이션을 수행하거나 데이터가 중복되어 테이블이 손상되는 것이 중요합니다 (문제를 해결하는 유일한 방법은 테이블을 손상시킨 모든 담당자가 로그 오프하고 저장된 변수 파일을 동시에 또는 다른 방법으로 삭제하는 것입니다). 로그인하자마자 손상된 데이터를 다시 받게됩니다.) 또한 모든 멤버가 호환 되려면 2.0 이상을 사용해야합니다. 이전 버전은 작동하지 않습니다.
+    MIGRATEINST1 = [=[| cffff0000 중요 !! | r : 계속하기 전에 저장된 변수 파일을 백업하십시오. 2.0에는 완전히 새로운 색인화 된 방송 시스템이 있습니다. 이를 위해서는 현재 테이블을 새 값으로 마이그레이션해야합니다. 이 이주는 한 명의 담당자 만 수행 할 수있는 일회성 프로세스입니다. 가장 정확한 데이터를 가진 임원을 선택하여 마이그레이션을 수행하십시오. 다른 모든 임원은 차단되며 선택한 임원의 새 데이터 방송을 수락하기 위해 데이터가 삭제됩니다. 이것은 데이터 중복을 방지하기위한 것입니다. 모든 임원이 새로운 데이터를 받으면 길드 리더 공개 메모에서 {CommDKP = OFFICER_NAME} 태그를 삭제할 수 있습니다. 한 명의 담당자 만 마이그레이션을 수행하거나 데이터가 중복되어 테이블이 손상되는 것이 중요합니다 (문제를 해결하는 유일한 방법은 테이블을 손상시킨 모든 담당자가 로그 오프하고 저장된 변수 파일을 동시에 또는 다른 방법으로 삭제하는 것입니다). 로그인하자마자 손상된 데이터를 다시 받게됩니다.) 또한 모든 멤버가 호환 되려면 2.0 이상을 사용해야합니다. 이전 버전은 작동하지 않습니다.
 
     이 창은 "/dkp migrate"로 다시 열 수 있습니다.]=],
-    MIGRATEINST2 = "%s 은 (는) 이미 마이그레이션을 수행했습니다. 저장된 변수 파일을 즉시 백업하고 (WTF\\Account\\ACCOUNT_NAME\\SavedVariables\\MonolithDKP.lua) 아래 테이블 삭제 버튼을 클릭하십시오. %s 이 (가) 온라인 인 경우 다시로드하면 자동으로 동기화됩니다. 그렇지 않은 경우 로그인 할 때 푸시되거나 동기화를 푸시하도록 요청할 수 있습니다 (메인 GUI의 왼쪽 하단 모서리에있는 테이블 상태 단추를 클릭하여 수행). 길드 마이그레이션 프로세스에서 오류가 발생하면 길드 리더의 공개 메모에서 마이그레이션 관리자 태그를 삭제하고 지금까지 참여한 모든 임원이 손상된 저장된 변수 파일을 삭제하고 백업 한 것으로 복원하십시오. 이 작업이 완료 될 때까지 모든 사람은 동시에이 작업을 수행해야하며 애드온이 활성화 된 상태에서 로그인하지 않아야합니다. 마이그레이션 된 테이블이있는 온라인 사용자는 로그인하자마자 해당 데이터를 자동으로 푸시합니다.",
+    MIGRATEINST2 = "%s 은 (는) 이미 마이그레이션을 수행했습니다. 저장된 변수 파일을 즉시 백업하고 (WTF\\Account\\ACCOUNT_NAME\\SavedVariables\\CommunityDKP.lua) 아래 테이블 삭제 버튼을 클릭하십시오. %s 이 (가) 온라인 인 경우 다시로드하면 자동으로 동기화됩니다. 그렇지 않은 경우 로그인 할 때 푸시되거나 동기화를 푸시하도록 요청할 수 있습니다 (메인 GUI의 왼쪽 하단 모서리에있는 테이블 상태 단추를 클릭하여 수행). 길드 마이그레이션 프로세스에서 오류가 발생하면 길드 리더의 공개 메모에서 마이그레이션 관리자 태그를 삭제하고 지금까지 참여한 모든 임원이 손상된 저장된 변수 파일을 삭제하고 백업 한 것으로 복원하십시오. 이 작업이 완료 될 때까지 모든 사람은 동시에이 작업을 수행해야하며 애드온이 활성화 된 상태에서 로그인하지 않아야합니다. 마이그레이션 된 테이블이있는 온라인 사용자는 로그인하자마자 해당 데이터를 자동으로 푸시합니다.",
     MIN = "최소",
     MINBIDDESCRIPTION = [=[최소 입찰 값을 사용하면 모든 슬롯 (또는 개별 항목)에 최소값이 할당됩니다. 입찰을 제출 한 사람은 해당 값 이상으로 입찰해야합니다. 
 
@@ -439,9 +517,9 @@ if GetLocale() == "koKR" then
     MINUTE = "분",
     MINUTES = "의사록",
     MISCSETTINGS = "기타 설정",
-    MONDKPSCALESIZE = "모놀리스 DKP 스케일 크기",
-    MONDKPSCALESIZETTDESC = "Monolith DKP 창의 스케일. \"설정 저장\"을 클릭하여 크기를 설정 값으로 변경하십시오.",
-    MONDKPSCALESIZETTWARN = "UI 스케일 (예 : TukUI, ElvUI 등)을 수정하는 다른 애드온을 사용하는 경우 저장 후 / 재로드가 필요할 수 있습니다.",
+    CommDKPSCALESIZE = "모놀리스 DKP 스케일 크기",
+    CommDKPSCALESIZETTDESC = "CommunityDKP 창의 스케일. \"설정 저장\"을 클릭하여 크기를 설정 값으로 변경하십시오.",
+    CommDKPSCALESIZETTWARN = "UI 스케일 (예 : TukUI, ElvUI 등)을 수정하는 다른 애드온을 사용하는 경우 저장 후 / 재로드가 필요할 수 있습니다.",
     MORE = "더",
     MORESECONDSTO = "더 많은 초.",
     MOVEBIDTIMER = "입찰 타이머 이동",
@@ -519,7 +597,7 @@ if GetLocale() == "koKR" then
 
     이 작업을 수행 하시겠습니까?]=],
     OUTOFDATE = "오래된",
-    OUTOFDATEANNOUNCE = "사용중인 Monolith DKP 버전이 오래되었습니다. 호환성 문제가 없는지 확인하려면 Curse / Twitch 또는 WoWInterface를 업데이트하십시오.",
+    OUTOFDATEANNOUNCE = "사용중인 CommunityDKP 버전이 오래되었습니다. 호환성 문제가 없는지 확인하려면 Curse / Twitch 또는 WoWInterface를 업데이트하십시오.",
     PAUSERAID = "레이드 일시 중지",
     PAUSERAIDTTDESC = "리더가 휴식을 위해 타이머를 중단해야한다고 결정하면 급습 타이머가 일시 중지됩니다.",
     PAUSERAIDTTWARN = "\"계속 레이드\"를 클릭하여 다시 시작할 수 있습니다.",
@@ -536,6 +614,7 @@ if GetLocale() == "koKR" then
     PLAYERSFORREASON = "이유가있는 플레이어",
     PLAYERVALIDATE = "선택된 플레이어가 없습니다",
     PLEASEUSENUMS = "숫자를 사용하십시오.",
+    PRICETAB = "Pricing", --TODO
     PLEASEVALIDATE = "유효하지 않은 항목이 제거되었습니다. 테이블을 확인하십시오. (DKP 테이블의 오른쪽 클릭 컨텍스트 메뉴)",
     POINTS = "포인트들",
     POINTSTTDESC = "DKP 테이블에서 선택한 플레이어에게 배포 할 DKP의 양을 입력하십시오. 아래의 \"옵션\"탭에서 기본값을 변경할 수 있습니다.",
@@ -605,6 +684,7 @@ if GetLocale() == "koKR" then
     SEARCH = "검색   ",
     SEARCHDESC = "DKP 목록을 필터링합니다. 이름, 클래스, 사양, 순위 및 역할을 검색합니다.",
     SECONDBIDDER = "두 번째 입찰자",
+    SECONDBIDDERORMIN = "Second Bidder or Min Value", -- NEEDS TRANSLATION
     SECONDS = "초",
     SELECTALL = "모두 선택",
     SELECTALLVISIBLE = "보이는 모든 것을 선택하십시오",
@@ -658,8 +738,8 @@ if GetLocale() == "koKR" then
     SUPPRESSNOTIFICATIONS = "애드온 알림 억제",
     SUPPRESSNOTIFYTTDESC = "채팅 프레임에 모든 애드온 메시지가 표시되지 않도록 숨 깁니다.",
     SUPPRESSNOTIFYTTWARN = "방송 업데이트는 계속 수신됩니다.",
-    SUPRESSBIDWHISPTTDESC = "입찰이 진행되는 동안 입찰과 관련된 들어오고 나가는 속삭임을 억제합니다.",
-    SUPRESSBIDWHISPTTWARN = "입찰과 관련되지 않은 다른 모든 속삭임은 계속 표시됩니다.",
+    SuppressBIDWHISPTTDESC = "입찰이 진행되는 동안 입찰과 관련된 들어오고 나가는 속삭임을 억제합니다.",
+    SuppressBIDWHISPTTWARN = "입찰과 관련되지 않은 다른 모든 속삭임은 계속 표시됩니다.",
     SYNCALREADY = "이미 동기화가 진행 중입니다.",
     SYNCCOMPLETE = "동기화 완료",
     SYNCCOMPLETE2 = "동기화 완료. 모든 플레이어는 최신 상태입니다.",
@@ -673,6 +753,28 @@ if GetLocale() == "koKR" then
     TABLEVIEWS = "테이블 뷰",
     TAKINGBIDSON = "입찰하기",
     TANK = "탱크",
+    NOTGUILDMASTER = "Only available to Guild Master",  -- NEED TRANSLATION
+    TEAM = "Team",
+    TEAMS = "Teams",
+    TEAMADD = "Add new team",
+    TEAMADDDIALOG = "Are you sure you want to create a new team? This can't be undone",
+    TEAMADDDESC = "Add new team to your guild (only available to guild master). At this point, there is no option to delete a team.",
+    TEAMRENAME = "Rename team",
+    TEAMRENAMESELECTED = "Rename selected team",
+    TEAMNAMEINPUTTOOLTIP = "Team name",
+    TEAMNAMEINPUTTOOLTIPDESC = "For changing currently selected team name",
+    TEAMRENAMESELECTEDESC = "Allows guild master to rename selected team from the dropdown list",
+    TEAMCURRENTLIST = "Currently selected team",
+    TEAMCURRENTLISTDESC = "This shows the list of all teams withing the guild.",
+    TEAMCURRENTLISTDESC2 = "All tabs/tables base their data on value coming from this dropdown. Be sure to always check which team you have selected before awarding any DKP or starting the raid timer.",
+    TEAMCURRENTLISTDESC3 = "You cannot change the currently selected team from this drop down. To change currently selected team go to /dkp main window",
+    TEAMLIST = "List of teams",
+    TEAMCURRENTLISTLABEL = "Team selector",
+    TEAMLISTDESC = "List of all the teams defined for current player's realm/guild. Team is a smaller subsection of a guild. Usefull for guilds with more than one raiding groups",
+    TEAMMANAGEMENTHEADER = "Guild team management section",
+    TEAMSELECT = "Select Team",
+    TEAMCHANGERAIDINPROGRESS = "You can't change currently selected team while raid is in progress!",
+    NOTEAMCHOSEN = "Please pick a team from drop down to change it's name", 
     TENSECONDSTOBID = "입찰에 남은 10 초!",
     THISWILLREFUND = "환불됩니다",
     TIMEELAPSED = "경과 시간",
@@ -692,7 +794,7 @@ if GetLocale() == "koKR" then
     TOSTANDBYLIST = "대기 목록으로",
     TOTALDKP = "총 DKP",
     TOTALDKPAWARD = "총 DKP 수여",
-    TOTALMONDKPUSERS = "총 MonDKP 사용자",
+    TOTALCommDKPUSERS = "총 CommDKP 사용자",
     TOWITHDRAWBID = "입찰을 철회합니다.",
     TRINKET = "하찮은 것",
     TTHISTORYCOUNT = "툴팁 히스토리 수",
@@ -739,7 +841,7 @@ if GetLocale() == "koKR" then
     WHITELISTEMPTY = "허용 목록이 비어 있습니다.",
     WHITELISTHEADER = [=[화이트리스트 설정 |CFF444444(리더 만)(알파)|r
 
-    임원이 필요한 권한을 제한하려면이 화이트리스트 설정 만 사용하는 것이 좋습니다. 모든 임원에게 권한을 부여하려면이 설정 기능을 완전히 무시하십시오. 주의해서 사용하십시오. (이 설정을 적용하면 문제가 발생하면 텍스트 편집기로 \WTF\Accounts\ACCOUNT_NAME\SavedVariables\MonolithDKP.lua 파일을 열고 하단 근처의 MonDKP_Whitelist 테이블을 삭제하십시오.)]=],
+    임원이 필요한 권한을 제한하려면이 화이트리스트 설정 만 사용하는 것이 좋습니다. 모든 임원에게 권한을 부여하려면이 설정 기능을 완전히 무시하십시오. 주의해서 사용하십시오. (이 설정을 적용하면 문제가 발생하면 텍스트 편집기로 \WTF\Accounts\ACCOUNT_NAME\SavedVariables\CommunityDKP.lua 파일을 열고 하단 근처의 CommDKP_Whitelist 테이블을 삭제하십시오.)]=],
     WIPETABLES = "테이블 정리",
     WIPETABLESCONF = "모든 테이블을 삭제 하시겠습니까? 경찰관이 온라인 상태 일 때 경찰관으로부터 모든 정보를 검색 할 수 있습니다.",
     WIPETABLESTTDESC = "DKP 테이블, 전리품 기록 및 DKP 기록을 포함한 모든 데이터를 지 웁니다. 사용 가능한 담당자로부터 새롭고 완전한 정보를 받기 위해 동기화하는 동안 문제가 발생하는 경우이 옵션을 사용하십시오.",
@@ -787,15 +889,24 @@ if GetLocale() == "koKR" then
     VALIDATEWARN          = "전체 기록을 기준으로 모든 플레이어의 dkp, 평생 획득 한 시간 및 평생을 재 계산합니다. 누락 된 히스토리 항목으로 인해 결과가 올바르지 않은 경우 저장된 변수 파일을 백업하십시오. 달리기 전에 모든 플레이어에 대해 이전 dkp (컨텍스트 메뉴> 모두 선택> 이전 dkp 재설정)를 재설정해야 변경 한 양을 확인할 수 있습니다. 계속 하시겠습니까?",
     PASS                  = "통과하다",
 
-    CHANGELOG1            = "-기본 DKP 인터페이스의 왼쪽 하단에있는 상태 표시기 아이콘을 클릭하여 인터페이스에 액세스 할 수있는 향상된 방송 시스템.",
-    CHANGELOG2            = "  -전체 브로드 캐스트 옵션은 모든 데이터를 브로드 캐스트하고 수신자의 동일한 사본으로 수신자 테이블을 겹쳐 씁니다. 그들이 가지고 있지 않은 모든 데이터는 손실되지 않습니다 (1.6 및 이전 버전의 브로드 캐스트 버튼과 동일하게 작동).",
-    CHANGELOG3            = "  -지난 2 주 동안 병합 옵션은 지난 2 주 동안 생성 된 모든 항목을 브로드 캐스트하고 (데이터 복제 가능성을 방지하기 위해 2.1이 설치된 시점 이전) 수신자에게없는 항목 만 적용합니다. 여러 레이드 파티 데이터를 병합하는 데 유용합니다.",
-    CHANGELOG4            = "-장교가 사용할 수있는 테이블 수리 기능. 사용하려면 저주 페이지에 링크 된 비디오를 보거나 https://www.youtube.com/watch?v=dwnNnppFF2I로 이동하십시오. 한 명의 경찰관 만이 가장 정확한 데이터가있는 테이블에서이를 사용하고 수리 된 데이터를 나머지 길드 또는 경찰에게 전달하여 전달할 것을 권장합니다. 저장된 변수 파일을 먼저 백업하십시오.",
-    CHANGELOG5            = "-공격대 방송 중 방송은 2.0에서와 마찬가지로 즉시 방송됩니다. 데이터 덮어 쓰기에 대한 두려움으로 항목이 브로드 캐스트되기를 기다리지 않습니다.",
-    CHANGELOG6            = "-테이블이 구식인지 여부를 결정하는 시드가 이제 애드온 내에서 자연스럽게 전파됩니다 (GM 공표 없음).",
-    CHANGELOG7            = "-이 새로운 데이터 구조는 개발자가 로직을 업데이트 할 수있을 때까지 www.warcraftdkp.com의 현재 데이터 관리와 호환되지 않습니다.",
-    CHANGELOG8            = "-상황에 맞는 메뉴에서 장교가 사용할 수있는 테이블 유효성 검사 옵션. 그러면 기록에 따라 모든 플레이어의 DKP 테이블 (dkp, 수명 및 소비)이 재 구축됩니다. 실행 기록 항목이 누락 된 경우 올바르지 않은 값을 리턴 할 수 있으므로 저장된 변수 파일을 실행하기 전에 백업하는 것이 좋습니다. 플레이어의 모든 이전 DKP 값을 재설정하면 (컨텍스트 메뉴> 모두 선택> 이전 dkp 재설정) 각 플레이어 DKP가 유효성 검사에서 얼마나 많이 변경되었는지 확인할 수 있습니다.",
-    CHANGELOG9            = "",
-    CHANGELOG10           = "",
-  }
+    MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?", --TODO TRANSLATE:
+    MIGRATIONTEAM         = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables|nas a NEW TEAM for your current GUILD|nto CommunityDKP?", --TODO TRANSLATE:
+    MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.", --TODO TRANSLATE:
+    MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?", --TODO TRANSLATE:
+    MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.", --TODO TRANSLATE:
+    MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.", --TODO TRANSLATE:
+
+    --TODO TRANSLATE:
+    CHANGELOG1 = "CommunityDKP - v3.2.8-r69-bcc",
+    CHANGELOG2 = " - fixed UI for classic era realms",
+    CHANGELOG3 = "",
+    CHANGELOG4 = "",
+    CHANGELOG5 = "",
+    CHANGELOG6 = "",
+    CHANGELOG7 = "",
+    CHANGELOG8 = "",
+    CHANGELOG8 = "",
+    CHANGELOG9 = "Taidtuskecyh @ Gehennas",
+    CHANGELOG10 = "CommunityDKP Discord: https://discord.gg/dXXK4vH"
+      }
 end

@@ -1,13 +1,20 @@
 local _, core = ...;
 local _G = _G;
-local MonDKP = core.MonDKP;
+local CommDKP = core.CommDKP;
 local L = core.L;
 
 
-function MonDKP:ClassGraph()
-	local graph = CreateFrame("Frame", "MonDKPClassIcons", MonDKP.ConfigTab1)
+function CommDKP:ClassGraph()
 
-	graph:SetPoint("TOPLEFT", MonDKP.ConfigTab1, "TOPLEFT", 0, 0)
+	local graph;
+
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		graph = CreateFrame("Frame", "CommDKPClassIcons", CommDKP.ConfigTab1)
+	elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+		graph = CreateFrame("Frame", "CommDKPClassIcons", CommDKP.ConfigTab1, BackdropTemplateMixin and "BackdropTemplate" or nil)
+	end
+
+	graph:SetPoint("TOPLEFT", CommDKP.ConfigTab1, "TOPLEFT", 0, 0)
 	graph:SetBackdropColor(0,0,0,0)
 	graph:SetSize(460, 495)
 
@@ -20,10 +27,10 @@ function MonDKP:ClassGraph()
 	local BarWidth = 25
 
 	for k, v in pairs(core.classes) do
-		local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, v)
+		local classSearch = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), v)
 		if classSearch and #classSearch > 0 then
 			tinsert(classCount, #classSearch)
-			local classPerc = MonDKP_round(#classSearch / #MonDKP_DKPTable, 4);
+			local classPerc = CommDKP_round(#classSearch / #CommDKP:GetTable(CommDKP_DKPTable, true), 4);
 			tinsert(perc, classPerc * 100)
 			local adjustBar = BarMaxHeight * classPerc;
 			tinsert(perc_height, adjustBar)
@@ -36,7 +43,7 @@ function MonDKP:ClassGraph()
 		end
 	end
 
-	for i=1, 8 do
+	for i=1, 9 do
 		graph.icons[i] = graph:CreateTexture(nil, "OVERLAY", nil);   -- Title Bar Texture
 		if i==1 then
 	  		graph.icons[i]:SetPoint("BOTTOMLEFT", graph, "BOTTOMLEFT", 74, 40);
@@ -45,76 +52,50 @@ function MonDKP:ClassGraph()
 		end
   		graph.icons[i]:SetColorTexture(0, 0, 0, 1)
   		graph.icons[i]:SetSize(28, 28);
-  		graph.icons[i].bar = CreateFrame("Frame", "MonDKP"..i.."Graph", graph)
+
+		if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+			graph.icons[i].bar = CreateFrame("Frame", "CommDKP"..i.."Graph", graph)
+		elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+			graph.icons[i].bar = CreateFrame("Frame", "CommDKP"..i.."Graph", graph, BackdropTemplateMixin and "BackdropTemplate" or nil)
+		end
+  		
 		graph.icons[i].bar:SetPoint("BOTTOM", icons[i], "TOP", 0, 5)
 		graph.icons[i].bar:SetBackdropBorderColor(1,1,1,0)
   		graph.icons[i].bar:SetSize(BarWidth, perc_height[i])
   		graph.icons[i].bar:SetBackdrop({
-			bgFile   = "Interface\\AddOns\\MonolithDKP\\Media\\Textures\\graph-bar", tile = false,
+			bgFile   = "Interface\\AddOns\\CommunityDKP\\Media\\Textures\\graph-bar", tile = false,
 			insets = { left = 1, right = 1, top = 1, bottom = 1}
 		});
   		graph.icons[i]:SetTexture("Interface\\GLUES\\CHARACTERCREATE\\UI-CharacterCreate-Classes");
 
-  		local c = MonDKP:GetCColors(core.classes[i])
+  		local c = CommDKP:GetCColors(core.classes[i])
 		graph.icons[i].bar:SetBackdropColor(c.r, c.g, c.b, 1)
 
 		graph.icons[i].percentage = graph.icons[i].bar:CreateFontString(nil, "OVERLAY")
 		graph.icons[i].percentage:SetPoint("BOTTOM", graph.icons[i].bar, "TOP", 0, 3)
-		graph.icons[i].percentage:SetFontObject("MonDKPSmallCenter")
-		graph.icons[i].percentage:SetText(MonDKP_round(perc[i] or 0, 1).."%")
+		graph.icons[i].percentage:SetFontObject("CommDKPSmallCenter")
+		graph.icons[i].percentage:SetText(CommDKP_round(perc[i] or 0, 1).."%")
 		graph.icons[i].percentage:SetTextColor(1, 1, 1, 1)
 
 		graph.icons[i].count = graph.icons[i].bar:CreateFontString(nil, "OVERLAY")
 		graph.icons[i].count:SetPoint("BOTTOM", graph.icons[i].bar, "BOTTOM", 0, -55)
-		graph.icons[i].count:SetFontObject("MonDKPSmallCenter")
+		graph.icons[i].count:SetFontObject("CommDKPSmallCenter")
 		graph.icons[i].count:SetText(classCount[i])
 		graph.icons[i].count:SetTextColor(1, 1, 1, 1)
 
-		--MonDKP.ConfigTab2.header:SetScale(1.2)
-	end
+		local className = core.classes[i] or "nil";
 
-	if core.faction == "Horde" then
-		--druid
-		graph.icons[1]:SetTexCoord(0.740, 0.9921, 0.005, 0.247)
-		--hunter
-		graph.icons[2]:SetTexCoord(0, 0.25, 0.2549, 0.5019)
-		--mage
-		graph.icons[3]:SetTexCoord(0.25, 0.494, 0, 0.25)
-		--priest
-		graph.icons[4]:SetTexCoord(0.5, 0.75, 0.25, 0.5)
-		--rogue
-		graph.icons[5]:SetTexCoord(0.5, 0.74, 0, 0.25)
-		--shaman
-		graph.icons[6]:SetTexCoord(0.25, 0.5, 0.25, 0.5)
-		--warlock
-		graph.icons[7]:SetTexCoord(0.74, 1, 0.25, 0.5)
-		--warrior
-		graph.icons[8]:SetTexCoord(0, 0.25, 0, 0.255)
-	elseif core.faction == "Alliance" then
-		--druid
-		graph.icons[1]:SetTexCoord(0.740, 0.9921, 0.005, 0.247)
-		--hunter
-		graph.icons[2]:SetTexCoord(0, 0.25, 0.2549, 0.5019)
-		--mage
-		graph.icons[3]:SetTexCoord(0.25, 0.494, 0, 0.25)
-		--paladin
-		graph.icons[4]:SetTexCoord(0, 0.25, 0.5, 0.75)
-		--priest
-		graph.icons[5]:SetTexCoord(0.5, 0.75, 0.25, 0.5)
-		--rogue
-		graph.icons[6]:SetTexCoord(0.5, 0.74, 0, 0.25)
-		--warlock
-		graph.icons[7]:SetTexCoord(0.74, 1, 0.25, 0.5)
-		--warrior
-		graph.icons[8]:SetTexCoord(0, 0.25, 0, 0.255)
+		local coords = CLASS_ICON_TCOORDS[className]
+		
+		graph.icons[i]:SetTexCoord(unpack(coords))
+
+		--CommDKP.ConfigTab2.header:SetScale(1.2)
 	end
-	
-	--tex:SetTexCoord(left, right, top, bottom)
 
 	return graph;
 end
 
-function MonDKP:ClassGraph_Update()
+function CommDKP:ClassGraph_Update()
 	local classCount = {}
 	local perc_height = {}
 	local perc = {}
@@ -122,10 +103,10 @@ function MonDKP:ClassGraph_Update()
 	local BarWidth = 25
 
 	for k, v in pairs(core.classes) do
-		local classSearch = MonDKP:Table_Search(MonDKP_DKPTable, v)
+		local classSearch = CommDKP:Table_Search(CommDKP:GetTable(CommDKP_DKPTable, true), v)
 		if classSearch and #classSearch > 0 then
 			tinsert(classCount, #classSearch)
-			local classPerc = MonDKP_round(#classSearch / #MonDKP_DKPTable, 4);
+			local classPerc = CommDKP_round(#classSearch / #CommDKP:GetTable(CommDKP_DKPTable, true), 4);
 			tinsert(perc, classPerc * 100)
 			local adjustBar = BarMaxHeight * classPerc;
 			tinsert(perc_height, adjustBar)
@@ -140,7 +121,7 @@ function MonDKP:ClassGraph_Update()
 
 	for i=1, 8 do
   		core.ClassGraph.icons[i].bar:SetSize(BarWidth, perc_height[i])
-		core.ClassGraph.icons[i].percentage:SetText(MonDKP_round(perc[i], 1).."%")
+		core.ClassGraph.icons[i].percentage:SetText(CommDKP_round(perc[i], 1).."%")
 		core.ClassGraph.icons[i].count:SetText(classCount[i])
 	end
 end

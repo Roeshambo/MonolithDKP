@@ -1,5 +1,5 @@
 local _, core = ...;
-local MonDKP = core.MonDKP;
+local CommDKP = core.CommDKP;
 
 core.BossList = {
   MC = {
@@ -34,11 +34,89 @@ core.BossList = {
   ONYXIA = {"Onyxia"},
   WORLD = {
     "Azuregos", "Lord Kazzak", "Emeriss", "Lethon", "Ysondre", "Taerar"
+  },
+
+  -- TBC Classic 2.5.1.38757
+  KARAZHAN = { -- 532
+    "Attumen the Huntsman",
+    "Moroes",
+    "Maiden of Virtue",
+    "Opera Hall",
+    "The Curator",
+    "Terestian Illhoof",
+    "Shade of Aran",
+    "Netherspite",
+    "Chess Event",
+    "Prince Malchezaar",
+    "Nightbane"
+  },
+  GRULLSLAIR = { -- 565
+    "High King Maulgar",
+    "Gruul the Dragonkiller"
+  },
+  MAGTHERIDONSLAIR = { -- 544
+    "Magtheridon"
+  },
+  SERPENTSHRINECAVERN = { -- 548
+    "Hydross the Unstable",
+    "The Lurker Below",
+    "Leotheras the Blind",
+    "Fathom-Lord Karathress",
+    "Morogrim Tidewalker",
+    "Lady Vashj"
+  },
+  TEMPESTKEEP = { -- 550
+    "Al'ar",
+    "Void Reaver",
+    "High Astromancer Solarian",
+    "Kael'thas Sunstrider"
+  },
+  ZULAMAN = { -- 568
+    "Akil'zon",
+    "Nalorakk",
+    "Jan'alai",
+    "Halazzi",
+    "Hex Lord Malacrass",
+    "Daakara"
+  },
+  BLACKTEMPLE = { -- 564 map id
+    "High Warlord Naj'entus",
+    "Supremus",
+    "Shade of Akama",
+    "Teron Gorefiend",
+    "Gurtogg Bloodboil",
+    "Reliquary of Souls",
+    "Mother Shahraz",
+    "The Illidari Council",
+    "Illidan Stormrage"
+  },
+  SUNWELLPLATEAU = { -- 580
+    "Kalecgos", 
+    "Brutallus",
+    "Felmyst",
+    "Eredar Twins",
+    "M'uru",
+    "Kil'jaeden"
   }
 }
 
 core.ZoneList = {
-  "Molten Core", "Blackwing Lair", "Temple of Ahn'Qiraj", "Naxxramas", "Zul'Gurub", "Ruins of Ahn'Qiraj", "Onyxia's Lair", "World Bosses"
+  "Molten Core", -- 1
+  "Blackwing Lair", -- 2
+  "Temple of Ahn'Qiraj", -- 3 
+  "Naxxramas",  -- 4
+  "Zul'Gurub", -- 5
+  "Ruins of Ahn'Qiraj",  -- 6
+  "Onyxia's Lair", -- 7
+  "World Bosses", -- 8
+  "Karazhan", -- 9
+  "Gruul's Lair", -- 10
+  "Magtheridon's Lair", -- 11
+  "Coilfang: Serpentshrine Cavern", -- 12
+  "Tempest Keep", -- 13
+  "Zul'Aman", -- 14
+  "Black Temple", -- 15
+  "The Sunwell" -- 16
 }
 
 core.L = {
@@ -53,7 +131,7 @@ core.L = {
   ADDNEGVALUES = "Add to Negative Values",
   ADDRAIDMEMBERS = "Add Raid Members",
   ADDRAIDMEMBERSCONFIRM = "Are you sure you'd like to add missing raid members to DKP table?",
-  ADDRAIDMEMBERSTTDESC = "Add all raid/party members that are in guild to DKP table.",
+  ADDRAIDMEMBERSTTDESC = "Add all raid/party members to the DKP table.",
   ADDREMDKPTABLEENTRIES = "Add/Remove DKP Table Entries",
   ADDTARGET = "Add Target",
   ADDTARGETTODKPTABLE = "Add Target to DKP Table",
@@ -83,7 +161,7 @@ core.L = {
   ARTIFICIALINFLATION = "Artificial Inflation",
   ARTINFLATTTDESC = "Points to give to each player ON TOP of the DKP that is divided and distributed among them. This value is added to their earned DKP AFTER the banked value is divided.",
   AUTOAWARD = "Auto Award DKP",
-  AUTOAWARDTTDESC = "Automatically awards Boss Kill Bonus DKP (set in Options tab) when a boss is killed. Only the raid leader will distribute points with this.",
+  AUTOAWARDTTDESC = "Automatically awards Boss Kill Bonus DKP (set in Options tab) when a boss is killed. Only the raid leader will distribute points with this. Raid must be initialized on the Adjust DKP tab.",
   AWARDBONUS = "Award Bonus",
   AWARDBONUSTTDESC = "Amount of DKP to give to the raid each time the below interval is met.",
   AWARDINTERVAL = "Award Interval",
@@ -106,7 +184,7 @@ core.L = {
   BCASTVALUESTTDESC = "Broadcast above minimum bid values to all officers. This will also broadcast any custom values set for specific items in the bid window.",
   BCASTVALUESTTWARN = "Current values will not be overwritten. Receiving this broadcast will update values already set or add values that don't exist. Any values they may have that are not sent will remain unchanged.",
   BELT = "Belt",
-  BESTPRACTICES = "Due to recurring issues with the sync system, the old broadcast system was brought back with some improvements. 2.1.0 is not compatible with earlier versions and all raiders must be on 2.1.0 or above. The new broadcast UI is available to officers by clicking the status indicator in the bottom left corner of the main DKP interface. There is also a repair option available to officers if your tables were corrupted by migration issues with 2.0.x. You can view how to use that via the YouTube video linked on the Curse page.",
+  BESTPRACTICES = "",
   BID = "Bid",
   BIDACCEPTEDFILTER = "Your bid was Accepted.",
   BIDCANCELLED = "Your bid has been canceled.",
@@ -164,7 +242,7 @@ core.L = {
   CONTINUERAID = "Continue Raid",
   CORRECTINGERROR = "Correcting Error",
   COSTAUTOUPDATE = "Cost Auto Update",
-  COSTAUTOUPDATETTDESC = "Select what you'd like the item cost to be automatically updated to during a bid session.\n\n|CFFFF0000First Bidder|r: This will update the cost of the item at the bottom of the bid window to the highest bidder.\n\n|CFFFF0000Second Bidder|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the minimum bid value.\n\nFor each, the cost is always editable on the fly.",
+  COSTAUTOUPDATETTDESC = "Select what you'd like the item cost to be automatically updated to during a bid session.\n\n|CFFFF0000First Bidder|r: This will update the cost of the item at the bottom of the bid window to the highest bidder.\n\n|CFFFF0000Second Bidder|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the bidder's value.\n\n|CFFFF0000Second Bidder or Min Value|r: This will update the cost of the item at the bottom of the bid window to either the second highest bidder or, if there is only one bidder, the minimum bid value.\n\nFor each, the cost is always editable on the fly.",
   COSTAUTOUPDATEVALUE = "Cost Auto Update Value",
   CREATEDMAINTAIN = "created and maintained by",
   CREATERAIDTIMER = "Creates Raid Timer (Officers Only) (eg. /dkp timer 120 Pizza Break!)",
@@ -317,6 +395,7 @@ core.L = {
   INVITE = "Invite",
   INVITESELECTED = "Invite Selected to Raid",
   ITEM = "Item",
+  ITEMS = "Items",
   ITEMCOST = "Item Cost",
   ITEMCOSTTTDESC = "DKP to charge player for item.",
   ITEMCOSTTYPES = "Item Cost Types",
@@ -376,9 +455,9 @@ core.L = {
   MINIMUMROLLTTDESC = "Set the minimum roll to be used.",
   MINUTE = "minute",
   MINUTES = "minutes",
-  MONDKPSCALESIZE = "Monolith DKP Scale Size",
-  MONDKPSCALESIZETTDESC = "Scale of the Monolith DKP window. Click \"Save Settings\" to change size to set value.",
-  MONDKPSCALESIZETTWARN = "May require a /reload after saving if another Addon is used that modifies UI scales (ex. TukUI, ElvUI etc...)",
+  CommDKPSCALESIZE = "CommunityDKP Scale Size",
+  CommDKPSCALESIZETTDESC = "Scale of the CommunityDKP window. Click \"Save Settings\" to change size to set value.",
+  CommDKPSCALESIZETTWARN = "May require a /reload after saving if another Addon is used that modifies UI scales (ex. TukUI, ElvUI etc...)",
   MORE = "more",
   MOVEBIDTIMER = "Move Bid Timer",
   MOVEME = "Move Me!",
@@ -441,7 +520,7 @@ core.L = {
   OTHERREASONVALIDATE = "No Other - Reason Selected",
   OUTDATEMODIFYWARN = "You are attempting to modify an outdated DKP table. This may inadvertently corrupt data for the officers that have the most recent tables.\n\n Are you sure you would like to do this?",
   OUTOFDATE = "out-of-date",
-  OUTOFDATEANNOUNCE = "Your version of Monolith DKP is out-of-date. Please update on Curse/Twitch or WoWInterface to ensure there are no compatibility issues.",
+  OUTOFDATEANNOUNCE = "Your version of CommunityDKP is out-of-date. Please update on Curse/Twitch or WoWInterface to ensure there are no compatibility issues.",
   PAUSERAID = "Pause Raid",
   PAUSERAIDTTDESC = "This pauses a raid timer if the leader decides the timer should be halted for breaks.",
   PAUSERAIDTTWARN = "Can be resumed by clicking \"Continue Raid\".",
@@ -457,6 +536,9 @@ core.L = {
   PLAYERSFORREASON = "players for reason",
   PLAYERVALIDATE = "No Player Selected",
   PLEASEUSENUMS = "Please use numbers.",
+  PRICETAB = "Pricing",
+  PRICETITLE = "Loot Prices",
+  PRICEDESC = "Use the following table to view pricing for managed loot.",
   POINTS = "Points",
   POINTSTTDESC = "Enter amount of DKP to be distributed to selected players on the DKP table. Default values can be changed in the \"Options\" tab below.",
   POINTSTTWARN = "Use a negative number to remove DKP from selected players.",
@@ -519,6 +601,7 @@ core.L = {
   SEARCH = "Search   ",
   SEARCHDESC = "Filters DKP list. Searches against Name, Class, Spec, Rank and Role.",
   SECONDBIDDER = "Second Bidder",
+  SECONDBIDDERORMIN = "Second Bidder or Min Value",
   SECONDS = "Seconds",
   SELECTALL = "Select All",
   SELECTALLVISIBLE = "Select All Visible",
@@ -560,12 +643,12 @@ core.L = {
   SUBMITBUGS = "for help and submit any bugs",
   SUBZEROBIDDING = "Sub Zero Bidding",
   SUBZEROBIDDINGTTDESC = "Allows players to bid if they don't have enough DKP or bid higher than their available DKP (depending on mode settings).\n\n|cffff0000Minimum Bid Values|r: Allows players to bid more dkp than they have, up to the Max Bid (set below) allowing them to go into the negative.\n\n|cffff0000Others|r: Allows player to submit a bid even if their available DKP is exceeded by the cost of the item.",
-  SUPPRESSBIDWHISP = "Supress Bid Whispers",
-  SUPPRESSNOTIFICATIONS = "Supress Addon Notifications",
+  SUPPRESSBIDWHISP = "Suppress Automatic Whispers", --TODO TRANSLATE: This was changed, need to translate changes to other languages -Vapok
+  SUPPRESSNOTIFICATIONS = "Suppress Addon Notifications",
   SUPPRESSNOTIFYTTDESC = "Hides all addon messages from being displayed in your chat frame.",
   SUPPRESSNOTIFYTTWARN = "Broadcast updates will still be received.",
-  SUPRESSBIDWHISPTTDESC = "Supresses incoming and outgoing whispers related to bidding while a bid is in progress.",
-  SUPRESSBIDWHISPTTWARN = "All other non-bidding related whispers will still be displayed.",
+  SuppressBIDWHISPTTDESC = "Suppresses automatic incoming and outgoing whispers related to bidding or dkp status", --TODO TRANSLATE: This was changed, need to translate changes to other languages -Vapok
+  SuppressBIDWHISPTTWARN = "All other non-bidding or dkp related whispers will still be displayed.", --TODO TRANSLATE: This was changed, need to translate changes to other languages -Vapok
   TABLEQUERYHEADER = "Guild DKP Table Status",
   TABLEQUERYNONOFFICER = "Non-Officer Table Status (Online)",
   TABLEQUERYOFFICER = "Officer Table Status (Online)",
@@ -574,6 +657,29 @@ core.L = {
   TABLEVIEWS = "Table Views",
   TAKINGBIDSON = "Taking bids on",
   TANK = "Tank",
+  NOTGUILDMASTER = "Only available to Guild Master",
+  TEAM = "Team",
+  TEAMS = "Teams",
+  TEAMADD = "Add new team",
+  TEAMADDDIALOG = "Are you sure you want to create a new team? This can't be undone",
+  TEAMADDDESC = "Add new team to your guild (only available to guild master). At this point, there is no option to delete a team.",
+  TEAMRENAME = "Rename team",
+  TEAMRENAMESELECTED = "Rename selected team",
+  TEAMNAMEINPUTTOOLTIP = "Team name",
+  TEAMNAMEINPUTTOOLTIPDESC = "For changing currently selected team name",
+  TEAMRENAMESELECTEDESC = "Allows guild master to rename selected team from the dropdown list",
+  TEAMCURRENTLIST = "Currently selected team",
+  TEAMCURRENTLISTLABEL = "Team selector",
+  TEAMCURRENTLISTDESC = "This shows the list of all teams within the guild.",
+  TEAMCURRENTLISTDESC2 = "All tabs/tables base their data on value coming from this dropdown. Be sure to always check which team you have selected before awarding any DKP or starting the raid timer.",
+  TEAMCURRENTLISTDESC3 = "You cannot change the currently selected team from this drop down. To change currently selected team go to /dkp main window",
+  TEAMLIST = "List of teams",
+  TEAMCURRENTLISTLABEL = "Team selector",
+  TEAMLISTDESC = "List of all the teams defined for current player's realm/guild. Team is a smaller subsection of a guild. Usefull for guilds with more than one raiding groups",
+  TEAMMANAGEMENTHEADER = "Guild team management section",
+  TEAMSELECT = "Select Team",
+  TEAMCHANGERAIDINPROGRESS = "You can't change currently selected team while raid is in progress!",
+  NOTEAMCHOSEN = "Please pick a team from drop down to change it's name", 
   TENSECONDSTOBID = "10 Seconds left to bid!",
   THISWILLREFUND = "This will refund",
   TIMEELAPSED = "Time Elapsed",
@@ -593,7 +699,7 @@ core.L = {
   TOSTANDBYLIST = "to Standby List",
   TOTALDKP = "Total DKP",
   TOTALDKPAWARD = "Total DKP Awarded",
-  TOTALMONDKPUSERS = "Total MonDKP Users",
+  TOTALCommDKPUSERS = "Total CommDKP Users",
   TOWITHDRAWBID = "to withdraw your bid.",
   TRINKET = "Trinket",
   TTHISTORYCOUNT = "Tooltip History Count",
@@ -631,7 +737,7 @@ core.L = {
   WHISPERCMDSHELP = "Whisper Commands (To Designated Officers)",
   WHITELISTBROADCASTED = "Whitelist Broadcasted",
   WHITELISTEMPTY = "Your whitelist is empty.",
-  WHITELISTHEADER = "Whitelist Settings |CFF444444(Leader Only) (Alpha)|r\n\nIt is strongly advised you only use this whitelist setting if you wish to restrict what officers require permissions. If you want all officers to have permissions, ignore this settings feature entirely. Use with caution. (If applying these settings causes problems, open your \\WTF\\Accounts\\ACCOUNT_NAME\\SavedVariables\\MonolithDKP.lua file with a text editor and delete the MonDKP_Whitelist table near the bottom.)",
+  WHITELISTHEADER = "Whitelist Settings |CFF444444(Leader Only) (Alpha)|r\n\nIt is strongly advised you only use this whitelist setting if you wish to restrict what officers require permissions. If you want all officers to have permissions, ignore this settings feature entirely. Use with caution. (If applying these settings causes problems, open your \\WTF\\Accounts\\ACCOUNT_NAME\\SavedVariables\\CommunityDKP.lua file with a text editor and delete the CommDKP_Whitelist table near the bottom.)",
   WITH = "with",
   WON = "won",
   WONBY = "won by",
@@ -653,11 +759,13 @@ core.L = {
   ANTISNIPETTDESC = "Number of seconds you want the bid timer to be extended by if a bid is received when the bid timer is below 10 seconds. (To prevent last second bid sniping)",
   ANTISNIPETTWARN = "Set to 0 to turn off anti snipe.",
   ANNOUNCEBID = "Announce Highest Bid",
-  ANNOUNCEBIDTTDESC = "Each time a new bidder takes highest bid, you will that new high bid to raid",
+  ANNOUNCEBIDTTDESC = "Announce the current highest bid to the raid whenever it changes",
   INCLUDENAME = "Include Bidder",
   INCLUDENAMETTDESC = "Includes the name of the bidder that submitted the current high bid when announcing highest bidder.",
   ANNOUNCEAWARD = "Announce Award to Guild",
   ANNOUNCEAWARDTTDESC = "If selected, you will also announce who won an item to guild chat.",
+  ANNOUNCEINRAIDWARNING = "Announce in Raid Warning",
+  ANNOUNCEINRAIDWARNINGDESC = "If checked, announcements for higgest bid/bidder will be broadcasted via Raid Warning, not Raid chat.",
   ROLLDECLINED = "Roll declined. Expected roll range is",
   NEWHIGHROLL = "New highest roll is",
   NEWHIGHROLLER = "New highest roller is",
@@ -703,10 +811,14 @@ core.L = {
   CONFIRMMIGRATE = "Are you certain you wish to be the officer conducting the migration? This is a non-reversable process.",
   AUTOOPEN = "Auto Open Bid Window",
   AUTOOPENTTDESC = "When checked, bidding window will automatically open when a new item is being auctioned. If unchecked, you will be required to open it manually when needed with \"/dkp bid\".",
+  AUTOAWARDLOOT = "Auto Award Loot",
+  AUTOAWARDLOOTDESC = "When checked loot will be automatically awarded to the winner. If looting they will be master looted to the winner. If awarding from your bags they will be inserted into the next trade window with the winner.",
+  DECREASEDISENCHANT = "Decrease Disenchant Value",
+  DECREASEDISENCHANTTTDESC = "Decrease Disenchant Value after 3 disenchants by half every disenchant afterwards until a minimum of 5 DKP",
   DELETETABLES = "Delete Tables",
   YOUHAVERECOVERED = "You have recovered a player. Please reload your interface to recalculate values.",
-  MIGRATEINST1 = "|cffff0000IMPORTANT!!|r: Back up your saved variables file prior to proceeding. With 2.0 comes a brand new indexed broadcast system. This requires your current tables to be migrated with new values. This migration is a one time process that can ONLY be conducted by ONE officer. Select the officer with the most accurate data to conduct the migration. All other officers will be blocked and will have their data deleted to accept a broadcast of the new data from that selected officer. This is to prevent duplicated data. Once ALL officers have received the new data, you can delete the {MonDKP =OFFICER_NAME} tag from the Guild Leaders public note. It is crutially important that only one officer conducts the migration or you will have duplicate data and your tables will be corrupted (Only way to correct the issue is to have all officers that have corrupted tables log off and delete their saved variables files simultaneously or else you'll simply receive the corrupted data again as soon as you login). Additionally, all members must be using 2.0 or later to be compatible. Older versions will NOT work.\n\nThis window can be reopened with \"/dkp migrate\".",
-  MIGRATEINST2 = "%s has already conducted the migration. Please back up your saved variables file immediately (WTF\\Account\\ACCOUNT_NAME\\SavedVariables\\MonolithDKP.lua) and then click the delete tables button below. If %s is online, they will automatically push a sync to you after you've reloaded. If not, one will be pushed when they log in or you can request they push a sync (this is done by clicking the table status button on the bottom left corner of the main GUI). If any errors occur in the migration process for your guild, delete the migrating officers tag from the guild leader's public note and have all officers that have participated so far delete their corrupted saved variables file and restore it to the one that was backed up. Everyone must do this at the same time and not login (with the addon enabled) until this has been completed. Anyone online with migrated tables will automatically push that data to you as soon as you log in.",
+  MIGRATEINST1 = "|cffff0000IMPORTANT!!|r: Back up your saved variables file prior to proceeding. With 2.0 comes a brand new indexed broadcast system. This requires your current tables to be migrated with new values. This migration is a one time process that can ONLY be conducted by ONE officer. Select the officer with the most accurate data to conduct the migration. All other officers will be blocked and will have their data deleted to accept a broadcast of the new data from that selected officer. This is to prevent duplicated data. Once ALL officers have received the new data, you can delete the {CommDKP =OFFICER_NAME} tag from the Guild Leaders public note. It is crutially important that only one officer conducts the migration or you will have duplicate data and your tables will be corrupted (Only way to correct the issue is to have all officers that have corrupted tables log off and delete their saved variables files simultaneously or else you'll simply receive the corrupted data again as soon as you login). Additionally, all members must be using 2.0 or later to be compatible. Older versions will NOT work.\n\nThis window can be reopened with \"/dkp migrate\".",
+  MIGRATEINST2 = "%s has already conducted the migration. Please back up your saved variables file immediately (WTF\\Account\\ACCOUNT_NAME\\SavedVariables\\CommunityDKP.lua) and then click the delete tables button below. If %s is online, they will automatically push a sync to you after you've reloaded. If not, one will be pushed when they log in or you can request they push a sync (this is done by clicking the table status button on the bottom left corner of the main GUI). If any errors occur in the migration process for your guild, delete the migrating officers tag from the guild leader's public note and have all officers that have participated so far delete their corrupted saved variables file and restore it to the one that was backed up. Everyone must do this at the same time and not login (with the addon enabled) until this has been completed. Anyone online with migrated tables will automatically push that data to you as soon as you log in.",
   CHANGEDGUILDS = "It appears you have joined a new guild. All data from your previous guild has been wiped to prevent data corruption.",
   VALIDATETABLES = "Validate Tables",
   VALIDATINGTABLES = "Validating and rebuilding tables. This can take a few minutes...",
@@ -756,14 +868,21 @@ core.L = {
   VALIDATEWARN = "This will recalculate all players dkp, lifetime earned and lifetime spent based on their complete history. Make sure to back up your saved variables file in the event the result is improper due to missing history entries. You should reset previous dkp (context menu > select all > reset previous dkp) for all players prior to running so you can see how much they changed. Would you like to continue?",
   PASS = "Pass",
 
-  CHANGELOG1 = "- Improved broadcast system with interface accessible by clicking the status indicator icon in the lower left corner of main DKP interface.",
-  CHANGELOG2 = "  - Full Broadcast option will broadcast all data and overwrite the recipients tables with identical copies of yours. Any data they had that you did not will be lost (Works the same as the broadcast button in 1.6 and earlier).",
-  CHANGELOG3 = "  - Merge Last 2 Weeks option will broadcast any entries created in the last two weeks (but no earlier than when 2.1 was installed to prevent the possibility of data duplication) and will only apply entries the recipients do not have. Useful for merging multiple raid party data.",
-  CHANGELOG4 = "- Table repair function available to officers. To use it, please view the video linked on the Curse page or go to https://www.youtube.com/watch?v =dwnNnppFF2I. It is recommended only one officer use it on tables with the most accurate data and then do a full broadcast of the repaired data to the rest of the guild or officers to pass along. Back up your saved variables files prior.",
-  CHANGELOG5 = "- Broadcasting entries during raid will still be instant as they were in 2.0. There is no waiting for entries to broadcast with fear of overwriting data.",
-  CHANGELOG6 = "- The seed determining if your tables are out of date are now propagated naturally within the addon (no more GM public note)",
-  CHANGELOG7 = "- This new data structure is not compatible with the current data management on www.warcraftdkp.com until the developer there is able to update the logic.",
-  CHANGELOG8 = "- Validate Tables option available to officers in the context menu. This will rebuild all players DKP tables (dkp, lifetime earned and spent) based on their history. Recommended you back up your saved variables file before running as it can return incorrect values if you are missing any history entries. Resetting all previous DKP values for players (context menu > select all > reset previous dkp) will allow you to see exactly how much each players DKP changed from the validation.",
-  CHANGELOG9 = "",
-  CHANGELOG10 = "",
+  MIGRATIONDETECTED     = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables and settings to CommunityDKP?",
+  MIGRATIONTEAM         = "CommunityDKP has detected an active MonolithDKP addon.|n|nDo you want to migrate its current tables|nas a NEW TEAM for your current GUILD|nto CommunityDKP?",
+  MIGRATIONUNAVAILABLE  = "Please disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP.",
+  MIGRATIONCONFIRM      = "This will overwrite your existing CommunityDKP tables and settings.|n|nDo you want to continue?",
+  MIGRATIONCANCELED     = "Migration canceled.|n|nPlease disable MonolithDKP and /reload the UI if you want to continue with CommunityDKP without using your current tables and settings.",
+  MIGRATIONCOMPLETED    = "Migration complete.|n|nPlease disable MonolithDKP and /reload the UI.",
+
+  CHANGELOG1 = "CommunityDKP - v3.2.8-r69-bcc",
+  CHANGELOG2 = " - fixed UI for classic era realms",
+  CHANGELOG3 = "",
+  CHANGELOG4 = "",
+  CHANGELOG5 = "",
+  CHANGELOG6 = "",
+  CHANGELOG7 = "",
+  CHANGELOG8 = "",
+  CHANGELOG9 = "Taidtuskecyh @ Gehennas",
+  CHANGELOG10 = "CommunityDKP Discord: https://discord.gg/dXXK4vH"
 }
